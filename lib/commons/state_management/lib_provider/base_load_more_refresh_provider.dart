@@ -1,9 +1,9 @@
 
 import 'package:flutter/scheduler.dart';
-import 'state_management/base_provider.dart';
+import 'package:coffee_bean/commons/state_management/lib_provider/base_provider.dart';
 
 abstract class BaseLoadMoreRefreshProvider<T> extends BaseProvider {
-  BaseLoadMoreRefreshProvider() {
+  BaseLoadMoreRefreshProvider(super.router) {
     _currentPage = _getPreFirstPage();
   }
 

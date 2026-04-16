@@ -7,6 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -24,7 +25,6 @@ abstract interface class SplashStartListener {
 // Buildable
 abstract interface class SplashStartBuildable implements DbNoteBuildable {
 
-  Widget build();
   Widget buildWithAny(String param_1, int param_2);
   Widget buildWithListener(SplashStartListener listener);
 
@@ -38,29 +38,29 @@ class SplashPageCompleteRoute implements DbNoteRoute {
 
 // Builder
 
-class SplashStartBuilder extends DbNoteBuilder with DbNoteRouter implements SplashStartBuildable {
+class SplashStartBuilder extends DbNoteBuilder with DbNavigator implements DbNoteRoutable, SplashStartBuildable {
 
   SplashStartListener? listener;
 
   @override
   Widget build() {
-    var splashStartPage = SplashStartPage(router: this,);
-    rootPage = ChangeNotifierProvider<SplashStartProvider>.value(value: SplashStartProvider(), child: splashStartPage,);
+    var splashStartPage = SplashStartPage();
+    rootPage = ChangeNotifierProvider<SplashStartProvider>.value(value: SplashStartProvider(this), child: splashStartPage,);
     return rootPage;
   }
 
   @override
   Widget buildWithAny(String param_1, int param_2) {
-    var splashStartPage = SplashStartPage(router: this,);
-    rootPage = ChangeNotifierProvider<SplashStartProvider>.value(value: SplashStartProvider(), child: splashStartPage,);
+    var splashStartPage = SplashStartPage();
+    rootPage = ChangeNotifierProvider<SplashStartProvider>.value(value: SplashStartProvider(this), child: splashStartPage,);
     return rootPage;
   }
 
   @override
   Widget buildWithListener(SplashStartListener listener) {
     this.listener = listener;
-    var splashStartPage = SplashStartPage(router: this,);
-    rootPage = ChangeNotifierProvider<SplashStartProvider>.value(value: SplashStartProvider(), child: splashStartPage,);
+    var splashStartPage = SplashStartPage();
+    rootPage = ChangeNotifierProvider<SplashStartProvider>.value(value: SplashStartProvider(this), child: splashStartPage,);
     return rootPage;
   }
 
@@ -71,5 +71,8 @@ class SplashStartBuilder extends DbNoteBuilder with DbNoteRouter implements Spla
       // parentRouter?.goiLenParentRouter();
     }
   }
+
+  @override
+  DbNoteRouter? parentRouter;
 
 }

@@ -1,4 +1,5 @@
 
+import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:coffee_bean/commons/commons_constants.dart';
@@ -54,7 +55,11 @@ abstract class MyBaseProvider with ChangeNotifier {
 }
 
 
-abstract class BaseProvider with ChangeNotifier {
+abstract class BaseProvider<R extends DbNoteRoutable> with ChangeNotifier {
+
+  late R router;
+
+  BaseProvider(this.router);
 
   var _isStart = true;
 

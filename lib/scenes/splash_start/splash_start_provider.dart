@@ -3,15 +3,20 @@
 // import 'package:simple_auth_1/utils/tuple.dart';
 // import '../../constants.dart';
 
-import 'package:coffee_bean/commons/state_management/base_provider.dart';
+import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/commons/state_management/lib_provider/base_provider.dart';
+import 'package:coffee_bean/scenes/splash_start/splash_start_builder.dart';
 
 
-class SplashStartProvider extends BaseProvider {
+class SplashStartProvider extends BaseProvider<DbNoteRoutable> {
 
-  SplashStartProvider() {
-    // init state
-    isLoading = true;
-  }
+    SplashStartProvider(super.router);
+
+  // SplashStartPage({super.key, super.router});
+  // SplashStartProvider({super.router}) : super(router: router)) {
+  //   // init state
+  //   isLoading = true;
+  // };
 
 
   Future<String> fetchSomething() async {
@@ -20,7 +25,11 @@ class SplashStartProvider extends BaseProvider {
 
     //TODO Call API from server and do sth
     await Future.delayed(const Duration(seconds: 3));
+    router.navigate(SplashPageCompleteRoute(message: "SplashStartProvider --- DONE"));
+
     return "SplashStartProvider --- DONE";
+
+
 
     // if (_isHaveData.isEmpty) {
     //   await prefs.setString(Constants.sp_have_data, "just login_scene.login");

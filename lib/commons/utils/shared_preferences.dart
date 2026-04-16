@@ -68,7 +68,7 @@ class DbSharedPreferences {
   ///
   /// @param key String
   /// @returns Future
-  dynamic get(key) {
+  dynamic get(String key) {
     try {
       return json.decode(prefs.get(key).toString());
     } catch (e) {
@@ -81,7 +81,7 @@ class DbSharedPreferences {
   /// @param key String
   /// @param value any
   /// @returns Future
-  Future set(key, value) async {
+  Future set(String key, value) async {
 
     // Detect item type
     switch (value.runtimeType) {
@@ -129,6 +129,10 @@ class DbSharedPreferences {
 
     // Add item to session container
     _session.putIfAbsent(key, () => value);
+  }
+
+  Future remove(String key) {
+    return prefs.remove(key);
   }
 
 }

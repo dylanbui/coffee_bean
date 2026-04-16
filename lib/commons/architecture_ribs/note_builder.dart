@@ -20,7 +20,9 @@ abstract interface class DbNoteDependency {}
 abstract interface class DbNoteEmptyDependency extends DbNoteDependency {}
 
 /// The base builder protocol that all builders should conform to.
-abstract interface class DbNoteBuildable {}
+abstract interface class DbNoteBuildable {
+  Widget build();
+}
 
 
 /// Utility that instantiates a RIB and sets up its internal wirings.

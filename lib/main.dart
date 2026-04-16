@@ -1,15 +1,96 @@
+import 'dart:async';
+import 'dart:io';
+import 'package:coffee_bean/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:event_bus/event_bus.dart';
+import 'package:flutter/services.dart';
 
-import 'global_config.dart';
+import 'app.dart';
+import 'config/app_config.dart';
 
-void main() {
+EventBus globalEventBus = EventBus();
+mixin EventBusMixin {
+  StreamSubscription<T> listenEvent<T>(void Function(T) subscription) =>
+      globalEventBus.on<T>().listen(subscription);
 
-  GlobalVariable().init(Environment.dev);
-
-
-  runApp(const MyApp());
+  void fireEvent<S>(S event) => globalEventBus.fire(event);
 }
 
+void main() async {
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    systemNavigationBarColor: Colors.transparent, // navigation bar color
+    statusBarColor: AppColor.orangeDark, // status bar color
+  ));
+
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isAndroid) {
+    // await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
+  }
+
+  // Set current environment
+  // Core.init(Environment.DEV);
+  // Load global variable
+  AppConfig().init(Environment.dev);
+
+  Widget app = await initializeApp();
+  runApp(app);
+}
+
+
+// Future<void> main() async {
+//
+// /*
+//   Specifies the set of orientations the application interface can be displayed in.
+//   The orientation argument is a list of DeviceOrientation enum values. The empty list causes the application to defer to the operating system default.
+//   * */
+//   WidgetsFlutterBinding.ensureInitialized();
+//   SystemChrome.setPreferredOrientations([
+//     DeviceOrientation.portraitUp,
+//     DeviceOrientation.portraitDown,
+//   ]);
+//
+//   // Load share preferences data when start app
+//   await DbSharedPreferences().loadPreferences();
+//   // Load global variable
+//   GlobalVariable().init(Environment.dev);
+//   // Load app file
+//   await App().startLoad();
+//
+//   runApp(const MyApp());
+// }
+
+// class MyApp extends StatelessWidget {
+//
+//   const MyApp({super.key});
+//
+//   // This widget is the root of your application.
+//   @override
+//   Widget build(BuildContext context) {
+//
+//     final AppBuildable appBuilder = AppBuilder();
+//
+//     return MaterialApp(
+//       // Connect GlobalKey from Router to Flutter Navigator
+//       navigatorKey: DbNavigator.navigatorState,
+//       title: 'Flutter Demo',
+//       theme: ThemeData(
+//         // This is the theme of your application.
+//         //
+//         // Try running your application with "flutter run". You'll see the
+//         // application has a blue toolbar. Then, without quitting the app, try
+//         // changing the primarySwatch below to Colors.green and then invoke
+//         // "hot reload" (press "r" in the console where you ran "flutter run",
+//         // or simply save your changes to "hot reload" in a Flutter IDE).
+//         // Notice that the counter didn't reset back to zero; the application
+//         // is not restarted.
+//         primarySwatch: Colors.blue,
+//       ),
+//       home: appBuilder.build(),
+//     );
+//   }
+// }
+
+/*
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -126,3 +207,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+
+ */

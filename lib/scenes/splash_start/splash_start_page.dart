@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:coffee_bean/commons/base_stateless_widget.dart';
+import 'package:coffee_bean/commons/state_management/lib_provider/base_provider_stateless_widget.dart';
 import 'package:coffee_bean/scenes/splash_start/splash_start_builder.dart';
 import 'package:coffee_bean/scenes/splash_start/splash_start_provider.dart';
 
@@ -19,15 +19,18 @@ import 'package:coffee_bean/scenes/splash_start/splash_start_provider.dart';
 
 // Su dung StateLess hay StateFul cung deu khong Animation dc cho nay
 //ignore: must_be_immutable
-class SplashStartPage extends BaseStateLessWidget<SplashStartProvider> {
+class SplashStartPage extends BaseProviderStateLessWidget<SplashStartProvider> {
 
   // const SplashStartPage({Key? key, DbNoteRouter? router}) : super(key: key, router: router);
-  SplashStartPage({super.key, super.router});
+  SplashStartPage({super.key});
 
   // class _SplashStartPage extends BaseState<SplashStartPage, SplashStartProvider> {
 
   @override
   Widget getLayout(BuildContext context) {
+
+    // Goi từ lúc này dễ dàng, nếu muon truc tiep
+    // pageProvider.router.navigate(SplashPageCompleteRoute());
 
     // Gia lap chay lay du lieu tu server
     pageProvider.fetchSomething().then((value) {
@@ -35,7 +38,8 @@ class SplashStartPage extends BaseStateLessWidget<SplashStartProvider> {
       // Navigator.pushReplacement(context, router);
 
       log("Gia tri tra ve tu fetchSomething : $value");
-      router?.navigate(SplashPageCompleteRoute(message: value), fromContext: context);
+      // router?.navigate(SplashPageCompleteRoute(message: value), fromContext: context);
+      pageProvider.router.navigate(SplashPageCompleteRoute());
 
       // Navigator.pushReplacement(context, PageTransition(
       //     child: const SplashPage(),

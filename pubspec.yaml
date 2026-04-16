@@ -41,6 +41,7 @@ dependencies:
 
   # hard fix: package ảnh hưởng trực tiếp tới compile / generated code / architecture
   flutter_bloc: 9.1.1
+  provider: ^6.1.5+1
   dio: 5.9.2
   retrofit: 4.9.2
   #retrofit_generator: 10.2.5
@@ -56,10 +57,10 @@ dependencies:
   fluttertoast: ^9.0.0
   # dua tam vao, sau nay se bo ra sau
   dialog_loader: ^0.0.3+3
-  # con de tam truoc khi bo ra
-  provider: ^6.1.5+1
+  event_bus: ^2.0.1
 
   # soft
+  chuck_interceptor: ^2.3.1
   json_annotation: ^4.9.0
   shared_preferences: ^2.5.5
   hive: ^2.2.3
