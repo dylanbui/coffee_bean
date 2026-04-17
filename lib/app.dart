@@ -9,9 +9,8 @@
 
 import 'package:chuck_interceptor/chuck_interceptor.dart';
 import 'package:coffee_bean/config/app_config.dart';
-import 'package:coffee_bean/data/local/session_user.dart';
+import 'package:coffee_bean/data/local/user_session.dart';
 import 'package:coffee_bean/scenes/app/app_builder.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,7 +38,7 @@ Future<Widget> initializeApp() async {
   // Load share preferences data when start app
   await DbSharedPreferences().loadPreferences();
 
-  AppConfig().currentUser = SessionUser.fromSystem();
+  AppConfig().currentUser = await UserSession.fromSystem();
 
   // await setupLocator();
 

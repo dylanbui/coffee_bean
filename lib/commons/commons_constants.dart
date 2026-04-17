@@ -3,9 +3,7 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
 
-
-
-typedef Dictionary = Map<String, dynamic>;
+typedef Dictionary = Map<String, Object?>;
 
 class BaseError {
 

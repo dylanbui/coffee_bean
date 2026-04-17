@@ -7,29 +7,13 @@ import 'package:coffee_bean/commons/commons_constants.dart';
 typedef ResultType<T> = Tuple<T?, BaseError?>;
 
 enum NetworkType {
-  get, post, put, delete
-}
-
-extension NetworkTypeExtension on NetworkType {
-
-  String get name { return "demo thoi";}
-
-
-  String toValue() {
-    switch (this) {
-      case NetworkType.post:
-        return "POST";
-      case NetworkType.get:
-        return "GET";
-      default:
-        return "-1";
-    }
-  }
+  get, post, put, delete, patch;
+  String get method => name.toUpperCase();
 }
 
 class NetworkError extends BaseError {
   NetworkError(super.code, super.messenger);
 
-  static const ERROR_NETWORK_CODE_UNKNOWN = '-1000';
-  static const ERROR_NETWORK_CODE_PARSING = '-999';
+  static const errorNetworkCodeUnknown = '-1000';
+  static const errorNetworkCodeNoInternet = '-999';
 }

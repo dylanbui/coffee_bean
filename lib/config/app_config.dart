@@ -1,7 +1,5 @@
 import 'dart:core';
-import 'package:coffee_bean/data/local/session_user.dart';
-import 'package:equatable/equatable.dart';
-import 'package:flutter/widgets.dart';
+import 'package:coffee_bean/data/local/user_session.dart';
 
 enum Environment { dev,test, production }
 
@@ -15,7 +13,7 @@ class AppConfig {
     return _instance;
   }
 
-  SessionUser? currentUser;
+  UserSession? currentUser;
   String path = "";
   String url = "";
   String email = "";
