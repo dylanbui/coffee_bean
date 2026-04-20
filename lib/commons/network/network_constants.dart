@@ -4,6 +4,8 @@
 import 'package:coffee_bean/commons/utils/tuple.dart';
 import 'package:coffee_bean/commons/commons_constants.dart';
 
+// Dont use this
+
 typedef ResultType<T> = Tuple<T?, BaseError?>;
 
 enum NetworkType {

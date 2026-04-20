@@ -1,64 +1,18 @@
-import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import 'package:coffee_bean/commons/utils/tuple.dart';
-import 'package:coffee_bean/commons/commons_constants.dart';
 import 'package:coffee_bean/commons/network/network_response.dart';
-import 'package:coffee_bean/commons/network/network_constants.dart';
 import 'package:coffee_bean/commons/network/network_upload_response.dart';
-
-import 'base_request.dart';
-import 'network_common.dart';
+import 'package:coffee_bean/commons/network/base_request.dart';
+import 'package:coffee_bean/commons/network/network_common.dart';
+import 'package:coffee_bean/commons/commons_constants.dart';
 
 class NetworkClient {
-  // region Make Singleton Class
-  // static final NetworkClient _singleton = NetworkClient._internal();
-  // factory NetworkClient(String? url) {
-  //
-  //   // Update url
-  //   if (url != null) {
-  //     final options = BaseOptions(
-  //       baseUrl: url,
-  //       connectTimeout: Duration(milliseconds: 60000),
-  //       receiveTimeout: Duration(milliseconds: 60000),
-  //     );
-  //     _singleton._dio.options = options;
-  //   }
-  //
-  //   return _singleton;
-  // }
-  //
-  // NetworkClient._internal() {
-  //   /* Config Dio */
-  //   //NetworkConfig.baseURL
-  //   final options = BaseOptions(
-  //     baseUrl: "",
-  //     connectTimeout: Duration(milliseconds: 60000),
-  //     receiveTimeout: Duration(milliseconds: 60000),
-  //   );
-  //
-  //   _dio = Dio(options);
-  //
-  //   /* Add log interceptor */
-  //
-  //   _dio.interceptors.add(PrettyDioLogger(
-  //     requestHeader: true,
-  //     requestBody: true,
-  //     responseBody: true,
-  //     responseHeader: false,
-  //     error: true,
-  //     compact: true,
-  //     maxWidth: 90,
-  //   ));
-  // }
-  // endregion
-
   // region Make Constructor Class
   final Dio _dio;
   late String baseUrl = "";
   late NetworkConfig config;
-
 
   // Constructor nhận cấu hình từ bên ngoài
   NetworkClient(this.config) : _dio = Dio() {
@@ -79,22 +33,6 @@ class NetworkClient {
     }
   }
   // endregion
-
-  Future<List?> testCall(String url, NetworkType type) async {
-    try {
-      // Add header if need
-      _dio.options.headers['content-Type'] = 'application/json';
-      _dio.options.headers["authorization"] = "Bearer --String token--";
-
-      Response<List> result = await _dio.get(url);
-
-      log("count = + ${result.data?.length.toString()}");
-
-      return result.data;
-    } on DioException {
-      return null;
-    }
-  }
 
   // region Make Call API function
   // Check Json
@@ -143,53 +81,56 @@ class NetworkClient {
     );
   }
 
-  // Handle response after call api
-  Tuple<T?, NetworkError?> _handleResponse<T>(Response<T> response) {
-    if (response.data == null) {
-      return Tuple(null, NetworkError(404, "Data is null"));
-    }
+  // --- NUCLEUS: Hàm thực thi gốc ---
 
-    final networkResponse = NetworkResponse.fromJson(response.data as Map<String, dynamic>);
-    if (networkResponse.result == false) {
-      return Tuple(null, NetworkError(int.parse(networkResponse.code), networkResponse.message));
-    }
-
-    return Tuple(networkResponse.data as T, null);
+  /// Đây là hàm trung tâm mới thay thế cho makeCall.
+  /// Nó trả về Future<Response<T>> để các Extension có thể "chain" vào.
+  Future<Response<T>> request<T>(String url, {NetworkType type = NetworkType.get, Object? params, Options? options, bool isPublic = false}) {
+    final requestData = _extractRequestData(params);
+    return _executeRequest<T>(url, type, requestData, options, isPublic);
   }
 
-  Future<Tuple<T?, NetworkError?>> makeCall<T>(String url, {NetworkType type = NetworkType.get, Object? params, Options? options, bool isPublic = false}) async {
-    // For public API set isPublic = true, default is FALSE
-    try {
-      // Data Normalization
-      final requestData = _extractRequestData(params);
-      // Call API
-      final response = await _executeRequest<T>(url, type, requestData, options, isPublic);
-      // Process response with custom logic
-      return _handleResponse<T>(response);
-    } on DioException catch (ex) {
-      return Tuple(null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Lỗi kết nối"));
-    } catch (e) {
-      return Tuple(null, NetworkError(500, e.toString()));
-    }
-  }
-
+  // --- RETRY LOGIC (Dành cho Interceptor) ---
+  /// Hàm này rất quan trọng cho Refresh Token logic.
+  /// Tôi đã thêm xử lý để đảm bảo options được copy đúng luồng.
   Future<Response<T>> reTryConnectionWithOption<T>({required RequestOptions options}) async {
     try {
+      // Sử dụng .fetch để thực hiện lại đúng chính xác Request cũ với Options mới (đã update Token)
       return await _dio.fetch<T>(options);
-    } catch (e){
+    } catch (e) {
       rethrow;
     }
-
-    // try {
-    //   final response = await _dio.fetch<T>(options);
-    //   // Process response with custom logic
-    //   return _handleResponse<T>(response);
-    // } on DioException catch (ex) {
-    //   return Tuple(null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Lỗi kết nối"));
-    // } catch (e) {
-    //   return Tuple(null, NetworkError(500, e.toString()));
-    // }
   }
+
+  // Handle response after call api
+  // Tuple<T?, NetworkError?> _handleResponse<T>(Response<T> response) {
+  //   if (response.data == null) {
+  //     return Tuple(null, NetworkError(404, "Data is null"));
+  //   }
+  //
+  //   final networkResponse = NetworkResponse.fromJson(response.data as Map<String, dynamic>);
+  //   if (networkResponse.result == false) {
+  //     return Tuple(null, NetworkError(int.parse(networkResponse.code), networkResponse.message));
+  //   }
+  //
+  //   return Tuple(networkResponse.data as T, null);
+  // }
+
+  // Future<Tuple<T?, NetworkError?>> makeCall<T>(String url, {NetworkType type = NetworkType.get, Object? params, Options? options, bool isPublic = false}) async {
+  //   // For public API set isPublic = true, default is FALSE
+  //   try {
+  //     // Data Normalization
+  //     final requestData = _extractRequestData(params);
+  //     // Call API
+  //     final response = await _executeRequest<T>(url, type, requestData, options, isPublic);
+  //     // Process response with custom logic
+  //     return _handleResponse<T>(response);
+  //   } on DioException catch (ex) {
+  //     return Tuple(null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Lỗi kết nối"));
+  //   } catch (e) {
+  //     return Tuple(null, NetworkError(500, e.toString()));
+  //   }
+  // }
 
   // endregion
   // ---------------------------------------------------------------------
@@ -197,17 +138,16 @@ class NetworkClient {
   // T only is : List, Map<String, dynamic>
   // Dung cho tat ca cac truong hop can call server Json
   // Simple call for https://jsonplaceholder.typicode.com/posts?_start=0&_limit=5
-  Future<T?> simpleCall<T>(String url, {NetworkType type = NetworkType.get, Dictionary? params}) async {
+  Future<T?> simpleCall<T>(String url, {NetworkType type = NetworkType.get, Dictionary? requestData}) async {
     // Check kieu nya bi sai, tam thoi dong lai
     // if (T is! List || T is! Map<String, dynamic>) {
     //   // return const Tuple(null, BaseError("Cast error: T only is : List, Map<String, dynamic>"));
     //   throw Exception("Cast error: T only is : List, Map<String, dynamic>");
     // }
-
     try {
       Response<T> result;
       if (type == NetworkType.post) {
-        result = await _dio.post<T>(url, data: params);
+        result = await _dio.post<T>(url, data: requestData);
       } else {
         result = await _dio.get<T>(url);
       }
@@ -217,45 +157,23 @@ class NetworkClient {
     }
   }
 
-  // GOOD
-  // T only is : List, Map<String, dynamic>
-  Future<Tuple<T?, NetworkError?>> call<T>(String url, {NetworkType type = NetworkType.get, Dictionary? params}) async {
-    if (T is! List || T is! Map<String, dynamic>) {
-      // return const Tuple(null, BaseError("Cast error: T only is : List, Map<String, dynamic>"));
-      throw Exception("Cast error: T only is : List, Map<String, dynamic>");
-    }
+  Future<Response<T>> doUpload<T>(String url, UploadData uploadData) async {
+    // 1. Tạo FormData linh hoạt
+    final Map<String, dynamic> formDataMap = {
+      if (uploadData.extraData != null) ...uploadData.extraData!,
+      uploadData.fieldName: await MultipartFile.fromFile(
+        uploadData.filePath,
+        filename: uploadData.filePath.split('/').last, // Lấy tên file từ path
+      ),
+    };
 
-    try {
-      Response<Dictionary> result;
-      if (type == NetworkType.post) {
-        result = await _dio.post(url, data: params);
-      } else {
-        result = await _dio.get(url);
-      }
-      //TODO: Them cac load khac DELETE, PUT
+    final payload = FormData.fromMap(formDataMap);
 
-      final json = result.data;
-      if (json != null) {
-        final networkResponse = NetworkResponse.fromJson(json);
-        // Kiem tra cac loi tu server tra ve va xu ly
-        if (networkResponse.result == false) {
-          // Cac loi tra ve tu server
-          return Tuple(null, NetworkError(int.parse(networkResponse.code), networkResponse.message));
-        }
-        return Tuple(networkResponse.data as T, null);
-      }
-
-      // return ve loi mac dinh
-      return Tuple(null, NetworkError(4040, "result.data == NULL"));
-    } on DioException catch (ex) {
-      return Tuple(null, NetworkError(ex.hashCode, ex.toString()));
-    } on Error catch (error) {
-      return Tuple(null, NetworkError(error.hashCode, "Error : ${error.toString()}"));
-    } on Exception catch (ex) {
-      return Tuple(null, NetworkError(ex.hashCode, "Exception : ${ex.toString()}"));
-    }
+    // 2. Thực thi post (Dùng lại cấu trúc request của Dio)
+    return _dio.post<T>(url, data: payload, onSendProgress: uploadData.progressCallback);
   }
 
+/*
   // GOOD
   // https://www.topcoder.com/thrive/articles/networking-with-flutter
   Future<Tuple<UploadResult?, NetworkError?>> doUpload(String url, UploadData uploadData) async {
@@ -308,7 +226,7 @@ class NetworkClient {
       return Tuple(null, NetworkError(ex.hashCode, "Exception : ${ex.toString()}"));
     }
   }
-
+*/
   // Code mau vi du sai
   // Sai khong su dung dc voi doi tuong nhu Post
   // Phai dung kieu du lieu co ban : List, Map<String, dynamic>
