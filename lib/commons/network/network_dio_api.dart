@@ -4,10 +4,9 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
-import 'package:coffee_bean/commons/utils/tuple.dart';
 import 'package:coffee_bean/commons/commons_constants.dart';
 import 'package:coffee_bean/commons/network/network_response.dart';
-import 'package:coffee_bean/commons/network/network_constants.dart';
+import 'package:coffee_bean/commons/network/network_common.dart';
 import 'package:coffee_bean/commons/network/network_upload_response.dart';
 
 
@@ -82,9 +81,10 @@ class NetworkDioApi {
       } else {
         result = await _dio.get<T>(url);
       }
-      return ResultType(result.data as T, null); // Thay the bang Tuple cung dc;
+      return (data: result.data as T, error: null);
+
     } on DioException catch (ex) {
-      return ResultType(null as T, NetworkError(ex.hashCode, ex.toString()));
+      return (data: null, error: NetworkError(ex.hashCode, ex.toString()));
     }
   }
 
@@ -115,7 +115,7 @@ class NetworkDioApi {
 
   // GOOD
   // T only is : List, Map<String, dynamic>
-  Future<Tuple<T?, NetworkError?>> call<T>(String url, {NetworkType type = NetworkType.get, Dictionary? params}) async {
+  Future<(T?, NetworkError?)> call<T>(String url, {NetworkType type = NetworkType.get, Dictionary? params}) async {
 
     if (T is! List || T is! Map<String, dynamic>) {
       // return const Tuple(null, BaseError("Cast error: T only is : List, Map<String, dynamic>"));
@@ -137,25 +137,25 @@ class NetworkDioApi {
         // Kiem tra cac loi tu server tra ve va xu ly
         if (networkResponse.result == false) {
           // Cac loi tra ve tu server
-          return Tuple(null, NetworkError(int.parse(networkResponse.code), networkResponse.message));
+          return (null, NetworkError(int.parse(networkResponse.code), networkResponse.message));
         }
-        return Tuple(networkResponse.data as T, null);
+        return (networkResponse.data as T, null);
       }
 
       // return ve loi mac dinh
-      return Tuple(null, NetworkError(4040, "result.data == NULL"));
+      return (null, NetworkError(4040, "result.data == NULL"));
     } on DioException catch (ex) {
-      return Tuple(null, NetworkError(ex.hashCode, ex.toString()));
+      return (null, NetworkError(ex.hashCode, ex.toString()));
     } on Error catch (error) {
-      return Tuple(null, NetworkError(error.hashCode, "Error : ${error.toString()}"));
+      return (null, NetworkError(error.hashCode, "Error : ${error.toString()}"));
     } on Exception catch (ex) {
-      return Tuple(null, NetworkError(ex.hashCode, "Exception : ${ex.toString()}"));
+      return (null, NetworkError(ex.hashCode, "Exception : ${ex.toString()}"));
     }
   }
 
   // GOOD
   // https://www.topcoder.com/thrive/articles/networking-with-flutter
-  Future<Tuple<UploadResult?, NetworkError?>> doUpload(String url, UploadData uploadData) async {
+  Future<(UploadResult?, NetworkError?)> doUpload(String url, UploadData uploadData) async {
     // The image to be uploaded
     // final imagePath = 'path/to/image.jpg';
     // Filling the HTML form programmatically
@@ -189,19 +189,19 @@ class NetworkDioApi {
         // Kiem tra cac loi tu server tra ve va xu ly
         if (networkResponse.result == false) {
           // Cac loi tra ve tu server
-          return Tuple(null, NetworkError(int.parse(networkResponse.code), networkResponse.message));
+          return (null, NetworkError(int.parse(networkResponse.code), networkResponse.message));
         }
-        return Tuple(UploadResult.fromJson(networkResponse.data), null);
+        return (UploadResult.fromJson(networkResponse.data), null);
       }
 
       // return ve loi mac dinh
-      return Tuple(null, NetworkError(4040, "result.data == NULL"));
+      return (null, NetworkError(4040, "result.data == NULL"));
     } on DioException catch (ex) {
-      return Tuple(null, NetworkError(ex.hashCode, ex.toString()));
+      return (null, NetworkError(ex.hashCode, ex.toString()));
     } on Error catch (error) {
-      return Tuple(null, NetworkError(error.hashCode, "Error : ${error.toString()}"));
+      return (null, NetworkError(error.hashCode, "Error : ${error.toString()}"));
     } on Exception catch (ex) {
-      return Tuple(null, NetworkError(ex.hashCode, "Exception : ${ex.toString()}"));
+      return (null, NetworkError(ex.hashCode, "Exception : ${ex.toString()}"));
     }
   }
 

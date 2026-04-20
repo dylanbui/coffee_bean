@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
-import 'package:coffee_bean/commons/utils/tuple.dart';
-import 'package:coffee_bean/commons/network/network_response.dart';
 import 'package:coffee_bean/commons/network/network_upload_response.dart';
 import 'package:coffee_bean/commons/network/base_request.dart';
 import 'package:coffee_bean/commons/network/network_common.dart';

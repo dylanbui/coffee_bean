@@ -10,7 +10,6 @@
 import 'package:dio/dio.dart';
 
 import 'package:coffee_bean/commons/network/network_common.dart';
-import 'package:coffee_bean/commons/utils/tuple.dart';
 
 
 class NetworkResponse<T> {
@@ -38,7 +37,7 @@ extension NetworkMappingProject<T> on Future<Response<T>> {
     /// Nếu đúng, nó trả về data (List<Post>, User...).
     /// Nếu sai hoặc lỗi mạng, nó trả về NetworkError.
     // Future<(R? data, NetworkError? error)> mapToNetworkResponse<R>(JsonMapper<R> mapper) async {
-    Future<Tuple<R?, NetworkError?>> mapToNetworkResponse<R>(JsonMapper<R> mapper) async {
+    Future<(R?, NetworkError?)> mapToNetworkResponse<R>(JsonMapper<R> mapper) async {
         try {
             final response = await this;
             final rawData = response.data;
@@ -50,17 +49,17 @@ extension NetworkMappingProject<T> on Future<Response<T>> {
                 // 2. Kiểm tra logic nghiệp vụ của Server (biến result)
                 if (networkRes.result == true) {
                     // Thành công: Trả về data (Ví dụ: List<Post>)
-                    return Tuple(networkRes.data, null);
+                    return (networkRes.data, null);
                 } else {
                     // Lỗi nghiệp vụ (ví dụ: sai mật khẩu, hết hạn gói): Trả về error
-                    return Tuple(null, NetworkError(int.tryParse(networkRes.code) ?? 500, networkRes.message));
+                    return (null, NetworkError(int.tryParse(networkRes.code) ?? 500, networkRes.message));
                 }
             }
-            return Tuple(null, NetworkError(500, "Định dạng JSON không hợp lệ"));
+            return (null, NetworkError(500, "Định dạng JSON không hợp lệ"));
         } on DioException catch (ex) {
-            return Tuple(null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
+            return (null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
         } catch (e) {
-            return Tuple(null, NetworkError(500, e.toString()));
+            return (null, NetworkError(500, e.toString()));
         }
     }
 }

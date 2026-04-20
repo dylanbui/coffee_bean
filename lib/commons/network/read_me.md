@@ -30,7 +30,7 @@ final (user, err1) = await client.request("profile").mapToNetworkResponse(User.f
 final (items, err2) = await client.request("partner/items").mapToYourResponse(Item.fromJsonList);
 
 // 3. Lấy dữ liệu từ API cũ/đơn giản (JSON Trần)
-final (posts, err3) = await client.request("raw-posts").mapToData(Post.fromJsonList);
+final (posts, err3) = await client.request("raw-posts").mapToObject(Post.fromJsonList);
 
 // Xử lý logic rất tập trung:
 if (user != null) {

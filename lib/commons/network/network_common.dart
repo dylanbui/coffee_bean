@@ -9,15 +9,18 @@
 
 import 'package:dio/dio.dart';
 import 'package:coffee_bean/commons/network/network_client.dart';
-import 'package:coffee_bean/commons/utils/tuple.dart';
 import 'package:coffee_bean/commons/commons_constants.dart';
 
+typedef ResultType<T> = ({T? data, NetworkError? error});
+
+// Define JSON parse for Object
 typedef JsonMapper<T> = T Function(dynamic json);
 
 List<T> parseList<T>(dynamic json, T Function(Map<String, dynamic>) fromJson) {
     return (json as List).map((e) => fromJson(e as Map<String, dynamic>)).toList();
 }
 
+// Class configure network
 class NetworkConfig {
     final String baseUrl;
     final List<Interceptor>? interceptors;
@@ -49,8 +52,6 @@ class NetworkServiceProvider {
     }
 }
 
-typedef ResultType<T> = Tuple<T?, BaseError?>;
-
 enum NetworkType {
     get, post, put, delete, patch;
     String get method => name.toUpperCase();
@@ -64,15 +65,15 @@ class NetworkError extends BaseError {
 }
 
 extension NetworkMappingCommon<T> on Future<Response<T>> {
-    /// Xử lý cho JSON Trần (Dùng chung cho mọi dự án)
-    Future<Tuple<R?, NetworkError?>> mapToData<R>(JsonMapper<R> mapper) async {
+    /// Simple JSON (Default for API) Map {} , List<Map> [{}]
+    Future<(R?, NetworkError?)> mapToObject<R>(JsonMapper<R> mapper) async {
         try {
             final response = await this;
-            return Tuple(mapper(response.data), null);
+            return (mapper(response.data), null);
         } on DioException catch (ex) {
-            return Tuple(null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
+            return (null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
         } catch (e) {
-            return Tuple(null, NetworkError(500, e.toString()));
+            return (null, NetworkError(500, e.toString()));
         }
     }
 }
