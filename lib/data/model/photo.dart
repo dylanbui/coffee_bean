@@ -20,8 +20,8 @@ class Photo {
 
   // ... properties ...
   // Chúng ta ép kiểu dynamic -> Map tại đây để mapToData chạy mượt mà
-  static Photo fromMap(dynamic json) => Photo.fromJson(json as Map<String, dynamic>);
-  static List<Photo> fromJsonList(dynamic json) => (json as List).map((e) => Photo.fromJson(e)).toList();
+  // static Photo fromMap(dynamic json) => Photo.fromJson(json as Map<String, dynamic>);
+  // static List<Photo> fromJsonList(dynamic json) => (json as List).map((e) => Photo.fromJson(e)).toList();
 
   /**
 

@@ -8,10 +8,10 @@ typedef Dictionary = Map<String, Object?>;
 class BaseError {
 
   final int code;
-  final String messenger;
+  final String message;
 
   // Constructor
-  const BaseError(this.code, this.messenger);
+  const BaseError(this.code, this.message);
 }
 
 class AppTheme {

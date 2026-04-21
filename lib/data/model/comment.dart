@@ -25,8 +25,8 @@ class Comment {
 
   // ... properties ...
   // Chúng ta ép kiểu dynamic -> Map tại đây để mapToData chạy mượt mà
-  static Comment fromMap(dynamic json) => Comment.fromJson(json as Map<String, dynamic>);
-  static List<Comment> fromJsonList(dynamic json) => (json as List).map((e) => Comment.fromJson(e)).toList();
+  // static Comment fromMap(dynamic json) => Comment.fromJson(json as Map<String, dynamic>);
+  // static List<Comment> fromJsonList(dynamic json) => (json as List).map((e) => Comment.fromJson(e)).toList();
   // Dùng helper parseList để code ngắn gọn
   // static List<Comment> fromJsonList(dynamic json) => parseList(json, Comment.fromJson);
 

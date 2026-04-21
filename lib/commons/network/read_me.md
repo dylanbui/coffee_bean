@@ -24,13 +24,14 @@ static List<Post> fromJsonList(dynamic json) =>
 
 void fetchEverything() async {
 // 1. Lấy dữ liệu từ API dùng chuẩn dự án mình
-final (user, err1) = await client.request("profile").mapToNetworkResponse(User.fromMap);
+final (user, err1) = await client.request("profile").mapToNetworkResponse<User>(User.fromJson);
 
 // 2. Lấy dữ liệu từ API đối tác (YourResponse)
-final (items, err2) = await client.request("partner/items").mapToYourResponse(Item.fromJsonList);
+final (items, err2) = await client.request("partner/items").mapToYourResponse<List<Item>>(Item.fromJson);
 
 // 3. Lấy dữ liệu từ API cũ/đơn giản (JSON Trần)
-final (posts, err3) = await client.request("raw-posts").mapToObject(Post.fromJsonList);
+final (post, err3) = await client.request("raw-posts").mapToObject<Post>(Post.fromJson);
+final (posts, err3) = await client.request("raw-posts").mapToObject<List<Post>>(Post.fromJson);
 
 // Xử lý logic rất tập trung:
 if (user != null) {
@@ -43,6 +44,6 @@ print("Lỗi: ${err1.message}");
 // --- TRONG MODEL (Để dùng Tear-offs) ---
 class Post {
 // ... properties ...
-static Post fromJson(dynamic json) => Post.fromMap(json as Map<String, dynamic>);
-static List<Post> fromJsonList(dynamic json) => (json as List).map((e) => Post.fromJson(e)).toList();
+factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
+Map<String, dynamic> toJson() => _$PostToJson(this);
 }

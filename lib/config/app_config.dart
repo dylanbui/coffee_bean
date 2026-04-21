@@ -23,7 +23,7 @@ class AppConfig {
     switch (env) {
       case Environment.dev:
         path = "dev path";
-        url = "dev url";
+        url = "https://jsonplaceholder.typicode.com";
         email = "dev email";
         username = "dev username";
         break;

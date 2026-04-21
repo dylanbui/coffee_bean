@@ -32,7 +32,7 @@ class Todo {
 
   // ... properties ...
   // Chúng ta ép kiểu dynamic -> Map tại đây để mapToData chạy mượt mà
-  static Todo fromMap(dynamic json) => Todo.fromJson(json as Map<String, dynamic>);
-  static List<Todo> fromJsonList(dynamic json) => (json as List).map((e) => Todo.fromJson(e)).toList();
+  // static Todo fromMap(dynamic json) => Todo.fromJson(json as Map<String, dynamic>);
+  // static List<Todo> fromJsonList(dynamic json) => (json as List).map((e) => Todo.fromJson(e)).toList();
 
 }

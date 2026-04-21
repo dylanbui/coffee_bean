@@ -8,9 +8,7 @@
  */
 
 import 'package:dio/dio.dart';
-
 import 'package:coffee_bean/commons/network/network_common.dart';
-
 
 class NetworkResponse<T> {
     final String message;
@@ -20,12 +18,24 @@ class NetworkResponse<T> {
 
     NetworkResponse({required this.message, required this.code, required this.result, this.data});
 
-    factory NetworkResponse.fromJson(Map<String, dynamic> json, JsonMapper mapper) {
+    factory NetworkResponse.fromJson(Map<String, dynamic> json, JsonMapper<dynamic> mapper) {
+        final dynamic rawData = json['data'];
+        dynamic parsedData;
+        // Check and parse json from rawData
+        if (rawData != null) {
+            if (rawData is List) {
+                // Tự động map nếu là List
+                parsedData = rawData.map((e) => mapper(e as Map<String, dynamic>)).toList();
+            } else if (rawData is Map<String, dynamic>) {
+                // Parse Object đơn
+                parsedData = mapper(rawData);
+            }
+        }
         return NetworkResponse(
             message: json['message'] ?? "",
             code: json['code']?.toString() ?? "0",
             result: json['result'] ?? false,
-            data: json['data'] != null ? mapper(json['data']) : null,
+            data: parsedData as T?,
         );
     }
 }
@@ -36,8 +46,7 @@ extension NetworkMappingProject<T> on Future<Response<T>> {
     /// Extension này sẽ tự động kiểm tra 'result == true'
     /// Nếu đúng, nó trả về data (List<Post>, User...).
     /// Nếu sai hoặc lỗi mạng, nó trả về NetworkError.
-    // Future<(R? data, NetworkError? error)> mapToNetworkResponse<R>(JsonMapper<R> mapper) async {
-    Future<(R?, NetworkError?)> mapToNetworkResponse<R>(JsonMapper<R> mapper) async {
+    Future<(R? data, NetworkError? error)> mapToNetworkResponse<R>(JsonMapper<dynamic> mapper) async {
         try {
             final response = await this;
             final rawData = response.data;
@@ -45,7 +54,6 @@ extension NetworkMappingProject<T> on Future<Response<T>> {
             if (rawData is Map<String, dynamic>) {
                 // 1. Parse ra lớp vỏ NetworkResponse trước
                 final networkRes = NetworkResponse<R>.fromJson(rawData, mapper);
-
                 // 2. Kiểm tra logic nghiệp vụ của Server (biến result)
                 if (networkRes.result == true) {
                     // Thành công: Trả về data (Ví dụ: List<Post>)
@@ -84,7 +92,7 @@ extension NetworkMappingYourResponse<T> on Future<Response<T>> {
 
   /// Extension bóc tách dữ liệu cho cấu trúc YourResponse (errorCode, content)
   /// Trả về Record: (R? data, NetworkError? error)
-  Future<(R? data, NetworkError? error)> mapToYourResponse<R>(JsonMapper<R> mapper) async {
+  Future<(R? data, NetworkError? error)> mapToYourResponse<R>(JsonMapper<dynamic> mapper) async {
     try {
       final response = await this;
       final rawData = response.data;

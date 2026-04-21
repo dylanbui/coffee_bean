@@ -14,7 +14,9 @@ import 'package:coffee_bean/commons/commons_constants.dart';
 typedef ResultType<T> = ({T? data, NetworkError? error});
 
 // Define JSON parse for Object
-typedef JsonMapper<T> = T Function(dynamic json);
+// typedef JsonMapper<T> = T Function(dynamic json);
+
+typedef JsonMapper<T> = T Function(Map<String, dynamic> json);
 
 List<T> parseList<T>(dynamic json, T Function(Map<String, dynamic>) fromJson) {
     return (json as List).map((e) => fromJson(e as Map<String, dynamic>)).toList();
@@ -66,16 +68,42 @@ class NetworkError extends BaseError {
 
 extension NetworkMappingCommon<T> on Future<Response<T>> {
     /// Simple JSON (Default for API) Map {} , List<Map> [{}]
-    Future<(R?, NetworkError?)> mapToObject<R>(JsonMapper<R> mapper) async {
+    Future<(R?, NetworkError?)> mapToData<R>() async {
         try {
             final response = await this;
-            return (mapper(response.data), null);
+            return (response.data as R, null);
         } on DioException catch (ex) {
             return (null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
         } catch (e) {
             return (null, NetworkError(500, e.toString()));
         }
     }
+    /// Xử lý lấy Data (không quan tâm vỏ NetworkResponse)
+    /// mapper: Truyền vào Post.fromJson
+    Future<(R?, NetworkError?)> mapToObject<R>(JsonMapper<dynamic> mapper) async {
+        try {
+            final response = await this;
+            final rawData = response.data;
+            // Check data to mapper
+            if (rawData is Map<String, dynamic>) {
+                final result = mapper(rawData);
+                return (result as R, null);
+            } else if (rawData is List) {
+                // Tự động xử lý nếu data là List mà không cần hàm fromJsonList thủ công
+                final list = rawData.map((e) => mapper(e as Map<String, dynamic>)).toList();
+                return (list as R, null);
+            }
+            return (null, NetworkError(500, "Dữ liệu không đúng định dạng Map/List"));
+        } on DioException catch (ex) {
+            return (null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
+        } catch (e) {
+            return (null, NetworkError(500, e.toString()));
+        }
+    }
+
+
+
+
 }
 
 

@@ -1,7 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/utils/app_colors.dart';
 
+class DefaultStyle {
+  static final textSmall = TextStyle(
+    color: Colors.grey[600],
+    fontSize: 12,
+  );
+
+  static final textNormal = TextStyle(
+    color: Colors.grey[800],
+    fontSize: 14,
+  );
+
+  static final textLarge = TextStyle(
+    color: Colors.black,
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+  );
+}
+
 class BigRevampStyle {
+
   static final labelTextStyle = TextStyle(
     color: AppColor.secondaryText,
     fontSize: 16,

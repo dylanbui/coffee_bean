@@ -13,11 +13,11 @@ import 'network_client.dart';
 import 'network_common.dart';
 
 abstract class BaseRepository {
-  // Các lớp con sẽ dùng biến này để gọi API
-  final NetworkClient networkClient = NetworkServiceProvider.client;
+  late final NetworkClient networkClient;
 
-  // Bạn có thể thêm các hàm bổ trợ dùng chung ở đây
-  // Ví dụ: xử lý lỗi chung, log nghiệp vụ...
+  BaseRepository({NetworkClient? client}) {
+    networkClient = client ?? NetworkServiceProvider.client;
+  }
 }
 
 /*

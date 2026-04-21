@@ -24,8 +24,8 @@ class Post {
 
   // ... properties ...
   // Chúng ta ép kiểu dynamic -> Map tại đây để mapToData chạy mượt mà
-  static Post fromMap(dynamic json) => Post.fromJson(json as Map<String, dynamic>);
-  static List<Post> fromJsonList(dynamic json) => (json as List).map((e) => Post.fromJson(e)).toList();
+  // static Post fromMap(dynamic json) => Post.fromJson(json as Map<String, dynamic>);
+  // static List<Post> fromJsonList(dynamic json) => (json as List).map((e) => Post.fromJson(e)).toList();
 
 
   /**
