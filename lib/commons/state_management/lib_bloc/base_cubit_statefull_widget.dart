@@ -1,53 +1,58 @@
 
+import 'package:coffee_bean/commons/commons_constants.dart';
 import 'package:dialog_loader/dialog_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
-import 'package:coffee_bean/commons/commons_constants.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/commons/custom_app_bar.dart';
 
-import 'custom_app_bar.dart';
+// https://github.com/FlorinMihalache/flutter_progress_hud
 
 //ignore: must_be_immutable
-abstract class BaseCubitStateLessWidget<P extends Cubit<S>, S> extends StatelessWidget {
+abstract class BaseCubitStateFulWidget extends StatefulWidget {
 
-  late P pageProvider;
-  late S currentState;
   DbNoteRouter? router;
-
-  BaseCubitStateLessWidget({super.key, this.router});
-
-  String getTitle() => "";
   bool showAppBar = true;
-  DialogLoader? dialogLoader;
 
-  // Init chi chay 1 lan khi build lan dau
-  bool _begin = true;
-  void init(BuildContext context);
+  BaseCubitStateFulWidget({super.key, this.router});
+}
 
-  // Tao make layout
-  /// Way 1: should be overridden in extended widget
+// abstract class BaseBlocState<B extends BaseBlocStateFulWidget, P extends BaseProvider> extends State<B> {
+// abstract class BaseCubitStateLessWidget<P extends Cubit<S>, S> extends StatelessWidget {
+
+abstract class BaseCubitState<B extends BaseCubitStateFulWidget, P extends Cubit<State>> extends State<B> {
+
+  /// should be overridden in extended widget
   Widget? getLayout(BuildContext context) => null;
 
-  /// Way 2
-  dynamic getAppBar(BuildContext context, S state) => CustomAppBar(getTitle(), appBarActions: getAppBarAction(),);
-  Widget getBody(BuildContext context, S state) => const Text("implement getBody() function");
+  // void startBuild(BuildContext context) { }
+  dynamic getAppBar(BuildContext context) => "";
+  Widget getBody(BuildContext context) => const Text("implement getBody() function");
   List<Widget> getAppBarAction() => [];
 
-  void blocConsumerListener(BuildContext context, S currentState) { }
-  bool blocConsumerBuildWhen(BuildContext context, S previousState, S state) { return true; }
+
+  late BuildContext buildContext;
+  DialogLoader? dialogLoader;
+
+  late P pageProvider;
+
+  // P createProvider(BuildContext context);
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   buildContext = context;
+  //   return getLayout();
+  // }
 
   @override
   Widget build(BuildContext context) {
-    pageProvider = BlocProvider.of<P>(context);
-    currentState = pageProvider.state;
-
-    if (_begin) {
-      init(context);
-      _begin = false;
-    }
+    buildContext = context;
+    pageProvider = Provider.of<P>(context);
+    dialogLoader = DialogLoader(context: buildContext);
 
     // Muon control thang nao thi phai dung context thang do
     var layout = getLayout(context);
@@ -55,42 +60,26 @@ abstract class BaseCubitStateLessWidget<P extends Cubit<S>, S> extends Stateless
       return layout;
     }
 
-    return BlocConsumer<P, S>(
-        listener: (context, state) {
-          blocConsumerListener(context, state);
-        },
-        // Khong chay theo dung yeu cau
-        buildWhen: (previousState, currentState) {
-          // Ko bit bi dien kieu gi
-          return blocConsumerBuildWhen(context, previousState, currentState);
-        },
-        builder: (context, state) {
-          return Scaffold(
-            appBar: getAppBar(context, state),
-            body: getBody(context, state),
-          );
-        }
+    var appBar = getAppBar(context);
+    if (appBar is String) {
+      // tao 1 custom use for common theme
+      appBar = CustomAppBar(appBar, appBarActions: getAppBarAction(),);
+    }
 
+    // if (appBar is! AppBar) {
+    //   throw Exception("Need to AppBar Widget or String !");
+    // }
+
+    if (widget.showAppBar == false) {
+      appBar = null;
+    }
+
+    return Scaffold(
+      appBar: appBar,
+      body: getBody(context),
     );
-
-
-    // var appBar = getAppBar(context);
-    // if (appBar is String) {
-    //   // tao 1 custom use for common theme
-    //   appBar = CustomAppBar(appBar, appBarActions: getAppBarAction(),);
-    // }
-    //
-    // if (showAppBar == false) {
-    //   appBar = null;
-    // }
-    //
-    // return Scaffold(
-    //   appBar: appBar,
-    //   body: getBody(context),
-    // );
   }
-
-//region Private Support Methods
+  //region Private Support Methods
 
   void hideKeyboard() {
     SystemChannels.textInput.invokeMethod('TextInput.hide');
@@ -105,7 +94,7 @@ abstract class BaseCubitStateLessWidget<P extends Cubit<S>, S> extends Stateless
   }
 
   // TODO: Cai nay co the chay sai, chua dc kiem chung
-  void showErrorSnackbar(String message, BuildContext context) {
+  void showErrorSnackbar(String message) {
     var snackBar = SnackBar(
       content: Text(
         message,
@@ -152,6 +141,9 @@ abstract class BaseCubitStateLessWidget<P extends Cubit<S>, S> extends Stateless
     // progress?.dismiss();
   }
 
-//endregion
+  //endregion
 
 }
+
+
+

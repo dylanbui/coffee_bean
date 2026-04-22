@@ -127,7 +127,7 @@ class _ProductListPageState extends State<ProductListPage> {
           return InkWell(
             onTap: () {
               if (product.id case final id?) {
-                pageInteractor.router?.gotoPostDetail(ProductDetailRoute(id), context);
+                pageInteractor.router?.gotoPostDetail(ProductDetailRoute(id), nextContext: context);
               }
             },
             child: Card(

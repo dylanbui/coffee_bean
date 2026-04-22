@@ -21,7 +21,7 @@ class NetworkClient {
     _dio.options.headers['content-Type'] = 'application/json';
     _dio.options.headers['Accept'] = 'application/json';
 
-    // Log mặc định
+    // default log
     _dio.interceptors.add(PrettyDioLogger(requestHeader: true, requestBody: true, responseBody: true, responseHeader: false, error: true, compact: true, maxWidth: 90));
 
     // Cho phép thêm các interceptor tùy biến từ dự án cụ thể

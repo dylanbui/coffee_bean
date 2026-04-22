@@ -22,19 +22,20 @@ class ProductDetailRoute implements DbNoteRoute {
 // Router
 
 abstract class ProductListRoutable with DbNavigator implements DbNoteRoutable {
-  void gotoPostDetail(ProductDetailRoute productDetail, BuildContext nextContext);
+  void gotoPostDetail(ProductDetailRoute productDetail, {BuildContext? nextContext});
 }
 
 class ProductListRouter extends DbNoteRouter implements ProductListRoutable {
 
   @override
-  void gotoPostDetail(ProductDetailRoute productDetail, BuildContext nextContext) {
+  void gotoPostDetail(ProductDetailRoute productDetail, {BuildContext? nextContext}) {
     navigate(productDetail, fromContext: nextContext);
   }
 
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
     if (toRoute is ProductDetailRoute) {
+
 
       // final PostDetailBuildable postDetailBuilder = PostDetailBuilder();
       // final widget = postDetailBuilder.build(toRoute.postId);

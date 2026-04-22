@@ -68,36 +68,37 @@ class NetworkError extends BaseError {
 
 extension NetworkMappingCommon<T> on Future<Response<T>> {
     /// Simple JSON (Default for API) Map {} , List<Map> [{}]
-    Future<(R?, NetworkError?)> mapToData<R>() async {
+    Future<ResultType<R>> mapToData<R>() async {
         try {
             final response = await this;
-            return (response.data as R, null);
+            return (data: response.data as R, error: null);
         } on DioException catch (ex) {
-            return (null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
+            return (data: null, error: NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
         } catch (e) {
-            return (null, NetworkError(500, e.toString()));
+            return (data: null, error: NetworkError(500, e.toString()));
         }
     }
-    /// Xử lý lấy Data (không quan tâm vỏ NetworkResponse)
-    /// mapper: Truyền vào Post.fromJson
-    Future<(R?, NetworkError?)> mapToObject<R>(JsonMapper<dynamic> mapper) async {
+
+    /// Process getting Data (ignore NetworkResponse wrapper)
+    /// mapper: Pass Post.fromJson
+    Future<ResultType<R>> mapToObject<R>(JsonMapper<dynamic> mapper) async {
         try {
             final response = await this;
             final rawData = response.data;
-            // Check data to mapper
+            // Check data for mapper
             if (rawData is Map<String, dynamic>) {
                 final result = mapper(rawData);
-                return (result as R, null);
+                return (data: result as R, error: null);
             } else if (rawData is List) {
-                // Tự động xử lý nếu data là List mà không cần hàm fromJsonList thủ công
+                // Automatically handle if data is List without needing manual fromJsonList
                 final list = rawData.map((e) => mapper(e as Map<String, dynamic>)).toList();
-                return (list as R, null);
+                return (data: list as R, error: null);
             }
-            return (null, NetworkError(500, "Dữ liệu không đúng định dạng Map/List"));
+            return (data: null, error: NetworkError(500, "Invalid Data format (Map/List)"));
         } on DioException catch (ex) {
-            return (null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
+            return (data: null, error: NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
         } catch (e) {
-            return (null, NetworkError(500, e.toString()));
+            return (data: null, error: NetworkError(500, e.toString()));
         }
     }
 

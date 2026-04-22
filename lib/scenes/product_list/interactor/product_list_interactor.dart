@@ -52,8 +52,10 @@ class ProductListInteractor extends CubitInteractor<ProductListRoutable, Product
       emit(ProductListInProgress());
     }
 
+    // router.gotoPostDetail(productDetail);
+
     // Sử dụng Positional Records Destructuring: (products, err)
-    final (products, err) = await _productRepository.getProducts(limit: _limitItem, offset: 0);
+    final (data: products, error: err) = await _productRepository.getProducts(limit: _limitItem, offset: 0);
     if (products != null) {
       // Giả sử mỗi page 10 item, nếu lấy được ít hơn 10 tức là đã hết dữ liệu
       bool hasReachedMax = products.length < _limitItem;
@@ -72,7 +74,7 @@ class ProductListInteractor extends CubitInteractor<ProductListRoutable, Product
       int currentOffset = currentState.items.length;
 
       // Bóc tách theo vị trí (Positional)
-      final (newList, err) = await _productRepository.getProducts(limit: _limitItem, offset: currentOffset);
+      final (data: newList, error: err) = await _productRepository.getProducts(limit: _limitItem, offset: currentOffset);
 
       if (newList != null) {
         bool hasReachedMax = newList.length < _limitItem;

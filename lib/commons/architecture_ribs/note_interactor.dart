@@ -7,7 +7,6 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 
 /// The base builder protocol that all builders should conform to.
@@ -27,7 +26,7 @@ abstract class DbNoteInteractor<T extends DbNoteRoutable, P extends DbNotePresen
 
 }
 
-// Dang thu nghiem Presentable
+// TODO: Dang thu nghiem Presentable
 
 /// The base protocol for all `Presenter`s.
 abstract class DbNotePresentable {}

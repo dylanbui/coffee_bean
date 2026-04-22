@@ -15,8 +15,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'commons/architecture_ribs/navigator.dart';
-import 'commons/utils/shared_preferences.dart';
+import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
+import 'package:coffee_bean/commons/network/network_common.dart';
+import 'package:coffee_bean/commons/utils/shared_preferences.dart';
 
 Chuck chuck = Chuck(
   showNotification: true,
@@ -39,6 +40,13 @@ Future<Widget> initializeApp() async {
   await DbSharedPreferences().loadPreferences();
 
   AppConfig().currentUser = await UserSession.fromSystem();
+
+  NetworkServiceProvider.init(NetworkConfig(
+    baseUrl: AppConfig().url,
+    timeout: Duration(seconds: 30),
+    interceptors: [chuck.dioInterceptor],
+
+  ));
 
   // await setupLocator();
 

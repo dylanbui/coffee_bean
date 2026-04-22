@@ -42,32 +42,32 @@ class NetworkResponse<T> {
 
 extension NetworkMappingProject<T> on Future<Response<T>> {
 
-    /// Xử lý cho NetworkResponse đặc thù của dự án
-    /// Extension này sẽ tự động kiểm tra 'result == true'
-    /// Nếu đúng, nó trả về data (List<Post>, User...).
-    /// Nếu sai hoặc lỗi mạng, nó trả về NetworkError.
-    Future<(R? data, NetworkError? error)> mapToNetworkResponse<R>(JsonMapper<dynamic> mapper) async {
+    /// Process for project-specific NetworkResponse
+    /// This extension automatically checks 'result == true'
+    /// If true, it returns data (List<Post>, User...).
+    /// If false or network error, it returns NetworkError.
+    Future<ResultType<R>> mapToNetworkResponse<R>(JsonMapper<dynamic> mapper) async {
         try {
             final response = await this;
             final rawData = response.data;
 
             if (rawData is Map<String, dynamic>) {
-                // 1. Parse ra lớp vỏ NetworkResponse trước
+                // 1. Parse into NetworkResponse wrapper first
                 final networkRes = NetworkResponse<R>.fromJson(rawData, mapper);
-                // 2. Kiểm tra logic nghiệp vụ của Server (biến result)
+                // 2. Check Server business logic (result variable)
                 if (networkRes.result == true) {
-                    // Thành công: Trả về data (Ví dụ: List<Post>)
-                    return (networkRes.data, null);
+                    // Success: Return data (e.g., List<Post>)
+                    return (data: networkRes.data, error: null);
                 } else {
-                    // Lỗi nghiệp vụ (ví dụ: sai mật khẩu, hết hạn gói): Trả về error
-                    return (null, NetworkError(int.tryParse(networkRes.code) ?? 500, networkRes.message));
+                    // Business error (e.g., wrong password, expired package): Return error
+                    return (data: null, error: NetworkError(int.tryParse(networkRes.code) ?? 500, networkRes.message));
                 }
             }
-            return (null, NetworkError(500, "Định dạng JSON không hợp lệ"));
+            return (data: null, error: NetworkError(500, "Invalid JSON format"));
         } on DioException catch (ex) {
-            return (null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
+            return (data: null, error: NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
         } catch (e) {
-            return (null, NetworkError(500, e.toString()));
+            return (data: null, error: NetworkError(500, e.toString()));
         }
     }
 }
@@ -90,30 +90,29 @@ class YourResponse<T> {
 
 extension NetworkMappingYourResponse<T> on Future<Response<T>> {
 
-  /// Extension bóc tách dữ liệu cho cấu trúc YourResponse (errorCode, content)
-  /// Trả về Record: (R? data, NetworkError? error)
-  Future<(R? data, NetworkError? error)> mapToYourResponse<R>(JsonMapper<dynamic> mapper) async {
+  /// Extension for parsing YourResponse structure (errorCode, content)
+  Future<ResultType<R>> mapToYourResponse<R>(JsonMapper<dynamic> mapper) async {
     try {
       final response = await this;
       final rawData = response.data;
 
       if (rawData is Map<String, dynamic>) {
-        // 1. Parse ra lớp vỏ YourResponse
+        // 1. Parse into YourResponse wrapper
         final yourRes = YourResponse<R>.fromJson(rawData, mapper);
 
-        // 2. Kiểm tra errorCode (Giả định 0 là thành công)
+        // 2. Check errorCode (Assume 0 is success)
         if (yourRes.errorCode == 0) {
-          return (yourRes.content, null); // Trả về data thực tế (content)
+          return (data: yourRes.content, error: null); // Return actual data (content)
         } else {
-          // Trả về lỗi nghiệp vụ từ YourResponse
-          return (null, NetworkError(yourRes.errorCode, "Error from YourResponse"));
+          // Return business error from YourResponse
+          return (data: null, error: NetworkError(yourRes.errorCode, "Error from YourResponse"));
         }
       }
-      return (null, NetworkError(500, "Định dạng JSON YourResponse không hợp lệ"));
+      return (data: null, error: NetworkError(500, "Invalid YourResponse JSON format"));
     } on DioException catch (ex) {
-      return (null, NetworkError(ex.response?.statusCode ?? 500, ex.message));
+      return (data: null, error: NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
     } catch (e) {
-      return (null, NetworkError(500, e.toString()));
+      return (data: null, error: NetworkError(500, e.toString()));
     }
   }
 }

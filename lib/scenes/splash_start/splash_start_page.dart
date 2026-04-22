@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:coffee_bean/commons/state_management/lib_provider/base_provider_stateless_widget.dart';
 import 'package:coffee_bean/scenes/splash_start/splash_start_builder.dart';
 import 'package:coffee_bean/scenes/splash_start/splash_start_provider.dart';
-
+import 'package:coffee_bean/utils/app_assets.dart';
 
 //ignore: must_be_immutable
 // class SplashStartPage extends BaseStateFulWidget {
@@ -16,11 +16,9 @@ import 'package:coffee_bean/scenes/splash_start/splash_start_provider.dart';
 //   }
 // }
 
-
 // Su dung StateLess hay StateFul cung deu khong Animation dc cho nay
 //ignore: must_be_immutable
 class SplashStartPage extends BaseProviderStateLessWidget<SplashStartProvider> {
-
   // const SplashStartPage({Key? key, DbNoteRouter? router}) : super(key: key, router: router);
   SplashStartPage({super.key});
 
@@ -28,7 +26,6 @@ class SplashStartPage extends BaseProviderStateLessWidget<SplashStartProvider> {
 
   @override
   Widget getLayout(BuildContext context) {
-
     // Goi từ lúc này dễ dàng, nếu muon truc tiep
     // pageProvider.router.navigate(SplashPageCompleteRoute());
 
@@ -48,28 +45,16 @@ class SplashStartPage extends BaseProviderStateLessWidget<SplashStartProvider> {
       // Navigator.push(context, PageTransition(
       //     child: ChangeNotifierProvider<LoginProvider>.value(value: LoginProvider(), child: const LoginPage(),),
       //     type: PageTransitionType.rightToLeft),);
-
     });
 
     return Container(
       alignment: Alignment.center,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          stops: [0.1, 0.9],
-          colors: [
-            Color(0xFFFC5C7D),
-            Color(0xFF6A82FB),
-          ],
-        ),
+            begin: Alignment.topRight, end: Alignment.bottomLeft, stops: [0.1, 0.9], colors: [Color(0xFFFC5C7D), Color(0xFF6A82FB)]),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 90.0),
-      child: Image.asset(
-        "assets/images/logo_splash.png",
-        fit: BoxFit.scaleDown,
-      ),
+      child: Image.asset(AppAssets.images.logoSplash, fit: BoxFit.scaleDown),
     );
   }
-
 }
