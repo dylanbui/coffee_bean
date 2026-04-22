@@ -9,6 +9,7 @@
 
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/scenes/product_detail/product_detail_builder.dart';
 import 'package:flutter/material.dart';
 
 
@@ -35,16 +36,9 @@ class ProductListRouter extends DbNoteRouter implements ProductListRoutable {
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
     if (toRoute is ProductDetailRoute) {
-
-
-      // final PostDetailBuildable postDetailBuilder = PostDetailBuilder();
-      // final widget = postDetailBuilder.build(toRoute.postId);
-      //// push(nextContext, widget);
-      //DbNavigator().push(widget);
-      //push(widget)
+      final ProductDetailBuildable productDetailBuilder = ProductDetailBuilder();
+      final widget = productDetailBuilder.buildWithId(toRoute.productId);
+      push(widget);
     }
-
   }
-
-
 }

@@ -15,11 +15,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? appBarActions;
   final bool hideBackButton;
+  final Color backButtonColor;
 
   @override
   final Size preferredSize; // default is 56.0
 
-  const CustomAppBar(this.title, {super.key, this.appBarActions, this.hideBackButton = false}) : preferredSize = const Size.fromHeight(kToolbarHeight);
+  const CustomAppBar(this.title, {super.key, this.appBarActions, this.hideBackButton = false, this.backButtonColor = Colors.white}) : preferredSize = const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       titleSpacing: hideBackButton ? kTabLabelPadding.right : 0,
       automaticallyImplyLeading: !hideBackButton,
-      // backgroundColor: Colors.white,
+      backgroundColor: Colors.blue,
+      iconTheme: IconThemeData(color: backButtonColor),
       actions: appBarActions,
     );
   }
@@ -38,6 +40,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
 
 // Cach 2
+// ignore: must_be_immutable
 class MyAppBar extends AppBar {
 
   final String titleBar;

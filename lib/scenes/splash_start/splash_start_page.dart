@@ -1,10 +1,10 @@
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
 import 'package:coffee_bean/commons/state_management/lib_provider/base_provider_stateless_widget.dart';
 import 'package:coffee_bean/scenes/splash_start/splash_start_builder.dart';
 import 'package:coffee_bean/scenes/splash_start/splash_start_provider.dart';
 import 'package:coffee_bean/utils/app_assets.dart';
+import 'package:flutter/material.dart';
 
 //ignore: must_be_immutable
 // class SplashStartPage extends BaseStateFulWidget {
@@ -54,7 +54,7 @@ class SplashStartPage extends BaseProviderStateLessWidget<SplashStartProvider> {
             begin: Alignment.topRight, end: Alignment.bottomLeft, stops: [0.1, 0.9], colors: [Color(0xFFFC5C7D), Color(0xFF6A82FB)]),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 90.0),
-      child: Image.asset(AppAssets.images.logoSplash, fit: BoxFit.scaleDown),
+      child: Image.asset(AppAssets.images.logoTmLabs, fit: BoxFit.scaleDown),
     );
   }
 }

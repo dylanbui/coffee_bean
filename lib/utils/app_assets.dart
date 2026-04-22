@@ -18,6 +18,7 @@ class _Images {
   final String icArrowRightWhite = 'assets/images/ic_arrow_right_white.svg';
   final String icCheckRightGreen = 'assets/images/ic_check_right_green.svg';
   final String logoSplash = 'assets/images/logo_splash.png';
+  final String logoTmLabs = 'assets/images/logo_tmlabs.png';
 }
 
 class _Json {

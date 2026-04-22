@@ -66,7 +66,7 @@ class TokenInterceptor extends QueuedInterceptorsWrapper {
 
         try {
             // TODO: Gọi Refresh API
-            // Cho nay chua hoan thanh, khi su dung den day, phai kiem tra ham ben duoi coi goi len server
+            // TODO: Cho nay chua hoan thanh, khi su dung den day, phai kiem tra ham ben duoi coi goi len server
             // kieu tra ve la gi, con phai xư ly them
             // Temporarily not fixing the expired token bug
             _performLogout();

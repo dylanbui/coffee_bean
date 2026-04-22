@@ -7,10 +7,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
-
-import 'note_viewer.dart';
 
 /// The controller used for launching [ViewControllable]
 class WindowController {
@@ -55,7 +53,7 @@ class Window extends StatelessWidget {
     return ValueListenableBuilder(
       valueListenable: controller.currentView,
       builder: (context, value, child) {
-        return value as Widget ?? Container();
+        return value as Widget;
       },
     );
   }

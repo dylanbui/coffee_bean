@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:coffee_bean/utils/app_colors.dart';
-import 'package:coffee_bean/utils/utils.dart';
-import 'package:flutter/material.dart';
-import 'package:event_bus/event_bus.dart';
-import 'package:flutter/services.dart';
 
-import 'app.dart';
-import 'config/app_config.dart';
+import 'package:coffee_bean/app.dart';
+import 'package:coffee_bean/config/app_config.dart';
+import 'package:coffee_bean/utils/app_colors.dart';
+import 'package:event_bus/event_bus.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+
 
 EventBus globalEventBus = EventBus();
 mixin EventBusMixin {
@@ -18,12 +19,14 @@ mixin EventBusMixin {
 }
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: WidgetsBinding.instance);
+  
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     systemNavigationBarColor: Colors.transparent, // navigation bar color
     statusBarColor: AppColor.orangeDark, // status bar color
   ));
 
-  WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isAndroid) {
     // await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
   }

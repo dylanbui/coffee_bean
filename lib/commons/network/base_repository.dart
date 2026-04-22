@@ -1,16 +1,15 @@
 /*
  * Created with IntelliJ IDEA
- * Package: 
+ * Package:
  * User: dylanbui
  * Email: duc@propzy.com
  * Date: 17/4/26 - 00:49
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:flutter/material.dart';
 
-import 'network_client.dart';
-import 'network_common.dart';
+import 'package:coffee_bean/commons/network/network_client.dart';
+import 'package:coffee_bean/commons/network/network_common.dart';
 
 abstract class BaseRepository {
   late final NetworkClient networkClient;

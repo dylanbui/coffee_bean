@@ -8,16 +8,16 @@
  */
 
 import 'package:chuck_interceptor/chuck_interceptor.dart';
+import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
+import 'package:coffee_bean/commons/network/network_common.dart';
+import 'package:coffee_bean/commons/utils/shared_preferences.dart';
 import 'package:coffee_bean/config/app_config.dart';
 import 'package:coffee_bean/data/local/user_session.dart';
 import 'package:coffee_bean/scenes/app/app_builder.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
-import 'package:coffee_bean/commons/network/network_common.dart';
-import 'package:coffee_bean/commons/utils/shared_preferences.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 Chuck chuck = Chuck(
   showNotification: true,
@@ -55,6 +55,9 @@ Future<Widget> initializeApp() async {
     // AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
   }
 
+  // Remove the native splash screen when app is ready
+  FlutterNativeSplash.remove();
+
   return const App();
 }
 
@@ -71,7 +74,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       // Connect GlobalKey from Router to Flutter Navigator
       navigatorKey: DbNavigator.navigatorState,
-      title: 'Flutter Demo',
+      title: 'Coffee Bean',
       theme: ThemeData(
         // This is the theme of your application.
         //

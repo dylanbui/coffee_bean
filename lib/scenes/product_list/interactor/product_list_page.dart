@@ -1,16 +1,17 @@
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/commons/custom_app_bar.dart';
 import 'package:coffee_bean/commons/utils/logger.dart';
+import 'package:coffee_bean/data/model/product.dart';
 import 'package:coffee_bean/scenes/product_list/interactor/product_list_event_state.dart';
 import 'package:coffee_bean/scenes/product_list/interactor/product_list_interactor.dart';
 import 'package:coffee_bean/scenes/product_list/product_list_router.dart';
-import 'package:flutter/material.dart';
-import 'package:coffee_bean/data/model/product.dart';
 import 'package:coffee_bean/utils/app_style.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:coffee_bean/widget/error_view.dart';
+import 'package:coffee_bean/widget/cached_image_widget.dart';
 import 'package:coffee_bean/widget/empty_view.dart';
+import 'package:coffee_bean/widget/error_view.dart';
 import 'package:coffee_bean/widget/loading_view.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProductListPage extends StatefulWidget with ViewControllable {
   const ProductListPage({super.key});
@@ -125,6 +126,7 @@ class _ProductListPageState extends State<ProductListPage> {
           // Get product by index
           final product = products[index];
           return InkWell(
+            borderRadius: BorderRadius.circular(10),
             onTap: () {
               if (product.id case final id?) {
                 pageInteractor.router?.gotoPostDetail(ProductDetailRoute(id), nextContext: context);
@@ -158,18 +160,7 @@ class _ProductImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: (imageUrl != null && imageUrl!.isNotEmpty)
-          ? Image.network(
-              imageUrl!,
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(width: 100, height: 100, color: Colors.grey[300], child: const Icon(Icons.error)),
-            )
-          : Container(width: 100, height: 100, color: Colors.grey[300], child: const Icon(Icons.image)),
-    );
+    return CachedImageWidget(imageUrl: imageUrl, width: 100, height: 100, borderRadius: 8);
   }
 }
 

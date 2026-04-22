@@ -63,6 +63,8 @@ dependencies:
   event_bus: ^2.0.1
   # Draw SVG files
   flutter_svg: ^2.2.4
+  # Animated list for load more
+  implicitly_animated_reorderable_list_2: ^0.6.0
 
   # soft
   # querying information about an application package.
@@ -80,6 +82,8 @@ dependencies:
   lottie: ^3.3.3
   # finding commonly used locations on the filesystem
   path_provider: ^2.1.5
+    # remove white screen when app start
+  flutter_native_splash: ^2.4.7
 
 dev_dependencies:
   flutter_test:
@@ -111,6 +115,17 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  color_dark: "#121212"
+  image: assets/images/logo_tmlabs.png
+  image_dark: assets/images/logo_tmlabs.png
+  android_12:
+    image: assets/images/logo_tmlabs.png
+    image_dark: assets/images/logo_tmlabs.png
+    icon_background_color: "#FFFFFF"
+    icon_background_color_dark: "#121212"
 
   # To add assets to your application, add an assets section, like this:
   # assets:
