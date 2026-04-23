@@ -1,8 +1,8 @@
 
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/scenes/home/home_router.dart';
-import 'package:coffee_bean/scenes/home/interactor/home_interactor.dart';
-import 'package:coffee_bean/scenes/home/interactor/home_page.dart';
+import 'package:coffee_bean/scenes/app_landing/home/home_router.dart';
+import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.dart';
+import 'package:coffee_bean/scenes/app_landing/home/interactor/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

@@ -1,6 +1,6 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:coffee_bean/scenes/home/home_router.dart';
+import 'package:coffee_bean/scenes/app_landing/home/home_router.dart';
 
 // Events
 abstract class HomeEvent {}

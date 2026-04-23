@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:coffee_bean/scenes/my_profile/my_profile_router.dart';
+import 'package:coffee_bean/scenes/app_landing/my_profile/my_profile_router.dart';
 
 // Events
 abstract class MyProfileEvent {}

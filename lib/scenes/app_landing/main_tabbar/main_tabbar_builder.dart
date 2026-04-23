@@ -1,8 +1,8 @@
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/scenes/main_tabbar/main_tabbar_page.dart';
-import 'package:coffee_bean/scenes/main_tabbar/main_tabbar_provider.dart';
+import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_page.dart';
+import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

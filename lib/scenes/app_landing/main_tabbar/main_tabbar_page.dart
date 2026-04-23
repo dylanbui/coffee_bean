@@ -1,10 +1,10 @@
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/state_management/lib_provider/base_provider_statefull_widget.dart';
-import 'package:coffee_bean/scenes/home/home_builder.dart';
-import 'package:coffee_bean/scenes/community/community_builder.dart';
-import 'package:coffee_bean/scenes/main_tabbar/main_tabbar_provider.dart';
-import 'package:coffee_bean/scenes/my_profile/my_profile_builder.dart';
-import 'package:coffee_bean/scenes/shopping/shopping_builder.dart';
+import 'package:coffee_bean/scenes/app_landing/home/home_builder.dart';
+import 'package:coffee_bean/scenes/app_landing/community/community_builder.dart';
+import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_provider.dart';
+import 'package:coffee_bean/scenes/app_landing/my_profile/my_profile_builder.dart';
+import 'package:coffee_bean/scenes/app_landing/shopping/shopping_builder.dart';
 import 'package:coffee_bean/widget/fade_indexed_stack.dart';
 import 'package:flutter/material.dart';
 
