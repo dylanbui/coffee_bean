@@ -23,6 +23,12 @@ abstract class CubitPresenterInteractor<T extends DbNoteRoutable, P extends DbNo
 
   CubitPresenterInteractor(super.initialState, {this.router, this.presenter});
 
+  @override
+  void emit(State state) {
+    if (isClosed) return;
+    super.emit(state);
+  }
+
   // void pop() {
   //   // router?.pop();
   // }

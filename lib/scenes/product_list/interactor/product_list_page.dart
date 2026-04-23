@@ -1,6 +1,9 @@
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/commons/custom_app_bar.dart';
+import 'package:coffee_bean/commons/utils/locator.dart';
 import 'package:coffee_bean/commons/utils/logger.dart';
+import 'package:coffee_bean/data/local/live_service/cart_service.dart';
+import 'package:coffee_bean/data/local/live_service/model/cart_item.dart';
 import 'package:coffee_bean/data/model/product.dart';
 import 'package:coffee_bean/scenes/product_list/interactor/product_list_event_state.dart';
 import 'package:coffee_bean/scenes/product_list/interactor/product_list_interactor.dart';
@@ -46,144 +49,252 @@ class _ProductListPageState extends State<ProductListPage> {
     if (!_scrollController.hasClients) return false;
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
-    return currentScroll >= (maxScroll * 0.9); // Kích hoạt load more khi cuộn được 90%
-  }
-
-  String getTitle() {
-    return "Product List Page";
+    return currentScroll >= (maxScroll * 0.9);
   }
 
   @override
   Widget build(BuildContext context) {
     pageInteractor = BlocProvider.of<ProductListInteractor>(context);
-    // BlocConsumer. Chỉ bọc Builder quanh những gì thực sự cần thay đổi.
+
     return Scaffold(
-      appBar: CustomAppBar(getTitle(), hideBackButton: true),
+      appBar: CustomAppBar("Sản phẩm", hideBackButton: true, appBarActions: [_CartBadge(onTap: () => pageInteractor.router?.gotoProductCart())]),
       body: BlocConsumer<ProductListInteractor, ProductListState>(
         listener: (context, state) {
           if (state is ProductListGetDataError) {
             eLog("Error: ${state.error.message}");
           }
         },
-        buildWhen: (previousState, currentState) {
-          return true;
-        },
         builder: (context, state) {
-          return getBody(context, state);
+          if (state is ProductListInitial || state is ProductListInProgress) {
+            return const Center(child: LoadingView(width: 150, height: 150));
+          }
+
+          if (state is ProductListGetDataSuccess || state is ProductListInLoadMoreProgress) {
+            List<Product> items = [];
+            bool hasReachedMax = false;
+
+            if (state is ProductListGetDataSuccess) {
+              items = state.items;
+              hasReachedMax = state.hasReachedMax;
+            } else if (state is ProductListInLoadMoreProgress) {
+              items = state.items;
+              hasReachedMax = false;
+            }
+
+            if (items.isEmpty) {
+              return const EmptyView(message: "Không tìm thấy sản phẩm nào");
+            }
+
+            return _ProductListView(products: items, hasReachedMax: hasReachedMax, scrollController: _scrollController, onRefresh: pageInteractor.onRefresh);
+          }
+
+          if (state is ProductListGetDataError) {
+            return ErrorView(message: state.error.message, onRetry: () => pageInteractor.loadData());
+          }
+
+          return const SizedBox.shrink();
         },
       ),
     );
   }
+}
 
-  Widget getBody(BuildContext context, ProductListState state) {
-    if (state is ProductListInitial || state is ProductListInProgress) {
-      // return const Center(child: CircularProgressIndicator());
-      return const Center(child: LoadingView(width: 150, height: 150));
-    }
+class _CartBadge extends StatelessWidget {
+  final VoidCallback? onTap;
+  const _CartBadge({this.onTap});
 
-    if (state is ProductListGetDataSuccess || state is ProductListInLoadMoreProgress) {
-      List<Product> items = [];
-      bool hasReachedMax = false;
-
-      if (state is ProductListGetDataSuccess) {
-        items = state.items;
-        hasReachedMax = state.hasReachedMax;
-      } else if (state is ProductListInLoadMoreProgress) {
-        items = state.items;
-        hasReachedMax = false; // Dang load more thi chua coi la ket thuc
-      }
-
-      if (items.isEmpty) {
-        return EmptyView(message: "Không tìm thấy sản phẩm nào");
-      }
-
-      return _buildListView(items, hasReachedMax, state is ProductListInLoadMoreProgress);
-    }
-
-    if (state is ProductListGetDataError) {
-      return ErrorView(message: state.error.message, onRetry: () => pageInteractor.loadData());
-    }
-
-    return const SizedBox.shrink();
-  }
-
-  Widget _buildListView(List<Product> products, bool hasReachedMax, bool isLoadMore) {
-    return RefreshIndicator(
-      onRefresh: pageInteractor.onRefresh,
-      child: ListView.separated(
-        controller: _scrollController,
-        padding: const EdgeInsets.all(16),
-        // Thêm 1 item ở cuối để hiển thị Loading indicator khi load more
-        itemCount: hasReachedMax ? products.length : products.length + 1,
-        separatorBuilder: (context, index) => const SizedBox(height: 12),
-        itemBuilder: (context, index) {
-          if (index >= products.length) {
-            return const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-            );
-          }
-          // Get product by index
-          final product = products[index];
-          return InkWell(
-            borderRadius: BorderRadius.circular(10),
-            onTap: () {
-              if (product.id case final id?) {
-                pageInteractor.router?.gotoPostDetail(ProductDetailRoute(id), nextContext: context);
-              }
-            },
-            child: Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _ProductImage(imageUrl: product.images?.firstOrNull),
-                    const SizedBox(width: 12),
-                    _ProductContent(id: product.id, title: product.title, description: product.description),
-                  ],
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<CartItem>>(
+      stream: locator<CartService>().cartStream,
+      builder: (context, snapshot) {
+        final int count = snapshot.data?.length ?? 0;
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.shopping_cart, color: Colors.white),
+              onPressed: onTap,
+            ),
+            if (count > 0)
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(10)),
+                  constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                  child: Text(
+                    '$count',
+                    style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
-            ),
-          );
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _ProductListView extends StatelessWidget {
+  final List<Product> products;
+  final bool hasReachedMax;
+  final ScrollController scrollController;
+  final RefreshCallback onRefresh;
+
+  const _ProductListView({required this.products, required this.hasReachedMax, required this.scrollController, required this.onRefresh});
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: ListView.separated(
+        controller: scrollController,
+        padding: const EdgeInsets.all(16),
+        itemCount: hasReachedMax ? products.length : products.length + 1,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          if (index >= products.length) {
+            return const _LoadMoreIndicator();
+          }
+          return _ProductCard(product: products[index]);
         },
+      ),
+    );
+  }
+}
+
+class _ProductCard extends StatelessWidget {
+  final Product product;
+
+  const _ProductCard({required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    final interactor = context.read<ProductListInteractor>();
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(10),
+      onTap: () {
+        interactor.router?.gotoPostDetail(ProductDetailRoute(product.id), nextContext: context);
+      },
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _ProductImage(product: product),
+              const SizedBox(width: 12),
+              _ProductInfo(product: product),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
 class _ProductImage extends StatelessWidget {
-  final String? imageUrl;
-  const _ProductImage({this.imageUrl});
+  final Product product;
+
+  const _ProductImage({required this.product});
 
   @override
   Widget build(BuildContext context) {
-    return CachedImageWidget(imageUrl: imageUrl, width: 100, height: 100, borderRadius: 8);
+    return Stack(
+      children: [
+        CachedImageWidget(imageUrl: product.images?.firstOrNull, width: 100, height: 100, borderRadius: 8),
+        Positioned(top: 4, right: 4, child: _LikeButton(product: product)),
+      ],
+    );
   }
 }
 
-class _ProductContent extends StatelessWidget {
-  final int? id;
-  final String? title;
-  final String? description;
+class _LikeButton extends StatelessWidget {
+  final Product product;
 
-  const _ProductContent({this.id, this.title, this.description});
+  const _LikeButton({required this.product});
 
   @override
   Widget build(BuildContext context) {
+    final interactor = context.read<ProductListInteractor>();
+    final isLiked = interactor.isProductLiked(product.id);
+
+    return GestureDetector(
+      onTap: () => interactor.toggleLike(product),
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(color: Colors.white.withOpacity(0.8), shape: BoxShape.circle),
+        child: Icon(isLiked ? Icons.favorite : Icons.favorite_border, color: Colors.red, size: 20),
+      ),
+    );
+  }
+}
+
+class _ProductInfo extends StatelessWidget {
+  final Product product;
+
+  const _ProductInfo({required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    final interactor = context.read<ProductListInteractor>();
+
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('ID: $id', style: DefaultStyle.textSmall),
+          Text(
+            product.title ?? '',
+            style: DefaultStyle.textLarge.copyWith(fontWeight: FontWeight.bold),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
           const SizedBox(height: 4),
-          Text(title ?? '', style: DefaultStyle.textLarge, maxLines: 1, overflow: TextOverflow.ellipsis),
+          Text(product.description ?? '', style: DefaultStyle.textSmall, maxLines: 2, overflow: TextOverflow.ellipsis),
           const SizedBox(height: 8),
-          Text(description ?? '', style: DefaultStyle.textNormal, maxLines: 2, overflow: TextOverflow.ellipsis),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "${product.price?.toStringAsFixed(0)}đ",
+                style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  interactor.addToCart(product);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Đã thêm ${product.title} vào giỏ hàng"), duration: const Duration(seconds: 1)));
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(60, 30),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                ),
+                child: const Text("Thêm", style: TextStyle(fontSize: 12)),
+              ),
+            ],
+          ),
         ],
       ),
+    );
+  }
+}
+
+class _LoadMoreIndicator extends StatelessWidget {
+  const _LoadMoreIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 16),
+      child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
     );
   }
 }

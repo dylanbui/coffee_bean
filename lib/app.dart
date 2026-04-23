@@ -17,6 +17,9 @@ import 'package:coffee_bean/scenes/app/app_builder.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:coffee_bean/commons/utils/locator.dart';
+import 'package:coffee_bean/data/local/live_service/cart_service.dart';
+import 'package:coffee_bean/data/local/live_service/likes_service.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 Chuck chuck = Chuck(
@@ -25,7 +28,6 @@ Chuck chuck = Chuck(
 );
 
 Future<Widget> initializeApp() async {
-
   /*
   Specifies the set of orientations the application interface can be displayed in.
   The orientation argument is a list of DeviceOrientation enum values. The empty list causes the application to defer to the operating system default.
@@ -38,9 +40,9 @@ Future<Widget> initializeApp() async {
 
   // Load share preferences data when start app
   await DbSharedPreferences().loadPreferences();
-
+  // Load current data
   AppConfig().currentUser = await UserSession.fromSystem();
-
+  // 1. Initialize Network Service
   NetworkServiceProvider.init(NetworkConfig(
     baseUrl: AppConfig().url,
     timeout: Duration(seconds: 30),
@@ -48,7 +50,8 @@ Future<Widget> initializeApp() async {
 
   ));
 
-  // await setupLocator();
+  // Initialize locator and services, Always load AFTER Load share preferences
+  await setupLocator();
 
   // Check if we're running on Android
   if (defaultTargetPlatform == TargetPlatform.android) {
@@ -59,6 +62,12 @@ Future<Widget> initializeApp() async {
   FlutterNativeSplash.remove();
 
   return const App();
+}
+
+Future<void> setupLocator() async {
+  // Register Live Services
+  locator.registerLazySingleton<CartService>(() => CartService());
+  locator.registerLazySingleton<LikesService>(() => LikesService());
 }
 
 class App extends StatelessWidget {
@@ -76,15 +85,6 @@ class App extends StatelessWidget {
       navigatorKey: DbNavigator.navigatorState,
       title: 'Coffee Bean',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
       home: appBuilder.build(),

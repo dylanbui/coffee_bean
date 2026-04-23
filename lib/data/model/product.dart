@@ -5,7 +5,7 @@ part 'product.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Product {
-  int? id;
+  int id = 0;
   String? title;
   String? slug;
   double? price;
@@ -13,7 +13,7 @@ class Product {
   Category? category;
   List<String>? images;
 
-  Product({this.id, this.title, this.slug, this.price, this.description, this.category, this.images});
+  Product({this.id = 0, this.title, this.slug, this.price, this.description, this.category, this.images});
 
   factory Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
 

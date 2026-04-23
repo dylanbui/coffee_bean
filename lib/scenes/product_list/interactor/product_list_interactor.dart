@@ -1,17 +1,10 @@
-/*
- * Created with IntelliJ IDEA
- * Package: 
- * User: dylanbui
- * Email: duc@propzy.com
- * Date: 07/07/2022 - 19:34
- * To change this template use File | Settings | File Templates.
- */
-
-// Provider
-
+import 'dart:async';
 import 'package:coffee_bean/commons/commons_constants.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/commons/utils/logger.dart';
+import 'package:coffee_bean/commons/utils/locator.dart';
+import 'package:coffee_bean/data/local/live_service/cart_service.dart';
+import 'package:coffee_bean/data/local/live_service/likes_service.dart';
 import 'package:coffee_bean/data/model/product.dart';
 import 'package:coffee_bean/data/repository/product_repository.dart';
 import 'package:coffee_bean/scenes/product_list/interactor/product_list_event_state.dart';
@@ -36,11 +29,33 @@ class UserInterListBloc extends BlocInteractor<UserListRouter, UserListEvent, Us
 class ProductListInteractor extends CubitInteractor<ProductListRoutable, ProductListState> {
 
   final _productRepository = ProductRepository();
+  final _cartService = locator<CartService>();
+  final _likesService = locator<LikesService>();
   final _limitItem = 10;
 
+  StreamSubscription? _likesSubscription;
+
   ProductListInteractor(ProductListRoutable router) : super(ProductListInitial(), router: router) {
+    _setupLikesSubscription();
     // Gọi loadData ngay tại đây
     loadData(firstLoad: true);
+  }
+
+  void _setupLikesSubscription() {
+    _likesSubscription = _likesService.likedStream.listen((likedIds) {
+      final currentState = state;
+      if (currentState is ProductListGetDataSuccess) {
+        // Force refresh UI by emitting new state with updated like status
+        emit(ProductListGetDataSuccess(
+          List.from(currentState.items),
+          currentState.hasReachedMax,
+          currentState.totalItems,
+          currentState.currentPage,
+        ));
+      } else if (currentState is ProductListInLoadMoreProgress) {
+        emit(ProductListInLoadMoreProgress(List.from(currentState.items)));
+      }
+    });
   }
 
   Future onRefresh() async {
@@ -52,12 +67,9 @@ class ProductListInteractor extends CubitInteractor<ProductListRoutable, Product
       emit(ProductListInProgress());
     }
 
-    // router.gotoPostDetail(productDetail);
-
     // Sử dụng Positional Records Destructuring: (products, err)
     final (products, err) = await _productRepository.getProducts(limit: _limitItem, offset: 0);
     if (products != null) {
-      // Giả sử mỗi page 10 item, nếu lấy được ít hơn 10 tức là đã hết dữ liệu
       bool hasReachedMax = products.length < _limitItem;
       emit(ProductListGetDataSuccess(products, hasReachedMax, products.length, 0));
     } else {
@@ -87,5 +99,23 @@ class ProductListInteractor extends CubitInteractor<ProductListRoutable, Product
         if (err != null) eLog("Load more error: ${err.message}");
       }
     }
+  }
+
+  void addToCart(Product product) {
+    _cartService.addToCart(product);
+  }
+
+  bool isProductLiked(int productId) {
+    return _likesService.isLiked(productId);
+  }
+
+  void toggleLike(Product product) {
+    _likesService.toggleLike(product);
+  }
+
+  @override
+  Future<void> close() {
+    _likesSubscription?.cancel();
+    return super.close();
   }
 }
