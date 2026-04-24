@@ -83,8 +83,10 @@ class _MainTabbarPageState extends BaseProviderState<MainTabbarPage, MainTabbarP
       type: BottomNavigationBarType.fixed,
       onTap: _navigateToPage,
       currentIndex: _selectedIndexPage,
-      selectedItemColor: Theme.of(context).primaryColor,
+      selectedItemColor: const Color(0xFF0D1B3E),
       unselectedItemColor: Colors.grey,
+      selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+      unselectedLabelStyle: const TextStyle(fontSize: 12),
       showUnselectedLabels: true,
       items: const [
         BottomNavigationBarItem(

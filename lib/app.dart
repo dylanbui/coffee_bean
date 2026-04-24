@@ -10,6 +10,7 @@
 import 'package:chuck_interceptor/chuck_interceptor.dart';
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/network/network_common.dart';
+import 'package:coffee_bean/commons/services/event_bus.dart';
 import 'package:coffee_bean/commons/utils/shared_preferences.dart';
 import 'package:coffee_bean/config/app_config.dart';
 import 'package:coffee_bean/data/local/user_session.dart';
@@ -65,6 +66,8 @@ Future<Widget> initializeApp() async {
 }
 
 Future<void> setupLocator() async {
+  // Register Broadcast Service same EventBus
+  locator.registerLazySingleton<DbEventBus>(() => DbEventBus());
   // Register Live Services
   locator.registerLazySingleton<CartService>(() => CartService());
   locator.registerLazySingleton<LikesService>(() => LikesService());

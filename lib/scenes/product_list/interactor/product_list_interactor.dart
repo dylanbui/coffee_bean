@@ -35,7 +35,11 @@ class ProductListInteractor extends CubitInteractor<ProductListRoutable, Product
 
   StreamSubscription? _likesSubscription;
 
-  ProductListInteractor(ProductListRoutable router) : super(ProductListInitial(), router: router) {
+  ProductListInteractor(ProductListRoutable router) : super(ProductListInitial(), router: router);
+
+  @override
+  void didBecomeActive() {
+    super.didBecomeActive();
     _setupLikesSubscription();
     // Gọi loadData ngay tại đây
     loadData(firstLoad: true);
@@ -114,8 +118,8 @@ class ProductListInteractor extends CubitInteractor<ProductListRoutable, Product
   }
 
   @override
-  Future<void> close() {
+  void willResignActive() {
     _likesSubscription?.cancel();
-    return super.close();
+    super.willResignActive();
   }
 }

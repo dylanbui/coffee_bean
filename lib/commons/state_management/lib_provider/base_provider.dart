@@ -1,4 +1,5 @@
 
+import 'dart:async';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -58,8 +59,31 @@ abstract class MyBaseProvider with ChangeNotifier {
 abstract class BaseProvider<R extends DbNoteRoutable> with ChangeNotifier {
 
   late R router;
+  bool _isDisposed = false;
 
-  BaseProvider(this.router);
+  BaseProvider(this.router) {
+    scheduleMicrotask(() {
+      if (!_isDisposed) didBecomeActive();
+    });
+  }
+
+  void didBecomeActive() {}
+
+  void willResignActive() {}
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    willResignActive();
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_isDisposed) {
+      super.notifyListeners();
+    }
+  }
 
   var _isStart = true;
 

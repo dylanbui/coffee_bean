@@ -16,7 +16,11 @@ class ProductCartInteractor extends CubitInteractor<ProductCartRoutable, Product
   final CartService _cartService = locator<CartService>();
   StreamSubscription? _cartSubscription;
 
-  ProductCartInteractor(ProductCartRoutable router) : super(ProductCartInitial(), router: router) {
+  ProductCartInteractor(ProductCartRoutable router) : super(ProductCartInitial(), router: router);
+
+  @override
+  void didBecomeActive() {
+    super.didBecomeActive();
     _setupSubscription();
   }
 
@@ -39,8 +43,8 @@ class ProductCartInteractor extends CubitInteractor<ProductCartRoutable, Product
   }
 
   @override
-  Future<void> close() {
+  void willResignActive() {
     _cartSubscription?.cancel();
-    return super.close();
+    super.willResignActive();
   }
 }

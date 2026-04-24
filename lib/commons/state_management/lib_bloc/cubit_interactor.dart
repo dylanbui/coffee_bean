@@ -7,6 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'dart:async';
 import 'package:coffee_bean/commons/architecture_ribs/note_interactor.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,12 +22,28 @@ abstract class CubitPresenterInteractor<T extends DbNoteRoutable, P extends DbNo
   @override
   P? presenter;
 
-  CubitPresenterInteractor(super.initialState, {this.router, this.presenter});
+  CubitPresenterInteractor(super.initialState, {this.router, this.presenter}) {
+    scheduleMicrotask(() {
+      if (!isClosed) didBecomeActive();
+    });
+  }
 
   @override
   void emit(State state) {
     if (isClosed) return;
     super.emit(state);
+  }
+
+  @override
+  void didBecomeActive() {}
+
+  @override
+  void willResignActive() {}
+
+  @override
+  Future<void> close() {
+    willResignActive();
+    return super.close();
   }
 
   // void pop() {

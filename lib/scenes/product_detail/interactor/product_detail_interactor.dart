@@ -18,7 +18,11 @@ class ProductDetailInteractor extends CubitInteractor<ProductDetailRoutable, Pro
   final _productRepository = ProductRepository();
   final int productId;
 
-  ProductDetailInteractor(ProductDetailRoutable router, this.productId) : super(ProductDetailInitial(), router: router) {
+  ProductDetailInteractor(ProductDetailRoutable router, this.productId) : super(ProductDetailInitial(), router: router);
+
+  @override
+  void didBecomeActive() {
+    super.didBecomeActive();
     loadData();
   }
 

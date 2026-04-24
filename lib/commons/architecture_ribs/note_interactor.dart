@@ -24,6 +24,9 @@ abstract class DbNoteInteractor<T extends DbNoteRoutable, P extends DbNotePresen
   /// - parameter dependency: The dependency used for this builder to build the RIB.
   // DbNoteInteractor({this.router});
 
+  void didBecomeActive() {}
+  void willResignActive() {}
+
 }
 
 // TODO: Dang thu nghiem Presentable
