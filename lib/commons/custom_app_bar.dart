@@ -8,6 +8,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // Cách 1
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -34,6 +35,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.blue,
       iconTheme: IconThemeData(color: backButtonColor),
       actions: appBarActions,
+      // Đảm bảo phần màu AppBar tràn lên cả status bar bằng cách để statusBarColor trong suốt
+      systemOverlayStyle: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light, // Chữ trắng
+        statusBarBrightness: Brightness.dark, // Cho iOS
+      ),
     );
   }
 }
@@ -67,6 +74,11 @@ class MyAppBar extends AppBar {
     titleSpacing: 0,
     automaticallyImplyLeading: true,
     actions: appBarActions,
+    systemOverlayStyle: const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark, // AppBar trắng nên icon đen
+      statusBarBrightness: Brightness.light, // Cho iOS
+    ),
   );
 
 }

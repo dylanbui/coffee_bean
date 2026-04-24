@@ -22,9 +22,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: WidgetsBinding.instance);
   
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    systemNavigationBarColor: Colors.transparent, // navigation bar color
-    statusBarColor: AppColor.orangeDark, // status bar color
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent, // Làm status bar trong suốt mặc định
+    statusBarIconBrightness: Brightness.light, // Chữ trắng cho thanh trạng thái (tùy chọn)
+    systemNavigationBarColor: Colors.transparent,
   ));
 
   if (Platform.isAndroid) {

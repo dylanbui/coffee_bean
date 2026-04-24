@@ -5,6 +5,7 @@ import 'package:coffee_bean/scenes/splash_start/splash_start_builder.dart';
 import 'package:coffee_bean/scenes/splash_start/splash_start_provider.dart';
 import 'package:coffee_bean/utils/app_assets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 //ignore: must_be_immutable
 // class SplashStartPage extends BaseStateFulWidget {
@@ -47,14 +48,23 @@ class SplashStartPage extends BaseProviderStateLessWidget<SplashStartProvider> {
       //     type: PageTransitionType.rightToLeft),);
     });
 
-    return Container(
-      alignment: Alignment.center,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-            begin: Alignment.topRight, end: Alignment.bottomLeft, stops: [0.1, 0.9], colors: [Color(0xFFFC5C7D), Color(0xFF6A82FB)]),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 90.0),
-      child: Image.asset(AppAssets.images.logoTmLabs, fit: BoxFit.scaleDown),
+      child: Container(
+        alignment: Alignment.center,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              stops: [0.1, 0.9],
+              colors: [Color(0xFFFC5C7D), Color(0xFF6A82FB)]),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 90.0),
+        child: Image.asset(AppAssets.images.logoTmLabs, fit: BoxFit.scaleDown),
+      ),
     );
   }
 }
