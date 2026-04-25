@@ -43,3 +43,25 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# =========================================================================
+# AI Assistants Context & Config Files
+# =========================================================================
+# Gemini / General AI Context
+AI_CONTEXT.md
+gemini.md
+.ai/
+
+# Cursor AI Editor
+.cursor/
+.cursorrules
+.cursorignore
+
+# GitHub Copilot
+.copilot/
+.copilotignore
+copilot.yml
+
+# Other AI tools (e.g., Codeium, Tabnine)
+.codeium/
+.tabnine/

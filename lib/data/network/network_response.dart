@@ -7,8 +7,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:dio/dio.dart';
 import 'package:coffee_bean/commons/network/network_common.dart';
+import 'package:dio/dio.dart';
 
 class NetworkResponse<T> {
     final String message;
@@ -120,3 +120,65 @@ extension NetworkMappingYourResponse<T> on Future<Response<T>> {
 
 *
 * */
+
+// =========================================================================
+// PHIÊN BẢN MỚI: FLUENT INTERFACE CHO PROJECT-SPECIFIC WRAPPER
+// (Không sửa class cũ bên trên để có thể đối chiếu, so sánh)
+// =========================================================================
+
+/// Lớp trung gian xử lý cấu trúc bọc (Wrapper) của dự án
+class NetworkResponseDataMapper<T, M> {
+  final Future<Response<T>> responseFuture;
+  final JsonMapper<M> mapper;
+
+  NetworkResponseDataMapper(this.responseFuture, this.mapper);
+
+  /// Hàm nội bộ: Bóc tách vỏ bọc JSON, kiểm tra 'result' và lấy ra trường 'data'
+  Future<(dynamic innerData, NetworkError? error)> _extractInnerData() async {
+    try {
+      final response = await responseFuture;
+      final rawData = response.data;
+
+      if (rawData is Map<String, dynamic>) {
+        // Kiểm tra Server business logic theo cấu trúc dự án của bạn
+        final bool result = rawData['result'] ?? false;
+        final String code = rawData['code']?.toString() ?? "0";
+        final String message = rawData['message'] ?? "";
+
+        if (result == true) {
+          // Thành công: Lấy trường 'data' bên trong để đưa cho Utility xử lý
+          return (rawData['data'], null);
+        } else {
+          // Lỗi nghiệp vụ (VD: Sai mật khẩu)
+          return (null, NetworkError(int.tryParse(code) ?? 500, message));
+        }
+      }
+      return (null, NetworkError(500, "Invalid JSON wrapper format"));
+    } on DioException catch (ex) {
+      return (null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
+    } catch (e) {
+      return (null, NetworkError(500, e.toString()));
+    }
+  }
+
+  /// Lấy trường 'data' và nhờ Utility parse thành Object
+  Future<(M? data, NetworkError? error)> toObject() async {
+    final (innerData, error) = await _extractInnerData();
+    if (error != null) return (null, error); // Thoát sớm nếu việc bóc vỏ bị lỗi
+    return NetworkParsingUtils.parseToObject(innerData, mapper);
+  }
+
+  /// Lấy trường 'data' và nhờ Utility parse thành List
+  Future<(List<M>? data, NetworkError? error)> toList() async {
+    final (innerData, error) = await _extractInnerData();
+    if (error != null) return (null, error); // Thoát sớm nếu việc bóc vỏ bị lỗi
+    return NetworkParsingUtils.parseToList(innerData, mapper);
+  }
+}
+
+extension NetworkMappingProjectChaining<T> on Future<Response<T>> {
+  /// Cung cấp hàm mapResponseTo() cho các API bọc cấu trúc NetworkResponse
+  NetworkResponseDataMapper<T, M> mapResponseTo<M>(JsonMapper<M> mapper) {
+    return NetworkResponseDataMapper<T, M>(this, mapper);
+  }
+}

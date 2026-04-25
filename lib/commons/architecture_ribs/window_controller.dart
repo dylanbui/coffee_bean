@@ -1,6 +1,6 @@
 /*
  * Created with IntelliJ IDEA
- * Package: 
+ * Package:
  * User: dylanbui
  * Email: duc@propzy.com
  * Date: 15/08/2022 - 11:06
@@ -10,7 +10,27 @@
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:flutter/material.dart';
 
-/// The controller used for launching [ViewControllable]
+/// The [WindowController] serves as the high-level routing system for the RIBs architecture.
+/// It manages both the root view of the application and the presentation of overlay flows.
+///
+/// ### Usage 1: Managing the Root View
+/// Use [launch] to completely replace the root screen without using the Navigator stack.
+/// Ideal for switching major modules (e.g., Splash -> Login -> Home).
+/// ```dart
+/// final windowController = WindowController();
+/// windowController.launch(homeView);
+/// ```
+/// Note: The [Window] widget must be set as the `home` of your `MaterialApp`.
+///
+/// ### Usage 2: Managing Overlay Flows (Modals)
+/// Use [present] to push an entire flow (e.g., Create Order Flow) on top of the current screen.
+/// Use [dismiss] to pop all screens within that flow until the specific flow is removed.
+/// ```dart
+/// // Open the flow
+/// WindowController.present(orderFlowView);
+/// // Close the flow completely
+/// WindowController.dismiss(orderFlowView);
+/// ```
 class WindowController {
   static final _navigator = GlobalKey<NavigatorState>();
 
@@ -33,11 +53,12 @@ class WindowController {
     });
   }
 
-  final _currentView = null; // ValueNotifier<ViewControllable>(null);
+  // Initialize ValueNotifier properly to hold the root view
+  final ValueNotifier<ViewControllable?> _currentView = ValueNotifier<ViewControllable?>(null);
 
-  ValueNotifier<ViewControllable> get currentView => _currentView;
+  ValueNotifier<ViewControllable?> get currentView => _currentView;
 
-  void launch(ViewControllable view) {
+  void launch(ViewControllable? view) {
     _currentView.value = view;
   }
 }
@@ -50,10 +71,11 @@ class Window extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
+    return ValueListenableBuilder<ViewControllable?>(
       valueListenable: controller.currentView,
       builder: (context, value, child) {
-        return value as Widget;
+        // Safely cast to Widget, show an empty box if value is null
+        return (value as Widget?) ?? const SizedBox.shrink();
       },
     );
   }
