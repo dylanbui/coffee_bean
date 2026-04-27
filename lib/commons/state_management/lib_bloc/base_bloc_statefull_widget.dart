@@ -1,24 +1,60 @@
 
-import 'package:dialog_loader/dialog_loader.dart';
+import 'package:coffee_bean/commons/custom_app_bar.dart';
+import 'package:coffee_bean/commons/state_management/lib_bloc/constants.dart';
+import 'package:coffee_bean/commons/state_management/lib_bloc/view_utils_mixin.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-// https://github.com/FlorinMihalache/flutter_progress_hud
-/*
+/// A Base Stateful Widget designed for pages using [Bloc] (Event-State pattern).
+///
+/// ### Usage:
+/// - Extend this class when your page needs a lifecycle (e.g., `initState` to fetch data).
+/// - Use the `bloc` property to dispatch events: `bloc.add(FetchDataEvent());`.
+/// - Do NOT expect the whole page to rebuild on state changes. Use `BlocBuilder`
+///   inside [getBody] to rebuild specific UI parts.
+///
+/// ### Sample Code:
+/// ```dart
+/// class MyBlocPage extends BaseBlocStateFulWidget {
+///   MyBlocPage({super.key});
+///   @override
+///   State<MyBlocPage> createState() => _MyBlocPageState();
+/// }
+///
+/// class _MyBlocPageState extends BaseBlocViewState<MyBlocPage, MyBloc, MyInteractor> {
+///   @override
+///   void initState() {
+///     super.initState();
+///     blocProvider.add(FetchInitialDataEvent());
+///   }
+///
+///   @override
+///   Widget getBody(BuildContext context) {
+///     return ElevatedButton(
+///       onPressed: () => interactor.goToDetails(), 
+///       child: const Text("Chi tiết"),
+///     );
+///   }
+/// }
+/// ```
 //ignore: must_be_immutable
 abstract class BaseBlocStateFulWidget extends StatefulWidget {
 
-  DbNavigation? nav;
-  DbNoteRouter? router;
+  /// The Interactor or Navigation object used to handle business logic.
+  // dynamic nav;
+  /// The Router object used in RIBs architecture.
+  // DbNoteRouter? router;
   bool showAppBar = true;
 
-  BaseBlocStateFulWidget({Key? key, this.nav, this.router}) : super(key: key);
+  BaseBlocStateFulWidget({super.key});
 
 }
 
-abstract class BaseBlocState<B extends BaseBlocStateFulWidget, P extends BaseProvider> extends State<B> {
+/// Base View State class for BLoC UI handling.
+/// [B] is the StatefulWidget type.
+/// [BLOC] is the specific Bloc type (must extend Bloc to accept events).
+/// [I] is the Interactor or Router type injected via Provider.
+abstract class BaseBlocViewState<B extends BaseBlocStateFulWidget, BLOC extends Bloc<BaseBlocEvent, BaseBlocState>, I> extends State<B> with ViewUtilsMixin {
 
   /// should be overridden in extended widget
   Widget? getLayout(BuildContext context) => null;
@@ -30,23 +66,23 @@ abstract class BaseBlocState<B extends BaseBlocStateFulWidget, P extends BasePro
 
 
   late BuildContext buildContext;
-  DialogLoader? dialogLoader;
 
-  late P pageProvider;
+  /// The Bloc instance for this page. Used to add events (not for listening to state).
+  late BLOC blocProvider;
 
-  // P createProvider(BuildContext context);
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   buildContext = context;
-  //   return getLayout();
-  // }
+  /// Quick access to the Interactor or Router via Provider.
+  /// Usage: `interactor.doSomething()`
+  I get interactor {
+    return context.read<I>();
+  }
 
   @override
   Widget build(BuildContext context) {
     buildContext = context;
-    pageProvider = Provider.of<P>(context);
-    dialogLoader = DialogLoader(context: buildContext);
+    
+    // Use context.read() instead of Provider.of() to prevent the entire Scaffold 
+    // from rebuilding every time the Bloc emits a new state.
+    blocProvider = context.read<BLOC>();
 
     // Muon control thang nao thi phai dung context thang do
     var layout = getLayout(context);
@@ -73,70 +109,4 @@ abstract class BaseBlocState<B extends BaseBlocStateFulWidget, P extends BasePro
       body: getBody(context),
     );
   }
-  //region Private Support Methods
-
-  void hideKeyboard() {
-    SystemChannels.textInput.invokeMethod('TextInput.hide');
-  }
-
-  void showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-    );
-  }
-
-  // TODO: Cai nay co the chay sai, chua dc kiem chung
-  void showErrorSnackbar(String message) {
-    var snackBar = SnackBar(
-      content: Text(
-        message,
-        style: const TextStyle(color: Colors.black87),
-      ),
-      backgroundColor: Colors.yellowAccent,
-      duration: const Duration(seconds: 1),
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    // Scaffold.of(context).showSnackBar(snackBar); // Da bi deprecated
-  }
-
-  void showProgressLoading({String? text = "Đang xử lý ..."}) {
-    // LoadingIndicatorDialog().show(context, text: text ?? "Đang xử lý");
-    dialogLoader?.show(
-      theme: LoaderTheme.dialogDefault,
-      title: Container(
-        padding: const EdgeInsets.all(10),
-        child: Text(text ?? "Đang xử lý ...", style: AppTheme.textStyle_2,),
-      ),
-      leftIcon: const SizedBox(
-        child: CircularProgressIndicator(),
-        height: 30.0,
-        width: 30.0,
-      ),
-    );
-
-    // Xai khong tot
-    // final progress = ProgressHUD.of(_contextLoading);
-    // if (text == null) {
-    //   progress?.show();
-    // } else {
-    //   progress?.showWithText(text);
-    // }
-  }
-
-  void hideProgressLoading() {
-    // LoadingIndicatorDialog().dismiss();
-    dialogLoader?.close();
-
-    // Xai khong tot
-    // final progress = ProgressHUD.of(_contextLoading);
-    // progress?.dismiss();
-  }
-
-  //endregion
-
 }
-
- */

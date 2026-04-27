@@ -1,0 +1,33 @@
+import 'dart:async';
+
+import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/commons/commons_constants.dart';
+import 'package:coffee_bean/commons/state_management/lib_bloc/bloc_interactor.dart';
+import 'package:coffee_bean/commons/state_management/lib_bloc/constants.dart';
+import 'package:coffee_bean/scenes/user_detail/interactor/user_detail_event_state.dart';
+import 'package:coffee_bean/scenes/user_detail/interactor/user_detail_presenter.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class UserDetailBloc extends BlocPresenterInteractor<DbNoteRoutable, UserDetailPresenter, BaseBlocEvent, BaseBlocState> {
+  // The constructor now receives the Presenter.
+  UserDetailBloc({required UserDetailPresenter presenter}) : super(UserDetailInitial(), presenter: presenter) {
+    on<UserDetailFetchEvent>(_onFetchData);
+  }
+
+  Future<void> _onFetchData(UserDetailFetchEvent event, Emitter<BaseBlocState> emit) async {
+    emit(UserDetailInProgress());
+
+    // No more null checks needed! `presenter` is guaranteed to be non-null.
+    final (user, error) = await presenter.fetchUserDetail(event.userId);
+
+    // Use pattern matching on the result tuple for cleaner, null-safe handling.
+    switch ((user, error)) {
+      case (final u?, null):
+        emit(UserDetailGetDataSuccess(u));
+      case (null, final e?):
+        emit(UserDetailGetDataError(e));
+      default:
+        emit(UserDetailGetDataError(BaseError(111, "Invalid response from presenter.")));
+    }
+  }
+}

@@ -1,70 +1,79 @@
 
 import 'dart:async';
+
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
-import 'package:flutter/cupertino.dart';
-
 import 'package:coffee_bean/commons/commons_constants.dart';
+import 'package:flutter/foundation.dart';
 
-abstract class MyBaseProvider with ChangeNotifier {
-
-  // var _isStart = true;
-  //
-  // void isStart(bool start) {
-  //   if (start == true) {
-  //     _isStart = true;
-  //     isLoading = true;
-  //     _error = null;
-  //   } else {
-  //     _isStart = false;
-  //   }
-  //
-  //   notifyListeners();
-  // }
-
-  final noInternetConnectionEvent = false;
-  final connectTimeoutEvent = false;
-
-  // Xu ly loi xay ra
-  BaseError? _error;
-  BaseError? get error => _error;
-  set error(BaseError? err) {
-    _error = err;
-    notifyListeners();
-  }
-
-  // Cho bat dau load
-  var _isLoading = true;
-  bool isLoading(bool? loading) {
-    if (loading != null) {
-      _isLoading = loading;
-      notifyListeners();
-    }
-    return _isLoading;
-  }
-
-  // Cho khi post, update du lieu
-  var _isProcessedLoading = false;
-  bool isProcessedLoading(bool? processed) {
-    if (processed != null) {
-      _isProcessedLoading = processed;
-      notifyListeners();
-    }
-    return _isProcessedLoading;
-  }
-
-
-}
-
-
-abstract class BaseProvider<R extends DbNoteRoutable> with ChangeNotifier {
+/// A base class for simple state management using ChangeNotifier, combined with RIBs-style routing.
+///
+/// Use this for pages with simple logic where a full BLoC/Cubit might be overkill.
+/// It provides basic state flags like `isLoading`, `isProcessing`, and `error`.
+///
+/// ### State Management:
+/// - `isLoading`: Typically for initial page loads.
+/// - `isProcessing`: For actions like submitting a form.
+/// - `error`: To hold and display error information.
+///
+/// Call `notifyListeners()` after changing state to update the UI.
+///
+/// ### Sample Code:
+/// ```dart
+/// class LoginProvider extends BaseProvider<LoginRouter> {
+///   LoginProvider() : super(LoginRouter());
+///
+///   Future<void> login(String email, String password) async {
+///     isProcessing = true; // Show loading indicator on button
+///     error = null; // Clear previous errors
+///
+///     final success = await _authApi.login(email, password);
+///
+///     if (success) {
+///       router.goToHomePage();
+///     } else {
+///       error = BaseError(message: "Invalid credentials");
+///     }
+///     isProcessing = false; // Hide loading indicator
+///   }
+/// }
+/// ```
+abstract class BaseProvider<R extends DbNoteRoutable> extends ChangeNotifier {
 
   late R router;
   bool _isDisposed = false;
+
+  BaseError? _error;
+  BaseError? get error => _error;
+  set error(BaseError? value) {
+    _error = value;
+    notifyListeners();
+  }
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  set isLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  bool _isProcessing = false;
+  bool get isProcessing => _isProcessing;
+  set isProcessing(bool value) {
+    _isProcessing = value;
+    notifyListeners();
+  }
 
   BaseProvider(this.router) {
     scheduleMicrotask(() {
       if (!_isDisposed) didBecomeActive();
     });
+  }
+
+  void clearError() {
+    if (_error != null) {
+      _error = null;
+      notifyListeners();
+    }
   }
 
   void didBecomeActive() {}
@@ -80,61 +89,7 @@ abstract class BaseProvider<R extends DbNoteRoutable> with ChangeNotifier {
 
   @override
   void notifyListeners() {
-    if (!_isDisposed) {
-      super.notifyListeners();
-    }
-  }
-
-  var _isStart = true;
-
-  void isStart(bool start) {
-    if (start == true) {
-      _isStart = true;
-      isLoading = true;
-      _error = null;
-    } else {
-      _isStart = false;
-    }
-
-    notifyListeners();
-  }
-
-
-  var isLoading = false;
-  var errorMessage = "";
-  BaseError? _error;
-
-  final noInternetConnectionEvent = false;
-  final connectTimeoutEvent = false;
-
-  // void onLoadFail(Exception exception) {
-  //   isLoading = false;
-  //   showErrorWithString(exception.toString());
-  //
-  //   notifyListeners();
-  // }
-
-  void showErrorWithString(String message) {
-    errorMessage = message;
-
-    // notifyListeners();
-  }
-
-  void showError(BaseError error) {
-    _error = error;
-
-    // notifyListeners();
-  }
-
-  void showLoading() {
-    isLoading = true;
-
-    // notifyListeners();
-  }
-
-  void hideLoading() {
-    isLoading = false;
-
-    // notifyListeners();
+    if (_isDisposed) return;
+    super.notifyListeners();
   }
 }

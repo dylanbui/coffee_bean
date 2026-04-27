@@ -1,14 +1,9 @@
 
-import 'package:coffee_bean/commons/commons_constants.dart';
-import 'package:dialog_loader/dialog_loader.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
-
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/commons/custom_app_bar.dart';
+import 'package:coffee_bean/commons/state_management/lib_bloc/view_utils_mixin.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 // https://github.com/FlorinMihalache/flutter_progress_hud
 
@@ -24,7 +19,30 @@ abstract class BaseCubitStateFulWidget extends StatefulWidget {
 // abstract class BaseBlocState<B extends BaseBlocStateFulWidget, P extends BaseProvider> extends State<B> {
 // abstract class BaseCubitStateLessWidget<P extends Cubit<S>, S> extends StatelessWidget {
 
-abstract class BaseCubitState<B extends BaseCubitStateFulWidget, P extends Cubit<State>> extends State<B> {
+/// Base class for stateful widgets that require a specific Cubit.
+/// [B] is the StatefulWidget type.
+/// [C] is the specific Cubit type.
+/// [I] is the Interactor or Router type injected via Provider.
+///
+/// ### Sample Code:
+/// ```dart
+/// class _MyPageState extends BaseCubitState<MyPage, MyCubit, MyInteractor> {
+///   @override
+///   void initState() {
+///     super.initState();
+///     cubitProvider.fetchInitialData();
+///   }
+///
+///   @override
+///   Widget getBody(BuildContext context) {
+///     return IconButton(
+///       onPressed: () => interactor.goBack(), 
+///       icon: const Icon(Icons.arrow_back),
+///     );
+///   }
+/// }
+/// ```
+abstract class BaseCubitState<B extends BaseCubitStateFulWidget, C extends Cubit<dynamic>, I> extends State<B> with ViewUtilsMixin {
 
   /// should be overridden in extended widget
   Widget? getLayout(BuildContext context) => null;
@@ -36,23 +54,23 @@ abstract class BaseCubitState<B extends BaseCubitStateFulWidget, P extends Cubit
 
 
   late BuildContext buildContext;
-  DialogLoader? dialogLoader;
 
-  late P pageProvider;
+  /// The Cubit instance for this page. Used to call methods (not for listening to state).
+  late C cubitProvider;
 
-  // P createProvider(BuildContext context);
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   buildContext = context;
-  //   return getLayout();
-  // }
+  /// Quick access to the Interactor or Router via Provider.
+  /// Usage: `interactor.doSomething()`
+  I get interactor {
+    return context.read<I>();
+  }  
 
   @override
   Widget build(BuildContext context) {
     buildContext = context;
-    pageProvider = Provider.of<P>(context);
-    dialogLoader = DialogLoader(context: buildContext);
+    
+    // Use context.read() instead of Provider.of() to prevent the entire Scaffold 
+    // from rebuilding every time the Cubit emits a new state.
+    cubitProvider = context.read<C>();
 
     // Muon control thang nao thi phai dung context thang do
     var layout = getLayout(context);
@@ -79,71 +97,4 @@ abstract class BaseCubitState<B extends BaseCubitStateFulWidget, P extends Cubit
       body: getBody(context),
     );
   }
-  //region Private Support Methods
-
-  void hideKeyboard() {
-    SystemChannels.textInput.invokeMethod('TextInput.hide');
-  }
-
-  void showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-    );
-  }
-
-  // TODO: Cai nay co the chay sai, chua dc kiem chung
-  void showErrorSnackbar(String message) {
-    var snackBar = SnackBar(
-      content: Text(
-        message,
-        style: const TextStyle(color: Colors.black87),
-      ),
-      backgroundColor: Colors.yellowAccent,
-      duration: const Duration(seconds: 1),
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    // Scaffold.of(context).showSnackBar(snackBar); // Da bi deprecated
-  }
-
-  void showProgressLoading({String? text = "Đang xử lý ..."}) {
-    // LoadingIndicatorDialog().show(context, text: text ?? "Đang xử lý");
-    dialogLoader?.show(
-      theme: LoaderTheme.dialogDefault,
-      title: Container(
-        padding: const EdgeInsets.all(10),
-        child: Text(text ?? "Đang xử lý ...", style: AppTheme.textStyle_2,),
-      ),
-      leftIcon: const SizedBox(
-        child: CircularProgressIndicator(),
-        height: 30.0,
-        width: 30.0,
-      ),
-    );
-
-    // Xai khong tot
-    // final progress = ProgressHUD.of(_contextLoading);
-    // if (text == null) {
-    //   progress?.show();
-    // } else {
-    //   progress?.showWithText(text);
-    // }
-  }
-
-  void hideProgressLoading() {
-    // LoadingIndicatorDialog().dismiss();
-    dialogLoader?.close();
-
-    // Xai khong tot
-    // final progress = ProgressHUD.of(_contextLoading);
-    // progress?.dismiss();
-  }
-
-  //endregion
-
 }
-
-
-

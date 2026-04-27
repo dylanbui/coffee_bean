@@ -1,14 +1,32 @@
 
-import 'package:dialog_loader/dialog_loader.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
-import 'package:coffee_bean/commons/commons_constants.dart';
-import 'package:coffee_bean/commons/state_management/lib_provider/base_provider.dart';
 import 'package:coffee_bean/commons/custom_app_bar.dart';
+import 'package:coffee_bean/commons/state_management/lib_bloc/view_utils_mixin.dart';
+import 'package:coffee_bean/commons/state_management/lib_provider/base_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 // https://github.com/FlorinMihalache/flutter_progress_hud
+
+/// A base StatefulWidget for pages using the Provider pattern for state management.
+///
+/// ### Usage:
+/// - Extend this class for pages that need a lifecycle (`initState`, `dispose`).
+/// - Use `pageProvider` to call business logic methods.
+/// - Use `Consumer<P>` or `context.watch<P>()` inside `getBody` to rebuild specific UI parts
+///   when the provider's state changes.
+///
+/// ### Sample Code:
+/// ```dart
+/// class _MyPageState extends BaseProviderState<MyPage, MyProvider> {
+///   @override
+///   Widget getBody(BuildContext context) {
+///     // Use Consumer to only rebuild the Text widget on changes
+///     return Consumer<MyProvider>(
+///       builder: (context, provider, child) => Text('Count: ${provider.count}'),
+///     );
+///   }
+/// }
+/// ```
 
 //ignore: must_be_immutable
 abstract class BaseProviderStateFulWidget extends StatefulWidget {
@@ -18,7 +36,7 @@ abstract class BaseProviderStateFulWidget extends StatefulWidget {
 
 }
 
-abstract class BaseProviderState<B extends BaseProviderStateFulWidget, P extends BaseProvider> extends State<B> {
+abstract class BaseProviderState<B extends BaseProviderStateFulWidget, P extends BaseProvider> extends State<B> with ViewUtilsMixin {
 
   /// should be overridden in extended widget
   Widget? getLayout(BuildContext context) => null;
@@ -28,22 +46,25 @@ abstract class BaseProviderState<B extends BaseProviderStateFulWidget, P extends
   Widget getBody(BuildContext context) => const Text("implement getBody() function");
   List<Widget> getAppBarAction() => [];
 
-  late BuildContext buildContext;
-  DialogLoader? dialogLoader;
-
+  /// The Provider instance for this page.
+  /// Use this to call methods (e.g., `pageProvider.fetchData()`).
+  /// It's initialized in `build` using `context.read<P>()` for performance.
   late P pageProvider;
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   buildContext = context;
-  //   return getLayout();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    // It's better to initialize context-dependent objects here if needed,
+    // but DialogLoader is now handled by ViewUtilsMixin with SmartDialog.
+  }
 
   @override
   Widget build(BuildContext context) {
-    buildContext = context;
-    pageProvider = Provider.of<P>(context);
-    dialogLoader = DialogLoader(context: buildContext);
+    // CRITICAL FIX: Use `context.read<P>()` instead of `Provider.of<P>(context)`.
+    // `read` gets the provider instance WITHOUT listening for changes.
+    // This prevents the entire Scaffold from rebuilding on every `notifyListeners()`.
+    // UI updates should be handled by `Consumer` or `context.watch` inside `getBody`.
+    pageProvider = context.read<P>();
 
     // Muon control thang nao thi phai dung context thang do
     var layout = getLayout(context);
@@ -55,9 +76,8 @@ abstract class BaseProviderState<B extends BaseProviderStateFulWidget, P extends
     if (appBar is String) {
       // tao 1 custom use for common theme
       appBar = CustomAppBar(appBar, appBarActions: getAppBarAction(),);
-    } else if (appBar is! AppBar) {
-      appBar = null;
-      // throw Exception("Need to AppBar Widget or String !");
+    } else if (appBar is! AppBar && appBar is! PreferredSizeWidget) {
+      // If it's not a String, AppBar, or a widget that can be an app bar, don't show it.
     }
     if (widget.showAppBar == false) {
       appBar = null;
@@ -68,69 +88,5 @@ abstract class BaseProviderState<B extends BaseProviderStateFulWidget, P extends
       body: getBody(context),
     );
   }
-
-  //region Private Support Methods
-
-  void hideKeyboard() {
-    SystemChannels.textInput.invokeMethod('TextInput.hide');
-  }
-
-  void showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-    );
-  }
-
-  // TODO: Cai nay co the chay sai, chua dc kiem chung
-  void showErrorSnackbar(String message) {
-    var snackBar = SnackBar(
-      content: Text(
-        message,
-        style: const TextStyle(color: Colors.black87),
-      ),
-      backgroundColor: Colors.yellowAccent,
-      duration: const Duration(seconds: 1),
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    // Scaffold.of(context).showSnackBar(snackBar); // Da bi deprecated
-  }
-
-  void showProgressLoading({String? text = "Đang xử lý ..."}) {
-    // LoadingIndicatorDialog().show(context, text: text ?? "Đang xử lý");
-    dialogLoader?.show(
-      theme: LoaderTheme.dialogDefault,
-      title: Container(
-        padding: const EdgeInsets.all(10),
-        child: Text(text ?? "Đang xử lý ...", style: AppTheme.textStyle_2,),
-      ),
-      leftIcon: const SizedBox(
-        child: CircularProgressIndicator(),
-        height: 30.0,
-        width: 30.0,
-      ),
-    );
-
-    // Xai khong tot
-    // final progress = ProgressHUD.of(_contextLoading);
-    // if (text == null) {
-    //   progress?.show();
-    // } else {
-    //   progress?.showWithText(text);
-    // }
-  }
-
-  void hideProgressLoading() {
-    // LoadingIndicatorDialog().dismiss();
-    dialogLoader?.close();
-
-    // Xai khong tot
-    // final progress = ProgressHUD.of(_contextLoading);
-    // progress?.dismiss();
-  }
-
-  //endregion
 
 }

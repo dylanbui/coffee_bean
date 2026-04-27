@@ -6,7 +6,6 @@ import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/commons/utils/logger.dart';
 import 'package:coffee_bean/config/app_config.dart';
 import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_builder.dart';
-import 'package:coffee_bean/scenes/product_list/product_list_builder.dart';
 // import 'package:simple_auth_1/login_scene/flexhome/flex_home_builder.dart';
 // import 'package:simple_auth_1/login_scene/google_map/google_map_builder.dart';
 // import 'package:simple_auth_1/login_scene/open_web_view/open_web_view_builder.dart';

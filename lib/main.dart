@@ -1,22 +1,12 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:coffee_bean/app.dart';
 import 'package:coffee_bean/config/app_config.dart';
-import 'package:coffee_bean/utils/app_colors.dart';
-import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 
-EventBus globalEventBus = EventBus();
-mixin EventBusMixin {
-  StreamSubscription<T> listenEvent<T>(void Function(T) subscription) =>
-      globalEventBus.on<T>().listen(subscription);
-
-  void fireEvent<S>(S event) => globalEventBus.fire(event);
-}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

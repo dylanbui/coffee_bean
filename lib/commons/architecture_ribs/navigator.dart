@@ -15,6 +15,7 @@ mixin class DbNavigator {
   // Dùng static để tất cả các Router đều dùng chung một cổng điều hướng
   static final GlobalKey<NavigatorState> navigatorState = GlobalKey<NavigatorState>();
 
+  /// Hàm Push Modal: Hiển thị màn hình trượt từ dưới lên (Bottom to Top) transitionType: PageTransitionType.bottomToTop
   /// Hàm Push: Thêm tùy chọn đặt tên (routeName)
   void push(Widget widget, {BuildContext? fromContext, String? routeName, PageTransitionType transitionType = PageTransitionType.rightToLeft}) {
     final state = navigatorState.currentState;

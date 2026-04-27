@@ -12,30 +12,36 @@ import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 /// The base builder protocol that all builders should conform to.
 abstract class DbNoteInteractable {}
 
-//Interactable
-abstract class DbNoteInteractor<T extends DbNoteRoutable, P extends DbNotePresentable> implements DbNoteInteractable, DbNotePresentable {
+/// Base Interactor for RIBs that only handles routing.
+abstract class DbNoteInteractor<T extends DbNoteRoutable> implements DbNoteInteractable {
+  T? get router;
+  void didBecomeActive();
+  void willResignActive();
+}
 
-  /// The dependency used for this builder to build the RIB.
-  T? router;
-  P? presenter;
-
-  /// Initializer.
-  ///
-  /// - parameter dependency: The dependency used for this builder to build the RIB.
-  // DbNoteInteractor({this.router});
-
-  void didBecomeActive() {}
-  void willResignActive() {}
-
+/// An Interactor that also manages a Presenter.
+abstract class DbNotePresenterInteractor<T extends DbNoteRoutable, P extends DbNotePresentable>
+    implements DbNoteInteractor<T> {
+  @override
+  T? get router;
+  P get presenter;
 }
 
 // TODO: Dang thu nghiem Presentable
 
 /// The base protocol for all `Presenter`s.
-abstract class DbNotePresentable {}
+abstract class DbNotePresentable {
+  /// A lifecycle method for presenters to release resources.
+  void dispose();
+}
 
 /// The special empty dependency.
-abstract class DbNoteEmptyPresenter extends DbNotePresentable {}
+abstract class DbNoteEmptyPresenter extends DbNotePresentable {
+  @override
+  void dispose() {
+    // No-op
+  }
+}
 
 /// The base class of all `Presenter`s. A `Presenter` translates business models into values the corresponding
 /// `ViewController` can consume and display. It also maps UI events to business logic method, invoked to
@@ -48,4 +54,9 @@ class DbNotePresenter<InteractorType> extends DbNotePresentable {
   ///
   /// - parameter viewController: The `ViewController` of this `Pesenters`.
   DbNotePresenter(this.interactor);
+
+  @override
+  void dispose() {
+    // No-op by default, can be overridden.
+  }
 }
