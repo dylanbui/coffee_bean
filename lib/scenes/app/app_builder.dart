@@ -1,80 +1,57 @@
-
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
-// import 'package:coffee_bean/commons/architecture_ribs';
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/commons/utils/logger.dart';
-import 'package:coffee_bean/config/app_config.dart';
-import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_builder.dart';
-// import 'package:simple_auth_1/login_scene/flexhome/flex_home_builder.dart';
-// import 'package:simple_auth_1/login_scene/google_map/google_map_builder.dart';
-// import 'package:simple_auth_1/login_scene/open_web_view/open_web_view_builder.dart';
+import 'package:coffee_bean/scenes/app/interactor/app_interactor.dart';
 import 'package:coffee_bean/scenes/splash_start/splash_start_builder.dart';
 import 'package:flutter/material.dart';
-// import 'package:simple_auth_1/session_user.dart';
-// import 'package:simple_auth_1/typi_code/main_tab/main_tab_builder.dart';
-// import 'package:simple_auth_1/typi_code/todos/todo_list_builder.dart';
-// import 'package:coffee_bean/commons/utils/logger.dart';
 
-// import 'app.dart';
-// import 'login_scene/text_editor/text_editor_builder.dart';
 
 // Buildable
-abstract class AppBuildable implements DbNoteBuildable { }
+abstract class AppBuildable implements DbNoteBuildable {}
 
-
-class AppBuilder extends DbNoteBuilder with DbNavigator implements DbNoteRoutable, AppBuildable, SplashStartListener {
+/// AppBuilder acts as a "Root Coordinator" or "Root Router".
+/// Its main responsibility is to coordinate the main application flows (e.g., Splash, Auth, Main)
+/// and initialize global services.
+class AppBuilder extends DbNoteBuilder
+    with DbNavigator
+    implements DbNoteRoutable, AppBuildable, SplashStartListener {
+  late final AppInteractor interactor;
 
   @override
   Widget build() {
+    // 1. Create the Interactor, which contains the application's root-level business logic.
+    //    We pass `this` builder to act as the router.
+    interactor = AppInteractor(router: this);
+    // Call sync function
+    interactor.bootstrap();
+
+    // 2. Build the initial UI, which is the Splash screen.
+    //    The Interactor will be notified when the splash screen completes.
+    // AppBuilder will listen for the event when Splash completes.
     final SplashStartBuildable splashStartBuilder = SplashStartBuilder();
     rootPage = splashStartBuilder.buildWithListener(this);
     return rootPage;
   }
 
   @override
-  void splashPageComplete(String? message) {
-    // Lay thong tin current user, kiem tra da login chua
-
-    if (AppConfig().currentUser?.isLogin() ?? false) {
-      dLog("AppCoordinator -- DA LOGIN ROI");
-      // dLog(AppConfig().currentUser?.toString());
-    } else {
-      dLog("AppCoordinator -- CHUAAAA LOGIN");
-    }
-
-    // Sau khi login xong thi chay thang nay
-    // final MainTabBuildable mainTabBuilder = MainTabBuilder();
-    // final widget = mainTabBuilder.build();
-
-    // final TodoListBuildable todoListBuildable = TodoListBuilder();
-    // final widget = todoListBuildable.build();
-
-    // final GoogleMapBuildable googleMapBuildable = GoogleMapBuilder();
-    // final widget = googleMapBuildable.build();
-
-    // final FlexHomeBuildable flexHomeBuildable = FlexHomeBuilder();
-    // final widget = flexHomeBuildable.build();
-
-    // final OpenWebViewBuildable openWebViewBuildable = OpenWebViewBuilder();
-    // final widget = openWebViewBuildable.build();
-
-    // final ProductListBuilder productListBuilder = ProductListBuilder();
-    // final widget = productListBuilder.build();
-
-    final MainTabbarBuilder mainTabBuilder = MainTabbarBuilder();
-    final widget = mainTabBuilder.build();
-
-    pushSameRootPage(widget);
-
+  void splashPageComplete(String? message) async {
+    // 3. Delegate the completion event to the Interactor to handle the bootstrap logic.
+    // await interactor.bootstrap();
   }
 
   @override
-  void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}){
+  void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
+    // This method is called by the Interactor to handle routing, including deep links.
+    // It translates a logical `DbNoteRoute` into a concrete navigation action.
+    dLog("AppBuilder: Handling navigation for route: ${toRoute.runtimeType}");
 
+    // switch (toRoute) {
+    //   case UserDetailRoute():
+    //     final builder = UserDetailBuilder(userId: toRoute.userId);
+    //     push(builder.build());
+    //     break;
+    //   // Add cases for other routes here
+    // }
   }
-
-
-
-
 }
