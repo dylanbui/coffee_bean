@@ -4,13 +4,13 @@ import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/commons/commons_constants.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/bloc_interactor.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/constants.dart';
-import 'package:coffee_bean/scenes/user_detail/interactor/user_detail_event_state.dart';
-import 'package:coffee_bean/scenes/user_detail/interactor/user_detail_presenter.dart';
+import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_event_state.dart';
+import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_presenter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class UserDetailBloc extends BlocPresenterInteractor<DbNoteRoutable, UserDetailPresenter, BaseBlocEvent, BaseBlocState> {
+class UserDetailInteractor extends BlocPresenterInteractor<DbNoteRoutable, UserDetailPresenter, BaseBlocEvent, BaseBlocState> {
   // The constructor now receives the Presenter.
-  UserDetailBloc({required UserDetailPresenter presenter}) : super(UserDetailInitial(), presenter: presenter) {
+  UserDetailInteractor({required UserDetailPresenter presenter}) : super(UserDetailInitial(), presenter: presenter) {
     on<UserDetailFetchEvent>(_onFetchData);
   }
 

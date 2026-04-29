@@ -1,9 +1,9 @@
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/utils/locator.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
-import 'package:coffee_bean/scenes/user_detail/interactor/user_detail_bloc.dart';
-import 'package:coffee_bean/scenes/user_detail/presenter/user_detail_presenter.dart';
-import 'package:coffee_bean/scenes/user_detail/user_detail_page.dart';
+import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_interactor.dart';
+import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_presenter.dart';
+import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -24,7 +24,7 @@ class UserDetailBuilder extends DbNoteBuilder {
     // 3. Create the Page, passing the required user ID.
     final page = UserDetailPage(userId: userId);
 
-    // 4. Create the BLoC (Interactor), injecting the presenter, and provide it to the page.
-    return BlocProvider<UserDetailBloc>(create: (context) => UserDetailBloc(presenter: presenter), child: page);
+    // 4. Create the Interactor, injecting the presenter, and provide it to the page.
+    return BlocProvider<UserDetailInteractor>(create: (context) => UserDetailInteractor(presenter: presenter), child: page);
   }
 }

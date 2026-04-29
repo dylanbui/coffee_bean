@@ -8,31 +8,25 @@
  */
 
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/scenes/product_list/interactor/product_list_interactor.dart';
-import 'package:coffee_bean/scenes/product_list/interactor/product_list_page.dart';
-import 'package:coffee_bean/scenes/product_list/product_list_router.dart';
+import 'package:coffee_bean/scenes/rib_samples/product_list/interactor/product_list_interactor.dart';
+import 'package:coffee_bean/scenes/rib_samples/product_list/interactor/product_list_page.dart';
+import 'package:coffee_bean/scenes/rib_samples/product_list/product_list_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 // Listener
-
 
 // Buildable
 
 abstract class ProductListBuildable implements DbNoteBuildable {
-
   @override
   Widget build({bool showAppBarOnRootPage = true});
   // DbNoteViewControllable buildNote({bool showAppBarOnRootPage = true});
-
 }
-
 
 // Builder
 
 class ProductListBuilder extends DbNoteBuilder implements ProductListBuildable {
-
   // PostBuilder({bool showAppBarOnRootPage = true}) : super() {
   //   var postListPage = PostListPage(router: this,);
   //   postListPage.showAppBar = showAppBarOnRootPage;
@@ -73,7 +67,7 @@ class ProductListBuilder extends DbNoteBuilder implements ProductListBuildable {
     final productListInteractor = ProductListInteractor(router);
     // productListInteractor.router = router;
     final page = ProductListPage();
-    rootPage = BlocProvider(create: (_) =>  productListInteractor, child: page,);
+    rootPage = BlocProvider(create: (_) => productListInteractor, child: page);
     return rootPage;
   }
 
@@ -85,8 +79,4 @@ class ProductListBuilder extends DbNoteBuilder implements ProductListBuildable {
   //   viewControllable = BlocProvider(create: (_) =>  postListInteractor, child: page,) as DbNoteViewControllable;
   //   return viewControllable;
   // }
-
-
-
-
 }

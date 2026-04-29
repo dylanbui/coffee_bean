@@ -9,8 +9,8 @@
 
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/scenes/product_cart/product_cart_builder.dart';
-import 'package:coffee_bean/scenes/product_detail/product_detail_builder.dart';
+import 'package:coffee_bean/scenes/rib_samples/product_cart/product_cart_builder.dart';
+import 'package:coffee_bean/scenes/rib_samples/product_detail/product_detail_builder.dart';
 import 'package:flutter/material.dart';
 
 
@@ -23,13 +23,13 @@ class ProductDetailRoute implements DbNoteRoute {
 
 class ProductCartRoute implements DbNoteRoute {}
 
-// Router
-
+// Routable: This is different define
 abstract class ProductListRoutable with DbNavigator implements DbNoteRoutable {
   void gotoPostDetail(ProductDetailRoute productDetail, {BuildContext? nextContext});
   void gotoProductCart();
 }
 
+// Router
 class ProductListRouter extends DbNoteRouter implements ProductListRoutable {
 
   @override

@@ -1,15 +1,14 @@
-import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/scenes/product_cart/interactor/product_cart_interactor.dart';
-import 'package:coffee_bean/scenes/product_detail/product_detail_builder.dart';
-import 'package:coffee_bean/scenes/product_list/product_list_router.dart';
+import 'package:coffee_bean/scenes/rib_samples/product_detail/product_detail_builder.dart';
 import 'package:flutter/cupertino.dart';
 
-class ProductCartRouter extends DbNoteRouter implements ProductCartRoutable {
-  @override
-  void gotoProductDetail(ProductDetailRoute route) {
-    navigate(route);
-  }
+
+class ProductDetailRoute implements DbNoteRoute {
+  int productId;
+  ProductDetailRoute(this.productId);
+}
+
+class ProductCartRouter extends DbNoteRouter {
 
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
@@ -19,4 +18,5 @@ class ProductCartRouter extends DbNoteRouter implements ProductCartRoutable {
       push(widget);
     }
   }
+
 }

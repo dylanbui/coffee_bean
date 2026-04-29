@@ -5,9 +5,9 @@ import 'package:coffee_bean/commons/utils/logger.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/live_service/model/cart_item.dart';
 import 'package:coffee_bean/data/model/product.dart';
-import 'package:coffee_bean/scenes/product_list/interactor/product_list_event_state.dart';
-import 'package:coffee_bean/scenes/product_list/interactor/product_list_interactor.dart';
-import 'package:coffee_bean/scenes/product_list/product_list_router.dart';
+import 'package:coffee_bean/scenes/rib_samples/product_list/interactor/product_list_event_state.dart';
+import 'package:coffee_bean/scenes/rib_samples/product_list/interactor/product_list_interactor.dart';
+import 'package:coffee_bean/scenes/rib_samples/product_list/product_list_router.dart';
 import 'package:coffee_bean/utils/app_style.dart';
 import 'package:coffee_bean/widget/cached_image_widget.dart';
 import 'package:coffee_bean/widget/empty_view.dart';
@@ -16,6 +16,7 @@ import 'package:coffee_bean/widget/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+//ignore: must_be_immutable
 class ProductListPage extends StatefulWidget with ViewControllable {
   const ProductListPage({super.key});
 

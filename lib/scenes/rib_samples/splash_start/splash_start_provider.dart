@@ -5,9 +5,9 @@
 
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/commons/state_management/lib_provider/base_provider.dart';
-import 'package:coffee_bean/scenes/splash_start/splash_start_builder.dart';
+import 'package:coffee_bean/scenes/rib_samples/splash_start/splash_start_builder.dart';
 
-
+//ignore: must_be_immutable
 class SplashStartProvider extends BaseProvider<DbNoteRoutable> {
 
     SplashStartProvider(super.router);

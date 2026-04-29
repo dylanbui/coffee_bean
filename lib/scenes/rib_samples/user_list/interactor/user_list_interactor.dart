@@ -5,7 +5,7 @@ import 'package:coffee_bean/commons/commons_constants.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/bloc_interactor.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
-import 'package:coffee_bean/scenes/user_list/interactor/user_list_event_state.dart';
+import 'package:coffee_bean/scenes/rib_samples/user_list/interactor/user_list_event_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserListInteractor extends BlocInteractor<DbNoteRoutable, BaseBlocEvent, BaseBlocState> {

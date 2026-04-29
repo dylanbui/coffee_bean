@@ -10,8 +10,8 @@
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/scenes/splash_start/splash_start_page.dart';
-import 'package:coffee_bean/scenes/splash_start/splash_start_provider.dart';
+import 'package:coffee_bean/scenes/rib_samples/splash_start/splash_start_page.dart';
+import 'package:coffee_bean/scenes/rib_samples/splash_start/splash_start_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

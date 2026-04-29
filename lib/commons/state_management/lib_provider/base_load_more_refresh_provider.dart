@@ -51,7 +51,7 @@ abstract class BaseLoadMoreRefreshProvider<T> extends BaseProvider {
   /// first load
   void firstLoad() {
     if (_isFirst()) {
-      showLoading();
+      // showLoading();
       loadData(getFirstPage());
     }
   }
@@ -108,8 +108,7 @@ abstract class BaseLoadMoreRefreshProvider<T> extends BaseProvider {
     isLoadMore = false;
 
     _checkEmptyList();
-
-    showErrorWithString(strErr);
+    //showErrorWithString(strErr);
 
     notifyListeners();
   }

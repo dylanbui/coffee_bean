@@ -1,8 +1,8 @@
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/commons/custom_app_bar.dart';
 import 'package:coffee_bean/commons/utils/logger.dart';
-import 'package:coffee_bean/scenes/product_detail/interactor/product_detail_event_state.dart';
-import 'package:coffee_bean/scenes/product_detail/interactor/product_detail_interactor.dart';
+import 'package:coffee_bean/scenes/rib_samples/product_detail/interactor/product_detail_event_state.dart';
+import 'package:coffee_bean/scenes/rib_samples/product_detail/interactor/product_detail_interactor.dart';
 import 'package:coffee_bean/utils/app_style.dart';
 import 'package:coffee_bean/widget/cached_image_widget.dart';
 import 'package:coffee_bean/widget/error_view.dart';

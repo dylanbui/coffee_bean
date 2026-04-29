@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:coffee_bean/commons/state_management/lib_provider/base_provider_stateless_widget.dart';
-import 'package:coffee_bean/scenes/splash_start/splash_start_builder.dart';
-import 'package:coffee_bean/scenes/splash_start/splash_start_provider.dart';
+import 'package:coffee_bean/scenes/rib_samples/splash_start/splash_start_builder.dart';
+import 'package:coffee_bean/scenes/rib_samples/splash_start/splash_start_provider.dart';
 import 'package:coffee_bean/utils/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

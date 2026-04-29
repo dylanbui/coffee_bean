@@ -1,22 +1,17 @@
 import 'dart:async';
-import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
-import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/commons/utils/locator.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/model/product.dart';
-import 'package:coffee_bean/scenes/product_cart/interactor/product_cart_event_state.dart';
-import 'package:coffee_bean/scenes/product_list/product_list_router.dart';
+import 'package:coffee_bean/scenes/rib_samples/product_cart/interactor/product_cart_event_state.dart';
+import 'package:coffee_bean/scenes/rib_samples/product_cart/product_cart_router.dart';
 
-abstract class ProductCartRoutable with DbNavigator implements DbNoteRoutable {
-  void gotoProductDetail(ProductDetailRoute route);
-}
 
-class ProductCartInteractor extends CubitInteractor<ProductCartRoutable, ProductCartState> {
+class ProductCartInteractor extends CubitInteractor<ProductCartRouter, ProductCartState> {
   final CartService _cartService = locator<CartService>();
   StreamSubscription? _cartSubscription;
 
-  ProductCartInteractor(ProductCartRoutable router) : super(ProductCartInitial(), router: router);
+  ProductCartInteractor(ProductCartRouter router) : super(ProductCartInitial(), router: router);
 
   @override
   void didBecomeActive() {
@@ -39,7 +34,7 @@ class ProductCartInteractor extends CubitInteractor<ProductCartRoutable, Product
   }
 
   void gotoDetail(Product product) {
-      router?.gotoProductDetail(ProductDetailRoute(product.id));
+      router?.navigate(ProductDetailRoute(product.id));
   }
 
   @override

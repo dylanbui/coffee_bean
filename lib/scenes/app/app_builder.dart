@@ -2,10 +2,11 @@ import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/commons/utils/logger.dart';
+import 'package:coffee_bean/scenes/app/app_routes.dart';
 import 'package:coffee_bean/scenes/app/interactor/app_interactor.dart';
-import 'package:coffee_bean/scenes/splash_start/splash_start_builder.dart';
+import 'package:coffee_bean/scenes/rib_samples/splash_start/splash_start_builder.dart';
+import 'package:coffee_bean/scenes/rib_samples/user_detail/user_detail_builder.dart';
 import 'package:flutter/material.dart';
-
 
 // Buildable
 abstract class AppBuildable implements DbNoteBuildable {}
@@ -13,9 +14,7 @@ abstract class AppBuildable implements DbNoteBuildable {}
 /// AppBuilder acts as a "Root Coordinator" or "Root Router".
 /// Its main responsibility is to coordinate the main application flows (e.g., Splash, Auth, Main)
 /// and initialize global services.
-class AppBuilder extends DbNoteBuilder
-    with DbNavigator
-    implements DbNoteRoutable, AppBuildable, SplashStartListener {
+class AppBuilder extends DbNoteBuilder with DbNavigator implements AppBuildable, DbNoteRoutable, SplashStartListener {
   late final AppInteractor interactor;
 
   @override
@@ -46,12 +45,16 @@ class AppBuilder extends DbNoteBuilder
     // It translates a logical `DbNoteRoute` into a concrete navigation action.
     dLog("AppBuilder: Handling navigation for route: ${toRoute.runtimeType}");
 
-    // switch (toRoute) {
-    //   case UserDetailRoute():
-    //     final builder = UserDetailBuilder(userId: toRoute.userId);
-    //     push(builder.build());
-    //     break;
-    //   // Add cases for other routes here
-    // }
+    switch (toRoute) {
+      case SplashRoute():
+        final builder = SplashStartBuilder();
+        push(builder.buildWithListener(this));
+        break;
+      case UserDetailRoute():
+        final builder = UserDetailBuilder(userId: toRoute.userId);
+        push(builder.build());
+        break;
+      // Add cases for other routes here
+    }
   }
 }

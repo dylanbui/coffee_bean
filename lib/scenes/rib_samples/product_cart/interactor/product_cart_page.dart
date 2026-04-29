@@ -1,8 +1,8 @@
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/commons/custom_app_bar.dart';
 import 'package:coffee_bean/data/local/live_service/model/cart_item.dart';
-import 'package:coffee_bean/scenes/product_cart/interactor/product_cart_event_state.dart';
-import 'package:coffee_bean/scenes/product_cart/interactor/product_cart_interactor.dart';
+import 'package:coffee_bean/scenes/rib_samples/product_cart/interactor/product_cart_event_state.dart';
+import 'package:coffee_bean/scenes/rib_samples/product_cart/interactor/product_cart_interactor.dart';
 import 'package:coffee_bean/utils/app_style.dart';
 import 'package:coffee_bean/widget/cached_image_widget.dart';
 import 'package:coffee_bean/widget/empty_view.dart';

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/scenes/app/app_routes.dart';
 
 // For a real implementation, you would use a package like uni_links:
 // import 'package:uni_links/uni_links.dart';
@@ -48,7 +49,7 @@ class DeepLinkService {
   }
 
   void _handleUri(Uri uri) {
-    // Example URI: coffeebean://users/123
+    // Example URI: coffee_bean://users/123
     if (uri.host == 'users' && uri.pathSegments.isNotEmpty) {
       final userId = int.tryParse(uri.pathSegments.first);
       if (userId != null) {

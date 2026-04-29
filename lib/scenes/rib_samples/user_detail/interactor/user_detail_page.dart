@@ -2,12 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/base_bloc_statefull_widget.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean/data/model/user.dart';
-import 'package:coffee_bean/scenes/user_detail/interactor/user_detail_bloc.dart';
-import 'package:coffee_bean/scenes/user_detail/interactor/user_detail_event_state.dart';
+import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_interactor.dart';
+import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_event_state.dart';
 import 'package:coffee_bean/widget/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+//ignore: must_be_immutable
 class UserDetailPage extends BaseBlocStateFulWidget {
   final int userId;
   UserDetailPage({super.key, required this.userId});
@@ -16,7 +17,7 @@ class UserDetailPage extends BaseBlocStateFulWidget {
   State<UserDetailPage> createState() => _UserDetailPageState();
 }
 
-class _UserDetailPageState extends BaseBlocViewState<UserDetailPage, UserDetailBloc, dynamic> {
+class _UserDetailPageState extends BaseBlocViewState<UserDetailPage, UserDetailInteractor, dynamic> {
   @override
   String getAppBar(BuildContext context) => "User Detail";
 
@@ -29,7 +30,7 @@ class _UserDetailPageState extends BaseBlocViewState<UserDetailPage, UserDetailB
 
   @override
   Widget getBody(BuildContext context) {
-    return BlocBuilder<UserDetailBloc, BaseBlocState>(
+    return BlocBuilder<UserDetailInteractor, BaseBlocState>(
       builder: (context, state) {
         if (state is UserDetailInProgress) {
           return const Center(child: LoadingView(width: 100, height: 100));
