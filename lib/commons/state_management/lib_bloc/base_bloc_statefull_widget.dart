@@ -1,4 +1,5 @@
 
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/commons/custom_app_bar.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/view_utils_mixin.dart';
@@ -38,7 +39,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// }
 /// ```
 //ignore: must_be_immutable
-abstract class BaseBlocStateFulWidget extends StatefulWidget {
+abstract class BaseBlocStateFulWidget extends StatefulWidget with ViewControllable {
 
   /// The Interactor or Navigation object used to handle business logic.
   // dynamic nav;

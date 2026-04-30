@@ -1,6 +1,7 @@
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/commons/utils/logger.dart';
 import 'package:coffee_bean/scenes/app/app_routes.dart';
 import 'package:coffee_bean/scenes/app/interactor/app_interactor.dart';
@@ -19,7 +20,7 @@ class AppBuilder extends DbNoteBuilder with DbNavigator implements AppBuildable,
   late final AppInteractor interactor;
 
   @override
-  Widget build() {
+  ViewController build() {
     // 1. Create the Interactor, which contains the application's root-level business logic.
     //    We pass `this` builder to act as the router.
     interactor = AppInteractor(router: this);

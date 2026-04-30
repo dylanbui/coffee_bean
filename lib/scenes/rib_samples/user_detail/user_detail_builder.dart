@@ -1,10 +1,10 @@
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/commons/utils/locator.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_interactor.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_presenter.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_page.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Builder for the UserDetail module.
@@ -14,7 +14,7 @@ class UserDetailBuilder extends DbNoteBuilder {
   UserDetailBuilder({required this.userId});
 
   @override
-  Widget build() {
+  ViewController build() {
     // 1. Get dependencies from the service locator.
     final userRepository = locator.get<UserRepository>();
 

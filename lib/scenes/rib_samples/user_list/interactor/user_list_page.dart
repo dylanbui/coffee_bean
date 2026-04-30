@@ -1,3 +1,4 @@
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/base_bloc_statefull_widget.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/constants.dart';

@@ -19,6 +19,11 @@ class ProblemReportInteractor extends CubitInteractor<DbNoteRoutable, ProblemRep
     emit(ProblemReportUpdate(text: state.text, images: updatedImages));
   }
 
+  void onImagesPicked(List<String> paths) {
+    final updatedImages = List<String>.from(state.images)..addAll(paths);
+    emit(ProblemReportUpdate(text: state.text, images: updatedImages));
+  }
+
   void removeImage(int index) {
     final updatedImages = List<String>.from(state.images)..removeAt(index);
     emit(ProblemReportUpdate(text: state.text, images: updatedImages));

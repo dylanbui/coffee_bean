@@ -4,7 +4,7 @@ import 'package:coffee_bean/commons/state_management/lib_bloc/base_cubit_statefu
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // This import might be wrong if it's flutter_bloc.dart
 import 'package:image_picker/image_picker.dart';
-import 'package:coffee_bean/widget/image_picker_list_view.dart';
+import 'package:coffee_bean/widget/image_wechat_picker_list_view.dart';
 import 'problem_report_interactor.dart';
 import 'problem_report_event_state.dart';
 
@@ -52,10 +52,10 @@ class _ProblemReportPageState extends BaseCubitState<ProblemReportPage, ProblemR
             children: [
               _buildTextArea(state),
               const SizedBox(height: 20),
-              ImagePickerListView(
+              ImageWechatPickerListView(
                 images: state.images,
                 maxImages: 5,
-                onImagePicked: interactor.onImagePicked,
+                onImagesPicked: interactor.onImagesPicked,
                 onRemoveImage: interactor.removeImage,
               ),
               const SizedBox(height: 40),

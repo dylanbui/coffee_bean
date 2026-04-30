@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:flutter/material.dart';
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 
 
 /// The base dependency protocol.
@@ -21,16 +21,16 @@ abstract interface class DbNoteEmptyDependency extends DbNoteDependency {}
 
 /// The base builder protocol that all builders should conform to.
 abstract interface class DbNoteBuildable {
-  Widget build();
+  ViewController build();
 }
 
 
 /// Utility that instantiates a RIB and sets up its internal wirings.
-abstract class DbNoteBuilder<T extends DbNoteDependency> extends DbNoteBuildable {
+abstract class DbNoteBuilder<T extends DbNoteDependency> implements DbNoteBuildable {
   /// The dependency used for this builder to build the RIB.
   final T? dependency;
 
-  late Widget rootPage;
+  late ViewController rootPage;
 
   /// Initializer.
   ///

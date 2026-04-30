@@ -1,5 +1,6 @@
 
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/commons/custom_app_bar.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/view_utils_mixin.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // https://github.com/FlorinMihalache/flutter_progress_hud
 
 //ignore: must_be_immutable
-abstract class BaseCubitStateFulWidget extends StatefulWidget {
+abstract class BaseCubitStateFulWidget extends StatefulWidget with ViewControllable {
 
   DbNoteRouter? router;
   bool showAppBar = true;
