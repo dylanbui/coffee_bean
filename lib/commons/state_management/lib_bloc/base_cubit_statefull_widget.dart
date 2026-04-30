@@ -30,7 +30,7 @@ abstract class BaseCubitStateFulWidget extends StatefulWidget {
 ///   @override
 ///   void initState() {
 ///     super.initState();
-///     cubitProvider.fetchInitialData();
+///     interactor.fetchInitialData();
 ///   }
 ///
 ///   @override
@@ -56,13 +56,7 @@ abstract class BaseCubitState<B extends BaseCubitStateFulWidget, C extends Cubit
   late BuildContext buildContext;
 
   /// The Cubit instance for this page. Used to call methods (not for listening to state).
-  late C cubitProvider;
-
-  /// Quick access to the Interactor or Router via Provider.
-  /// Usage: `interactor.doSomething()`
-  I get interactor {
-    return context.read<I>();
-  }  
+  late C interactor;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +64,7 @@ abstract class BaseCubitState<B extends BaseCubitStateFulWidget, C extends Cubit
     
     // Use context.read() instead of Provider.of() to prevent the entire Scaffold 
     // from rebuilding every time the Cubit emits a new state.
-    cubitProvider = context.read<C>();
+    interactor = context.read<C>();
 
     // Muon control thang nao thi phai dung context thang do
     var layout = getLayout(context);

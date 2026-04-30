@@ -21,6 +21,7 @@ import 'package:flutter/services.dart';
 import 'package:coffee_bean/commons/utils/locator.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/live_service/likes_service.dart';
+import 'package:coffee_bean/scenes/app/interactor/deep_link_service.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 Chuck chuck = Chuck(
@@ -68,6 +69,8 @@ Future<Widget> initializeApp() async {
 Future<void> setupLocator() async {
   // Register Broadcast Service same EventBus
   locator.registerLazySingleton<DbEventBus>(() => DbEventBus());
+  // Register DeepLink Service
+  locator.registerLazySingleton<DeepLinkService>(() => DeepLinkService());
   // Register Live Services
   locator.registerLazySingleton<CartService>(() => CartService());
   locator.registerLazySingleton<LikesService>(() => LikesService());

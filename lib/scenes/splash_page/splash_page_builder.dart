@@ -27,11 +27,11 @@ class SplashPageBuilder extends DbNoteBuilder with DbNavigator implements DbNote
   @override
   Widget build() {
     // The Interactor (Cubit) is created here. It receives a reference to the router (which is 'this').
-    final interactor = SplashPageCubit(router: this);
+    final interactor = SplashPageInteractor(router: this);
     final page = SplashPagePage();
 
     // BlocProvider "injects" the Cubit into the widget tree, making it accessible to the Page.
-    rootPage = BlocProvider<SplashPageCubit>.value(value: interactor, child: page);
+    rootPage = BlocProvider<SplashPageInteractor>.value(value: interactor, child: page);
     return rootPage;
   }
 

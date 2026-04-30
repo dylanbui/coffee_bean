@@ -12,9 +12,9 @@ abstract class SplashPageState extends BaseBlocState {}
 class SplashPageInitial extends SplashPageState {}
 
 // --- INTERACTOR (CUBIT) ---
-class SplashPageCubit extends CubitInteractor<DbNoteRoutable, SplashPageState> {
+class SplashPageInteractor extends CubitInteractor<DbNoteRoutable, SplashPageState> {
   // Constructor receives the router (which is the builder) and sets the initial state.
-  SplashPageCubit({required DbNoteRoutable router}) : super(SplashPageInitial(), router: router);
+  SplashPageInteractor({required DbNoteRoutable router}) : super(SplashPageInitial(), router: router);
 
   /// Simulates fetching data and then notifies of completion.
   Future<void> fetchSomething() async {

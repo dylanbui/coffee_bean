@@ -1,4 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<!--    <uses-permission android:name="android.permission.CAMERA" />-->
+<!--    <uses-feature android:name="android.hardware.camera" android:required="false" />-->
+
+    <!-- Quyền cho Android 12 trở xuống -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+
+    <!-- Quyền cho Android 13 trở lên -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+
+
     <application
         android:label="coffee_bean"
         android:name="${applicationName}"

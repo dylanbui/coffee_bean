@@ -77,8 +77,10 @@ dependencies:
   hive: ^2.2.3
   url_launcher: ^6.3.2
   permission_handler: ^12.0.1
+  device_info_plus: ^11.1.1
   rflutter_alert: ^2.0.7
   cached_network_image: ^3.4.1
+  image_picker: ^1.1.2
 
   intl: ^0.20.2
   # parses Adobe After Effects animations exported as json

@@ -4,6 +4,7 @@ import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/commons/utils/logger.dart';
 import 'package:coffee_bean/scenes/app/app_routes.dart';
 import 'package:coffee_bean/scenes/app/interactor/app_interactor.dart';
+import 'package:coffee_bean/scenes/problem_report/problem_report_builder.dart';
 import 'package:coffee_bean/scenes/rib_samples/splash_start/splash_start_builder.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/user_detail_builder.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,8 @@ class AppBuilder extends DbNoteBuilder with DbNavigator implements AppBuildable,
   void splashPageComplete(String? message) async {
     // 3. Delegate the completion event to the Interactor to handle the bootstrap logic.
     // await interactor.bootstrap();
+    ProblemReportBuilder problemReportBuilder = ProblemReportBuilder();
+    pushSameRootPage(problemReportBuilder.build());
   }
 
   @override

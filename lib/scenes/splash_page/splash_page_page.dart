@@ -15,13 +15,13 @@ class SplashPagePage extends BaseCubitStateFulWidget {
   State<SplashPagePage> createState() => _SplashPagePageState();
 }
 
-class _SplashPagePageState extends BaseCubitState<SplashPagePage, SplashPageCubit, dynamic> {
+class _SplashPagePageState extends BaseCubitState<SplashPagePage, SplashPageInteractor, dynamic> {
   @override
   void initState() {
     super.initState();
-    // When the page is initialized, trigger the data fetching logic in the Cubit.
-    // We use the `cubitProvider` that is readily available from BaseCubitState.
-    cubitProvider.fetchSomething();
+    // When the page is initialized, trigger the data fetching logic in the Interactor.
+    // We use the `interactor` that is readily available from BaseCubitState.
+    interactor.fetchSomething();
   }
 
   @override
