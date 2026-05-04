@@ -6,8 +6,11 @@ import 'package:coffee_bean/commons/utils/logger.dart';
 import 'package:coffee_bean/scenes/app/app_routes.dart';
 import 'package:coffee_bean/scenes/app/interactor/app_interactor.dart';
 import 'package:coffee_bean/scenes/problem_report/problem_report_builder.dart';
+import 'package:coffee_bean/scenes/rib_samples/flash_demo/flash_demo_builder.dart';
 import 'package:coffee_bean/scenes/rib_samples/splash_start/splash_start_builder.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/user_detail_builder.dart';
+import 'package:coffee_bean/scenes/user_pages/user_login/user_login_builder.dart';
+import 'package:coffee_bean/scenes/user_pages/user_register/user_register_builder.dart';
 import 'package:flutter/material.dart';
 
 // Buildable
@@ -39,8 +42,19 @@ class AppBuilder extends DbNoteBuilder with DbNavigator implements AppBuildable,
   void splashPageComplete(String? message) async {
     // 3. Delegate the completion event to the Interactor to handle the bootstrap logic.
     // await interactor.bootstrap();
-    ProblemReportBuilder problemReportBuilder = ProblemReportBuilder();
-    pushSameRootPage(problemReportBuilder.build());
+    // ProblemReportBuilder problemReportBuilder = ProblemReportBuilder();
+    // pushSameRootPage(problemReportBuilder.build());
+
+    // FlashDemoBuilder flashDemoBuilder = FlashDemoBuilder();
+    // pushSameRootPage(flashDemoBuilder.build());
+
+    // UserLoginBuilder userLoginBuilder = UserLoginBuilder();
+    // pushSameRootPage(userLoginBuilder.build());
+
+    UserRegisterBuilder userRegisterBuilder = UserRegisterBuilder();
+    pushSameRootPage(userRegisterBuilder.build());
+
+
   }
 
   @override

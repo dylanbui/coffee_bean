@@ -53,7 +53,6 @@ abstract class BaseCubitState<B extends BaseCubitStateFulWidget, C extends Cubit
   Widget getBody(BuildContext context) => const Text("implement getBody() function");
   List<Widget> getAppBarAction() => [];
 
-
   late BuildContext buildContext;
 
   /// The Cubit instance for this page. Used to call methods (not for listening to state).

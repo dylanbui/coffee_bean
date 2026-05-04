@@ -37,6 +37,8 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
+  # iOS : CupertinoIcons.shopping_cart
+  # Android : Icons.shopping_cart
   cupertino_icons: ^1.0.8
 
   # hard fix: package ảnh hưởng trực tiếp tới compile / generated code / architecture
@@ -68,6 +70,8 @@ dependencies:
   # Show Dialog library
   flutter_smart_dialog: ^5.1.0
   easy_debounce: ^2.0.3
+  # UI Notifications / Flash messages
+  flash: ^3.1.1
 
   # soft
   # querying information about an application package.
@@ -84,14 +88,21 @@ dependencies:
   wechat_assets_picker: ^9.4.0
   wechat_camera_picker: ^4.3.1
   mobile_scanner: ^6.0.0
-
+  # Simple zoomable image/content widget
+  photo_view: ^0.15.0
+  # Localization and Internationalization
   intl: ^0.20.2
   # parses Adobe After Effects animations exported as json
   lottie: ^3.3.3
   # finding commonly used locations on the filesystem
   path_provider: ^2.1.5
-    # remove white screen when app start
+  # remove white screen when app start
   flutter_native_splash: ^2.4.7
+
+  table_calendar: ^3.2.0
+  easy_date_timeline: ^2.0.9
+
+
 
 dev_dependencies:
   flutter_test:

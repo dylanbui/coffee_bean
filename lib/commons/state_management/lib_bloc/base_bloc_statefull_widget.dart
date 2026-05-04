@@ -65,7 +65,6 @@ abstract class BaseBlocViewState<B extends BaseBlocStateFulWidget, BLOC extends 
   Widget getBody(BuildContext context) => const Text("implement getBody() function");
   List<Widget> getAppBarAction() => [];
 
-
   late BuildContext buildContext;
 
   /// The Bloc instance for this page. Used to add events (not for listening to state).

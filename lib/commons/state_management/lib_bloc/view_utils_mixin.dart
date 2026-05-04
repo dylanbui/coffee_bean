@@ -1,3 +1,5 @@
+import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
+import 'package:coffee_bean/commons/utils/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
@@ -18,7 +20,7 @@ mixin ViewUtilsMixin {
     );
   }
 
-  void showErrorSnackbar(BuildContext context, String message) {
+  void showErrorSnackBar(BuildContext context, String message) {
     if (!context.mounted) return;
     var snackBar = SnackBar(
       content: Text(
@@ -30,6 +32,19 @@ mixin ViewUtilsMixin {
     );
 
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  /// Hiển thị loading sử dụng DbLoading (Flash)
+  /// Nếu không truyền context, sẽ sử dụng navigator context mặc định
+  void showLoading({String? text}) {
+    final effectiveContext = DbNavigator.navigatorState.currentContext;
+    if (effectiveContext != null) {
+      DbLoading.show(effectiveContext, message: text);
+    }
+  }
+
+  void hideLoading() {
+    DbLoading.dismiss();
   }
 
   void showProgressLoading({String? text = "Đang xử lý ..."}) {
