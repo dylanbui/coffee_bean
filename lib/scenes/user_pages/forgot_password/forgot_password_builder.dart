@@ -12,6 +12,7 @@ import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/user_pages/forgot_password/interactor/forgot_password_interactor.dart';
 import 'package:coffee_bean/scenes/user_pages/forgot_password/interactor/forgot_password_page.dart';
+import 'package:coffee_bean/scenes/user_pages/set_password/set_password_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -48,7 +49,8 @@ class ForgotPasswordBuilder extends DbNoteBuilder with DbNavigator implements Db
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
     if (toRoute is ForgotPasswordCompleteRoute) {
       // When the completion route is received, notify the parent module's listener.
-
+      SetPasswordBuilder setPasswordBuilder = SetPasswordBuilder();
+      push(setPasswordBuilder.build());
     }
   }
 }

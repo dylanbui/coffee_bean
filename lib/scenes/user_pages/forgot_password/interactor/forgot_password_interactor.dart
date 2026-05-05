@@ -7,6 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/scenes/user_pages/forgot_password/forgot_password_builder.dart';
 import 'package:coffee_bean/scenes/user_pages/forgot_password/interactor/forgot_password_event_state.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/cubit_interactor.dart';
@@ -32,8 +33,11 @@ class ForgotPasswordInteractor extends CubitInteractor<DbNoteRoutable, ForgotPas
     // repository.sendSmsCode(phoneNumber);
   }
 
-  void forgotPassword(String phoneNumber, String smsCode) {
+  Future<void> forgotPassword(String phoneNumber, String smsCode) async {
     emit(ForgotPasswordInProgress());
+    await Future.delayed(const Duration(seconds: 3));
+    emit(ForgotPasswordSuccess());
+    router?.navigate(ForgotPasswordCompleteRoute());
     // repository.verifyAndResetPassword(phoneNumber, smsCode);
   }
 }

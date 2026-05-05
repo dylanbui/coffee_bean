@@ -10,6 +10,7 @@ import 'package:coffee_bean/scenes/rib_samples/flash_demo/flash_demo_builder.dar
 import 'package:coffee_bean/scenes/rib_samples/splash_start/splash_start_builder.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/user_detail_builder.dart';
 import 'package:coffee_bean/scenes/user_pages/forgot_password/forgot_password_builder.dart';
+import 'package:coffee_bean/scenes/user_pages/user_gift_pack/user_gift_pack_builder.dart';
 import 'package:coffee_bean/scenes/user_pages/user_login/user_login_builder.dart';
 import 'package:coffee_bean/scenes/user_pages/user_register/user_register_builder.dart';
 import 'package:flutter/material.dart';
@@ -49,12 +50,14 @@ class AppBuilder extends DbNoteBuilder with DbNavigator implements AppBuildable,
     // FlashDemoBuilder flashDemoBuilder = FlashDemoBuilder();
     // pushSameRootPage(flashDemoBuilder.build());
 
-    ForgotPasswordBuilder forgotPasswordBuilder = ForgotPasswordBuilder();
-    pushSameRootPage(forgotPasswordBuilder.build());
+    // ForgotPasswordBuilder forgotPasswordBuilder = ForgotPasswordBuilder();
+    // pushSameRootPage(forgotPasswordBuilder.build());
 
-    // UserLoginBuilder userLoginBuilder = UserLoginBuilder();
-    // pushSameRootPage(userLoginBuilder.build());
+    UserLoginBuilder userLoginBuilder = UserLoginBuilder();
+    pushSameRootPage(userLoginBuilder.build());
 
+    // UserGiftPackBuilder userGiftPackBuilder = UserGiftPackBuilder();
+    // pushSameRootPage(userGiftPackBuilder.build());
     // UserRegisterBuilder userRegisterBuilder = UserRegisterBuilder();
     // pushSameRootPage(userRegisterBuilder.build());
 

@@ -57,10 +57,7 @@ class UserLoginBuilder extends DbNoteBuilder with DbNavigator implements DbNoteR
 
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
-    if (toRoute is ForgotPasswordRoute) {
-      // When the completion route is received, notify the parent module's listener.
-      // listener.onUserLoginCompleted();
-    } else if (toRoute is LoginSuccessRoute) {
+    if (toRoute is LoginSuccessRoute) {
       // Implement navigation or listener callback for successful login
 
     } else if (toRoute is UserRegisterRoute) {

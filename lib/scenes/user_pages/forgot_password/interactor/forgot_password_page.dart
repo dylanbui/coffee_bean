@@ -50,79 +50,97 @@ class _ForgotPasswordPageState extends BaseCubitState<ForgotPasswordPage, Forgot
 
   @override
   Widget getBody(BuildContext context) {
+    return BlocConsumer<ForgotPasswordInteractor, ForgotPasswordState>(
+      listener: _onStateListener,
+      builder: (context, state) => _buildMainContent(context),
+    );
+  }
+
+  // region UI Builders
+
+  void _onStateListener(BuildContext context, ForgotPasswordState state) {
+    if (state is ForgotPasswordInProgress) {
+      showLoading();
+    } else {
+      hideLoading();
+      if (state is ForgotPasswordSuccess) {
+        // Xử lý khi thành công (e.g., chuyển trang)
+      } else if (state is ForgotPasswordError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  Widget _buildMainContent(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: IntrinsicHeight(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 1. Instruction Text
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 30.0),
-                        child: Text(
-                          "To ensure account security, please verify your identity first.",
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
-                        ),
-                      ),
-                
-                      // Inputs
-                      _buildPhoneInput(
-                        controller: _forgotPwController.phoneController,
-                        selectedCode: _forgotPwController.countryCode,
-                        onCodeChanged: (val) => setState(() => _forgotPwController.countryCode = val!),
-                      ),
-                
-                      const SizedBox(height: 20),
-                
-                      _buildUnderlineInput(
-                        controller: _forgotPwController.smsController,
-                        hint: "Verification Code",
-                        suffix: _buildCountdownButton(),
-                      ),
-                
-                      const SizedBox(height: 50),
-                
-                      // 4. Submit Button
-                      _buildSubmitButton(),
-                
-                      // VÙNG ĐỆM: Chiếm toàn bộ khoảng trống còn lại để nhận sự kiện tap
-                      const Expanded(child: SizedBox.shrink()),
-                
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                ),
+      child: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false, // Cho phép Spacer hoạt động bên trong Column
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildInstructionText(),
+                  _buildInputs(),
+                  const SizedBox(height: 50),
+                  _buildSubmitButton(),
+                  const Spacer(), // Đẩy các widget phía trên lên đầu
+                  const SizedBox(height: 20),
+                ],
               ),
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
 
-  // region Private functions
+  Widget _buildInstructionText() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 30.0),
+      child: Text(
+        "To ensure account security, please verify your identity first.",
+        style: TextStyle(fontSize: 14, color: Colors.grey),
+      ),
+    );
+  }
+
+  Widget _buildInputs() {
+    return Column(
+      children: [
+        _buildPhoneInput(
+          controller: _forgotPwController.phoneController,
+          selectedCode: _forgotPwController.countryCode,
+          onCodeChanged: (val) => setState(() => _forgotPwController.countryCode = val!),
+        ),
+        const SizedBox(height: 20),
+        _buildUnderlineInput(
+          controller: _forgotPwController.smsController,
+          hint: "Verification Code",
+          suffix: _buildCountdownButton(),
+        ),
+      ],
+    );
+  }
 
   Widget _buildSubmitButton() {
     return SizedBox(
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
-        onPressed: () {
-          void onError(String message) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: Colors.red));
-          }
-
-          _forgotPwController.validateAndSubmit(interactor, onError);
-        },
+        onPressed: () => _forgotPwController.validateAndSubmit(
+          interactor,
+          (message) => ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message), backgroundColor: Colors.red),
+          ),
+        ),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.black,
           elevation: 0,
@@ -138,24 +156,23 @@ class _ForgotPasswordPageState extends BaseCubitState<ForgotPasswordPage, Forgot
 
   Widget _buildCountdownButton() {
     return InkWell(
-      onTap: _isCountingDown
-          ? null
-          : () {
-              if (_forgotPwController.phoneController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please enter phone number"), backgroundColor: Colors.red));
-                return;
-              }
-              _startCountdown();
-              interactor.sendSmsCode("${_forgotPwController.countryCode}${_forgotPwController.phoneController.text}");
-            },
+      onTap: _isCountingDown ? null : _handleSendSms,
       child: Text(
         _isCountingDown ? "Resend (${_start}s)" : "Send Code",
-        style: TextStyle(color: _isCountingDown ? Colors.grey : Colors.black, fontWeight: FontWeight.bold, fontSize: 14),
+        style: TextStyle(
+          color: _isCountingDown ? Colors.grey : Colors.black,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
       ),
     );
   }
 
-  Widget _buildPhoneInput({required TextEditingController controller, required String selectedCode, required ValueChanged<String?> onCodeChanged}) {
+  Widget _buildPhoneInput({
+    required TextEditingController controller,
+    required String selectedCode,
+    required ValueChanged<String?> onCodeChanged,
+  }) {
     return Container(
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
@@ -177,7 +194,7 @@ class _ForgotPasswordPageState extends BaseCubitState<ForgotPasswordPage, Forgot
               keyboardType: TextInputType.phone,
               style: const TextStyle(fontSize: 16),
               decoration: const InputDecoration(
-                hintText: "Phone Number", // Phone number
+                hintText: "Phone Number",
                 hintStyle: TextStyle(color: Colors.grey),
                 border: InputBorder.none,
               ),
@@ -199,6 +216,21 @@ class _ForgotPasswordPageState extends BaseCubitState<ForgotPasswordPage, Forgot
         focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
       ),
     );
+  }
+
+  // endregion
+
+  // region Logic Handlers
+
+  void _handleSendSms() {
+    if (_forgotPwController.phoneController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter phone number"), backgroundColor: Colors.red),
+      );
+      return;
+    }
+    _startCountdown();
+    interactor.sendSmsCode("${_forgotPwController.countryCode}${_forgotPwController.phoneController.text}");
   }
 
   void _startCountdown() {
@@ -227,14 +259,14 @@ class ForgotPasswordController {
   String countryCode = "+86";
 
   void validateAndSubmit(ForgotPasswordInteractor interactor, Function(String) onError) {
-    if (phoneController.text.isEmpty) {
-      onError("Please enter phone number");
-      return;
-    }
-    if (smsController.text.isEmpty) {
-      onError("Please enter verification code");
-      return;
-    }
+    // if (phoneController.text.isEmpty) {
+    //   onError("Please enter phone number");
+    //   return;
+    // }
+    // if (smsController.text.isEmpty) {
+    //   onError("Please enter verification code");
+    //   return;
+    // }
     interactor.forgotPassword("$countryCode${phoneController.text}", smsController.text);
   }
 
