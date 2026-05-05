@@ -1,32 +1,25 @@
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/utils/loading_dialog.dart';
+import 'package:coffee_bean/commons/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 
 /// Mixin chứa các hàm tiện ích dùng chung cho các Base View (Bloc, Cubit, Stateful, Stateless)
 mixin ViewUtilsMixin {
-  
   void hideKeyboard() {
     SystemChannels.textInput.invokeMethod('TextInput.hide');
   }
 
   void showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-    );
+    DbToast.show(message, gravity: DbToastGravity.bottom, duration: const Duration(seconds: 2));
   }
 
   void showErrorSnackBar(BuildContext context, String message) {
     if (!context.mounted) return;
     var snackBar = SnackBar(
-      content: Text(
-        message,
-        style: const TextStyle(color: Colors.black87),
-      ),
+      content: Text(message, style: const TextStyle(color: Colors.black87)),
       backgroundColor: Colors.yellowAccent,
       duration: const Duration(seconds: 1),
     );
@@ -36,7 +29,7 @@ mixin ViewUtilsMixin {
 
   /// Hiển thị loading sử dụng DbLoading (Flash)
   /// Nếu không truyền context, sẽ sử dụng navigator context mặc định
-  void showLoading({String? text}) {
+  void showLoading({String text = "Loading ..."}) {
     final effectiveContext = DbNavigator.navigatorState.currentContext;
     if (effectiveContext != null) {
       DbLoading.show(effectiveContext, message: text);
@@ -48,10 +41,10 @@ mixin ViewUtilsMixin {
   }
 
   void showProgressLoading({String? text = "Đang xử lý ..."}) {
-    SmartDialog.showLoading(msg: text ?? "Đang xử lý ...");
+    // SmartDialog.showLoading(msg: text ?? "Đang xử lý ...");
   }
 
   void hideProgressLoading() {
-    SmartDialog.dismiss();
+    // SmartDialog.dismiss();
   }
 }

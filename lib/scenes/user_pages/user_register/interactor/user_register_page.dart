@@ -8,19 +8,21 @@
  */
 
 import 'dart:async';
+import 'package:coffee_bean/commons/custom_app_bar.dart';
 import 'package:coffee_bean/commons/utils/logger.dart';
+import 'package:coffee_bean/commons/utils/keyboard_visibility.dart';
 import 'package:coffee_bean/scenes/user_pages/user_register/interactor/user_register_event_state.dart';
 import 'package:coffee_bean/scenes/user_pages/user_register/interactor/user_register_interactor.dart';
+import 'package:coffee_bean/scenes/user_pages/user_register/user_register_builder.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/base_cubit_statefull_widget.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 //ignore: must_be_immutable
 class UserRegisterPage extends BaseCubitStateFulWidget with ViewControllable {
-  UserRegisterPage({super.key});
+  UserRegisterPage({super.key, super.router});
 
   @override
   State<UserRegisterPage> createState() => _UserRegisterPageState();
@@ -29,14 +31,12 @@ class UserRegisterPage extends BaseCubitStateFulWidget with ViewControllable {
 class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegisterInteractor, UserRegisterState> {
 
   late RegisterController _registerController;
+  bool _isKeyboardVisible = false;
 
   // Logic Countdown cho SMS
   int _start = 60;
   bool _isCountingDown = false;
   Timer? _timer;
-
-  @override
-  dynamic getAppBar(BuildContext context) => "Register";
 
   @override
   void initState() {
@@ -45,17 +45,45 @@ class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegist
   }
 
   @override
+  void dispose() {
+    _registerController.dispose();
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  dynamic getAppBar(BuildContext context) => "Register"; // Register
+
+  @override
+  Widget? getLayout(BuildContext context) {
+    // Override getLayout để cấu hình Scaffold duy nhất cho trang này
+    var appBar = getAppBar(context);
+    if (appBar is String) {
+      appBar = CustomAppBar(appBar, appBarActions: getAppBarAction());
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: appBar as PreferredSizeWidget?,
+      // Tắt tính năng tự đẩy để chúng ta quản lý chiều cao thủ công qua availableHeight
+      resizeToAvoidBottomInset: false, 
+      body: GestureDetector(
+        // Chạm ra ngoài để ẩn bàn phím
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: DbKeyboardVisibility(
+          onChanged: (info) {
+            if (mounted && _isKeyboardVisible != info.isVisible) {
+              setState(() => _isKeyboardVisible = info.isVisible);
+            }
+          },
+          child: getBody(context),
+        ),
+      ),
+    );
+  }
+
+  @override
   Widget getBody(BuildContext context) {
-    // 1. Lấy các thông số kích thước (như ý tưởng của bạn)
-    final double screenHeight = MediaQuery.of(context).size.height;
-    final double statusBarHeight = MediaQuery.of(context).padding.top;
-    final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-    final double appBarHeight = kToolbarHeight; // Chiều cao chuẩn của AppBar
-
-    // 2. Tính toán chiều cao khả dụng linh hoạt
-    // TRỪ THÊM keyboardHeight để Container tự co lại khi bàn phím hiện
-    double availableHeight = screenHeight - statusBarHeight - appBarHeight - keyboardHeight;
-
     return BlocConsumer<UserRegisterInteractor, UserRegisterState>(
       listener: (context, state) {
         if (state is UserRegisterInProgress) {
@@ -74,61 +102,70 @@ class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegist
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          backgroundColor: Colors.white,
-          // Tắt tính năng tự đẩy của Scaffold để Container tự quản lý bằng availableHeight
-          resizeToAvoidBottomInset: false,
-          body: SingleChildScrollView(
-            child: Container(
-              // Đây là mấu chốt: Chiều cao sẽ thay đổi realtime khi bàn phím hiện/ẩn
-              height: availableHeight,
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Column(
-                children: <Widget>[
-                  // --- PHẦN NỘI DUNG TRÊN ---
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 40.0),
-                    child: Text(
-                      "TMLabs Coffee",
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+            double availableHeight = constraints.maxHeight - keyboardHeight;
+
+            return SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: Container(
+                height: availableHeight,
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  children: <Widget>[
+                    // Logo - Thu nhỏ khi có bàn phím để tiết kiệm diện tích
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: _isKeyboardVisible ? 30.0 : 60.0,
+                        bottom: _isKeyboardVisible ? 20.0 : 60.0,
+                      ),
+                      child: Text(
+                        "TMLabs Coffee",
+                        style: TextStyle(
+                          fontSize: _isKeyboardVisible ? 22 : 28, 
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
                     ),
-                  ),
-                  _buildPhoneInput(
-                    controller: _registerController.phoneController,
-                    selectedCode: _registerController.countryCode,
-                    onCodeChanged: (val) => setState(() => _registerController.countryCode = val!),
-                  ),
-                  const SizedBox(height: 15),
-                  _buildUnderlineInput(controller: _registerController.smsController, hint: "Verification code"),
-                  const SizedBox(height: 15),
-                  _buildUnderlineInput(controller: _registerController.invitationController, hint: "Invitation code"),
 
-                  const SizedBox(height: 20),
-                  _buildSubmitButton(),
-                  const SizedBox(height: 15),
-                  _buildFooterLinks(),
+                    // Inputs
+                    _buildPhoneInput(
+                      controller: _registerController.phoneController,
+                      selectedCode: _registerController.countryCode,
+                      onCodeChanged: (val) => setState(() => _registerController.countryCode = val!),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildUnderlineInput(
+                      controller: _registerController.smsController, 
+                      hint: "Verification Code", // Enter verification code
+                      suffix: _buildCountdownButton(),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildUnderlineInput(
+                      controller: _registerController.invitationController, 
+                      hint: "Invitation Code (Optional)", // Invitation code (Optional)
+                    ),
 
-                  // --- PHẦN CO GIÃN ---
-                  // Lúc này Expanded sẽ hoạt động cực chuẩn vì Container cha đã co lại
-                  const Expanded(child: SizedBox.shrink()),
+                    const SizedBox(height: 40),
+                    _buildSubmitButton(),
+                    const SizedBox(height: 20),
+                    _buildFooterLinks(),
 
-                  // --- PHẦN POLICY Ở ĐÁY ---
-                  _buildPolicyAgreement(),
-                  const SizedBox(height: 20),
-                ],
+                    // PHẦN CO GIÃN: Expanded sẽ thu nhỏ về 0 khi phím hiện lên
+                    const Expanded(child: SizedBox.shrink()),
+
+                    // PHẦN POLICY Ở ĐÁY
+                    _buildPolicyAgreement(),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
-  }
-
-  @override
-  void dispose() {
-    _registerController.dispose();
-    _timer?.cancel();
-    super.dispose();
   }
 
   // region Private functions
@@ -136,7 +173,7 @@ class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegist
   Widget _buildSubmitButton() {
     return SizedBox(
       width: double.infinity,
-      height: 48,
+      height: 50,
       child: ElevatedButton(
         onPressed: () {
           void onError(String message) {
@@ -148,9 +185,10 @@ class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegist
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.black,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
-        child: const Text("Register", style: TextStyle(color: Colors.white)),
+        child: const Text("Register", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -167,15 +205,12 @@ class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegist
         _startCountdown();
         interactor.sendSmsCode("${_registerController.countryCode}${_registerController.phoneController.text}");
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Text(
-          _isCountingDown ? "Resend in ${_start}s" : "Send Code",
-          style: TextStyle(
-            color: _isCountingDown ? Colors.grey : Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
+      child: Text(
+        _isCountingDown ? "Resend (${_start}s)" : "Send Code",
+        style: TextStyle(
+          color: _isCountingDown ? Colors.grey : Colors.black,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
         ),
       ),
     );
@@ -193,17 +228,22 @@ class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegist
           DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: selectedCode,
+              icon: const Icon(Icons.keyboard_arrow_down, size: 18, color: Colors.grey),
               items: ["+86", "+84", "+1"].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: onCodeChanged,
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 15),
           Expanded(
             child: TextField(
               controller: controller,
               keyboardType: TextInputType.phone,
               style: const TextStyle(fontSize: 16),
-              decoration: const InputDecoration(hintText: "Phone Number", border: InputBorder.none),
+              decoration: const InputDecoration(
+                hintText: "Phone Number", // Phone number
+                hintStyle: TextStyle(color: Colors.grey),
+                border: InputBorder.none
+              ),
             ),
           ),
         ],
@@ -216,7 +256,8 @@ class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegist
       controller: controller,
       decoration: InputDecoration(
         hintText: hint,
-        suffix: suffix,
+        hintStyle: const TextStyle(color: Colors.grey, fontSize: 16),
+        suffixIcon: suffix != null ? Column(mainAxisAlignment: MainAxisAlignment.center, children: [suffix]) : null,
         enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade200)),
         focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
       ),
@@ -231,7 +272,7 @@ class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegist
         InkWell(
           onTap: () {
             iLog("Tap: Go to Login");
-            // interactor.router?.navigate(UserLoginRoute());
+            interactor.router?.navigate(UserLoginRoute());
           },
           child: const Text(
             "Go to Login",
@@ -249,32 +290,36 @@ class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegist
         GestureDetector(
           onTap: () => setState(() => _registerController.isAgreed = !_registerController.isAgreed),
           child: Container(
-            width: 16, height: 16,
+            width: 18, height: 18,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: _registerController.isAgreed ? Colors.black : Colors.grey),
+              border: Border.all(color: _registerController.isAgreed ? Colors.black : Colors.grey.shade300, width: 1.5),
               color: _registerController.isAgreed ? Colors.black : Colors.transparent,
             ),
-            child: _registerController.isAgreed ? const Icon(Icons.check, size: 10, color: Colors.white) : null,
+            child: _registerController.isAgreed ? const Icon(Icons.check, size: 12, color: Colors.white) : null,
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 10),
         Expanded(
           child: Text.rich(
             TextSpan(
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
+              style: const TextStyle(fontSize: 12, color: Colors.grey, height: 1.5),
               children: [
                 const TextSpan(text: "I have read and agree to the "),
                 TextSpan(
                   text: "User Agreement",
                   style: const TextStyle(decoration: TextDecoration.underline),
-                  recognizer: TapGestureRecognizer()..onTap = () => launchUrl(Uri.parse('https://example.com/terms')),
+                  recognizer: TapGestureRecognizer()..onTap = () {
+                    interactor.router?.navigate(UserAgreementRoute());
+                  },
                 ),
                 const TextSpan(text: " and "),
                 TextSpan(
                   text: "Privacy Policy",
                   style: const TextStyle(decoration: TextDecoration.underline),
-                  recognizer: TapGestureRecognizer()..onTap = () => launchUrl(Uri.parse('https://example.com/privacy')),
+                  recognizer: TapGestureRecognizer()..onTap = () {
+                    interactor.router?.navigate(PrivacyPolicyRoute());
+                  },
                 ),
               ],
             ),

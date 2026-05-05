@@ -59,7 +59,7 @@ dependencies:
   logger: ^2.7.0
   pretty_dio_logger: ^1.4.0
   quiver: ^3.2.2
-  fluttertoast: ^9.0.0
+  #fluttertoast: ^9.0.0
   # dua tam vao, sau nay se bo ra sau
   # dialog_loader: ^0.0.3+3
   # event_bus: ^2.0.1
@@ -68,10 +68,12 @@ dependencies:
   # Animated list for load more
   implicitly_animated_reorderable_list_2: ^0.6.0
   # Show Dialog library
-  flutter_smart_dialog: ^5.1.0
+  #flutter_smart_dialog: ^5.1.0
   easy_debounce: ^2.0.3
   # UI Notifications / Flash messages
   flash: ^3.1.1
+  # Network connection check
+  connectivity_plus: ^7.1.1
 
   # soft
   # querying information about an application package.

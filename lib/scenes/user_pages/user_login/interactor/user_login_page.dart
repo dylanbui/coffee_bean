@@ -7,20 +7,20 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'dart:async';
+import 'package:coffee_bean/commons/custom_app_bar.dart';
 import 'package:coffee_bean/commons/utils/logger.dart';
+import 'package:coffee_bean/commons/utils/keyboard_visibility.dart';
 import 'package:coffee_bean/scenes/user_pages/user_login/interactor/user_login_event_state.dart';
 import 'package:coffee_bean/scenes/user_pages/user_login/interactor/user_login_interactor.dart';
 import 'package:coffee_bean/scenes/user_pages/user_login/user_login_builder.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/base_cubit_statefull_widget.dart';
-import 'dart:async';
-import 'package:flutter/gestures.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:url_launcher/url_launcher.dart'; // Cần thêm vào pubspec.yaml
+import 'package:url_launcher/url_launcher.dart';
 import 'package:coffee_bean/widget/password_field.dart';
-
 
 //ignore: must_be_immutable
 class UserLoginPage extends BaseCubitStateFulWidget with ViewControllable {
@@ -34,6 +34,7 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
 
   late LoginController _loginController;
   late TabController _tabController;
+  bool _isKeyboardVisible = false;
 
   // Logic Countdown cho SMS
   int _start = 60;
@@ -41,13 +42,47 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
   Timer? _timer;
 
   @override
-  dynamic getAppBar(BuildContext context) => "Login";
-
-  @override
   void initState() {
     super.initState();
     _loginController = LoginController();
     _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _loginController.dispose();
+    _tabController.dispose();
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  dynamic getAppBar(BuildContext context) => "Login";
+
+  @override
+  Widget? getLayout(BuildContext context) {
+    var appBar = getAppBar(context);
+    if (appBar is String) {
+      appBar = CustomAppBar(appBar, appBarActions: getAppBarAction());
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: appBar as PreferredSizeWidget?,
+      resizeToAvoidBottomInset: false, 
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: DbKeyboardVisibility(
+          onChanged: (info) {
+            if (mounted && _isKeyboardVisible != info.isVisible) {
+              setState(() => _isKeyboardVisible = info.isVisible);
+            }
+          },
+          child: getBody(context),
+        ),
+      ),
+    );
   }
 
   @override
@@ -70,71 +105,76 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
         }
       },
       builder: (context, state) {
-        return _buildMainLayout(context);
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+            final double availableHeight = constraints.maxHeight - keyboardHeight;
+
+            return SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: Container(
+                height: availableHeight,
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  children: [
+                    // Logo - Responsive height & size
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: _isKeyboardVisible ? 20.0 : 50.0,
+                        bottom: _isKeyboardVisible ? 15.0 : 40.0,
+                      ),
+                      child: Text(
+                        "TMLabs Coffee",
+                        style: TextStyle(
+                          fontSize: _isKeyboardVisible ? 22 : 28, 
+                          fontWeight: FontWeight.bold, 
+                        ),
+                      ),
+                    ),
+
+                    // Tab Bar
+                    TabBar(
+                      controller: _tabController,
+                      dividerColor: Colors.transparent,
+                      dividerHeight: 0,
+                      overlayColor: WidgetStateProperty.all(Colors.transparent),
+                      splashFactory: NoSplash.splashFactory,
+                      labelColor: Colors.black,
+                      unselectedLabelColor: Colors.grey,
+                      labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      indicatorColor: Colors.black,
+                      indicatorSize: TabBarIndicatorSize.label,
+                      indicatorWeight: 3,
+                      tabs: const [
+                        Tab(text: "Password Login"),
+                        Tab(text: "SMS Login"),
+                      ],
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    // Content Area (Expanded will shrink/expand to fit available space)
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: [
+                          _buildPasswordTab(),
+                          _buildSMSTab(),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+                    _buildPolicyAgreement(),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
       },
-    );
-  }
-
-  @override
-  void dispose() {
-    _loginController.dispose();
-    _tabController.dispose();
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  // region Private functions
-
-  Widget _buildMainLayout(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 50.0),
-            child: Text(
-              "TMLabs Coffee",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'Roboto'),
-            ),
-          ),
-
-          // Tab Bar - Cố định
-          TabBar(
-            controller: _tabController,
-            dividerColor: Colors.transparent,
-            dividerHeight: 0,
-            overlayColor: WidgetStateProperty.all(Colors.transparent),
-            splashFactory: NoSplash.splashFactory,
-            labelColor: Colors.black,
-            unselectedLabelColor: Colors.grey,
-            labelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            indicatorColor: Colors.black,
-            indicatorSize: TabBarIndicatorSize.label,
-            indicatorWeight: 3,
-            tabs: const [
-              Tab(text: "Password Login"),
-              Tab(text: "SMS Login"),
-            ],
-          ),
-
-          const SizedBox(height: 30),
-
-          // Vùng nội dung trượt: Chiếm toàn bộ không gian còn lại
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildPasswordTab(), // Tab 1
-                _buildSMSTab(),      // Tab 2
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 20),
-          _buildPolicyAgreement(),
-          const SizedBox(height: 20),
-        ],
-      ),
     );
   }
 
@@ -142,7 +182,7 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
   Widget _buildSubmitButton({required int tabIndex}) {
     return SizedBox(
       width: double.infinity,
-      height: 48,
+      height: 50,
       child: ElevatedButton(
         onPressed: () {
           void onError(String message) {
@@ -159,62 +199,76 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.black,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
-        child: const Text("Login", style: TextStyle(color: Colors.white)),
+        child: const Text("Login", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
       ),
     );
   }
 
-// --- TAB 1: PASSWORD LOGIN ---
   Widget _buildPasswordTab() {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // Ô nhập SDT riêng của Tab 1
-          _buildPhoneInput(
-            controller: _loginController.phonePwLogin,
-            selectedCode: _loginController.countryCode1,
-            onCodeChanged: (val) => setState(() => _loginController.countryCode1 = val!),
-          ),
-          const SizedBox(height: 15),
-          PasswordField(
-            controller: _loginController.passwordController,
-            hint: "Enter Password",
-          ),
-          const SizedBox(height: 30),
-          _buildSubmitButton(tabIndex: 0),
-
-          const SizedBox(height: 15),
-          _buildFooterLinks(),
-        ],
-      ),
+    return Column(
+      children: [
+        _buildPhoneInput(
+          controller: _loginController.phonePwLogin,
+          selectedCode: _loginController.countryCode1,
+          onCodeChanged: (val) => setState(() => _loginController.countryCode1 = val!),
+        ),
+        const SizedBox(height: 20),
+        PasswordField(
+          controller: _loginController.passwordController,
+          hint: "Enter Password",
+        ),
+        const SizedBox(height: 30),
+        _buildSubmitButton(tabIndex: 0),
+        const SizedBox(height: 20),
+        _buildFooterLinks(),
+      ],
     );
   }
 
-  // --- TAB 2: SMS LOGIN ---
   Widget _buildSMSTab() {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // Ô nhập SDT riêng của Tab 2
-          _buildPhoneInput(
-            controller: _loginController.phoneSmsLogin,
-            selectedCode: _loginController.countryCode2,
-            onCodeChanged: (val) => setState(() => _loginController.countryCode2 = val!),
-          ),
-          const SizedBox(height: 15),
-          _buildUnderlineInput(
-            controller: _loginController.smsController,
-            hint: "SMS Code",
-            //suffix: _buildCountdownButton(),
-          ),
-          const SizedBox(height: 30),
-          _buildSubmitButton(tabIndex: 1),
+    return Column(
+      children: [
+        _buildPhoneInput(
+          controller: _loginController.phoneSmsLogin,
+          selectedCode: _loginController.countryCode2,
+          onCodeChanged: (val) => setState(() => _loginController.countryCode2 = val!),
+        ),
+        const SizedBox(height: 20),
+        _buildUnderlineInput(
+          controller: _loginController.smsController,
+          hint: "SMS Code",
+          suffix: _buildCountdownButton(),
+        ),
+        const SizedBox(height: 30),
+        _buildSubmitButton(tabIndex: 1),
+        const SizedBox(height: 20),
+        _buildFooterLinks(hideForgotPw: true),
+      ],
+    );
+  }
 
-          const SizedBox(height: 15),
-          _buildFooterLinks(hideForgotPw: true),
-        ],
+  Widget _buildCountdownButton() {
+    return InkWell(
+      onTap: _isCountingDown ? null : () {
+        if (_loginController.phoneSmsLogin.text.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Please enter phone number"), backgroundColor: Colors.red),
+          );
+          return;
+        }
+        _startCountdown();
+        // interactor.sendSmsCode...
+      },
+      child: Text(
+        _isCountingDown ? "Resend (${_start}s)" : "Send Code",
+        style: TextStyle(
+          color: _isCountingDown ? Colors.grey : Colors.black,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
       ),
     );
   }
@@ -232,11 +286,12 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
           DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: selectedCode,
+              icon: const Icon(Icons.keyboard_arrow_down, size: 18, color: Colors.grey),
               items: ["+86", "+84", "+1"].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: onCodeChanged,
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 15),
           Expanded(
             child: TextField(
               controller: controller,
@@ -250,16 +305,15 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
     );
   }
 
-  Widget _buildUnderlineInput({required TextEditingController controller, required String hint, bool isPassword = false, Widget? suffix}) {
+  Widget _buildUnderlineInput({required TextEditingController controller, required String hint, Widget? suffix}) {
     return TextFormField(
       controller: controller,
-      obscureText: isPassword,
       decoration: InputDecoration(
         hintText: hint,
-        suffixIcon: isPassword ? Icon(Icons.remove_red_eye_outlined, size: 18) : null,
-        suffix: suffix,
+        hintStyle: const TextStyle(color: Colors.grey),
+        suffixIcon: suffix != null ? Column(mainAxisAlignment: MainAxisAlignment.center, children: [suffix]) : null,
         enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade200)),
-        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+        focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
       ),
     );
   }
@@ -271,29 +325,17 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text("No account? ", style: TextStyle(fontSize: 14)),
+            const Text("No account? ", style: TextStyle(fontSize: 14, color: Colors.grey)),
             InkWell(
-              onTap: () {
-                iLog("Tap: Register Now");
-                interactor.router?.navigate(UserRegisterRoute());
-              },
-              child: const Text(
-                "Register Now",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              ),
+              onTap: () => interactor.router?.navigate(UserRegisterRoute()),
+              child: const Text("Register Now", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
             ),
           ],
         ),
         if (!hideForgotPw)
           InkWell(
-            onTap: () {
-              iLog("Tap: Forgot Password");
-              interactor.router?.navigate(ForgotPasswordRoute());
-            },
-            child: const Text(
-              "Forgot Password",
-              style: TextStyle(color: Colors.grey, fontSize: 14),
-            ),
+            onTap: () => interactor.router?.navigate(ForgotPasswordRoute()),
+            child: const Text("Forgot Password", style: TextStyle(color: Colors.grey, fontSize: 14)),
           ),
       ],
     );
@@ -306,32 +348,36 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
         GestureDetector(
           onTap: () => setState(() => _loginController.isAgreed = !_loginController.isAgreed),
           child: Container(
-            width: 16, height: 16,
+            width: 18, height: 18,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: _loginController.isAgreed ? Colors.black : Colors.grey),
+              border: Border.all(color: _loginController.isAgreed ? Colors.black : Colors.grey.shade300, width: 1.5),
               color: _loginController.isAgreed ? Colors.black : Colors.transparent,
             ),
-            child: _loginController.isAgreed ? Icon(Icons.check, size: 10, color: Colors.white) : null,
+            child: _loginController.isAgreed ? const Icon(Icons.check, size: 12, color: Colors.white) : null,
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 10),
         Expanded(
           child: Text.rich(
             TextSpan(
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              style: const TextStyle(fontSize: 12, color: Colors.grey, height: 1.5),
               children: [
-                TextSpan(text: "I have read and agree to the "),
+                const TextSpan(text: "I have read and agree to the "),
                 TextSpan(
                   text: "User Agreement",
-                  style: TextStyle(decoration: TextDecoration.underline),
-                  recognizer: TapGestureRecognizer()..onTap = () => launchUrl(Uri.parse('https://example.com/terms')),
+                  style: const TextStyle(decoration: TextDecoration.underline),
+                  recognizer: TapGestureRecognizer()..onTap = () {
+                    interactor.router?.navigate(UserAgreementRoute());
+                  },
                 ),
-                TextSpan(text: " and "),
+                const TextSpan(text: " and "),
                 TextSpan(
                   text: "Privacy Policy",
-                  style: TextStyle(decoration: TextDecoration.underline),
-                  recognizer: TapGestureRecognizer()..onTap = () => launchUrl(Uri.parse('https://example.com/privacy')),
+                  style: const TextStyle(decoration: TextDecoration.underline),
+                  recognizer: TapGestureRecognizer()..onTap = () {
+                    interactor.router?.navigate(PrivacyPolicyRoute());
+                  },
                 ),
               ],
             ),
@@ -347,30 +393,21 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
       _isCountingDown = true;
       _start = 60;
     });
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_start == 0) {
-        setState(() => _isCountingDown = false);
+        if (mounted) setState(() => _isCountingDown = false);
         _timer?.cancel();
       } else {
-        setState(() => _start--);
+        if (mounted) setState(() => _start--);
       }
     });
   }
-  // endregion
-
-
 }
 
-// --- CẬP NHẬT CONTROLLER ---
 class LoginController {
-  final formKey = GlobalKey<FormState>();
-
-  // Tab 1: Password Login
-  final phonePwLogin = TextEditingController(); // Số điện thoại Tab 1
+  final phonePwLogin = TextEditingController();
   final passwordController = TextEditingController();
-
-  // Tab 2: SMS Login
-  final phoneSmsLogin = TextEditingController(); // Số điện thoại Tab 2
+  final phoneSmsLogin = TextEditingController();
   final smsController = TextEditingController();
 
   String countryCode1 = "+86";

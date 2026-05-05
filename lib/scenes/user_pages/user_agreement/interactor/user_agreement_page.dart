@@ -1,0 +1,70 @@
+/*
+ * Created with Android Studio
+ * Package: coffee bean
+ * User: dylanbui
+ * Email: buivantienduc@gmail.com
+ * Date: 5/5/26 - 14:14
+ * To change this template use File | Settings | File Templates.
+ */
+
+import 'package:coffee_bean/scenes/user_pages/user_agreement/interactor/user_agreement_event_state.dart';
+import 'package:coffee_bean/scenes/user_pages/user_agreement/interactor/user_agreement_interactor.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
+import 'package:coffee_bean/commons/state_management/lib_bloc/base_cubit_statefull_widget.dart';
+
+//ignore: must_be_immutable
+class UserAgreementPage extends BaseCubitStateFulWidget with ViewControllable {
+  UserAgreementPage({super.key});
+
+  @override
+  State<UserAgreementPage> createState() => _UserAgreementPageState();
+}
+
+class _UserAgreementPageState extends BaseCubitState<UserAgreementPage, UserAgreementInteractor, UserAgreementState> {
+
+  @override
+  dynamic getAppBar(BuildContext context) => "User Agreement";
+
+  @override
+  Widget getBody(BuildContext context) {
+    return BlocConsumer<UserAgreementInteractor, UserAgreementState>(
+      listener: (context, state) {
+        if (state is UserAgreementSuccess) {
+
+        } else if (state is UserAgreementError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+          );
+        }
+      },
+      builder: (context, state) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Please read and accept our terms and conditions to continue using the application.',
+                style: TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                },
+                child: const Text('Accept and Continue'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+}

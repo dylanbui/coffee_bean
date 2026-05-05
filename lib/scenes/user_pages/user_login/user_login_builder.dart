@@ -10,8 +10,12 @@
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/scenes/user_pages/forgot_password/forgot_password_builder.dart';
+import 'package:coffee_bean/scenes/user_pages/privacy_policy/privacy_policy_builder.dart';
+import 'package:coffee_bean/scenes/user_pages/user_agreement/user_agreement_builder.dart';
 import 'package:coffee_bean/scenes/user_pages/user_login/interactor/user_login_interactor.dart';
 import 'package:coffee_bean/scenes/user_pages/user_login/interactor/user_login_page.dart';
+import 'package:coffee_bean/scenes/user_pages/user_register/user_register_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,6 +31,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ForgotPasswordRoute implements DbNoteRoute {}
 class UserRegisterRoute implements DbNoteRoute {}
 class LoginSuccessRoute implements DbNoteRoute {}
+
+class UserAgreementRoute implements DbNoteRoute {}
+class PrivacyPolicyRoute implements DbNoteRoute {}
 
 
 // --- BUILDER ---
@@ -53,11 +60,28 @@ class UserLoginBuilder extends DbNoteBuilder with DbNavigator implements DbNoteR
     if (toRoute is ForgotPasswordRoute) {
       // When the completion route is received, notify the parent module's listener.
       // listener.onUserLoginCompleted();
-    } else if (toRoute is UserRegisterRoute) {
-      // Implement navigation to User Register scene
     } else if (toRoute is LoginSuccessRoute) {
       // Implement navigation or listener callback for successful login
+
+    } else if (toRoute is UserRegisterRoute) {
+      // Implement navigation to User Register scene
+      UserRegisterBuilder userRegisterBuilder = UserRegisterBuilder();
+      push(userRegisterBuilder.build());
+
+    } else if (toRoute is ForgotPasswordRoute) {
+      ForgotPasswordBuilder forgotPasswordBuilder = ForgotPasswordBuilder();
+      push(forgotPasswordBuilder.build());
+
+    } else if (toRoute is UserAgreementRoute) {
+      UserAgreementBuilder userAgreementBuilder = UserAgreementBuilder();
+      push(userAgreementBuilder.build());
+
+    } else if (toRoute is PrivacyPolicyRoute) {
+      PrivacyPolicyBuilder privacyPolicyBuilder = PrivacyPolicyBuilder();
+      push(privacyPolicyBuilder.build());
+
     }
+
   }
 }
 
