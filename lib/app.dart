@@ -76,27 +76,56 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton<LikesService>(() => LikesService());
 }
 
-class App extends StatelessWidget {
 
+class App extends StatefulWidget {
   const App({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  // Khởi tạo instance duy nhất ở đây
+  late final AppBuildable _appBuilder;
+
+  @override
+  void initState() {
+    super.initState();
+    _appBuilder = AppBuilder();
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    final AppBuildable appBuilder = AppBuilder();
-
     return MaterialApp(
-      // Connect GlobalKey from Router to Flutter Navigator
       navigatorKey: DbNavigator.navigatorState,
       title: 'Coffee Bean',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: appBuilder.build(),
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: _appBuilder.build(),
     );
   }
 }
+
+// class App extends StatelessWidget {
+//
+//   const App({super.key});
+//
+//   // This widget is the root of your application.
+//   @override
+//   Widget build(BuildContext context) {
+//
+//     final AppBuildable appBuilder = AppBuilder();
+//
+//     return MaterialApp(
+//       // Connect GlobalKey from Router to Flutter Navigator
+//       navigatorKey: DbNavigator.navigatorState,
+//       title: 'Coffee Bean',
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//       ),
+//       home: appBuilder.build(),
+//     );
+//   }
+// }
 
 
 //

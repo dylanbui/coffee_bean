@@ -1,7 +1,10 @@
 
+import 'dart:async';
+
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/commons/custom_app_bar.dart';
+import 'package:coffee_bean/commons/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/view_utils_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,7 +46,7 @@ abstract class BaseCubitStateFulWidget extends StatefulWidget with ViewControlla
 ///   }
 /// }
 /// ```
-abstract class BaseCubitState<B extends BaseCubitStateFulWidget, C extends Cubit<dynamic>, I> extends State<B> with ViewUtilsMixin {
+abstract class BaseCubitState<B extends BaseCubitStateFulWidget, C extends CubitInteractor, I> extends State<B> with ViewUtilsMixin {
 
   /// should be overridden in extended widget
   Widget? getLayout(BuildContext context) => null;
@@ -59,12 +62,24 @@ abstract class BaseCubitState<B extends BaseCubitStateFulWidget, C extends Cubit
   late C interactor;
 
   @override
+  void initState() {
+    super.initState();
+    interactor = context.read<C>();
+    // Dùng microtask ở đây để đảm bảo UI đã subscribe xong xuôi
+    scheduleMicrotask(() {
+      if (mounted) interactor.didBecomeActive();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     buildContext = context;
     
     // Use context.read() instead of Provider.of() to prevent the entire Scaffold 
     // from rebuilding every time the Cubit emits a new state.
-    interactor = context.read<C>();
+    // interactor = context.read<C>();
+    // interactor.didBecomeActive();
+
 
     // Muon control thang nao thi phai dung context thang do
     var layout = getLayout(context);

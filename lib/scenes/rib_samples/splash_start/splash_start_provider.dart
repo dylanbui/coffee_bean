@@ -9,8 +9,7 @@ import 'package:coffee_bean/scenes/rib_samples/splash_start/splash_start_builder
 
 //ignore: must_be_immutable
 class SplashStartProvider extends BaseProvider<DbNoteRoutable> {
-
-    SplashStartProvider(super.router);
+  SplashStartProvider(super.router);
 
   // SplashStartPage({super.key, super.router});
   // SplashStartProvider({super.router}) : super(router: router)) {
@@ -18,6 +17,11 @@ class SplashStartProvider extends BaseProvider<DbNoteRoutable> {
   //   isLoading = true;
   // };
 
+  @override
+  void didBecomeActive() {
+    super.didBecomeActive();
+    fetchSomething(); // Kích hoạt tự động khi Provider sẵn sàng
+  }
 
   Future<String> fetchSomething() async {
     // SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -29,15 +33,12 @@ class SplashStartProvider extends BaseProvider<DbNoteRoutable> {
 
     return "SplashStartProvider --- DONE";
 
-
-
     // if (_isHaveData.isEmpty) {
     //   await prefs.setString(Constants.sp_have_data, "just login_scene.login");
     //   view.goToNextScreen(true);
     // } else {
     //   view.goToNextScreen(false);
     // }
-
   }
 
   // Day la mo hinh xu ly nut bam goi server
@@ -82,6 +83,4 @@ class SplashStartProvider extends BaseProvider<DbNoteRoutable> {
   //     throw error;
   //   }
   // }
-
-
 }

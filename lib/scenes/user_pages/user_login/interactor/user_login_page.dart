@@ -122,7 +122,13 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
   // --- LOGIC HỖ TRỢ ---
 
   void _onLoginStateChanged(BuildContext context, UserLoginState state) {
-    if (state is UserLoginInProgress) {
+    if (state is UserLoginInitial) {
+      eLog("UserLoginInitial");
+      //showPageLoading();
+    } else if (state is UserLoginStarted) {
+      iLog("UserLoginStarted");
+      //hidePageLoading();
+    } else if (state is UserLoginInProgress) {
       iLog(state.message);
       showLoading(text: state.message);
     } else {

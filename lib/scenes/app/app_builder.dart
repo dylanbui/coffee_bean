@@ -16,7 +16,7 @@ import 'package:coffee_bean/scenes/user_pages/user_register/user_register_builde
 import 'package:flutter/material.dart';
 
 // Buildable
-abstract class AppBuildable implements DbNoteBuildable {}
+abstract class AppBuildable implements DbNoteBuildable { }
 
 /// AppBuilder acts as a "Root Coordinator" or "Root Router".
 /// Its main responsibility is to coordinate the main application flows (e.g., Splash, Auth, Main)
@@ -24,20 +24,30 @@ abstract class AppBuildable implements DbNoteBuildable {}
 class AppBuilder extends DbNoteBuilder with DbNavigator implements AppBuildable, DbNoteRoutable, SplashStartListener {
   late final AppInteractor interactor;
 
+  AppBuilder() {
+    // 1. Khởi tạo interactor ngay khi AppBuilder ra đời
+    interactor = AppInteractor(router: this);
+
+    // 2. Gọi bootstrap TẠI ĐÂY để đảm bảo nó chỉ chạy 1 lần duy nhất
+    // bất kể hàm build() phía dưới có bị Flutter gọi lại bao nhiêu lần.
+    // interactor.bootstrap();
+  }
+
+
   @override
   ViewController build() {
     // 1. Create the Interactor, which contains the application's root-level business logic.
     //    We pass `this` builder to act as the router.
-    interactor = AppInteractor(router: this);
-    // Call sync function
+    // interactor = AppInteractor(router: this);
+    // // Call sync function
     interactor.bootstrap();
 
     // 2. Build the initial UI, which is the Splash screen.
     //    The Interactor will be notified when the splash screen completes.
     // AppBuilder will listen for the event when Splash completes.
     final SplashStartBuildable splashStartBuilder = SplashStartBuilder();
-    rootPage = splashStartBuilder.buildWithListener(this);
-    return rootPage;
+    final splashPage = splashStartBuilder.buildWithListener(this);
+    return splashPage;
   }
 
   @override
@@ -53,6 +63,7 @@ class AppBuilder extends DbNoteBuilder with DbNavigator implements AppBuildable,
     // ForgotPasswordBuilder forgotPasswordBuilder = ForgotPasswordBuilder();
     // pushSameRootPage(forgotPasswordBuilder.build());
 
+    dLog(message ?? "----- UserLoginBuilder");
     UserLoginBuilder userLoginBuilder = UserLoginBuilder();
     pushSameRootPage(userLoginBuilder.build());
 

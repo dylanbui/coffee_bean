@@ -47,12 +47,24 @@ class UserLoginBuilder extends DbNoteBuilder with DbNavigator implements DbNoteR
   @override
   Widget build() {
     // The Interactor (Cubit) is created here. It receives a reference to the router (which is 'this').
-    final interactor = UserLoginInteractor(router: this);
-    final page = UserLoginPage();
+    // final interactor = UserLoginInteractor(router: this);
+    // final page = UserLoginPage();
+    //
+    // // BlocProvider "injects" the Cubit into the widget tree, making it accessible to the Page.
+    // rootPage = BlocProvider<UserLoginInteractor>.value(value: interactor, child: page);
+    // final page = UserLoginPage();
+    // BlocProvider sẽ chịu trách nhiệm tạo interactor
 
-    // BlocProvider "injects" the Cubit into the widget tree, making it accessible to the Page.
-    rootPage = BlocProvider<UserLoginInteractor>.value(value: interactor, child: page);
-    return rootPage;
+    // TẠM THỜI thêm dòng này để debug
+    print("DEBUG: UserLoginBuilder build called at ${DateTime.now().millisecondsSinceEpoch}");
+    debugPrintStack(label: "DEBUG STACK TRACE"); // Nó sẽ in ra toàn bộ danh sách các hàm đang gọi build này
+
+
+    final loginPage = BlocProvider<UserLoginInteractor>(
+      create: (context) => UserLoginInteractor(router: this),
+      child: UserLoginPage(),
+    );
+    return loginPage;
   }
 
   @override

@@ -31,22 +31,22 @@ class SplashStartPage extends BaseProviderStateLessWidget<SplashStartProvider> {
     // pageProvider.router.navigate(SplashPageCompleteRoute());
 
     // Gia lap chay lay du lieu tu server
-    pageProvider.fetchSomething().then((value) {
-      // final router = MaterialPageRoute(builder: (context) => const SplashPage(),);
-      // Navigator.pushReplacement(context, router);
-
-      log("Gia tri tra ve tu fetchSomething : $value");
-      // router?.navigate(SplashPageCompleteRoute(message: value), fromContext: context);
-      pageProvider.router.navigate(SplashPageCompleteRoute());
-
-      // Navigator.pushReplacement(context, PageTransition(
-      //     child: const SplashPage(),
-      //     type: PageTransitionType.fade),);
-
-      // Navigator.push(context, PageTransition(
-      //     child: ChangeNotifierProvider<LoginProvider>.value(value: LoginProvider(), child: const LoginPage(),),
-      //     type: PageTransitionType.rightToLeft),);
-    });
+    // pageProvider.fetchSomething().then((value) {
+    //   // final router = MaterialPageRoute(builder: (context) => const SplashPage(),);
+    //   // Navigator.pushReplacement(context, router);
+    //
+    //   log("Gia tri tra ve tu fetchSomething : $value");
+    //   // router?.navigate(SplashPageCompleteRoute(message: value), fromContext: context);
+    //   pageProvider.router.navigate(SplashPageCompleteRoute());
+    //
+    //   // Navigator.pushReplacement(context, PageTransition(
+    //   //     child: const SplashPage(),
+    //   //     type: PageTransitionType.fade),);
+    //
+    //   // Navigator.push(context, PageTransition(
+    //   //     child: ChangeNotifierProvider<LoginProvider>.value(value: LoginProvider(), child: const LoginPage(),),
+    //   //     type: PageTransitionType.rightToLeft),);
+    // });
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(

@@ -16,7 +16,12 @@ abstract class UserLoginEvent extends BaseBlocEvent {}
 // ----------- STATE ---------------
 abstract class UserLoginState extends BaseBlocState {}
 
+// Constructor state, a state that is never called or emit
+class UserLoginEmptyState extends UserLoginState {}
+
 class UserLoginInitial extends UserLoginState {}
+
+class UserLoginStarted extends UserLoginState {}
 
 class UserLoginSuccess extends UserLoginState {}
 
@@ -29,8 +34,6 @@ class UserLoginFailure extends UserLoginState {
   final String error;
   UserLoginFailure({this.error = ""});
 }
-
-
 
 class UserLoginError extends UserLoginState {
   final String message;

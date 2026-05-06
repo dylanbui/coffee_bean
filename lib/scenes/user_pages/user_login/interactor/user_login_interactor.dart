@@ -15,11 +15,12 @@ import 'package:coffee_bean/commons/state_management/lib_bloc/cubit_interactor.d
 
 class UserLoginInteractor extends CubitInteractor<DbNoteRoutable, UserLoginState> {
 
-  UserLoginInteractor({DbNoteRoutable? router}) : super(UserLoginInitial(), router: router);
+  UserLoginInteractor({DbNoteRoutable? router}) : super(UserLoginEmptyState(), router: router);
 
   @override
   void didBecomeActive() {
-    super.didBecomeActive();
+    // super.didBecomeActive();
+    emit(UserLoginInitial());
     loadData();
   }
 
@@ -38,10 +39,9 @@ class UserLoginInteractor extends CubitInteractor<DbNoteRoutable, UserLoginState
 
   }
 
-
-
-
   Future loadData() async {
     // emit(UserLoginInProgress());
+    await Future.delayed(const Duration(seconds: 3));
+    emit(UserLoginStarted());
   }
 }

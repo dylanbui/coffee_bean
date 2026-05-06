@@ -55,9 +55,19 @@ abstract class CubitInteractor<T extends DbNoteRoutable, State> extends Cubit<St
   T? router;
 
   CubitInteractor(super.initialState, {this.router}) {
-    scheduleMicrotask(() {
-      if (!isClosed) didBecomeActive();
-    });
+    // scheduleMicrotask(() {
+    //   if (!isClosed) didBecomeActive();
+    // });
+
+    // Timer.run pushes the execution to the end of the current event queue.
+    // This ensures:
+    // 1. The constructor finishes, and the object is fully initialized.
+    // 2. Flutter has enough time to mount BlocProvider and for UI to subscribe.
+    // 3. 'router' is guaranteed to be available before didBecomeActive runs.
+    // Timer.run(() {
+    //   if (!isClosed) didBecomeActive();
+    // });
+
   }
 
   @override
