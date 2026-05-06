@@ -38,11 +38,25 @@ mixin ViewUtilsMixin {
     DbLoading.dismiss();
   }
 
+  void showPageLoading({String text = "Loading ..."}) {
+    final effectiveContext = DbNavigator.navigatorState.currentContext;
+    if (effectiveContext != null) {
+      DbPageLoading.show(context: effectiveContext);
+    }
+  }
+
+  void hidePageLoading() {
+    DbPageLoading.dismiss();
+  }
+
   void showProgressLoading({String? text = "Đang xử lý ..."}) {
-    // SmartDialog.showLoading(msg: text ?? "Đang xử lý ...");
+    final effectiveContext = DbNavigator.navigatorState.currentContext;
+    if (effectiveContext != null) {
+      DbLoading.show(effectiveContext, message: text);
+    }
   }
 
   void hideProgressLoading() {
-    // SmartDialog.dismiss();
+    DbLoading.dismiss();
   }
 }
