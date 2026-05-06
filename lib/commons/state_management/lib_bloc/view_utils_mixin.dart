@@ -3,8 +3,6 @@ import 'package:coffee_bean/commons/utils/loading_dialog.dart';
 import 'package:coffee_bean/commons/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
 
 /// Mixin chứa các hàm tiện ích dùng chung cho các Base View (Bloc, Cubit, Stateful, Stateless)
 mixin ViewUtilsMixin {

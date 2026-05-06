@@ -20,6 +20,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/base_cubit_statefull_widget.dart';
 import 'package:coffee_bean/widget/password_field.dart';
+import 'package:coffee_bean/widget/phone_input_field.dart';
 
 //ignore: must_be_immutable
 class UserLoginPage extends BaseCubitStateFulWidget with ViewControllable {
@@ -29,8 +30,8 @@ class UserLoginPage extends BaseCubitStateFulWidget with ViewControllable {
   State<UserLoginPage> createState() => _UserLoginPageState();
 }
 
-class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInteractor, UserLoginState> with SingleTickerProviderStateMixin {
-
+class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInteractor, UserLoginState>
+    with SingleTickerProviderStateMixin {
   late LoginController _loginController;
   late TabController _tabController;
   bool _isKeyboardVisible = false;
@@ -68,7 +69,7 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar as PreferredSizeWidget?,
-      resizeToAvoidBottomInset: false, 
+      resizeToAvoidBottomInset: false,
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -87,22 +88,7 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
   @override
   Widget getBody(BuildContext context) {
     return BlocConsumer<UserLoginInteractor, UserLoginState>(
-      listener: (context, state) {
-        if (state is UserLoginInProgress) {
-          iLog(state.message);
-          showLoading(text: state.message);
-        } else {
-          hideLoading();
-          if (state is UserLoginSuccess) {
-            // Xử lý khi đăng nhập thành công
-            interactor.router?.navigate(LoginSuccessRoute());
-          } else if (state is UserLoginFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error), backgroundColor: Colors.red),
-            );
-          }
-        }
-      },
+      listener: _onLoginStateChanged,
       builder: (context, state) {
         return LayoutBuilder(
           builder: (context, constraints) {
@@ -116,54 +102,10 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(
                   children: [
-                    // Logo - Responsive height & size
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: _isKeyboardVisible ? 20.0 : 50.0,
-                        bottom: _isKeyboardVisible ? 15.0 : 40.0,
-                      ),
-                      child: Text(
-                        "TMLabs Coffee",
-                        style: TextStyle(
-                          fontSize: _isKeyboardVisible ? 22 : 28, 
-                          fontWeight: FontWeight.bold, 
-                        ),
-                      ),
-                    ),
-
-                    // Tab Bar
-                    TabBar(
-                      controller: _tabController,
-                      dividerColor: Colors.transparent,
-                      dividerHeight: 0,
-                      overlayColor: WidgetStateProperty.all(Colors.transparent),
-                      splashFactory: NoSplash.splashFactory,
-                      labelColor: Colors.black,
-                      unselectedLabelColor: Colors.grey,
-                      labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                      indicatorColor: Colors.black,
-                      indicatorSize: TabBarIndicatorSize.label,
-                      indicatorWeight: 3,
-                      tabs: const [
-                        Tab(text: "Password Login"),
-                        Tab(text: "SMS Login"),
-                      ],
-                    ),
-
+                    _buildLogo(),
+                    _buildTabBar(),
                     const SizedBox(height: 30),
-
-                    // Content Area (Expanded will shrink/expand to fit available space)
-                    Expanded(
-                      child: TabBarView(
-                        controller: _tabController,
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: [
-                          _buildPasswordTab(),
-                          _buildSMSTab(),
-                        ],
-                      ),
-                    ),
-
+                    _buildTabBarView(),
                     const SizedBox(height: 10),
                     _buildPolicyAgreement(),
                     const SizedBox(height: 20),
@@ -177,31 +119,116 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
     );
   }
 
+  // --- LOGIC HỖ TRỢ ---
+
+  void _onLoginStateChanged(BuildContext context, UserLoginState state) {
+    if (state is UserLoginInProgress) {
+      iLog(state.message);
+      showLoading(text: state.message);
+    } else {
+      hideLoading();
+      if (state is UserLoginSuccess) {
+        interactor.router?.navigate(LoginSuccessRoute());
+      } else if (state is UserLoginFailure) {
+        _showError(state.error);
+      }
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
+  }
+
+  void _startCountdown() {
+    if (_isCountingDown) return;
+    setState(() {
+      _isCountingDown = true;
+      _start = 60;
+    });
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_start == 0) {
+        if (mounted) setState(() => _isCountingDown = false);
+        _timer?.cancel();
+      } else {
+        if (mounted) setState(() => _start--);
+      }
+    });
+  }
+
   // --- WIDGET HỖ TRỢ ---
+
+  Widget _buildLogo() {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: _isKeyboardVisible ? 20.0 : 50.0,
+        bottom: _isKeyboardVisible ? 15.0 : 40.0,
+      ),
+      child: Text(
+        "TMLabs Coffee",
+        style: TextStyle(
+          fontSize: _isKeyboardVisible ? 22 : 28,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabBar() {
+    return TabBar(
+      controller: _tabController,
+      dividerColor: Colors.transparent,
+      dividerHeight: 0,
+      overlayColor: WidgetStateProperty.all(Colors.transparent),
+      splashFactory: NoSplash.splashFactory,
+      labelColor: Colors.black,
+      unselectedLabelColor: Colors.grey,
+      labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+      indicatorColor: Colors.black,
+      indicatorSize: TabBarIndicatorSize.label,
+      indicatorWeight: 3,
+      tabs: const [
+        Tab(text: "Password Login"),
+        Tab(text: "SMS Login"),
+      ],
+    );
+  }
+
+  Widget _buildTabBarView() {
+    return Expanded(
+      child: TabBarView(
+        controller: _tabController,
+        physics: const NeverScrollableScrollPhysics(),
+        children: [
+          _buildPasswordTab(),
+          _buildSMSTab(),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSubmitButton({required int tabIndex}) {
     return SizedBox(
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
         onPressed: () {
-          void onError(String message) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message), backgroundColor: Colors.red),
-            );
-          }
-
-          if (tabIndex == 0) {
-            _loginController.validatePwLogin(interactor, onError);
-          } else {
-            _loginController.validateSmsLogin(interactor, onError);
-          }
+          setState(() {
+            if (tabIndex == 0) {
+              _loginController.validatePwLogin(interactor, _showError);
+            } else {
+              _loginController.validateSmsLogin(interactor, _showError);
+            }
+          });
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.black,
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
-        child: const Text("Login", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+        child: const Text("Login",
+            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -209,10 +236,12 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
   Widget _buildPasswordTab() {
     return Column(
       children: [
-        _buildPhoneInput(
+        PhoneInputField(
           controller: _loginController.phonePwLogin,
-          selectedCode: _loginController.countryCode1,
-          onCodeChanged: (val) => setState(() => _loginController.countryCode1 = val!),
+          countryCodes: const ["+86", "+84", "+1"],
+          initialCountryCode: _loginController.countryCode1,
+          errorText: _loginController.phonePwError,
+          onChanged: (val) => _loginController.countryCode1 = val.countryCode,
         ),
         const SizedBox(height: 20),
         PasswordField(
@@ -230,10 +259,12 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
   Widget _buildSMSTab() {
     return Column(
       children: [
-        _buildPhoneInput(
+        PhoneInputField(
           controller: _loginController.phoneSmsLogin,
-          selectedCode: _loginController.countryCode2,
-          onCodeChanged: (val) => setState(() => _loginController.countryCode2 = val!),
+          countryCodes: const ["+86", "+84", "+1"],
+          initialCountryCode: _loginController.countryCode2,
+          errorText: _loginController.phoneSmsError,
+          onChanged: (val) => _loginController.countryCode2 = val.countryCode,
         ),
         const SizedBox(height: 20),
         _buildUnderlineInput(
@@ -251,15 +282,14 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
 
   Widget _buildCountdownButton() {
     return InkWell(
-      onTap: _isCountingDown ? null : () {
+      onTap: _isCountingDown
+          ? null
+          : () {
         if (_loginController.phoneSmsLogin.text.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Please enter phone number"), backgroundColor: Colors.red),
-          );
+          _showError("Please enter phone number");
           return;
         }
         _startCountdown();
-        // interactor.sendSmsCode...
       },
       child: Text(
         _isCountingDown ? "Resend (${_start}s)" : "Send Code",
@@ -268,38 +298,6 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
           fontWeight: FontWeight.bold,
           fontSize: 14,
         ),
-      ),
-    );
-  }
-
-  // Hàm Build Phone Input tùy biến để dùng cho cả 2 tab
-  Widget _buildPhoneInput({
-    required TextEditingController controller,
-    required String selectedCode,
-    required ValueChanged<String?> onCodeChanged,
-  }) {
-    return Container(
-      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade200))),
-      child: Row(
-        children: [
-          DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: selectedCode,
-              icon: const Icon(Icons.keyboard_arrow_down, size: 18, color: Colors.grey),
-              items: ["+86", "+84", "+1"].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-              onChanged: onCodeChanged,
-            ),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: TextField(
-              controller: controller,
-              keyboardType: TextInputType.phone,
-              style: const TextStyle(fontSize: 16),
-              decoration: const InputDecoration(hintText: "Phone Number", border: InputBorder.none),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -347,7 +345,8 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
         GestureDetector(
           onTap: () => setState(() => _loginController.isAgreed = !_loginController.isAgreed),
           child: Container(
-            width: 18, height: 18,
+            width: 18,
+            height: 18,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(color: _loginController.isAgreed ? Colors.black : Colors.grey.shade300, width: 1.5),
@@ -366,17 +365,15 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
                 TextSpan(
                   text: "User Agreement",
                   style: const TextStyle(decoration: TextDecoration.underline),
-                  recognizer: TapGestureRecognizer()..onTap = () {
-                    interactor.router?.navigate(UserAgreementRoute());
-                  },
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () => interactor.router?.navigate(UserAgreementRoute()),
                 ),
                 const TextSpan(text: " and "),
                 TextSpan(
                   text: "Privacy Policy",
                   style: const TextStyle(decoration: TextDecoration.underline),
-                  recognizer: TapGestureRecognizer()..onTap = () {
-                    interactor.router?.navigate(PrivacyPolicyRoute());
-                  },
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () => interactor.router?.navigate(PrivacyPolicyRoute()),
                 ),
               ],
             ),
@@ -384,22 +381,6 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
         ),
       ],
     );
-  }
-
-  void _startCountdown() {
-    if (_isCountingDown) return;
-    setState(() {
-      _isCountingDown = true;
-      _start = 60;
-    });
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_start == 0) {
-        if (mounted) setState(() => _isCountingDown = false);
-        _timer?.cancel();
-      } else {
-        if (mounted) setState(() => _start--);
-      }
-    });
   }
 }
 
@@ -413,13 +394,17 @@ class LoginController {
   String countryCode2 = "+86";
   bool isAgreed = false;
 
+  String? phonePwError;
+  String? phoneSmsError;
+
   void validatePwLogin(UserLoginInteractor interactor, Function(String) onError) {
+    phonePwError = null;
     if (!isAgreed) {
       onError("Please agree to the User Agreement and Privacy Policy");
       return;
     }
     if (phonePwLogin.text.isEmpty) {
-      onError("Please enter phone number");
+      phonePwError = "Please enter phone number";
       return;
     }
     if (passwordController.text.isEmpty) {
@@ -430,12 +415,13 @@ class LoginController {
   }
 
   void validateSmsLogin(UserLoginInteractor interactor, Function(String) onError) {
+    phoneSmsError = null;
     if (!isAgreed) {
       onError("Please agree to the User Agreement and Privacy Policy");
       return;
     }
     if (phoneSmsLogin.text.isEmpty) {
-      onError("Please enter phone number");
+      phoneSmsError = "Please enter phone number";
       return;
     }
     if (smsController.text.isEmpty) {

@@ -8,6 +8,7 @@
 
 import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
+import 'package:coffee_bean/commons/utils/common_style.dart';
 
 class DbLoading {
   static FlashController? _currentController;
@@ -17,11 +18,9 @@ class DbLoading {
   static final ValueNotifier<String> _messageNotifier = ValueNotifier<String>("");
 
   /// Hiện Loading toàn cục
-  static void show(
-    BuildContext context, {
-    String? message,
-  }) {
+  static void show(BuildContext context, {String? message, TextStyle? style}) {
     final msg = message ?? "Đang xử lý...";
+    final textStyle = style ?? DbCommonStyle.loadingTextStyle;
 
     // Nếu đang hiển thị hoặc đang trong quá trình mở, chỉ cập nhật tin nhắn
     if (_isShowing || _currentController != null) {
@@ -44,29 +43,28 @@ class DbLoading {
           controller: controller,
           child: PopScope(
             canPop: false,
-            child: Center(
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const CircularProgressIndicator(color: Colors.brown),
-                    const SizedBox(height: 16),
-                    ValueListenableBuilder<String>(
-                      valueListenable: _messageNotifier,
-                      builder: (context, value, child) {
-                        return Text(
-                          value,
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                          textAlign: TextAlign.center,
-                        );
-                      },
+            child: Material(
+              type: MaterialType.transparency,
+              child: DefaultTextStyle(
+                style: textStyle,
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const CircularProgressIndicator(color: Colors.brown),
+                        const SizedBox(height: 16),
+                        ValueListenableBuilder<String>(
+                          valueListenable: _messageNotifier,
+                          builder: (context, value, child) {
+                            return Text(value, textAlign: TextAlign.center);
+                          },
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
