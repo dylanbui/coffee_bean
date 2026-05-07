@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:coffee_bean/commons/architecture_ribs/note_interactor.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/commons/state_management/lib_bloc/constants.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// An abstract class that merges the responsibilities of a BLoC/Cubit's state management
@@ -35,6 +37,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// class MyPageCubit extends CubitInteractor<MyPageRouter, BaseBlocState> {
 ///   MyPageCubit() : super(MyPageInitial(), router: MyPageRouter());
 ///
+///   @override
+///   void onDidBecomeActive() {
+///     // Logic call here
+///     fetchData();
+///   }
+///
 ///   Future<void> fetchData() async {
 ///     // Simulate API call and emit a new state
 ///     await Future.delayed(const Duration(seconds: 1));
@@ -48,43 +56,55 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 ///   }
 /// }
 /// ```
+
 /// Base class for Cubits that do NOT have a presenter.
 abstract class CubitInteractor<T extends DbNoteRoutable, State> extends Cubit<State>
     implements DbNoteInteractor<T> {
   @override
   T? router;
 
+  InteractorLifecycle _lifecycle = InteractorLifecycle.initialized;
+  
   CubitInteractor(super.initialState, {this.router}) {
     // scheduleMicrotask(() {
     //   if (!isClosed) didBecomeActive();
     // });
-
-    // Timer.run pushes the execution to the end of the current event queue.
-    // This ensures:
-    // 1. The constructor finishes, and the object is fully initialized.
-    // 2. Flutter has enough time to mount BlocProvider and for UI to subscribe.
-    // 3. 'router' is guaranteed to be available before didBecomeActive runs.
-    // Timer.run(() {
-    //   if (!isClosed) didBecomeActive();
-    // });
-
   }
 
+  /// ĐIỀU PHỐI (Orchestrator): Widget sẽ gọi hàm này. 
+  /// Hàm này đảm bảo onDidBecomeActive chỉ chạy 1 lần.
+  @override
+  void didBecomeActive() {
+    if (_lifecycle == InteractorLifecycle.active) return;
+    _lifecycle = InteractorLifecycle.active;
+    onDidBecomeActive();
+  }
+
+  /// ĐIỀU PHỐI (Orchestrator): Widget hoặc hàm close sẽ gọi hàm này.
+  @override
+  void willResignActive() {
+    if (_lifecycle != InteractorLifecycle.active) return;
+    _lifecycle = InteractorLifecycle.resigned;
+    onWillResignActive();
+  }
+
+  // --- HOOK METHODS: Lớp con sẽ override các hàm này ---
+
+  @protected
+  void onDidBecomeActive() {}
+
+  @protected
+  void onWillResignActive() {}  
+  
   @override
   void emit(State state) {
     if (isClosed) return;
     super.emit(state);
   }
-
-  @override
-  void didBecomeActive() {}
-
-  @override
-  void willResignActive() {}
-
+  
   @override
   Future<void> close() {
-    willResignActive();
+    willResignActive(); // Chốt chặn cuối cùng đảm bảo tài nguyên được giải phóng
     return super.close();
   }
 }

@@ -5,19 +5,16 @@ import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/my_profile_
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/my_profile_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-abstract class MyProfileBuildable implements DbNoteBuildable {
-  @override
-  ViewController build({bool showAppBarOnRootPage = true});
-}
+abstract class MyProfileBuildable implements DbNoteBuildable { }
 
 class MyProfileBuilder extends DbNoteBuilder implements MyProfileBuildable {
+
   @override
-  ViewController build({bool showAppBarOnRootPage = true}) {
+  ViewController buildFactory({bool showAppBarOnRootPage = true}) {
     final router = MyProfileRouter();
     final interactor = MyProfileInteractor(router);
     final page = MyProfilePage();
 
-    rootPage = BlocProvider(create: (_) => interactor, child: page);
-    return rootPage;
+    return BlocProvider(create: (_) => interactor, child: page);
   }
 }

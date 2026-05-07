@@ -10,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// It's responsible for creating and wiring all the components of the module.
 class UserListBuilder extends DbNoteBuilder {
   @override
-  ViewController build() {
+  ViewController buildFactory() {
     // Get the singleton instance of the repository from the service locator.
     final userRepository = locator.get<UserRepository>();
     // The page widget.
@@ -18,9 +18,6 @@ class UserListBuilder extends DbNoteBuilder {
 
     // The BLoC (Interactor) is created and provided to the widget tree.
     // The BLoC itself depends on the repository.
-    return BlocProvider<UserListInteractor>(
-      create: (context) => UserListInteractor(userRepository),
-      child: page,
-    );
+    return BlocProvider<UserListInteractor>(create: (context) => UserListInteractor(userRepository), child: page);
   }
 }

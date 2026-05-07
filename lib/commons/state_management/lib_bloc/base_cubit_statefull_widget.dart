@@ -72,6 +72,12 @@ abstract class BaseCubitState<B extends BaseCubitStateFulWidget, C extends Cubit
   }
 
   @override
+  void dispose() {
+    interactor.willResignActive();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     buildContext = context;
     
@@ -79,7 +85,6 @@ abstract class BaseCubitState<B extends BaseCubitStateFulWidget, C extends Cubit
     // from rebuilding every time the Cubit emits a new state.
     // interactor = context.read<C>();
     // interactor.didBecomeActive();
-
 
     // Muon control thang nao thi phai dung context thang do
     var layout = getLayout(context);

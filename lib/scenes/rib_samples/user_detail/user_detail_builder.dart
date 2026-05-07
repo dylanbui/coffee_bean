@@ -14,7 +14,7 @@ class UserDetailBuilder extends DbNoteBuilder {
   UserDetailBuilder({required this.userId});
 
   @override
-  ViewController build() {
+  ViewController buildFactory() {
     // 1. Get dependencies from the service locator.
     final userRepository = locator.get<UserRepository>();
 

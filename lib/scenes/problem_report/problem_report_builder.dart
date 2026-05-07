@@ -17,12 +17,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProblemReportBuilder extends DbNoteBuilder {
     @override
-    Widget build() {
+    Widget buildFactory() {
         final router = ProblemReportRouter();
         final problemReportInteractor = ProblemReportInteractor(router);
         final page = ProblemReportPage();
-        rootPage = BlocProvider(create: (_) =>  problemReportInteractor, child: page,);
-        return rootPage;
+        return BlocProvider(create: (_) =>  problemReportInteractor, child: page,);
     }
 
 

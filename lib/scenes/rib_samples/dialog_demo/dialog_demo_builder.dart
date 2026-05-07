@@ -26,13 +26,12 @@ abstract class DialogDemoBuildable implements DbNoteBuildable {
 class DialogDemoBuilder extends DbNoteBuilder implements DialogDemoBuildable {
 
   @override
-  ViewController build() {
+  ViewController buildFactory() {
     final router = DialogDemoRouter();
     final interactor = DialogDemoInteractor(router);
     final page = DialogDemoPage();
 
-    rootPage = BlocProvider(create: (_) => interactor, child: page);
-    return rootPage;
+    return BlocProvider(create: (_) => interactor, child: page);
   }
 
 }

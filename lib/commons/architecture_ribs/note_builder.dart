@@ -8,6 +8,7 @@
  */
 
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
+import 'package:flutter/cupertino.dart';
 
 
 /// The base dependency protocol.
@@ -30,12 +31,30 @@ abstract class DbNoteBuilder<T extends DbNoteDependency> implements DbNoteBuilda
   /// The dependency used for this builder to build the RIB.
   final T? dependency;
 
-  late ViewController rootPage;
+  // Sử dụng private variable để lưu giữ trang đã build[cite: 10]
+  ViewController? _cachedPage;
+
 
   /// Initializer.
   ///
   /// - parameter dependency: The dependency used for this builder to build the RIB.
   DbNoteBuilder({this.dependency});
+
+  @override
+  ViewController build() {
+    // Nếu đã build rồi thì trả về cache, bỏ qua tất cả logic khởi tạo
+    if (_cachedPage != null) {
+      return _cachedPage!;
+    }
+    // 3. Yêu cầu các Builder con phải implement hàm này thay vì hàm build()
+    _cachedPage = buildFactory();
+    return _cachedPage!;
+  }
+
+  /// Đây là hàm mà các Sub-class (như AppBuilder) sẽ triển khai logic khởi tạo.
+  /// Nó đảm bảo chỉ chạy 1 lần duy nhất cho mỗi đối tượng Builder[cite: 7].
+  @protected
+  ViewController buildFactory();
 }
 
 ///////////////////////////////

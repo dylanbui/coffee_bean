@@ -11,6 +11,9 @@ abstract class BaseBlocState extends Equatable {
 
 }
 
+/// Định nghĩa các trạng thái vòng đời để quản lý chính xác
+enum InteractorLifecycle { initialized, active, resigned }
+
 /// Base event class for all Blocs.
 abstract class BaseBlocEvent extends Equatable {
 

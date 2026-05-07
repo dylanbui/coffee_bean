@@ -45,9 +45,9 @@ class ProductListRouter extends DbNoteRouter implements ProductListRoutable {
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
     if (toRoute is ProductDetailRoute) {
-      final ProductDetailBuildable productDetailBuilder = ProductDetailBuilder();
-      final widget = productDetailBuilder.buildWithId(toRoute.productId);
-      push(widget);
+      final ProductDetailBuildable productDetailBuilder = ProductDetailBuilder(productId: toRoute.productId);
+      final viewController = productDetailBuilder.build();
+      push(viewController);
     } else if (toRoute is ProductCartRoute) {
       final ProductCartBuildable cartBuilder = ProductCartBuilder();
       push(cartBuilder.build());

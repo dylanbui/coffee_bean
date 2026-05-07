@@ -7,22 +7,15 @@ import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_provider.
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-abstract class MainTabbarBuildable implements DbNoteBuildable {
-  @override
-  ViewController build();
-}
+abstract class MainTabbarBuildable implements DbNoteBuildable { }
 
 class MainTabbarBuilder extends DbNoteBuilder with DbNavigator implements DbNoteRoutable, MainTabbarBuildable {
   @override
-  ViewController build() {
+  ViewController buildFactory() {
     final provider = MainTabbarProvider(this);
     final page = MainTabbarPage();
-    
-    rootPage = ChangeNotifierProvider<MainTabbarProvider>.value(
-      value: provider,
-      child: page,
-    );
-    return rootPage;
+
+    return ChangeNotifierProvider<MainTabbarProvider>.value(value: provider, child: page);
   }
 
   @override

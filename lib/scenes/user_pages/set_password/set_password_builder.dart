@@ -10,6 +10,7 @@
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/user_pages/set_password/interactor/set_password_interactor.dart';
 import 'package:coffee_bean/scenes/user_pages/set_password/interactor/set_password_page.dart';
 import 'package:flutter/material.dart';
@@ -27,14 +28,13 @@ class SetPasswordBuilder extends DbNoteBuilder with DbNavigator implements DbNot
   SetPasswordBuilder();
 
   @override
-  Widget build() {
+  ViewController buildFactory() {
     // The Interactor (Cubit) is created here. It receives a reference to the router (which is 'this').
     final interactor = SetPasswordInteractor(router: this);
     final page = SetPasswordPage();
 
     // BlocProvider "injects" the Cubit into the widget tree, making it accessible to the Page.
-    rootPage = BlocProvider<SetPasswordInteractor>.value(value: interactor, child: page);
-    return rootPage;
+    return BlocProvider<SetPasswordInteractor>.value(value: interactor, child: page);
   }
 
   @override

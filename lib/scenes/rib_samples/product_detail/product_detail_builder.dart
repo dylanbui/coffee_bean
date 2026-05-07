@@ -8,6 +8,7 @@
  */
 
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_detail/interactor/product_detail_interactor.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_detail/interactor/product_detail_page.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_detail/product_detail_router.dart';
@@ -21,31 +22,32 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // Buildable
 
 abstract class ProductDetailBuildable implements DbNoteBuildable {
-  Widget buildWithId(int productId);
+  // Khong nen dung kieu nay
+  ViewController buildWithId(int productId);
 }
-
 
 // Builder
 
 class ProductDetailBuilder extends DbNoteBuilder implements ProductDetailBuildable {
 
-  late int productId = 0;
+  late int productId;
+
+  ProductDetailBuilder({required this.productId});
 
   @override
-  Widget build() {
-    // Default build without ID might not be useful for Detail, but keeping interface
-    // productId = 0, se khong tim thay du lieu
-    return buildWithId(0);
-  }
-
-  @override
-  Widget buildWithId(int productId) {
-    this.productId = productId;
+  ViewController buildFactory() {
     final router = ProductDetailRouter();
     final productDetailInteractor = ProductDetailInteractor(router, productId);
     final page = ProductDetailPage();
-    rootPage = BlocProvider(create: (_) =>  productDetailInteractor, child: page,);
-    return rootPage;
+    return BlocProvider(create: (_) =>  productDetailInteractor, child: page,);
+  }
+
+  @override
+  ViewController buildWithId(int productId) {
+    this.productId = productId;
+    // Call build() function => call buildFactory
+    return build();
+
   }
 
 }

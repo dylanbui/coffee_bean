@@ -1,4 +1,3 @@
-
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/app_landing/home/home_router.dart';
@@ -13,18 +12,14 @@ abstract class HomeBuildable implements DbNoteBuildable {
 
 class HomeBuilder extends DbNoteBuilder implements HomeBuildable {
   @override
-  ViewController build() {
+  ViewController buildFactory() {
     final router = HomeRouter();
     final interactor = HomeInteractor(router);
     final page = HomePage();
-    
+
     // Set showAppBar nếu cần thiết (giống product_list_builder)
     // page.showAppBar = showAppBarOnRootPage;
 
-    rootPage = BlocProvider(
-      create: (_) => interactor,
-      child: page,
-    );
-    return rootPage;
+    return BlocProvider(create: (_) => interactor, child: page);
   }
 }

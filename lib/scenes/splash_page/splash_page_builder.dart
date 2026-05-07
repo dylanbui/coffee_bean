@@ -1,6 +1,7 @@
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/splash_page/splash_page_interactor.dart';
 import 'package:coffee_bean/scenes/splash_page/splash_page_page.dart';
 import 'package:flutter/material.dart';
@@ -25,14 +26,12 @@ class SplashPageBuilder extends DbNoteBuilder with DbNavigator implements DbNote
   SplashPageBuilder({required this.listener});
 
   @override
-  Widget build() {
+  ViewController buildFactory() {
     // The Interactor (Cubit) is created here. It receives a reference to the router (which is 'this').
     final interactor = SplashPageInteractor(router: this);
     final page = SplashPagePage();
-
     // BlocProvider "injects" the Cubit into the widget tree, making it accessible to the Page.
-    rootPage = BlocProvider<SplashPageInteractor>.value(value: interactor, child: page);
-    return rootPage;
+    return BlocProvider<SplashPageInteractor>.value(value: interactor, child: page);
   }
 
   @override
@@ -42,4 +41,5 @@ class SplashPageBuilder extends DbNoteBuilder with DbNavigator implements DbNote
       listener.onSplashPageCompleted();
     }
   }
+
 }

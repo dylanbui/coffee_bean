@@ -10,6 +10,7 @@
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/user_pages/forgot_password/interactor/forgot_password_interactor.dart';
 import 'package:coffee_bean/scenes/user_pages/forgot_password/interactor/forgot_password_page.dart';
 import 'package:coffee_bean/scenes/user_pages/set_password/set_password_builder.dart';
@@ -35,14 +36,13 @@ class ForgotPasswordBuilder extends DbNoteBuilder with DbNavigator implements Db
   ForgotPasswordBuilder();
 
   @override
-  Widget build() {
+  ViewController buildFactory() {
     // The Interactor (Cubit) is created here. It receives a reference to the router (which is 'this').
     final interactor = ForgotPasswordInteractor(router: this);
     final page = ForgotPasswordPage();
 
     // BlocProvider "injects" the Cubit into the widget tree, making it accessible to the Page.
-    rootPage = BlocProvider<ForgotPasswordInteractor>.value(value: interactor, child: page);
-    return rootPage;
+    return BlocProvider<ForgotPasswordInteractor>.value(value: interactor, child: page);
   }
 
   @override
@@ -53,6 +53,7 @@ class ForgotPasswordBuilder extends DbNoteBuilder with DbNavigator implements Db
       push(setPasswordBuilder.build());
     }
   }
+
 }
 
 

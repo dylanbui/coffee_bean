@@ -10,6 +10,7 @@
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/rib_samples/splash_start/splash_start_page.dart';
 import 'package:coffee_bean/scenes/rib_samples/splash_start/splash_start_provider.dart';
 import 'package:flutter/material.dart';
@@ -24,8 +25,8 @@ abstract interface class SplashStartListener {
 // Buildable
 abstract interface class SplashStartBuildable implements DbNoteBuildable {
 
-  Widget buildWithAny(String param_1, int param_2);
-  Widget buildWithListener(SplashStartListener listener);
+  ViewController buildWithAny(String param_1, int param_2);
+  ViewController buildWithListener(SplashStartListener listener);
 
 }
 
@@ -42,25 +43,20 @@ class SplashStartBuilder extends DbNoteBuilder with DbNavigator implements DbNot
   SplashStartListener? listener;
 
   @override
-  Widget build() {
+  ViewController buildFactory() {
     var splashStartPage = SplashStartPage();
-    rootPage = ChangeNotifierProvider<SplashStartProvider>.value(value: SplashStartProvider(this), child: splashStartPage,);
-    return rootPage;
+    return ChangeNotifierProvider<SplashStartProvider>.value(value: SplashStartProvider(this), child: splashStartPage,);
   }
 
   @override
-  Widget buildWithAny(String param_1, int param_2) {
-    var splashStartPage = SplashStartPage();
-    rootPage = ChangeNotifierProvider<SplashStartProvider>.value(value: SplashStartProvider(this), child: splashStartPage,);
-    return rootPage;
+  ViewController buildWithAny(String param_1, int param_2) {
+    return build();
   }
 
   @override
-  Widget buildWithListener(SplashStartListener listener) {
+  ViewController buildWithListener(SplashStartListener listener) {
     this.listener = listener;
-    var splashStartPage = SplashStartPage();
-    rootPage = ChangeNotifierProvider<SplashStartProvider>.value(value: SplashStartProvider(this), child: splashStartPage,);
-    return rootPage;
+    return build();
   }
 
   @override

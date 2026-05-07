@@ -6,17 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 abstract class FlashDemoBuildable implements DbNoteBuildable {
-  @override
-  Widget build({bool showAppBarOnRootPage = true});
+  // @override
+  // Widget build({bool showAppBarOnRootPage = true});
 }
 
 class FlashDemoBuilder extends DbNoteBuilder implements FlashDemoBuildable {
   @override
-  Widget build({bool showAppBarOnRootPage = true}) {
+  Widget buildFactory() {
     final router = FlashDemoRouter();
     final interactor = FlashDemoInteractor(router);
     final page = FlashDemoPage();
-    rootPage = BlocProvider(create: (_) => interactor, child: page);
-    return rootPage;
+    return BlocProvider(create: (_) => interactor, child: page);
   }
 }

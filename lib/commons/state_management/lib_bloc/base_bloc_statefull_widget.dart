@@ -1,4 +1,7 @@
 
+import 'dart:async';
+
+import 'package:coffee_bean/commons/architecture_ribs/note_interactor.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/commons/custom_app_bar.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/constants.dart';
@@ -70,10 +73,25 @@ abstract class BaseBlocViewState<B extends BaseBlocStateFulWidget, BLOC extends 
   /// The Bloc instance for this page. Used to add events (not for listening to state).
   late BLOC blocProvider;
 
-  /// Quick access to the Interactor or Router via Provider.
-  /// Usage: `interactor.doSomething()`
-  I get interactor {
-    return context.read<I>();
+  late I interactor;
+
+  @override
+  void initState() {
+    super.initState();
+    interactor = context.read<I>();
+    if (interactor is DbNoteInteractor) {
+      scheduleMicrotask(() {
+        if (mounted) (interactor as DbNoteInteractor).didBecomeActive();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    if (interactor is DbNoteInteractor) {
+      (interactor as DbNoteInteractor).willResignActive();
+    }
+    super.dispose();
   }
 
   @override
@@ -83,6 +101,7 @@ abstract class BaseBlocViewState<B extends BaseBlocStateFulWidget, BLOC extends 
     // Use context.read() instead of Provider.of() to prevent the entire Scaffold 
     // from rebuilding every time the Bloc emits a new state.
     blocProvider = context.read<BLOC>();
+    // interactor = context.read<I>(); // Neu can thiet thi update tai day, nhung tot nhat nen o initState
 
     // Muon control thang nao thi phai dung context thang do
     var layout = getLayout(context);

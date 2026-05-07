@@ -18,8 +18,7 @@ class UserLoginInteractor extends CubitInteractor<DbNoteRoutable, UserLoginState
   UserLoginInteractor({DbNoteRoutable? router}) : super(UserLoginEmptyState(), router: router);
 
   @override
-  void didBecomeActive() {
-    // super.didBecomeActive();
+  void onDidBecomeActive() {
     emit(UserLoginInitial());
     loadData();
   }

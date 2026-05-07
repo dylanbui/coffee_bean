@@ -5,18 +5,15 @@ import 'package:coffee_bean/scenes/app_landing/community/interactor/community_in
 import 'package:coffee_bean/scenes/app_landing/community/interactor/community_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-abstract class CommunityBuildable implements DbNoteBuildable {
-
-}
+abstract class CommunityBuildable implements DbNoteBuildable { }
 
 class CommunityBuilder extends DbNoteBuilder implements CommunityBuildable {
   @override
-  ViewController build() {
+  ViewController buildFactory() {
     final router = CommunityRouter();
     final interactor = CommunityInteractor(router);
     final page = CommunityPage();
 
-    rootPage = BlocProvider(create: (_) => interactor, child: page);
-    return rootPage;
+    return BlocProvider(create: (_) => interactor, child: page);
   }
 }

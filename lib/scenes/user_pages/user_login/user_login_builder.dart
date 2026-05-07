@@ -10,6 +10,7 @@
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/user_pages/forgot_password/forgot_password_builder.dart';
 import 'package:coffee_bean/scenes/user_pages/privacy_policy/privacy_policy_builder.dart';
 import 'package:coffee_bean/scenes/user_pages/user_agreement/user_agreement_builder.dart';
@@ -45,7 +46,7 @@ class UserLoginBuilder extends DbNoteBuilder with DbNavigator implements DbNoteR
   UserLoginBuilder();
 
   @override
-  Widget build() {
+  ViewController buildFactory() {
     // The Interactor (Cubit) is created here. It receives a reference to the router (which is 'this').
     // final interactor = UserLoginInteractor(router: this);
     // final page = UserLoginPage();
@@ -56,10 +57,15 @@ class UserLoginBuilder extends DbNoteBuilder with DbNavigator implements DbNoteR
     // BlocProvider sẽ chịu trách nhiệm tạo interactor
 
     // TẠM THỜI thêm dòng này để debug
-    print("DEBUG: UserLoginBuilder build called at ${DateTime.now().millisecondsSinceEpoch}");
-    debugPrintStack(label: "DEBUG STACK TRACE"); // Nó sẽ in ra toàn bộ danh sách các hàm đang gọi build này
+    // print("DEBUG: UserLoginBuilder build called at ${DateTime.now().millisecondsSinceEpoch}");
+    // debugPrintStack(label: "DEBUG STACK TRACE"); // Nó sẽ in ra toàn bộ danh sách các hàm đang gọi build này
 
+    // final interactor = UserLoginInteractor(router: this);
+    // final page = UserLoginPage();
+    // // BlocProvider "injects" the Cubit into the widget tree, making it accessible to the Page.
+    // return BlocProvider<UserLoginInteractor>.value(value: interactor, child: page);
 
+    // Cach 2
     final loginPage = BlocProvider<UserLoginInteractor>(
       create: (context) => UserLoginInteractor(router: this),
       child: UserLoginPage(),
@@ -88,10 +94,10 @@ class UserLoginBuilder extends DbNoteBuilder with DbNavigator implements DbNoteR
     } else if (toRoute is PrivacyPolicyRoute) {
       PrivacyPolicyBuilder privacyPolicyBuilder = PrivacyPolicyBuilder();
       push(privacyPolicyBuilder.build());
-
     }
-
   }
+
+
 }
 
 

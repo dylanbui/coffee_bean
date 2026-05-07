@@ -18,8 +18,7 @@ class UserRegisterInteractor extends CubitInteractor<DbNoteRoutable, UserRegiste
   UserRegisterInteractor({DbNoteRoutable? router}) : super(UserRegisterInitial(), router: router);
 
   @override
-  void didBecomeActive() {
-    super.didBecomeActive();
+  void onDidBecomeActive() {
     loadData();
   }
 

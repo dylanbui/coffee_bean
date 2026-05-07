@@ -1,4 +1,7 @@
 
+import 'dart:async';
+
+import 'package:coffee_bean/commons/architecture_ribs/note_interactor.dart';
 import 'package:coffee_bean/commons/custom_app_bar.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/view_utils_mixin.dart';
 import 'package:flutter/material.dart';
@@ -63,6 +66,13 @@ abstract class BaseCubitStateLessWidget<C extends Cubit<S>, S, I> extends Statel
 
   @override
   Widget build(BuildContext context) {
+    final i = interactor(context);
+    if (i is DbNoteInteractor) {
+      scheduleMicrotask(() {
+        i.didBecomeActive();
+      });
+    }
+
     // Muon control thang nao thi phai dung context thang do
     var layout = getLayout(context);
     if (layout != null) {

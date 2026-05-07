@@ -10,6 +10,7 @@
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/user_pages/privacy_policy/interactor/privacy_policy_interactor.dart';
 import 'package:coffee_bean/scenes/user_pages/privacy_policy/interactor/privacy_policy_page.dart';
 import 'package:flutter/material.dart';
@@ -26,14 +27,13 @@ class PrivacyPolicyBuilder extends DbNoteBuilder with DbNavigator implements DbN
   PrivacyPolicyBuilder();
 
   @override
-  Widget build() {
+  ViewController buildFactory() {
     // The Interactor (Cubit) is created here. It receives a reference to the router (which is 'this').
     final interactor = PrivacyPolicyInteractor(router: this);
     final page = PrivacyPolicyPage();
 
     // BlocProvider "injects" the Cubit into the widget tree, making it accessible to the Page.
-    rootPage = BlocProvider<PrivacyPolicyInteractor>.value(value: interactor, child: page);
-    return rootPage;
+    return BlocProvider<PrivacyPolicyInteractor>.value(value: interactor, child: page);
   }
 
   @override

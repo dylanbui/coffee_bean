@@ -8,10 +8,10 @@
  */
 
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_list/interactor/product_list_interactor.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_list/interactor/product_list_page.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_list/product_list_router.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Listener
@@ -19,8 +19,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // Buildable
 
 abstract class ProductListBuildable implements DbNoteBuildable {
-  @override
-  Widget build({bool showAppBarOnRootPage = true});
+  // @override
+  // Widget build({bool showAppBarOnRootPage = true});
   // DbNoteViewControllable buildNote({bool showAppBarOnRootPage = true});
 }
 
@@ -62,13 +62,12 @@ class ProductListBuilder extends DbNoteBuilder implements ProductListBuildable {
   // }
 
   @override
-  Widget build({bool showAppBarOnRootPage = true}) {
+  ViewController buildFactory() {
     final router = ProductListRouter();
     final productListInteractor = ProductListInteractor(router);
     // productListInteractor.router = router;
     final page = ProductListPage();
-    rootPage = BlocProvider(create: (_) => productListInteractor, child: page);
-    return rootPage;
+    return BlocProvider(create: (_) => productListInteractor, child: page);
   }
 
   // @override

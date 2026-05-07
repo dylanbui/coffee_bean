@@ -11,6 +11,8 @@ import 'dart:async';
 
 import 'package:coffee_bean/commons/architecture_ribs/note_interactor.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/commons/state_management/lib_bloc/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// An abstract class that merges the responsibilities of a BLoC's event-driven state management
@@ -54,6 +56,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 ///     on<ItemTappedEvent>(_onItemTapped);
 ///   }
 ///
+///   @override
+///   void onDidBecomeActive() {
+///     // Logic call here
+///     add(FetchDataEvent());
+///   }
+///
 ///   Future<void> _onFetchData(FetchDataEvent event, Emitter<BaseBlocState> emit) async {
 ///     // Simulate API call and emit a new state
 ///     await Future.delayed(const Duration(seconds: 1));
@@ -73,17 +81,38 @@ abstract class BlocInteractor<T extends DbNoteRoutable, Event, State> extends Bl
   @override
   T? router;
 
+  InteractorLifecycle _lifecycle = InteractorLifecycle.initialized;
+
   BlocInteractor(super.initialState, {this.router}) {
-    scheduleMicrotask(() {
-      if (!isClosed) didBecomeActive();
-    });
+    // scheduleMicrotask(() {
+    //   if (!isClosed) didBecomeActive();
+    // });
   }
 
+  /// ĐIỀU PHỐI (Orchestrator): Widget sẽ gọi hàm này. 
+  /// Hàm này đảm bảo onDidBecomeActive chỉ chạy 1 lần.
   @override
-  void didBecomeActive() {}
+  void didBecomeActive() {
+    if (_lifecycle == InteractorLifecycle.active) return;
+    _lifecycle = InteractorLifecycle.active;
+    onDidBecomeActive();
+  }
 
+  /// ĐIỀU PHỐI (Orchestrator): Widget hoặc hàm close sẽ gọi hàm này.
   @override
-  void willResignActive() {}
+  void willResignActive() {
+    if (_lifecycle != InteractorLifecycle.active) return;
+    _lifecycle = InteractorLifecycle.resigned;
+    onWillResignActive();
+  }
+
+  // --- HOOK METHODS: Lớp con sẽ override các hàm này ---
+
+  @protected
+  void onDidBecomeActive() {}
+
+  @protected
+  void onWillResignActive() {}
 
   @override
   Future<void> close() {

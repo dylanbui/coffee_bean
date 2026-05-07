@@ -10,6 +10,7 @@
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/user_pages/privacy_policy/privacy_policy_builder.dart';
 import 'package:coffee_bean/scenes/user_pages/user_agreement/user_agreement_builder.dart';
 import 'package:coffee_bean/scenes/user_pages/user_register/interactor/user_register_interactor.dart';
@@ -38,14 +39,12 @@ class UserRegisterBuilder extends DbNoteBuilder with DbNavigator implements DbNo
   UserRegisterBuilder();
 
   @override
-  Widget build() {
-    // The Interactor (Cubit) is created here. It receives a reference to the router (which is 'this').
+  ViewController buildFactory() {
+  // The Interactor (Cubit) is created here. It receives a reference to the router (which is 'this').
     final interactor = UserRegisterInteractor(router: this);
     final page = UserRegisterPage();
-
     // BlocProvider "injects" the Cubit into the widget tree, making it accessible to the Page.
-    rootPage = BlocProvider<UserRegisterInteractor>.value(value: interactor, child: page);
-    return rootPage;
+    return BlocProvider<UserRegisterInteractor>.value(value: interactor, child: page);
   }
 
   @override
@@ -66,6 +65,8 @@ class UserRegisterBuilder extends DbNoteBuilder with DbNavigator implements DbNo
 
     }
   }
+
+
 }
 
 

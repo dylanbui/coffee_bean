@@ -27,8 +27,6 @@ abstract class DbNotePresenterInteractor<T extends DbNoteRoutable, P extends DbN
   P get presenter;
 }
 
-// TODO: Dang thu nghiem Presentable
-
 /// The base protocol for all `Presenter`s.
 abstract class DbNotePresentable {
   /// A lifecycle method for presenters to release resources.

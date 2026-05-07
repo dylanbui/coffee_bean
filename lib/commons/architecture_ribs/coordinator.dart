@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
-import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -39,7 +38,12 @@ import 'package:page_transition/page_transition.dart';
 ///   }
 /// }
 /// ```
-abstract class DbCoordinator<T> extends DbNoteBuilder with DbNavigator implements DbNoteRoutable {
+//abstract class DbCoordinator<T> extends DbNoteBuilder with DbNavigator implements DbNoteRoutable {
+abstract class DbCoordinator<T> with DbNavigator implements DbNoteRoutable, DbNoteRouter {
+
+  // Nối vào Trục Dọc để báo cáo kết quả lên trên
+  @override
+  DbNoteRouter? parentRouter;
 
   Completer<T?>? _completer;
 
@@ -82,6 +86,6 @@ abstract class DbCoordinator<T> extends DbNoteBuilder with DbNavigator implement
   /// Cancels the flow gracefully and returns null.
   void cancel() {
     finish(null);
-  }  
+  }
 
 }
