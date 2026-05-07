@@ -9,6 +9,7 @@
 
 import 'package:coffee_bean/scenes/user_pages/privacy_policy/interactor/privacy_policy_event_state.dart';
 import 'package:coffee_bean/scenes/user_pages/privacy_policy/interactor/privacy_policy_interactor.dart';
+import 'package:coffee_bean/widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
@@ -30,15 +31,7 @@ class _PrivacyPolicyPageState extends BaseCubitState<PrivacyPolicyPage, PrivacyP
   @override
   Widget getBody(BuildContext context) {
     return BlocConsumer<PrivacyPolicyInteractor, PrivacyPolicyState>(
-      listener: (context, state) {
-        if (state is PrivacyPolicySuccess) {
-
-        } else if (state is PrivacyPolicyError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-          );
-        }
-      },
+      listener: _onStateListener,
       builder: (context, state) {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -49,16 +42,26 @@ class _PrivacyPolicyPageState extends BaseCubitState<PrivacyPolicyPage, PrivacyP
                 "Privacy Policy Content",
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
+              const SizedBox(height: 40),
+              AppButton.secondary(
+                text: "Close",
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text("Close"),
               ),
             ],
           ),
         );
       },
     );
+  }
+
+  void _onStateListener(BuildContext context, PrivacyPolicyState state) {
+    if (state is PrivacyPolicySuccess) {
+      // Handle success
+    } else if (state is PrivacyPolicyError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+      );
+    }
   }
 
   @override

@@ -20,6 +20,8 @@ class ForgotPasswordInitial extends ForgotPasswordState {}
 
 class ForgotPasswordInProgress extends ForgotPasswordState {}
 
+class ForgotPasswordSendCodeDone extends ForgotPasswordState {}
+
 class ForgotPasswordSuccess extends ForgotPasswordState {}
 
 class ForgotPasswordError extends ForgotPasswordState {

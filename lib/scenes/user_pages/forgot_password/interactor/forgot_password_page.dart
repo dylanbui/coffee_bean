@@ -15,6 +15,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/base_cubit_statefull_widget.dart';
+import 'package:coffee_bean/widget/phone_input_field.dart';
+import 'package:coffee_bean/widget/underline_input_field.dart';
+import 'package:coffee_bean/widget/app_button.dart';
 
 //ignore: must_be_immutable
 class ForgotPasswordPage extends BaseCubitStateFulWidget with ViewControllable {
@@ -36,6 +39,9 @@ class _ForgotPasswordPageState extends BaseCubitState<ForgotPasswordPage, Forgot
   void initState() {
     super.initState();
     _forgotPwController = ForgotPasswordController();
+    
+    // Nhập số điện thoại mặc định
+    _forgotPwController.phoneController.text = "0901234567";
   }
 
   @override
@@ -61,16 +67,24 @@ class _ForgotPasswordPageState extends BaseCubitState<ForgotPasswordPage, Forgot
   void _onStateListener(BuildContext context, ForgotPasswordState state) {
     if (state is ForgotPasswordInProgress) {
       showLoading();
+
+    // check send code done
+    } else if (state is ForgotPasswordSendCodeDone) {
+      hideLoading();
     } else {
       hideLoading();
       if (state is ForgotPasswordSuccess) {
         // Xử lý khi thành công (e.g., chuyển trang)
       } else if (state is ForgotPasswordError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-        );
+        _showError(state.message);
       }
     }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
   }
 
   Widget _buildMainContent(BuildContext context) {
@@ -81,7 +95,7 @@ class _ForgotPasswordPageState extends BaseCubitState<ForgotPasswordPage, Forgot
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverFillRemaining(
-            hasScrollBody: false, // Cho phép Spacer hoạt động bên trong Column
+            hasScrollBody: false,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
@@ -90,8 +104,14 @@ class _ForgotPasswordPageState extends BaseCubitState<ForgotPasswordPage, Forgot
                   _buildInstructionText(),
                   _buildInputs(),
                   const SizedBox(height: 50),
-                  _buildSubmitButton(),
-                  const Spacer(), // Đẩy các widget phía trên lên đầu
+                  AppButton.primary(
+                    text: "Reset Password",
+                    onPressed: () => _forgotPwController.validateAndSubmit(
+                      interactor,
+                      _showError,
+                    ),
+                  ),
+                  const Spacer(),
                   const SizedBox(height: 20),
                 ],
               ),
@@ -115,42 +135,20 @@ class _ForgotPasswordPageState extends BaseCubitState<ForgotPasswordPage, Forgot
   Widget _buildInputs() {
     return Column(
       children: [
-        _buildPhoneInput(
+        PhoneInputField(
           controller: _forgotPwController.phoneController,
-          selectedCode: _forgotPwController.countryCode,
-          onCodeChanged: (val) => setState(() => _forgotPwController.countryCode = val!),
+          countryCodes: const ["+86", "+84", "+1"],
+          initialCountryCode: _forgotPwController.countryCode,
+          onChanged: (val) => _forgotPwController.countryCode = val.countryCode,
         ),
         const SizedBox(height: 20),
-        _buildUnderlineInput(
+        UnderlineInputField(
           controller: _forgotPwController.smsController,
           hint: "Verification Code",
           suffix: _buildCountdownButton(),
+          keyboardType: TextInputType.number,
         ),
       ],
-    );
-  }
-
-  Widget _buildSubmitButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: () => _forgotPwController.validateAndSubmit(
-          interactor,
-          (message) => ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message), backgroundColor: Colors.red),
-          ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.black,
-          elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        child: const Text(
-          "Reset Password",
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ),
     );
   }
 
@@ -168,65 +166,13 @@ class _ForgotPasswordPageState extends BaseCubitState<ForgotPasswordPage, Forgot
     );
   }
 
-  Widget _buildPhoneInput({
-    required TextEditingController controller,
-    required String selectedCode,
-    required ValueChanged<String?> onCodeChanged,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-      ),
-      child: Row(
-        children: [
-          DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: selectedCode,
-              icon: const Icon(Icons.keyboard_arrow_down, size: 18, color: Colors.grey),
-              items: ["+86", "+84", "+1"].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-              onChanged: onCodeChanged,
-            ),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: TextField(
-              controller: controller,
-              keyboardType: TextInputType.phone,
-              style: const TextStyle(fontSize: 16),
-              decoration: const InputDecoration(
-                hintText: "Phone Number",
-                hintStyle: TextStyle(color: Colors.grey),
-                border: InputBorder.none,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildUnderlineInput({required TextEditingController controller, required String hint, Widget? suffix}) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: const TextStyle(color: Colors.grey, fontSize: 16),
-        suffixIcon: suffix != null ? Column(mainAxisAlignment: MainAxisAlignment.center, children: [suffix]) : null,
-        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade200)),
-        focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-      ),
-    );
-  }
-
   // endregion
 
   // region Logic Handlers
 
   void _handleSendSms() {
     if (_forgotPwController.phoneController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please enter phone number"), backgroundColor: Colors.red),
-      );
+      _showError("Please enter phone number");
       return;
     }
     _startCountdown();
@@ -259,14 +205,14 @@ class ForgotPasswordController {
   String countryCode = "+86";
 
   void validateAndSubmit(ForgotPasswordInteractor interactor, Function(String) onError) {
-    // if (phoneController.text.isEmpty) {
-    //   onError("Please enter phone number");
-    //   return;
-    // }
-    // if (smsController.text.isEmpty) {
-    //   onError("Please enter verification code");
-    //   return;
-    // }
+    if (phoneController.text.isEmpty) {
+      onError("Please enter phone number");
+      return;
+    }
+    if (smsController.text.isEmpty) {
+      onError("Please enter verification code");
+      return;
+    }
     interactor.forgotPassword("$countryCode${phoneController.text}", smsController.text);
   }
 

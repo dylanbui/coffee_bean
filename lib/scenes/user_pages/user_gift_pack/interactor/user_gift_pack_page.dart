@@ -9,6 +9,7 @@
 
 import 'package:coffee_bean/scenes/user_pages/user_gift_pack/interactor/user_gift_pack_event_state.dart';
 import 'package:coffee_bean/scenes/user_pages/user_gift_pack/interactor/user_gift_pack_interactor.dart';
+import 'package:coffee_bean/widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
@@ -64,11 +65,15 @@ class _UserGiftPackPageState extends BaseCubitState<UserGiftPackPage, UserGiftPa
       if (state is UserGiftPackSuccess) {
         // Xử lý thành công
       } else if (state is UserGiftPackError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-        );
+        _showError(state.message);
       }
     }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
   }
 
   Widget _buildMainContent(BuildContext context) {
@@ -135,49 +140,16 @@ class _UserGiftPackPageState extends BaseCubitState<UserGiftPackPage, UserGiftPa
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Column(
         children: [
-          _buildActionButton(
+          AppButton.primary(
             text: "View Gift Pack",
-            backgroundColor: Colors.black,
-            textColor: Colors.white,
             onPressed: () => _handleButtonClick("View Gift Pack"),
           ),
           const SizedBox(height: 10), // Cách nhau 10px
-          _buildActionButton(
+          AppButton.outline(
             text: "Back",
-            backgroundColor: Colors.white.withOpacity(0.8),
-            textColor: Colors.black,
             onPressed: () => _handleButtonClick("Back"),
-            hasBorder: true,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildActionButton({
-    required String text,
-    required Color backgroundColor,
-    required Color textColor,
-    required VoidCallback onPressed,
-    bool hasBorder = false,
-  }) {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-            side: hasBorder ? const BorderSide(color: Colors.black) : BorderSide.none,
-          ),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.bold),
-        ),
       ),
     );
   }

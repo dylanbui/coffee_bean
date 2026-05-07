@@ -19,6 +19,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/base_cubit_statefull_widget.dart';
+import 'package:coffee_bean/widget/phone_input_field.dart';
+import 'package:coffee_bean/widget/underline_input_field.dart';
+import 'package:coffee_bean/widget/app_button.dart';
 
 //ignore: must_be_immutable
 class UserRegisterPage extends BaseCubitStateFulWidget with ViewControllable {
@@ -85,22 +88,7 @@ class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegist
   @override
   Widget getBody(BuildContext context) {
     return BlocConsumer<UserRegisterInteractor, UserRegisterState>(
-      listener: (context, state) {
-        if (state is UserRegisterInProgress) {
-          showLoading();
-        } else {
-          hideLoading();
-          if (state is UserRegisterSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Register Success!"), backgroundColor: Colors.green),
-            );
-          } else if (state is UserRegisterError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-            );
-          }
-        }
-      },
+      listener: _onRegisterStateChanged,
       builder: (context, state) {
         return LayoutBuilder(
           builder: (context, constraints) {
@@ -114,41 +102,15 @@ class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegist
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(
                   children: <Widget>[
-                    // Logo - Thu nhỏ khi có bàn phím để tiết kiệm diện tích
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: _isKeyboardVisible ? 30.0 : 60.0,
-                        bottom: _isKeyboardVisible ? 20.0 : 60.0,
-                      ),
-                      child: Text(
-                        "TMLabs Coffee",
-                        style: TextStyle(
-                          fontSize: _isKeyboardVisible ? 22 : 28, 
-                          fontWeight: FontWeight.bold
-                        ),
-                      ),
-                    ),
-
-                    // Inputs
-                    _buildPhoneInput(
-                      controller: _registerController.phoneController,
-                      selectedCode: _registerController.countryCode,
-                      onCodeChanged: (val) => setState(() => _registerController.countryCode = val!),
-                    ),
-                    const SizedBox(height: 20),
-                    _buildUnderlineInput(
-                      controller: _registerController.smsController, 
-                      hint: "Verification Code", // Enter verification code
-                      suffix: _buildCountdownButton(),
-                    ),
-                    const SizedBox(height: 20),
-                    _buildUnderlineInput(
-                      controller: _registerController.invitationController, 
-                      hint: "Invitation Code (Optional)", // Invitation code (Optional)
-                    ),
-
+                    _buildLogo(),
+                    _buildInputs(),
                     const SizedBox(height: 40),
-                    _buildSubmitButton(),
+                    AppButton.primary(
+                      text: "Register",
+                      onPressed: () {
+                        _registerController.validateRegister(interactor, _showError);
+                      },
+                    ),
                     const SizedBox(height: 20),
                     _buildFooterLinks(),
 
@@ -170,26 +132,65 @@ class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegist
 
   // region Private functions
 
-  Widget _buildSubmitButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: () {
-          void onError(String message) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message), backgroundColor: Colors.red),
-            );
-          }
-          _registerController.validateRegister(interactor, onError);
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.black,
-          elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        child: const Text("Register", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+  void _onRegisterStateChanged(BuildContext context, UserRegisterState state) {
+    if (state is UserRegisterInProgress) {
+      showLoading();
+    } else {
+      hideLoading();
+      if (state is UserRegisterSuccess) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Register Success!"), backgroundColor: Colors.green),
+        );
+      } else if (state is UserRegisterError) {
+        _showError(state.message);
+      }
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
+  }
+
+  Widget _buildLogo() {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: _isKeyboardVisible ? 30.0 : 60.0,
+        bottom: _isKeyboardVisible ? 20.0 : 60.0,
       ),
+      child: Text(
+        "TMLabs Coffee",
+        style: TextStyle(
+          fontSize: _isKeyboardVisible ? 22 : 28, 
+          fontWeight: FontWeight.bold
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInputs() {
+    return Column(
+      children: [
+        PhoneInputField(
+          controller: _registerController.phoneController,
+          countryCodes: const ["+86", "+84", "+1"],
+          initialCountryCode: _registerController.countryCode,
+          onChanged: (val) => _registerController.countryCode = val.countryCode,
+        ),
+        const SizedBox(height: 20),
+        UnderlineInputField(
+          controller: _registerController.smsController, 
+          hint: "Verification Code", 
+          suffix: _buildCountdownButton(),
+          keyboardType: TextInputType.number,
+        ),
+        const SizedBox(height: 20),
+        UnderlineInputField(
+          controller: _registerController.invitationController, 
+          hint: "Invitation Code (Optional)",
+        ),
+      ],
     );
   }
 
@@ -197,9 +198,7 @@ class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegist
     return InkWell(
       onTap: _isCountingDown ? null : () {
         if (_registerController.phoneController.text.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Please enter phone number"), backgroundColor: Colors.red),
-          );
+          _showError("Please enter phone number");
           return;
         }
         _startCountdown();
@@ -212,54 +211,6 @@ class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegist
           fontWeight: FontWeight.bold,
           fontSize: 14,
         ),
-      ),
-    );
-  }
-
-  Widget _buildPhoneInput({
-    required TextEditingController controller,
-    required String selectedCode,
-    required ValueChanged<String?> onCodeChanged,
-  }) {
-    return Container(
-      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade200))),
-      child: Row(
-        children: [
-          DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: selectedCode,
-              icon: const Icon(Icons.keyboard_arrow_down, size: 18, color: Colors.grey),
-              items: ["+86", "+84", "+1"].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-              onChanged: onCodeChanged,
-            ),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: TextField(
-              controller: controller,
-              keyboardType: TextInputType.phone,
-              style: const TextStyle(fontSize: 16),
-              decoration: const InputDecoration(
-                hintText: "Phone Number", // Phone number
-                hintStyle: TextStyle(color: Colors.grey),
-                border: InputBorder.none
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildUnderlineInput({required TextEditingController controller, required String hint, Widget? suffix}) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: const TextStyle(color: Colors.grey, fontSize: 16),
-        suffixIcon: suffix != null ? Column(mainAxisAlignment: MainAxisAlignment.center, children: [suffix]) : null,
-        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade200)),
-        focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
       ),
     );
   }

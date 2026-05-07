@@ -9,6 +9,7 @@
 
 import 'package:coffee_bean/scenes/user_pages/user_agreement/interactor/user_agreement_event_state.dart';
 import 'package:coffee_bean/scenes/user_pages/user_agreement/interactor/user_agreement_interactor.dart';
+import 'package:coffee_bean/widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
@@ -30,15 +31,7 @@ class _UserAgreementPageState extends BaseCubitState<UserAgreementPage, UserAgre
   @override
   Widget getBody(BuildContext context) {
     return BlocConsumer<UserAgreementInteractor, UserAgreementState>(
-      listener: (context, state) {
-        if (state is UserAgreementSuccess) {
-
-        } else if (state is UserAgreementError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-          );
-        }
-      },
+      listener: _onStateListener,
       builder: (context, state) {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -49,17 +42,28 @@ class _UserAgreementPageState extends BaseCubitState<UserAgreementPage, UserAgre
                 'Please read and accept our terms and conditions to continue using the application.',
                 style: TextStyle(fontSize: 16),
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
+              const SizedBox(height: 40),
+              AppButton.primary(
+                text: "Accept and Continue",
                 onPressed: () {
+                  // Handle accept logic
                 },
-                child: const Text('Accept and Continue'),
               ),
             ],
           ),
         );
       },
     );
+  }
+
+  void _onStateListener(BuildContext context, UserAgreementState state) {
+    if (state is UserAgreementSuccess) {
+      // Handle success
+    } else if (state is UserAgreementError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+      );
+    }
   }
 
   @override

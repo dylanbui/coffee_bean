@@ -56,9 +56,10 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
 
     void _handleChanged() {
         String text = _internalController.text.trim();
+        final bool showSelectBox = widget.countryCodes != null && widget.countryCodes!.isNotEmpty;
 
-        // Automatically remove leading '0' if the user enters it (as country code is already included)
-        if (text.startsWith('0')) {
+        // Automatically remove leading '0' ONLY IF the country code select box is shown
+        if (showSelectBox && text.startsWith('0')) {
             text = text.replaceFirst(RegExp(r'^0+'), '');
             _internalController.value = TextEditingValue(
                 text: text,
@@ -67,11 +68,21 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
             return;
         }
 
-        // Validation logic: Vietnam phone numbers are typically 9-10 digits (after removing the leading '0')
-        bool isValid = text.isNotEmpty && text.length >= 9 && text.length <= 10;
+        bool isValid = false;
+        if (showSelectBox) {
+            // Case 1: Select box is shown
+            // 1. Remove leading '0' (already handled above if it started with '0')
+            // 2. Head number (digits only, no '+') + number A
+            String codeDigits = _selectedCode.replaceAll(RegExp(r'[^0-9]'), '');
+            int totalLength = (codeDigits + text).length;
+            isValid = text.isNotEmpty && totalLength >= 10 && totalLength <= 11;
+        } else {
+            // Case 2: No select box
+            isValid = text.isNotEmpty && text.length >= 10 && text.length <= 11;
+        }
 
         widget.onChanged?.call(PhoneValue(
-            countryCode: _selectedCode,
+            countryCode: showSelectBox ? _selectedCode : "",
             number: text,
             isValid: isValid,
         ));

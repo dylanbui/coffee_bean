@@ -47,3 +47,30 @@ class BigRevampStyle {
     ),
   );
 }
+
+class AppButtonStyle {
+  static final primary = ElevatedButton.styleFrom(
+    backgroundColor: Colors.black,
+    foregroundColor: Colors.white,
+    elevation: 0,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  );
+
+  static final secondary = ElevatedButton.styleFrom(
+    backgroundColor: Colors.grey.shade200,
+    foregroundColor: Colors.black,
+    elevation: 0,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  );
+
+  static final outline = ElevatedButton.styleFrom(
+    backgroundColor: Colors.white,
+    foregroundColor: Colors.black,
+    elevation: 0,
+    side: const BorderSide(color: Colors.black, width: 1),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  );
+}

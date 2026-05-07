@@ -21,6 +21,8 @@ import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/commons/state_management/lib_bloc/base_cubit_statefull_widget.dart';
 import 'package:coffee_bean/widget/password_field.dart';
 import 'package:coffee_bean/widget/phone_input_field.dart';
+import 'package:coffee_bean/widget/underline_input_field.dart';
+import 'package:coffee_bean/widget/app_button.dart';
 
 //ignore: must_be_immutable
 class UserLoginPage extends BaseCubitStateFulWidget with ViewControllable {
@@ -214,31 +216,6 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
     );
   }
 
-  Widget _buildSubmitButton({required int tabIndex}) {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: () {
-          setState(() {
-            if (tabIndex == 0) {
-              _loginController.validatePwLogin(interactor, _showError);
-            } else {
-              _loginController.validateSmsLogin(interactor, _showError);
-            }
-          });
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.black,
-          elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        child: const Text("Login",
-            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-      ),
-    );
-  }
-
   Widget _buildPasswordTab() {
     return Column(
       children: [
@@ -255,7 +232,14 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
           hint: "Enter Password",
         ),
         const SizedBox(height: 30),
-        _buildSubmitButton(tabIndex: 0),
+        AppButton.primary(
+          text: "Login",
+          onPressed: () {
+            setState(() {
+              _loginController.validatePwLogin(interactor, _showError);
+            });
+          },
+        ),
         const SizedBox(height: 20),
         _buildFooterLinks(),
       ],
@@ -273,13 +257,21 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
           onChanged: (val) => _loginController.countryCode2 = val.countryCode,
         ),
         const SizedBox(height: 20),
-        _buildUnderlineInput(
+        UnderlineInputField(
           controller: _loginController.smsController,
           hint: "SMS Code",
           suffix: _buildCountdownButton(),
+          keyboardType: TextInputType.number,
         ),
         const SizedBox(height: 30),
-        _buildSubmitButton(tabIndex: 1),
+        AppButton.primary(
+          text: "Login",
+          onPressed: () {
+            setState(() {
+              _loginController.validateSmsLogin(interactor, _showError);
+            });
+          },
+        ),
         const SizedBox(height: 20),
         _buildFooterLinks(hideForgotPw: true),
       ],
@@ -304,19 +296,6 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
           fontWeight: FontWeight.bold,
           fontSize: 14,
         ),
-      ),
-    );
-  }
-
-  Widget _buildUnderlineInput({required TextEditingController controller, required String hint, Widget? suffix}) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: const TextStyle(color: Colors.grey),
-        suffixIcon: suffix != null ? Column(mainAxisAlignment: MainAxisAlignment.center, children: [suffix]) : null,
-        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade200)),
-        focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
       ),
     );
   }

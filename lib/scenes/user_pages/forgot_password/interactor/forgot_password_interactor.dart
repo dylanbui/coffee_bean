@@ -19,8 +19,7 @@ class ForgotPasswordInteractor extends CubitInteractor<DbNoteRoutable, ForgotPas
   ForgotPasswordInteractor({DbNoteRoutable? router}) : super(ForgotPasswordInitial(), router: router);
 
   @override
-  void didBecomeActive() {
-    super.didBecomeActive();
+  void onDidBecomeActive() {
     loadData();
   }
 
@@ -28,9 +27,19 @@ class ForgotPasswordInteractor extends CubitInteractor<DbNoteRoutable, ForgotPas
     // emit(ForgotPasswordInProgress());
   }
 
-  void sendSmsCode(String phoneNumber) {
+  void sendSmsCode(String phoneNumber) async {
+    // Để không bị kẹt ở màn hình loading, chúng ta chỉ emit InProgress nếu thực sự cần chặn UI.
+    // Ở đây ta giả lập gửi SMS nhanh nên có thể không cần emit hoặc emit rồi quay về Initial.
+    print("Interactor: Sending SMS to $phoneNumber");
     emit(ForgotPasswordInProgress());
-    // repository.sendSmsCode(phoneNumber);
+    await Future.delayed(const Duration(seconds: 3));
+    emit(ForgotPasswordSendCodeDone());
+
+    
+    // Nếu muốn hiện loading ngắn:
+    // emit(ForgotPasswordInProgress());
+    // await Future.delayed(const Duration(seconds: 1));
+    // emit(ForgotPasswordInitial());
   }
 
   Future<void> forgotPassword(String phoneNumber, String smsCode) async {

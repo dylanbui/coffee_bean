@@ -10,6 +10,7 @@
 import 'package:coffee_bean/scenes/user_pages/set_password/interactor/set_password_event_state.dart';
 import 'package:coffee_bean/scenes/user_pages/set_password/interactor/set_password_interactor.dart';
 import 'package:coffee_bean/widget/password_field.dart';
+import 'package:coffee_bean/widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
@@ -53,11 +54,15 @@ class _SetPasswordPageState extends BaseCubitState<SetPasswordPage, SetPasswordI
       if (state is SetPasswordSuccess) {
         // Handle success
       } else if (state is SetPasswordError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-        );
+        _showError(state.message);
       }
     }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
   }
 
   Widget _buildMainContent(BuildContext context) {
@@ -79,7 +84,10 @@ class _SetPasswordPageState extends BaseCubitState<SetPasswordPage, SetPasswordI
                   const SizedBox(height: 40),
                   _buildInputs(),
                   const SizedBox(height: 40),
-                  _buildSubmitButton(),
+                  AppButton.primary(
+                    text: "Change Password",
+                    onPressed: _handleSubmit,
+                  ),
                   const Spacer(),
                   const SizedBox(height: 20),
                 ],
@@ -118,25 +126,6 @@ class _SetPasswordPageState extends BaseCubitState<SetPasswordPage, SetPasswordI
     );
   }
 
-  Widget _buildSubmitButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: _handleSubmit,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.black,
-          elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        child: const Text(
-          "Change Password",
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
-  }
-
   // endregion
 
   // region Logic Handlers
@@ -144,9 +133,7 @@ class _SetPasswordPageState extends BaseCubitState<SetPasswordPage, SetPasswordI
   void _handleSubmit() {
     _setPasswordController.validateSetPassword(
       interactor,
-      (message) => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message), backgroundColor: Colors.red),
-      ),
+      _showError,
     );
   }
 
