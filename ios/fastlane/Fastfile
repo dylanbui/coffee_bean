@@ -1,0 +1,70 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  # Khai báo tester đồng bộ với Android
+  DEV_TESTERS = "buivantienduc@gmail.com"
+  DEV_GROUPS = "dev-tmlabs"
+
+  lane :deploy do |options|
+    env = options[:env] || "dev"
+
+    # Map file main tương ứng [cite: 2, 9]
+    target_map = {
+      "dev" => "lib/main_dev.dart",
+      "uat" => "lib/main_uat.dart",
+      "production" => "lib/main_release.dart"
+    }
+    target = target_map[env] || "lib/main.dart"
+
+    # 1. Build Flutter iOS (Tạo thư mục build và các liên kết native)
+    Dir.chdir "../.." do
+      sh("flutter", "build", "ios", "--flavor", env, "-t", target, "--no-codesign")
+    end
+
+    # 2. Archive và Export IPA bằng Gym (Đây là bước đặc thù của iOS)
+    # Lưu ý: 'scheme' phải khớp với tên Flavor bạn đặt trong Xcode
+    build_app(
+      scheme: env,
+      workspace: "Runner.xcworkspace",
+      include_bitcode: false,
+      export_method: (env == "production") ? "app-store" : "ad-hoc",
+      output_directory: "./build",
+      output_name: "Runner.ipa",
+      # Đảm bảo bạn đã cấu hình Build Configuration là Release-dev, Release-uat, v.v.
+      configuration: "Release-#{env}"
+    )
+
+    # 3. Phân phối
+    if env == "production"
+      # Đẩy lên TestFlight cho bản Production
+      upload_to_testflight(skip_waiting_for_build_processing: true)
+    else
+      # Đẩy lên Firebase App Distribution cho bản DEV/UAT
+      firebase_app_distribution(
+        app: "1:294180713194:ios:xxxx_id_cua_ios_xxxx", # Thay ID iOS của bạn tại đây
+        testers: DEV_TESTERS,
+        groups: DEV_GROUPS,
+        release_notes_file: '../release-notes.txt',
+        ipa_path: "./build/Runner.ipa"
+      )
+    end
+
+    # 4. Thông báo (Tùy chọn - Bật lại nếu cần)
+    # google_chat(webhook: "...", title: "iOS Build Success - #{env.upcase}")
+  end
+end

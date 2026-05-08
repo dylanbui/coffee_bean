@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "294180713194",
+    "project_id": "coffee-bean-cea92",
+    "storage_bucket": "coffee-bean-cea92.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:294180713194:android:59e6528e4d0a3c2db11d93",
+        "android_client_info": {
+          "package_name": "com.dylanbui.coffeebean"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAj3mWKdZMRErW0pqu50PPLe6vAgUFmRjw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

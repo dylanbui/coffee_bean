@@ -25,7 +25,7 @@ class UserSession {
   String? accessToken;
   String? refreshToken;
 
-  // Fixed keys used across functions
+  // Fixed scripts used across functions
   static const String _sessionKey = "SESSION_USER";
   static const String _accessTokenKey = "access_token"; // Separate key for quick access
   static const String _refreshTokenKey = "refresh_token";
@@ -98,7 +98,7 @@ class UserSession {
     return !isLogin();
   }
 
-  /// Save user session and separate keys for quick access
+  /// Save user session and separate scripts for quick access
   Future<void> saveToSystem() async {
     final storage = BaseSecureStorage();
 

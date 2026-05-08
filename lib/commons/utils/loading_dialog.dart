@@ -111,11 +111,12 @@ class DbLoading {
             child: Stack(
               children: [
                 // 1. LỚP NỀN TRẮNG (Hoặc tùy chỉnh)
-                Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  color: backgroundColor,
-                  child: message != null ? Center(child: Text(message, style: textStyle)) : null,
+                Positioned.fill(
+                  top: topPadding + appBarHeight,
+                  child: Container(
+                    color: backgroundColor,
+                    child: message != null ? Center(child: Text(message, style: textStyle)) : null,
+                  ),
                 ),
 
                 // 2. INDICATOR (iOS: Spinner nhỏ, Android: Thanh Line)
@@ -189,11 +190,12 @@ class DbPageLoading {
             child: Stack(
               children: [
                 // 1. LỚP NỀN TRẮNG (Hoặc tùy chỉnh)
-                Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  color: backgroundColor,
-                  child: message != null ? Center(child: Text(message, style: textStyle)) : null,
+                Positioned.fill(
+                  top: topPadding + appBarHeight,
+                  child: Container(
+                    color: backgroundColor,
+                    child: message != null ? Center(child: Text(message, style: textStyle)) : null,
+                  ),
                 ),
 
                 // 2. INDICATOR (iOS: Spinner nhỏ, Android: Thanh Line)

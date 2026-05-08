@@ -1,4 +1,4 @@
-package com.example.coffee_bean
+package com.dylanbui.coffeebean
 
 import io.flutter.embedding.android.FlutterActivity
 

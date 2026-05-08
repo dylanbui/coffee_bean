@@ -1,0 +1,66 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+
+  # Khai báo danh sách tester trực tiếp tại đây
+  DEV_TESTERS = "buivantienduc@gmail.com"
+  DEV_GROUPS = "dev-tmlabs"
+
+  lane :deploy do |options|
+
+        # Đọc version từ pubspec.yaml
+        # pubspec = YAML.load_file("../../pubspec.yaml")
+        # version_name = pubspec['version'].split('+')[0]
+        # build_number = pubspec['version'].split('+')[1]
+
+        env = options[:env] || "dev"
+        # Xác định file main dựa trên môi trường [cite: 2, 9]
+        target_map = {
+          "dev" => "lib/main_dev.dart",
+          "uat" => "lib/main_uat.dart",
+          "production" => "lib/main_release.dart"
+        }
+        target = target_map[env] || "lib/main.dart"
+
+        # 1. Build APK với flavor tương ứng [cite: 2, 4, 7]
+        Dir.chdir "../.." do
+          sh("flutter", "build", "apk", "--flavor", env, "-t", target)
+        end
+
+        # testers: (env == "production") ? PROD_TESTERS : DEV_TESTERS,
+        # groups: (env == "production") ? PROD_GROUPS : DEV_GROUPS,
+
+        # 2. Phân phối qua Firebase App Distribution [cite: 2, 5, 10]
+        firebase_app_distribution(
+          app: "1:294180713194:android:59e6528e4d0a3c2db11d93",
+          testers: DEV_TESTERS,
+          groups: DEV_GROUPS,
+          release_notes_file: '../release-notes.txt',
+          # release_notes: "Bản build: #{version_name} (Build: #{build_number}) cho #{env.upcase}",
+
+          android_artifact_type: "APK",
+          android_artifact_path: "../build/app/outputs/flutter-apk/app-#{env}-release.apk"
+
+          # Build AAB file replace for APK
+          # android_artifact_type: "AAB",
+          # android_artifact_path: "../build/app/outputs/bundle/#{env}Release/app-#{env}-release.aab"
+          # debug: true # Print debug log to terminal
+        )
+
+  end
+end

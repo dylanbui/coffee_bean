@@ -1,3 +1,5 @@
+keys/*.json
+
 # Miscellaneous
 *.class
 *.log
@@ -65,3 +67,21 @@ copilot.yml
 # Other AI tools (e.g., Codeium, Tabnine)
 .codeium/
 .tabnine/
+
+# =========================================================================
+# Build & Release Notes
+# =========================================================================
+# File release notes tổng hợp cho mỗi lần build
+release-notes.txt
+
+# Các file log release notes theo môi trường (ví dụ: Dev.release-notes.txt)
+*.release-notes.txt
+
+# File ghi chú thủ công dùng để input cho script build
+scripts/manual-notes.txt
+
+# Các bản sao của release notes trong thư mục native
+android/release-notes.txt
+ios/release-notes.txt
+
+
