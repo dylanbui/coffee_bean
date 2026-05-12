@@ -13,6 +13,9 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
+# Tối ưu cho hiển thị log
+$stdout.sync = true
+
 default_platform(:android)
 
 platform :android do

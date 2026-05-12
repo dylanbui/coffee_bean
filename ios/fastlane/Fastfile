@@ -13,6 +13,9 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
+# Tối ưu cho hiển thị log
+$stdout.sync = true
+
 default_platform(:ios)
 
 platform :ios do
@@ -21,50 +24,73 @@ platform :ios do
   DEV_GROUPS = "dev-tmlabs"
 
   lane :deploy do |options|
-    env = options[:env] || "dev"
+      env = options[:env] || "dev"
+      target = get_target_path(env)
 
-    # Map file main tương ứng [cite: 2, 9]
+      UI.header "🚀 Quy trình Deploy iOS [#{env.upcase}]"
+
+      # 1. Định nghĩa export_method dựa trên môi trường
+      # TestFlight BẮT BUỘC dùng 'app-store'
+      export_method = (env == "production") ? "app-store" : "ad-hoc"
+
+      # 2. Build IPA
+      UI.message("🛠  Building IPA for flavor: #{env} with export-method: #{export_method}...")
+      Dir.chdir "../.." do
+        sh("flutter", "build", "ipa", "--flavor", env, "-t", target, "--export-method", export_method)
+      end
+
+      # 3. Phân phối
+      if env == "production"
+        # --- ĐƯA LÊN TESTFLIGHT ---
+        upload_to_testflight(
+          # skip_waiting_for_build_processing: true, # Tiết kiệm thời gian trên CI
+          # apple_id: "ID_CỦA_APP_TRÊN_APP_STORE_CONNECT",
+          ipa: "../build/ios/ipa/*.ipa"
+        )
+        UI.success "✅ Đã tải bản build lên TestFlight thành công!"
+      else
+        # --- ĐƯA LÊN FIREBASE ---
+        app_id = get_firebase_app_id(env)
+        firebase_app_distribution(
+          app: app_id,
+          testers: DEV_TESTERS,
+          #groups: DEV_GROUPS,
+          release_notes_file: '../release-notes.txt',
+          ipa_path: "../build/ios/ipa/*.ipa"
+        )
+        UI.success "✅ Đã tải bản build [#{env}] lên Firebase!"
+      end
+    end
+
+  end
+
+  # ==============================================================
+  # HELPER METHODS
+  # ==============================================================
+
+  # Hàm xác định file main (Giống hệt Android)
+  def get_target_path(env)
     target_map = {
-      "dev" => "lib/main_dev.dart",
-      "uat" => "lib/main_uat.dart",
+      "dev"        => "lib/main_dev.dart",
+      "uat"        => "lib/main_uat.dart",
       "production" => "lib/main_release.dart"
     }
     target = target_map[env] || "lib/main.dart"
-
-    # 1. Build Flutter iOS (Tạo thư mục build và các liên kết native)
-    Dir.chdir "../.." do
-      sh("flutter", "build", "ios", "--flavor", env, "-t", target, "--no-codesign")
-    end
-
-    # 2. Archive và Export IPA bằng Gym (Đây là bước đặc thù của iOS)
-    # Lưu ý: 'scheme' phải khớp với tên Flavor bạn đặt trong Xcode
-    build_app(
-      scheme: env,
-      workspace: "Runner.xcworkspace",
-      include_bitcode: false,
-      export_method: (env == "production") ? "app-store" : "ad-hoc",
-      output_directory: "./build",
-      output_name: "Runner.ipa",
-      # Đảm bảo bạn đã cấu hình Build Configuration là Release-dev, Release-uat, v.v.
-      configuration: "Release-#{env}"
-    )
-
-    # 3. Phân phối
-    if env == "production"
-      # Đẩy lên TestFlight cho bản Production
-      upload_to_testflight(skip_waiting_for_build_processing: true)
-    else
-      # Đẩy lên Firebase App Distribution cho bản DEV/UAT
-      firebase_app_distribution(
-        app: "1:294180713194:ios:xxxx_id_cua_ios_xxxx", # Thay ID iOS của bạn tại đây
-        testers: DEV_TESTERS,
-        groups: DEV_GROUPS,
-        release_notes_file: '../release-notes.txt',
-        ipa_path: "./build/Runner.ipa"
-      )
-    end
-
-    # 4. Thông báo (Tùy chọn - Bật lại nếu cần)
-    # google_chat(webhook: "...", title: "iOS Build Success - #{env.upcase}")
+    UI.important "📍 Target Path: #{target}"
+    target
   end
+
+  # Hàm xác định App ID iOS (Bạn cần thay ID iOS từ Firebase Console)
+  def get_firebase_app_id(env)
+    app_id_map = {
+      "dev"        => "1:583923309178:ios:xxxxxx_DỔI_ID_TẠI_ĐÂY_xxxxxx",
+      "uat"        => "1:583923309178:ios:yyyyyy_DỔI_ID_TẠI_ĐÂY_yyyyyy",
+      "production" => "1:583923309178:ios:zzzzzz_DỔI_ID_TẠI_ĐÂY_zzzzzz"
+    }
+    id = app_id_map[env]
+    UI.important "📱 Firebase iOS App ID: #{id}"
+    id
+  end
+
+
 end
