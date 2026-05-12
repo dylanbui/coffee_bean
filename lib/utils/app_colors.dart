@@ -45,6 +45,14 @@ class AppColor {
   static final propzyBlue100 = HexColor('E8EFF6');
   static final green_iBuy = HexColor('248A3D');
   static final green_bg_time = HexColor('EDF9F4');
+
+  // Basic Colors for Prototype
+  static final basicBackground = HexColor('F8F8F8');
+  static final basicSearchBg = HexColor('F2F2F2');
+  static final basicPrimaryText = HexColor('333333');
+  static final basicSecondaryText = HexColor('999999');
+  static final basicPrice = HexColor('FF4D4F');
+  static final basicAccent = HexColor('000000');
 }
 
 class HexColor extends Color {

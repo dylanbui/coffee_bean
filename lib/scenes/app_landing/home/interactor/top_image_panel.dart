@@ -1,11 +1,12 @@
-import 'package:coffee_bean/commons/utils/logger.dart';
+import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
+import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.dart';
 import 'package:coffee_bean/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TopImagePanel extends StatefulWidget {
-  final BuildContext parentContext;
-  const TopImagePanel({super.key, required this.parentContext});
+  const TopImagePanel({super.key});
 
   @override
   State<TopImagePanel> createState() => _TopImagePanelState();
@@ -17,12 +18,8 @@ class _TopImagePanelState extends State<TopImagePanel> {
   int _currentPage = 0;
   bool _isSearchFocused = false;
 
-  final List<String> _images = [
-    'https://images.unsplash.com/photo-1501339819358-ee5969a1f18c?q=80&w=800&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=800&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=800&auto=format&fit=crop',
-  ];
+  // Interactor variable
+  late HomeInteractor _interactor;
 
   @override
   void initState() {
@@ -41,39 +38,54 @@ class _TopImagePanelState extends State<TopImagePanel> {
 
   @override
   Widget build(BuildContext context) {
+    // Access interactor from context
+    _interactor = context.read<HomeInteractor>();
+    
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-      ),
-      child: Stack(
-        children: [
-          _buildImageSlider(),
-          _buildPageIndicators(),
-          _buildHeader(statusBarHeight, screenWidth),
-          _buildWelcomeText(),
-        ],
-      ),
+    return BlocBuilder<HomeInteractor, HomeState>(
+      // Only rebuild if topImageData changes
+      buildWhen: (previous, current) => previous.topImageData != current.topImageData,
+      builder: (context, state) {
+        final data = state.topImageData;
+        final images = data?.images ?? [];
+        final userName = data?.userName ?? "";
+
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.light,
+          ),
+          child: Stack(
+            children: [
+              _buildImageSlider(images),
+              _buildPageIndicators(images.length),
+              _buildHeader(statusBarHeight, screenWidth),
+              _buildWelcomeText(userName),
+            ],
+          ),
+        );
+      },
     );
   }
 
   // --- Widget Components ---
 
-  Widget _buildImageSlider() {
+  Widget _buildImageSlider(List<String> images) {
+    if (images.isEmpty) return const SizedBox(height: 420);
+    
     return SizedBox(
       height: 420,
       child: PageView.builder(
         controller: _pageController,
-        itemCount: _images.length,
+        itemCount: images.length,
         onPageChanged: (index) => setState(() => _currentPage = index),
         itemBuilder: (context, index) => Stack(
           fit: StackFit.expand,
           children: [
             CachedImageWidget(
-              imageUrl: _images[index],
+              imageUrl: images[index],
               width: double.infinity,
               height: 420,
               borderRadius: 0,
@@ -102,14 +114,14 @@ class _TopImagePanelState extends State<TopImagePanel> {
     );
   }
 
-  Widget _buildPageIndicators() {
+  Widget _buildPageIndicators(int count) {
     return Positioned(
       bottom: 25,
       left: 0,
       right: 0,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(_images.length, (index) {
+        children: List.generate(count, (index) {
           final isSelected = _currentPage == index;
           return AnimatedContainer(
             duration: const Duration(milliseconds: 300),
@@ -146,9 +158,7 @@ class _TopImagePanelState extends State<TopImagePanel> {
   }
 
   Widget _buildLocationButton(double availableWidth, double searchWidthNormal) {
-    // Chiều rộng nút location: 2/3 phần không gian trừ đi search và spacing
-    // final double locationWidth = (availableWidth - searchWidthNormal - 8) * 2 / 3;
-    final double locationWidth = 220;
+    const double locationWidth = 220;
 
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 200),
@@ -170,7 +180,7 @@ class _TopImagePanelState extends State<TopImagePanel> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(25),
               child: InkWell(
-                onTap: () => iLog("Chọn cửa hàng..."),
+                onTap: () => _interactor.selectStore(),
                 borderRadius: BorderRadius.circular(25),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -216,38 +226,57 @@ class _TopImagePanelState extends State<TopImagePanel> {
             _searchFocusNode.unfocus();
           }
         },
-        child: Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFF0D1B3E).withOpacity(0.85),
-            borderRadius: BorderRadius.circular(25),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  focusNode: _searchFocusNode,
-                  style: const TextStyle(color: Colors.white, fontSize: 14),
-                  decoration: const InputDecoration(
-                    hintText: "Tìm kiếm...",
-                    hintStyle: TextStyle(color: Colors.white70, fontSize: 14),
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.only(left: 16),
+        child: GestureDetector(
+          onTap: () {
+            if (!_isSearchFocused) {
+              _searchFocusNode.requestFocus();
+            }
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFF0D1B3E).withOpacity(0.85),
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    focusNode: _searchFocusNode,
+                    onSubmitted: (value) => _interactor.openSearch(),
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    decoration: const InputDecoration(
+                      hintText: "Tìm kiếm...",
+                      hintStyle: TextStyle(color: Colors.white70, fontSize: 14),
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.only(left: 16),
+                    ),
                   ),
                 ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(right: 12, left: 8),
-                child: Icon(Icons.search, color: Colors.white, size: 22),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(right: 12, left: 8),
+                  child: IconButton(
+                    icon: const Icon(Icons.search, color: Colors.white, size: 22),
+                    onPressed: () {
+                      if (_isSearchFocused) {
+                        _interactor.openSearch();
+                      } else {
+                        _searchFocusNode.requestFocus();
+                      }
+                    },
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildWelcomeText() {
+  Widget _buildWelcomeText(String name) {
     if (_isSearchFocused) return const SizedBox.shrink();
     return Positioned(
       bottom: 60,
@@ -255,10 +284,10 @@ class _TopImagePanelState extends State<TopImagePanel> {
       child: IgnorePointer(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text("Chào buổi sáng Gigi", style: TextStyle(color: Colors.white, fontSize: 15)),
-            SizedBox(height: 10),
-            Text(
+          children: [
+            Text("Chào buổi sáng $name", style: const TextStyle(color: Colors.white, fontSize: 15)),
+            const SizedBox(height: 10),
+            const Text(
               "Chào mừng bạn\nđã quay trở lại",
               style: TextStyle(
                 color: Colors.white,

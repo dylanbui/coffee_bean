@@ -74,3 +74,33 @@ class AppButtonStyle {
     textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
   );
 }
+
+class BasicStyle {
+  static final primaryText = TextStyle(
+    color: AppColor.basicPrimaryText,
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+  );
+
+  static final secondaryText = TextStyle(
+    color: AppColor.basicSecondaryText,
+    fontSize: 14,
+  );
+
+  static final priceText = TextStyle(
+    color: AppColor.basicPrice,
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+  );
+
+  static final tabLabel = TextStyle(
+    color: AppColor.basicAccent,
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+  );
+
+  static final tabUnselectedLabel = TextStyle(
+    color: AppColor.basicSecondaryText,
+    fontSize: 14,
+  );
+}
