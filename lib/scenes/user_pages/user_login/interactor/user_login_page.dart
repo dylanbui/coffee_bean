@@ -14,6 +14,7 @@ import 'package:coffee_bean/commons/utils/keyboard_visibility.dart';
 import 'package:coffee_bean/scenes/user_pages/user_login/interactor/user_login_event_state.dart';
 import 'package:coffee_bean/scenes/user_pages/user_login/interactor/user_login_interactor.dart';
 import 'package:coffee_bean/scenes/user_pages/user_login/user_login_builder.dart';
+import 'package:coffee_bean/widget/loading_view.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -94,6 +95,11 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
       builder: (context, state) {
         return LayoutBuilder(
           builder: (context, constraints) {
+            // TODO: show loading
+            if (state is UserLoginInitial) {
+              return const Center(child: LoadingView(width: 150, height: 150));
+            }
+
             final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
             final double availableHeight = constraints.maxHeight - keyboardHeight;
 
@@ -129,7 +135,7 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
       showPageLoading();
     } else if (state is UserLoginStarted) {
       iLog("UserLoginStarted");
-      hidePageLoading();
+      // hidePageLoading();
     } else if (state is UserLoginInProgress) {
       iLog(state.message);
       showLoading(text: state.message);

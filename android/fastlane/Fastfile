@@ -19,7 +19,7 @@ platform :android do
 
   # Khai báo danh sách tester trực tiếp tại đây
   DEV_TESTERS = "buivantienduc@gmail.com"
-  DEV_GROUPS = "dev-tmlabs"
+  DEV_GROUPS = "tm-labs-qa"
 
   lane :deploy do |options|
 
@@ -29,15 +29,13 @@ platform :android do
         # build_number = pubspec['version'].split('+')[1]
 
         env = options[:env] || "dev"
-        # Xác định file main dựa trên môi trường [cite: 2, 9]
-        target_map = {
-          "dev" => "lib/main_dev.dart",
-          "uat" => "lib/main_uat.dart",
-          "production" => "lib/main_release.dart"
-        }
-        target = target_map[env] || "lib/main.dart"
+        # Xác định file main dựa trên môi trường
+        target = get_target_path(env)
+        # Get App ID - Distribution
+        app_id = get_firebase_app_id(env)
 
-        # 1. Build APK với flavor tương ứng [cite: 2, 4, 7]
+        # Build APK với flavor tương ứng
+        UI.message("🛠  Building APK for flavor: #{env} with target: #{target}...")
         Dir.chdir "../.." do
           sh("flutter", "build", "apk", "--flavor", env, "-t", target)
         end
@@ -47,9 +45,10 @@ platform :android do
 
         # 2. Phân phối qua Firebase App Distribution [cite: 2, 5, 10]
         firebase_app_distribution(
-          app: "1:294180713194:android:59e6528e4d0a3c2db11d93",
+          app: app_id,
           testers: DEV_TESTERS,
-          groups: DEV_GROUPS,
+          #groups: DEV_GROUPS,
+          # service_credentials_file: ENV["GOOGLE_APPLICATION_CREDENTIALS"],
           release_notes_file: '../release-notes.txt',
           # release_notes: "Bản build: #{version_name} (Build: #{build_number}) cho #{env.upcase}",
 
@@ -63,4 +62,33 @@ platform :android do
         )
 
   end
+
+  # ==============================================================
+  # HELPER METHODS
+  # ==============================================================
+
+  # Hàm xác định file main dựa trên môi trường
+  def get_target_path(env)
+    target_map = {
+      "dev"        => "lib/main_dev.dart",
+      "uat"        => "lib/main_uat.dart",
+      "production" => "lib/main_release.dart"
+    }
+    target = target_map[env] || "lib/main.dart"
+    UI.message("🚀 Target Path: #{target}")
+    target
+  end
+
+  # Hàm xác định App ID dựa trên môi trường
+  def get_firebase_app_id(env)
+    app_id_map = {
+      "dev"        => "1:583923309178:android:08a48518329ab1935f39c3",
+      "uat"        => "1:583923309178:android:f0aa44b8fe04aa2f5f39c3",
+      "production" => "1:583923309178:android:b2e7424894b6ea015f39c3"
+    }
+    app_id_map[env]
+  end
+
+
+
 end

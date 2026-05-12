@@ -18,8 +18,9 @@ class SplashPageInteractor extends CubitInteractor<DbNoteRoutable, SplashPageSta
 
   /// Simulates fetching data and then notifies of completion.
   Future<void> fetchSomething() async {
-    await Future.delayed(const Duration(seconds: 3));
-    // After waiting, command the router that the splash is complete.
-    router?.navigate(SplashPageCompleteRoute());
+    // Khong can xu ly o day nua
+    // await Future.delayed(const Duration(seconds: 3));
+    // // After waiting, command the router that the splash is complete.
+    // router?.navigate(SplashPageCompleteRoute());
   }
 }

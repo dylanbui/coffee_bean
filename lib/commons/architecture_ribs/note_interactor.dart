@@ -14,17 +14,19 @@ abstract class DbNoteInteractable {}
 
 /// Base Interactor for RIBs that only handles routing.
 abstract class DbNoteInteractor<T extends DbNoteRoutable> implements DbNoteInteractable {
-  T? get router;
+  late T? router;
   void didBecomeActive();
   void willResignActive();
+
+  DbNoteInteractor({this.router});
+
 }
 
 /// An Interactor that also manages a Presenter.
-abstract class DbNotePresenterInteractor<T extends DbNoteRoutable, P extends DbNotePresentable>
-    implements DbNoteInteractor<T> {
-  @override
-  T? get router;
-  P get presenter;
+abstract class DbNotePresenterInteractor<T extends DbNoteRoutable, P extends DbNotePresentable> extends DbNoteInteractor<T> {
+  final P presenter;
+
+  DbNotePresenterInteractor({required this.presenter, super.router});
 }
 
 /// The base protocol for all `Presenter`s.

@@ -151,7 +151,7 @@ class _TopImagePanelState extends State<TopImagePanel> {
     final double locationWidth = 220;
 
     return AnimatedPositioned(
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
       left: 0,
       top: 0,
@@ -204,37 +204,44 @@ class _TopImagePanelState extends State<TopImagePanel> {
 
   Widget _buildSearchBar(double availableWidth, double searchWidthNormal) {
     return AnimatedPositioned(
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
       right: 0,
       top: 0,
       bottom: 0,
       left: _isSearchFocused ? 0 : (availableWidth - searchWidthNormal),
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF0D1B3E).withOpacity(0.85),
-          borderRadius: BorderRadius.circular(25),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                focusNode: _searchFocusNode,
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-                decoration: const InputDecoration(
-                  hintText: "Tìm kiếm...",
-                  hintStyle: TextStyle(color: Colors.white70, fontSize: 14),
-                  border: InputBorder.none,
-                  isDense: true,
-                  contentPadding: EdgeInsets.only(left: 16),
+      child: TapRegion(
+        onTapOutside: (event) {
+          if (_isSearchFocused) {
+            _searchFocusNode.unfocus();
+          }
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF0D1B3E).withOpacity(0.85),
+            borderRadius: BorderRadius.circular(25),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  focusNode: _searchFocusNode,
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                  decoration: const InputDecoration(
+                    hintText: "Tìm kiếm...",
+                    hintStyle: TextStyle(color: Colors.white70, fontSize: 14),
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.only(left: 16),
+                  ),
                 ),
               ),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(right: 12, left: 8),
-              child: Icon(Icons.search, color: Colors.white, size: 22),
-            ),
-          ],
+              const Padding(
+                padding: EdgeInsets.only(right: 12, left: 8),
+                child: Icon(Icons.search, color: Colors.white, size: 22),
+              ),
+            ],
+          ),
         ),
       ),
     );

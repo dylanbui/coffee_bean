@@ -2,6 +2,7 @@ import 'package:coffee_bean/widget/cached_image_widget.dart';
 import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/top_image_panel.dart';
+import 'package:marquee/marquee.dart';
 
 class HomePage extends StatefulWidget with ViewControllable {
   const HomePage({super.key});
@@ -55,10 +56,10 @@ class _QuickActionsRow extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(color: Colors.grey[100], shape: BoxShape.circle),
-                child: Icon(item['icon'], color: const Color(0xFF0D1B3E)),
+                child: Icon(item['icon'], color: const Color(0xFF0D1B3E), size: 40,),
               ),
               const SizedBox(height: 8),
-              Text(item['label'], style: const TextStyle(fontSize: 11)),
+              Text(item['label'], style: const TextStyle(fontSize: 9)),
             ],
           );
         }).toList(),
@@ -76,19 +77,28 @@ class _AnnouncementBar extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(color: const Color(0xFF0D1B3E), borderRadius: BorderRadius.circular(8)),
+      height: 44,
+      decoration: BoxDecoration(color: const Color(0xFF0D1B3E), borderRadius: BorderRadius.circular(22)),
       child: Row(
-        children: const [
-          Icon(Icons.volume_up, color: Colors.white, size: 18),
-          SizedBox(width: 10),
+        children: [
+          const Icon(Icons.volume_up, color: Colors.white, size: 18),
+          const SizedBox(width: 10),
           Expanded(
-            child: Text(
-              "Menu mới với combo trader health các món ăn giàu dinh dườ...",
-              style: TextStyle(color: Colors.white, fontSize: 13),
-              overflow: TextOverflow.ellipsis,
+            child: Marquee(
+              text: "Menu mới với combo trader health các món ăn giàu dinh dưỡng... Đặt hàng ngay để nhận ưu đãi!",
+              style: const TextStyle(color: Colors.white, fontSize: 13),
+              scrollAxis: Axis.horizontal,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              blankSpace: 20.0,
+              velocity: 30.0,
+              pauseAfterRound: const Duration(seconds: 1),
+              accelerationDuration: const Duration(seconds: 1),
+              accelerationCurve: Curves.linear,
+              decelerationDuration: const Duration(milliseconds: 500),
+              decelerationCurve: Curves.easeOut,
             ),
           ),
-          Icon(Icons.chevron_right, color: Colors.white),
+          const Icon(Icons.arrow_forward_ios, color: Colors.white),
         ],
       ),
     );
@@ -108,14 +118,18 @@ class _PromoBanner extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text("Banner quảng cáo", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              SizedBox(height: 4),
-              Text("Hiển thị banner dạng nhỏ nhấn vào sẽ đến trang...", style: TextStyle(fontSize: 12, color: Colors.grey)),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text("Banner quảng cáo", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                SizedBox(height: 4),
+                Text("Hiển thị banner dạng nhỏ nhấn vào sẽ đến trang...",
+                    style: TextStyle(fontSize: 12, color: Colors.grey)),
+              ],
+            ),
           ),
+          const SizedBox(width: 12),
           ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(

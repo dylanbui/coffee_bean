@@ -25,7 +25,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.dylanbui.coffeebean"
+        applicationId = "com.tmlabs.coffee"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -40,19 +40,19 @@ android {
     productFlavors {
         create("dev") {
             dimension = "app-flavor"
-            // applicationIdSuffix = ".dev" // ID sẽ là com.dylanbui.coffeebean.dev
+            applicationIdSuffix = ".dev" // ID sẽ là com.tmlabs.coffee.dev
             versionNameSuffix = "-dev"
-            resValue("string", "app_name", "Coffee Dev")
+            resValue("string", "app_name", "TMLabs Dev")
         }
         create("uat") {
             dimension = "app-flavor"
-            // applicationIdSuffix = ".test" // ID sẽ là com.dylanbui.coffeebean.test
+            applicationIdSuffix = ".uat" // ID sẽ là com.tmlabs.coffee.uat
             versionNameSuffix = "-uat"
-            resValue("string", "app_name", "Coffee Test")
+            resValue("string", "app_name", "TMLabs Test")
         }
         create("production") {
             dimension = "app-flavor"
-            // Không có suffix để giữ ID sạch com.dylanbui.coffeebean cho Store
+            // Không có suffix để giữ ID sạch com.tmlabs.coffee cho Store
             resValue("string", "app_name", "Coffee Bean")
         }
     }

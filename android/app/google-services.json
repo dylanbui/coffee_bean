@@ -1,21 +1,59 @@
 {
   "project_info": {
-    "project_number": "294180713194",
-    "project_id": "coffee-bean-cea92",
-    "storage_bucket": "coffee-bean-cea92.firebasestorage.app"
+    "project_number": "583923309178",
+    "project_id": "tmlabs-coffee",
+    "storage_bucket": "tmlabs-coffee.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:294180713194:android:59e6528e4d0a3c2db11d93",
+        "mobilesdk_app_id": "1:583923309178:android:b2e7424894b6ea015f39c3",
         "android_client_info": {
-          "package_name": "com.dylanbui.coffeebean"
+          "package_name": "com.tmlabs.coffee"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAj3mWKdZMRErW0pqu50PPLe6vAgUFmRjw"
+          "current_key": "AIzaSyCNKvdUufQ9fvufwwpTycerPbLl4wiolUE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:583923309178:android:08a48518329ab1935f39c3",
+        "android_client_info": {
+          "package_name": "com.tmlabs.coffee.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNKvdUufQ9fvufwwpTycerPbLl4wiolUE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:583923309178:android:f0aa44b8fe04aa2f5f39c3",
+        "android_client_info": {
+          "package_name": "com.tmlabs.coffee.uat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNKvdUufQ9fvufwwpTycerPbLl4wiolUE"
         }
       ],
       "services": {

@@ -10,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserDetailInteractor extends BlocPresenterInteractor<DbNoteRoutable, UserDetailPresenter, BaseBlocEvent, BaseBlocState> {
   // The constructor now receives the Presenter.
-  UserDetailInteractor({required UserDetailPresenter presenter}) : super(UserDetailInitial(), presenter: presenter) {
+  UserDetailInteractor({required super.presenter, super.router}) : super(UserDetailInitial()) {
     on<UserDetailFetchEvent>(_onFetchData);
   }
 
@@ -30,4 +30,9 @@ class UserDetailInteractor extends BlocPresenterInteractor<DbNoteRoutable, UserD
         emit(UserDetailGetDataError(BaseError(111, "Invalid response from presenter.")));
     }
   }
+
+  // @override
+  // set presenter(UserDetailPresenter value) {
+  //   // TODO: implement presenter
+  // }
 }

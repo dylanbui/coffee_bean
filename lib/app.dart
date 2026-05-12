@@ -107,15 +107,18 @@ Future<void> setupLocator() async {
 
 class App extends StatelessWidget {
 
-  late final AppBuildable appBuilder ;
+  late final AppBuilder _appBuilder ;
 
   App({super.key}) {
-    appBuilder = AppBuilder();
+    _appBuilder = AppBuilder();
   }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
+    // Run sync data
+    _appBuilder.init();
 
     return MaterialApp(
       // Connect GlobalKey from Router to Flutter Navigator
@@ -124,7 +127,7 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: appBuilder.build(),
+      home: _appBuilder.build(),
     );
   }
 }

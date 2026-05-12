@@ -35,7 +35,7 @@ OS=${OS:-all}
 
 # --- GLOBAL CONFIGURATION ---
 RELEASE_NOTE_FILE="release-notes.txt"
-MANUAL_NOTE_FILE="scripts/manual_notes.txt"
+MANUAL_NOTE_FILE="scripts/manual-notes.txt"
 
 # --- UTILITY FUNCTIONS ---
 
@@ -231,7 +231,7 @@ fi
 # --- 4. Send consolidated notification (Send once only) ---
 if [ "$SHOULD_NOTIFY" == "true" ] || [ "$STATUS_ANDROID" == "failed" ] || [ "$STATUS_IOS" == "failed" ]; then
     echo "🔔 Sending consolidated notification to Lark..."
-    ruby scripts/send_lark.rb "$ENV" "$STATUS_ANDROID" "$STATUS_IOS" "release-notes.txt" "$LARK_WEBHOOK"
+    #ruby scripts/send_lark.rb "$ENV" "$STATUS_ANDROID" "$STATUS_IOS" "release-notes.txt" "$LARK_WEBHOOK"
 fi
 
 echo "✅ Build process completed successfully!"

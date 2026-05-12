@@ -79,37 +79,62 @@ class _MainTabbarPageState extends BaseProviderState<MainTabbarPage, MainTabbarP
   }
 
   Widget _buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      onTap: _navigateToPage,
-      currentIndex: _selectedIndexPage,
-      selectedItemColor: const Color(0xFF0D1B3E),
-      unselectedItemColor: Colors.grey,
-      selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-      unselectedLabelStyle: const TextStyle(fontSize: 12),
-      showUnselectedLabels: true,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined),
-          activeIcon: Icon(Icons.home),
-          label: "Trang chủ",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_bag_outlined),
-          activeIcon: Icon(Icons.shopping_bag),
-          label: "Mua sắm",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.people_outline),
-          activeIcon: Icon(Icons.people),
-          label: "Cộng đồng",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person_outline),
-          activeIcon: Icon(Icons.person),
-          label: "Tôi",
-        ),
-      ],
+    final double bottomPadding = MediaQuery.of(context).padding.bottom;
+    return Container(
+      height: 90,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Color(0xFFEEEEEE), width: 0.5)),
+      ),
+      child: Column(
+        children: [
+          Expanded(
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+              ),
+              child: BottomNavigationBar(
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+                type: BottomNavigationBarType.fixed,
+                onTap: _navigateToPage,
+                currentIndex: _selectedIndexPage,
+                selectedItemColor: const Color(0xFF0D1B3E),
+                unselectedItemColor: Colors.grey,
+                selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 9),
+                unselectedLabelStyle: const TextStyle(fontSize: 9),
+                selectedFontSize: 9,
+                unselectedFontSize: 9,
+                showUnselectedLabels: true,
+                items: [
+                  BottomNavigationBarItem(
+                    icon: const Icon(Icons.home_outlined, size: 40),
+                    activeIcon: const Icon(Icons.home, size: 40),
+                    label: "Trang chủ",
+                  ),
+                  BottomNavigationBarItem(
+                    icon: const Icon(Icons.shopping_bag_outlined, size: 40),
+                    activeIcon: const Icon(Icons.shopping_bag, size: 40),
+                    label: "Mua sắm",
+                  ),
+                  BottomNavigationBarItem(
+                    icon: const Icon(Icons.people_outline, size: 40),
+                    activeIcon: const Icon(Icons.people, size: 40),
+                    label: "Cộng đồng",
+                  ),
+                  BottomNavigationBarItem(
+                    icon: const Icon(Icons.person_outline, size: 40),
+                    activeIcon: const Icon(Icons.person, size: 40),
+                    label: "Tôi",
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: bottomPadding),
+        ],
+      ),
     );
   }
 }
