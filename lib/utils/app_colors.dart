@@ -55,6 +55,19 @@ class AppColor {
   static final basicAccent = HexColor('000000');
 }
 
+class TMLabsColor {
+  static final primary = HexColor('0E2040');
+  static final white = HexColor('FFFFFF');
+  static final grey = HexColor('525556');
+  static final lightBlue = HexColor('9FB0C6');
+  static final lightGrey = HexColor('CECCCD');
+  static final navy = HexColor('333951');
+  static final yellow = HexColor('FFCC85');
+  static final purple = HexColor('C9C0C9');
+  static final red = HexColor('EF3A33');
+  static final deepNavy = HexColor('091834');
+}
+
 class HexColor extends Color {
   static int _getColorFromHex(String hexColor) {
     hexColor = hexColor.toUpperCase().replaceAll("#", "");

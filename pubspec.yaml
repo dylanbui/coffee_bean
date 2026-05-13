@@ -138,6 +138,17 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  fonts:
+    - family: Source Sans Pro
+      fonts:
+        - asset: assets/fonts/SourceSansPro-Regular.ttf
+        - asset: assets/fonts/SourceSansPro-Light.ttf
+          weight: 300
+        - asset: assets/fonts/SourceSansPro-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/SourceSansPro-SemiBold.ttf
+          weight: 600
+
 flutter_native_splash:
   color: "#FFFFFF"
   color_dark: "#121212"

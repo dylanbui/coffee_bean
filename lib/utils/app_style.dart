@@ -104,3 +104,35 @@ class BasicStyle {
     fontSize: 14,
   );
 }
+
+class TMLabsStyle {
+  static const _fontFamily = 'Source Sans Pro';
+
+  static final semibold = TextStyle(
+    fontFamily: _fontFamily,
+    color: TMLabsColor.primary,
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+  );
+
+  static final light = TextStyle(
+    fontFamily: _fontFamily,
+    color: TMLabsColor.primary,
+    fontSize: 14,
+    fontWeight: FontWeight.w300,
+  );
+
+  static final extraLight = TextStyle(
+    fontFamily: _fontFamily,
+    color: TMLabsColor.primary,
+    fontSize: 14,
+    fontWeight: FontWeight.w200,
+  );
+
+  static final regular = TextStyle(
+    fontFamily: _fontFamily,
+    color: TMLabsColor.primary,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+}
