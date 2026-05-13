@@ -1,5 +1,5 @@
-import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/rib_samples/upload_files/interactor/upload_files_interactor.dart';
 import 'package:coffee_bean/scenes/rib_samples/upload_files/interactor/upload_files_page.dart';
 import 'package:coffee_bean/scenes/rib_samples/upload_files/upload_files_router.dart';

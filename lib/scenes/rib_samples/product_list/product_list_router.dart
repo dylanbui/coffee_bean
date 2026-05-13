@@ -7,8 +7,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
-import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/core/architecture_ribs/navigator.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_cart/product_cart_builder.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_detail/product_detail_builder.dart';
 import 'package:flutter/material.dart';

@@ -8,20 +8,20 @@
  */
 
 import 'dart:async';
-import 'package:coffee_bean/commons/custom_app_bar.dart';
-import 'package:coffee_bean/commons/utils/logger.dart';
-import 'package:coffee_bean/commons/utils/keyboard_visibility.dart';
+import 'package:coffee_bean/core/custom_app_bar.dart';
+import 'package:coffee_bean/core/utils/logger.dart';
+import 'package:coffee_bean/core/utils/keyboard_visibility.dart';
 import 'package:coffee_bean/scenes/user_pages/user_register/interactor/user_register_event_state.dart';
 import 'package:coffee_bean/scenes/user_pages/user_register/interactor/user_register_interactor.dart';
 import 'package:coffee_bean/scenes/user_pages/user_register/user_register_builder.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
-import 'package:coffee_bean/commons/state_management/lib_bloc/base_cubit_statefull_widget.dart';
-import 'package:coffee_bean/widget/phone_input_field.dart';
-import 'package:coffee_bean/widget/underline_input_field.dart';
-import 'package:coffee_bean/widget/app_button.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/base_cubit_statefull_widget.dart';
+import 'package:coffee_bean/shared/widget/phone_input_field.dart';
+import 'package:coffee_bean/shared/widget/underline_input_field.dart';
+import 'package:coffee_bean/shared/widget/app_button.dart';
 
 //ignore: must_be_immutable
 class UserRegisterPage extends BaseCubitStateFulWidget with ViewControllable {

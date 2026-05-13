@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:coffee_bean/commons/state_management/lib_bloc/base_bloc_statefull_widget.dart';
-import 'package:coffee_bean/commons/state_management/lib_bloc/constants.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/base_bloc_statefull_widget.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean/data/model/user.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_interactor.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_event_state.dart';
-import 'package:coffee_bean/widget/loading_view.dart';
+import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

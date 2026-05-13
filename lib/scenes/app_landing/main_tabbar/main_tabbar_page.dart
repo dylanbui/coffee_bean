@@ -1,12 +1,15 @@
-import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/commons/state_management/lib_provider/base_provider_statefull_widget.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
+import 'package:coffee_bean/core/state_management/lib_provider/base_provider_statefull_widget.dart';
 import 'package:coffee_bean/scenes/app_landing/home/home_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/community/community_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_provider.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/my_profile_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/shopping_builder.dart';
-import 'package:coffee_bean/widget/fade_indexed_stack.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
+import 'package:coffee_bean/shared/widget/fade_indexed_stack.dart';
+import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 // ignore: must_be_immutable
 class MainTabbarPage extends BaseProviderStateFulWidget {
@@ -84,7 +87,7 @@ class _MainTabbarPageState extends BaseProviderState<MainTabbarPage, MainTabbarP
       height: 90,
       decoration: const BoxDecoration(
         color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFEEEEEE), width: 0.5)),
+        border: Border(top: BorderSide(color: TMLabsColor.grey  , width: 0.5)),
       ),
       child: Column(
         children: [
@@ -100,8 +103,8 @@ class _MainTabbarPageState extends BaseProviderState<MainTabbarPage, MainTabbarP
                 type: BottomNavigationBarType.fixed,
                 onTap: _navigateToPage,
                 currentIndex: _selectedIndexPage,
-                selectedItemColor: const Color(0xFF0D1B3E),
-                unselectedItemColor: Colors.grey,
+                selectedItemColor: TMLabsColor.primary,
+                unselectedItemColor: TMLabsColor.navy,
                 selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 9),
                 unselectedLabelStyle: const TextStyle(fontSize: 9),
                 selectedFontSize: 9,
@@ -109,23 +112,23 @@ class _MainTabbarPageState extends BaseProviderState<MainTabbarPage, MainTabbarP
                 showUnselectedLabels: true,
                 items: [
                   BottomNavigationBarItem(
-                    icon: const Icon(Icons.home_outlined, size: 40),
-                    activeIcon: const Icon(Icons.home, size: 40),
+                    icon: SvgPicture.asset(AppAssets.images.icHome, width: 26, height: 26),
+                    activeIcon: SvgPicture.asset(AppAssets.images.icHomeActive, width: 26, height: 26),
                     label: "Trang chủ",
                   ),
                   BottomNavigationBarItem(
-                    icon: const Icon(Icons.shopping_bag_outlined, size: 40),
-                    activeIcon: const Icon(Icons.shopping_bag, size: 40),
+                    icon: SvgPicture.asset(AppAssets.images.icShopping, width: 26, height: 26),
+                    activeIcon: SvgPicture.asset(AppAssets.images.icShoppingActive, width: 26, height: 26),
                     label: "Mua sắm",
                   ),
                   BottomNavigationBarItem(
-                    icon: const Icon(Icons.people_outline, size: 40),
-                    activeIcon: const Icon(Icons.people, size: 40),
+                    icon: SvgPicture.asset(AppAssets.images.icCommunication, width: 26, height: 26),
+                    activeIcon: SvgPicture.asset(AppAssets.images.icCommunicationActive, width: 26, height: 26),
                     label: "Cộng đồng",
                   ),
                   BottomNavigationBarItem(
-                    icon: const Icon(Icons.person_outline, size: 40),
-                    activeIcon: const Icon(Icons.person, size: 40),
+                    icon: SvgPicture.asset(AppAssets.images.icMy, width: 26, height: 26),
+                    activeIcon: SvgPicture.asset(AppAssets.images.icMyActive, width: 26, height: 26),
                     label: "Tôi",
                   ),
                 ],

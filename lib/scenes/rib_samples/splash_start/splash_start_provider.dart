@@ -1,10 +1,10 @@
 // import 'package:simple_auth_1/api/user_api.dart';
-// import 'package:simple_auth_1/commons/base_provider.dart';
+// import 'package:simple_auth_1/core/base_provider.dart';
 // import 'package:simple_auth_1/utils/tuple.dart';
 // import '../../constants.dart';
 
-import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/commons/state_management/lib_provider/base_provider.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/core/state_management/lib_provider/base_provider.dart';
 import 'package:coffee_bean/scenes/rib_samples/splash_start/splash_start_builder.dart';
 
 //ignore: must_be_immutable

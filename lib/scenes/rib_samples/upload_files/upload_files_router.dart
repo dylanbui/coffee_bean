@@ -1,5 +1,5 @@
-import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
-import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/core/architecture_ribs/navigator.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
 import 'package:flutter/material.dart';
 
 // Define any specific routes for this module if needed.

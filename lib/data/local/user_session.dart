@@ -9,7 +9,7 @@
 
 import 'dart:convert';
 
-import 'package:coffee_bean/commons/utils/base_secure_storage.dart';
+import 'package:coffee_bean/core/utils/base_secure_storage.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user_session.g.dart';

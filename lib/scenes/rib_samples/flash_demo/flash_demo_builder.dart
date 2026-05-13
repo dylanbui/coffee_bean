@@ -1,4 +1,4 @@
-import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/scenes/rib_samples/flash_demo/interactor/flash_demo_interactor.dart';
 import 'package:coffee_bean/scenes/rib_samples/flash_demo/interactor/flash_demo_page.dart';
 import 'package:coffee_bean/scenes/rib_samples/flash_demo/flash_demo_router.dart';

@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:coffee_bean/commons/commons_constants.dart';
-import 'package:coffee_bean/commons/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:coffee_bean/commons/utils/logger.dart';
-import 'package:coffee_bean/commons/utils/locator.dart';
+import 'package:coffee_bean/core/commons_constants.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:coffee_bean/core/utils/logger.dart';
+import 'package:coffee_bean/core/utils/locator.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/live_service/likes_service.dart';
 import 'package:coffee_bean/data/model/product.dart';

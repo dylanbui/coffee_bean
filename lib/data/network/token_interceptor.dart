@@ -9,8 +9,8 @@
 
 import 'dart:ui';
 
-import 'package:coffee_bean/commons/network/network_client.dart';
-import 'package:coffee_bean/commons/network/network_common.dart';
+import 'package:coffee_bean/core/network/network_client.dart';
+import 'package:coffee_bean/core/network/network_common.dart';
 import 'package:coffee_bean/data/local/user_session.dart';
 import 'package:dio/dio.dart';
 

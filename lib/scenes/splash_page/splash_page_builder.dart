@@ -1,7 +1,7 @@
-import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
-import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
+import 'package:coffee_bean/core/architecture_ribs/navigator.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/splash_page/splash_page_interactor.dart';
 import 'package:coffee_bean/scenes/splash_page/splash_page_page.dart';
 import 'package:flutter/material.dart';

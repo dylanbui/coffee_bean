@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/commons/commons_constants.dart';
-import 'package:coffee_bean/commons/state_management/lib_bloc/bloc_interactor.dart';
-import 'package:coffee_bean/commons/state_management/lib_bloc/constants.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/core/commons_constants.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/bloc_interactor.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_presenter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

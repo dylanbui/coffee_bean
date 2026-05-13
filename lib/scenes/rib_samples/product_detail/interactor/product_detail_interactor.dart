@@ -7,8 +7,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/commons/commons_constants.dart';
-import 'package:coffee_bean/commons/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:coffee_bean/core/commons_constants.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/data/repository/product_repository.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_detail/interactor/product_detail_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_detail/product_detail_router.dart';

@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/scenes/problem_report/interactor/problem_report_interactor.dart';
 import 'package:coffee_bean/scenes/problem_report/interactor/problem_report_page.dart';
 import 'package:coffee_bean/scenes/problem_report/problem_report_router.dart';

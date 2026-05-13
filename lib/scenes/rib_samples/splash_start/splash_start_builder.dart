@@ -7,10 +7,10 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
-import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
+import 'package:coffee_bean/core/architecture_ribs/navigator.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/rib_samples/splash_start/splash_start_page.dart';
 import 'package:coffee_bean/scenes/rib_samples/splash_start/splash_start_provider.dart';
 import 'package:flutter/material.dart';

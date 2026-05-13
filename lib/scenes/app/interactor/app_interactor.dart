@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:coffee_bean/commons/architecture_ribs/note_interactor.dart';
-import 'package:coffee_bean/commons/utils/locator.dart';
-import 'package:coffee_bean/commons/utils/logger.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_interactor.dart';
+import 'package:coffee_bean/core/utils/locator.dart';
+import 'package:coffee_bean/core/utils/logger.dart';
 import 'package:coffee_bean/config/app_config.dart';
 import 'package:coffee_bean/scenes/app/app_builder.dart';
 import 'package:coffee_bean/scenes/app/interactor/deep_link_service.dart';

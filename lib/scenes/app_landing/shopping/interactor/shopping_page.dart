@@ -1,5 +1,5 @@
-import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
-import 'package:coffee_bean/widget/cached_image_widget.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
+import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 
 class ShoppingPage extends StatefulWidget with ViewControllable {

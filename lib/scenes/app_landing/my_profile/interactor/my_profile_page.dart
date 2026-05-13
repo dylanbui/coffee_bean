@@ -1,4 +1,4 @@
-import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
 import 'package:flutter/material.dart';
 
 class MyProfilePage extends StatefulWidget with ViewControllable {

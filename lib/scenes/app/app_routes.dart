@@ -2,7 +2,7 @@
 // They are simple data classes that carry the necessary parameters for a destination.
 
 
-import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
 
 class SplashRoute implements DbNoteRoute {}
 

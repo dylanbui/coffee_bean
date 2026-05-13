@@ -1,4 +1,4 @@
-import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
 import 'package:flutter/cupertino.dart';
 
 

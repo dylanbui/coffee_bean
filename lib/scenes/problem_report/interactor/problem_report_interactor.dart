@@ -1,6 +1,6 @@
-import 'package:coffee_bean/commons/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/commons/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:coffee_bean/commons/utils/logger.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:coffee_bean/core/utils/logger.dart';
 import 'package:coffee_bean/data/repository/file_repository.dart';
 import 'package:coffee_bean/scenes/problem_report/problem_report_router.dart';
 import 'package:coffee_bean/scenes/problem_report/interactor/problem_report_event_state.dart';

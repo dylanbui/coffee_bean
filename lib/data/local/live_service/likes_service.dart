@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:coffee_bean/commons/utils/locator.dart';
-import 'package:coffee_bean/commons/utils/logger.dart';
-import 'package:coffee_bean/commons/utils/shared_preferences.dart';
+import 'package:coffee_bean/core/utils/locator.dart';
+import 'package:coffee_bean/core/utils/logger.dart';
+import 'package:coffee_bean/core/utils/shared_preferences.dart';
 import 'package:coffee_bean/data/local/live_service/model/liked_product.dart';
 import 'package:coffee_bean/data/model/product.dart';
 

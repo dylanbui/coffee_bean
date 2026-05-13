@@ -7,8 +7,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/global_search/global_search_router.dart';
 import 'package:coffee_bean/scenes/global_search/interactor/global_search_interactor.dart';
 import 'package:coffee_bean/scenes/global_search/interactor/global_search_page.dart';

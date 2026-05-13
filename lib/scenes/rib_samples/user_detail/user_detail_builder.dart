@@ -1,6 +1,6 @@
-import 'package:coffee_bean/commons/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
-import 'package:coffee_bean/commons/utils/locator.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
+import 'package:coffee_bean/core/utils/locator.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_interactor.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_presenter.dart';

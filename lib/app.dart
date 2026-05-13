@@ -8,17 +8,17 @@
  */
 
 import 'package:chuck_interceptor/chuck_interceptor.dart';
-import 'package:coffee_bean/commons/architecture_ribs/navigator.dart';
-import 'package:coffee_bean/commons/network/network_common.dart';
-import 'package:coffee_bean/commons/services/event_bus.dart';
-import 'package:coffee_bean/commons/utils/shared_preferences.dart';
+import 'package:coffee_bean/core/architecture_ribs/navigator.dart';
+import 'package:coffee_bean/core/network/network_common.dart';
+import 'package:coffee_bean/core/services/event_bus.dart';
+import 'package:coffee_bean/core/utils/shared_preferences.dart';
 import 'package:coffee_bean/config/app_config.dart';
 import 'package:coffee_bean/data/local/user_session.dart';
 import 'package:coffee_bean/scenes/app/app_builder.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:coffee_bean/commons/utils/locator.dart';
+import 'package:coffee_bean/core/utils/locator.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/live_service/likes_service.dart';
 import 'package:coffee_bean/scenes/app/interactor/deep_link_service.dart';

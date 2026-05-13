@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/commons/network/network_common.dart';
+import 'package:coffee_bean/core/network/network_common.dart';
 import 'package:dio/dio.dart';
 
 class NetworkResponse<T> {

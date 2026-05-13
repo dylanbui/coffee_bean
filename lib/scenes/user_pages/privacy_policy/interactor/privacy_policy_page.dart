@@ -9,11 +9,11 @@
 
 import 'package:coffee_bean/scenes/user_pages/privacy_policy/interactor/privacy_policy_event_state.dart';
 import 'package:coffee_bean/scenes/user_pages/privacy_policy/interactor/privacy_policy_interactor.dart';
-import 'package:coffee_bean/widget/app_button.dart';
+import 'package:coffee_bean/shared/widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:coffee_bean/commons/architecture_ribs/note_viewer.dart';
-import 'package:coffee_bean/commons/state_management/lib_bloc/base_cubit_statefull_widget.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/base_cubit_statefull_widget.dart';
 
 //ignore: must_be_immutable
 class PrivacyPolicyPage extends BaseCubitStateFulWidget with ViewControllable {

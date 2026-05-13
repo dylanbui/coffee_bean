@@ -1,4 +1,4 @@
-import 'package:coffee_bean/commons/state_management/lib_bloc/constants.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean/data/local/live_service/model/cart_item.dart';
 
 // -------------- STATE ---------------------

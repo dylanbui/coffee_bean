@@ -1,5 +1,5 @@
-import 'package:coffee_bean/commons/network/network_common.dart';
-import 'package:coffee_bean/commons/utils/logger.dart';
+import 'package:coffee_bean/core/network/network_common.dart';
+import 'package:coffee_bean/core/utils/logger.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 

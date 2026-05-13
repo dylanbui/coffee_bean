@@ -1,5 +1,5 @@
-import 'package:coffee_bean/commons/commons_constants.dart';
-import 'package:coffee_bean/commons/state_management/lib_bloc/constants.dart';
+import 'package:coffee_bean/core/commons_constants.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean/data/model/user.dart';
 
 // -------------- EVENTS ---------------------
