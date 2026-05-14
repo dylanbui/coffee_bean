@@ -1,3 +1,7 @@
+import 'package:coffee_bean/shared/ui/app_assets.dart';
+import 'package:coffee_bean/shared/ui/app_strings.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
 import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
@@ -70,10 +74,10 @@ class _QuickActionsRow extends StatelessWidget {
     _interactor = context.read<HomeInteractor>();
 
     final List<Map<String, dynamic>> items = [
-      {'icon': Icons.assignment_turned_in_outlined, 'label': 'Đặt chỗ', 'onTap': () => _interactor.quickActions(0)},
-      {'icon': Icons.sync_alt, 'label': 'Đổi điểm', 'onTap': () => _interactor.quickActions(1)},
-      {'icon': Icons.school_outlined, 'label': 'Tất cả khóa học', 'onTap': () => _interactor.quickActions(2)},
-      {'icon': Icons.business_center_outlined, 'label': 'Trung tâm sk', 'onTap': () => _interactor.quickActions(3)},
+      {'icon': AppAssets.icons.icDatCho, 'label': AppStrings.booking, 'onTap': () => _interactor.quickActions(0)},
+      {'icon': AppAssets.icons.icDoiDiem, 'label': AppStrings.redeemPoints, 'onTap': () => _interactor.quickActions(1)},
+      {'icon': AppAssets.icons.icKhoaHoc, 'label': AppStrings.allCourses, 'onTap': () => _interactor.quickActions(2)},
+      {'icon': AppAssets.icons.icTrungTam, 'label': AppStrings.healthCenter, 'onTap': () => _interactor.quickActions(3)},
     ];
 
     return Padding(
@@ -90,11 +94,10 @@ class _QuickActionsRow extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(color: Colors.grey[100], shape: BoxShape.circle),
-                    child: Icon(item['icon'], color: const Color(0xFF0D1B3E), size: 40,),
+                    decoration: BoxDecoration(color: Colors.transparent, shape: BoxShape.circle),
+                    child: AppIcon(item['icon'], size: 60,),
                   ),
-                  const SizedBox(height: 8),
-                  Text(item['label'], style: const TextStyle(fontSize: 9)),
+                    Text(item['label'], style: const TextStyle(fontSize: 9)),
                 ],
               ),
             ),
@@ -179,7 +182,7 @@ class _PromoBanner extends StatelessWidget {
               backgroundColor: const Color(0xFF0D1B3E),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             ),
-            child: const Text("Xem thêm", style: TextStyle(color: Colors.white)),
+            child: const Text(AppStrings.seeMore, style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -198,22 +201,41 @@ class _FeaturedCourses extends StatelessWidget {
     if (items.isEmpty) return const SizedBox.shrink();
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Text("Khóa học nổi bật", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              TextButton(
-                onPressed: () {},
-                child: const Text("Xem thêm", style: TextStyle(color: Colors.grey)),
+              Text(
+                AppStrings.featuredCourses,
+                style: TMLabsStyle.semibold.copyWith(fontSize: 24, color: TMLabsColor.primary),
+              ),
+              InkWell(
+                onTap: () {},
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      AppStrings.seeMore,
+                      style: TMLabsStyle.semibold.copyWith(fontSize: 14, color: TMLabsColor.primary),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(
+                      Icons.arrow_forward,
+                      size: 18,
+                      color: TMLabsColor.primary,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ),
         SizedBox(
-          height: 250,
+          height: 240,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.only(left: 16),
@@ -221,10 +243,10 @@ class _FeaturedCourses extends StatelessWidget {
             itemBuilder: (context, index) {
               final item = items[index];
               return Container(
-                width: 200,
+                width: 160,
                 margin: const EdgeInsets.only(right: 12),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(20),
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
@@ -232,19 +254,33 @@ class _FeaturedCourses extends StatelessWidget {
                         imageUrl: item.imageUrl,
                         fit: BoxFit.cover,
                       ),
-                      Container(
-                        alignment: Alignment.bottomLeft,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: 240 * 0.4,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                TMLabsColor.primary.withOpacity(0),
+                                TMLabsColor.primary,
+                              ],
+                            ),
                           ),
-                        ),
-                        padding: const EdgeInsets.all(12),
-                        child: Text(
-                          item.title,
-                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                          padding: const EdgeInsets.all(12),
+                          alignment: Alignment.bottomLeft,
+                          child: Text(
+                            item.title,
+                            style: TMLabsStyle.semibold.copyWith(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ),
                     ],

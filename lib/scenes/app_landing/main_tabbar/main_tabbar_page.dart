@@ -8,8 +8,8 @@ import 'package:coffee_bean/scenes/app_landing/shopping/shopping_builder.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/widget/fade_indexed_stack.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
+import 'package:coffee_bean/shared/ui/app_strings.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 // ignore: must_be_immutable
 class MainTabbarPage extends BaseProviderStateFulWidget {
@@ -112,24 +112,24 @@ class _MainTabbarPageState extends BaseProviderState<MainTabbarPage, MainTabbarP
                 showUnselectedLabels: true,
                 items: [
                   BottomNavigationBarItem(
-                    icon: SvgPicture.asset(AppAssets.images.icHome, width: 26, height: 26),
-                    activeIcon: SvgPicture.asset(AppAssets.images.icHomeActive, width: 26, height: 26),
-                    label: "Trang chủ",
+                    icon: AppIcon(AppAssets.icons.icHome, size: 26),
+                    activeIcon: AppIcon(AppAssets.icons.icHomeActive, size: 26),
+                    label: AppStrings.home,
                   ),
                   BottomNavigationBarItem(
-                    icon: SvgPicture.asset(AppAssets.images.icShopping, width: 26, height: 26),
-                    activeIcon: SvgPicture.asset(AppAssets.images.icShoppingActive, width: 26, height: 26),
-                    label: "Mua sắm",
+                    icon: AppIcon(AppAssets.icons.icShopping, size: 26),
+                    activeIcon: AppIcon(AppAssets.icons.icShoppingActive, size: 26),
+                    label: AppStrings.shopping,
                   ),
                   BottomNavigationBarItem(
-                    icon: SvgPicture.asset(AppAssets.images.icCommunication, width: 26, height: 26),
-                    activeIcon: SvgPicture.asset(AppAssets.images.icCommunicationActive, width: 26, height: 26),
-                    label: "Cộng đồng",
+                    icon: AppIcon(AppAssets.icons.icCommunication, size: 26),
+                    activeIcon: AppIcon(AppAssets.icons.icCommunicationActive, size: 26),
+                    label: AppStrings.community,
                   ),
                   BottomNavigationBarItem(
-                    icon: SvgPicture.asset(AppAssets.images.icMy, width: 26, height: 26),
-                    activeIcon: SvgPicture.asset(AppAssets.images.icMyActive, width: 26, height: 26),
-                    label: "Tôi",
+                    icon: AppIcon(AppAssets.icons.icMy, size: 26),
+                    activeIcon: AppIcon(AppAssets.icons.icMyActive, size: 26),
+                    label: AppStrings.profile,
                   ),
                 ],
               ),

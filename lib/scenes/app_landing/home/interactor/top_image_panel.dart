@@ -1,5 +1,7 @@
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.dart';
+import 'package:coffee_bean/shared/ui/app_assets.dart';
+import 'package:coffee_bean/shared/ui/app_strings.dart';
 import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -186,11 +188,11 @@ class _TopImagePanelState extends State<TopImagePanel> {
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   child: Row(
                     children: const [
-                      Icon(Icons.location_on_outlined, size: 18, color: Color(0xFF0D1B3E)),
+                      AppIcon(Icons.location_on_outlined, size: 18, color: Color(0xFF0D1B3E)),
                       SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          "Cửa hàng tp.HCM",
+                          AppStrings.selectStore,
                           style: TextStyle(
                             fontSize: 13,
                             color: Color(0xFF0D1B3E),
@@ -200,7 +202,7 @@ class _TopImagePanelState extends State<TopImagePanel> {
                           maxLines: 1,
                         ),
                       ),
-                      Icon(Icons.chevron_right, size: 18, color: Color(0xFF0D1B3E)),
+                      AppIcon(Icons.chevron_right, size: 18, color: Color(0xFF0D1B3E)),
                     ],
                   ),
                 ),
@@ -245,7 +247,7 @@ class _TopImagePanelState extends State<TopImagePanel> {
                     onSubmitted: (value) => _interactor.openSearch(),
                     style: const TextStyle(color: Colors.white, fontSize: 14),
                     decoration: const InputDecoration(
-                      hintText: "Tìm kiếm...",
+                      hintText: AppStrings.searchHint,
                       hintStyle: TextStyle(color: Colors.white70, fontSize: 14),
                       border: InputBorder.none,
                       isDense: true,
@@ -256,7 +258,7 @@ class _TopImagePanelState extends State<TopImagePanel> {
                 Padding(
                   padding: const EdgeInsets.only(right: 12, left: 8),
                   child: IconButton(
-                    icon: const Icon(Icons.search, color: Colors.white, size: 22),
+                    icon: AppIcon(AppAssets.icons.icSearch, color: Colors.white, size: 22),
                     onPressed: () {
                       if (_isSearchFocused) {
                         _interactor.openSearch();
@@ -285,10 +287,10 @@ class _TopImagePanelState extends State<TopImagePanel> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Chào buổi sáng $name", style: const TextStyle(color: Colors.white, fontSize: 15)),
+            Text("${AppStrings.morningWelcome} $name", style: const TextStyle(color: Colors.white, fontSize: 15)),
             const SizedBox(height: 10),
             const Text(
-              "Chào mừng bạn\nđã quay trở lại",
+              AppStrings.welcomeBack,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 28,

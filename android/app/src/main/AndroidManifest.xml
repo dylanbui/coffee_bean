@@ -11,7 +11,7 @@
 
 
     <application
-        android:label="coffee bean"
+        android:label="@string/app_name"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

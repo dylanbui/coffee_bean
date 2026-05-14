@@ -1,6 +1,29 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 class AppAssets {
   static const _Images images = _Images();
+  static const _Icons icons = _Icons();
   static const _Json json = _Json();
+}
+
+class _Icons {
+  const _Icons();
+
+  final String icMy = 'assets/icons/ic_my.svg';
+  final String icHome = 'assets/icons/ic_home.svg';
+  final String icShopping = 'assets/icons/ic_shopping.svg';
+  final String icMyActive = 'assets/icons/ic_my_active.svg';
+  final String icHomeActive = 'assets/icons/ic_home_active.svg';
+  final String icCommunication = 'assets/icons/ic_communication.svg';
+  final String icEmptyLocation = 'assets/icons/ic_empty_location.svg';
+  final String icShoppingActive = 'assets/icons/ic_shopping_active.svg';
+  final String icCommunicationActive = 'assets/icons/ic_communication_active.svg';
+  final String icDatCho = 'assets/icons/ic_dat_cho.svg';
+  final String icDoiDiem = 'assets/icons/ic_doi_diem.svg';
+  final String icKhoaHoc = 'assets/icons/ic_khoa_hoc.svg';
+  final String icTrungTam = 'assets/icons/ic_trung_tam.svg';
+  final String icSearch = 'assets/icons/ic_search.svg';
 }
 
 class _Images {
@@ -19,16 +42,6 @@ class _Images {
   final String icCheckRightGreen = 'assets/images/ic_check_right_green.svg';
   final String logoSplash = 'assets/images/logo_splash.png';
   final String logoTmLabs = 'assets/images/logo_tmlabs.png';
-
-  final String icMy = 'assets/icons/ic_my.svg';
-  final String icHome = 'assets/icons/ic_home.svg';
-  final String icShopping = 'assets/icons/ic_shopping.svg';
-  final String icMyActive = 'assets/icons/ic_my_active.svg';
-  final String icHomeActive = 'assets/icons/ic_home_active.svg';
-  final String icCommunication = 'assets/icons/ic_communication.svg';
-  final String icEmptyLocation = 'assets/icons/ic_empty_location.svg';
-  final String icShoppingActive = 'assets/icons/ic_shopping_active.svg';
-  final String icCommunicationActive = 'assets/icons/ic_communication_active.svg';
 }
 
 class _Json {
@@ -42,4 +55,36 @@ class _Json {
   final String propzyHomeManBuildHouse = 'assets/json/propzy_home_man_build_house.json';
   final String logoSplashScreen = 'assets/json/logo_splash_screen.json';
   final String lottieAnimationGrowingHouse = 'assets/json/lottie_view_animation_growing_house_propzy_home.json';
+}
+
+class AppIcon extends StatelessWidget {
+  final dynamic icon;
+  final Color? color;
+  final double? size;
+
+  const AppIcon(this.icon, {super.key, this.color, this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    if (icon == null) return const SizedBox.shrink();
+
+    if (icon is IconData) {
+      return Icon(icon as IconData, color: color, size: size);
+    }
+
+    if (icon is String) {
+      final String iconPath = icon as String;
+      if (iconPath.endsWith('.svg')) {
+        return SvgPicture.asset(
+          iconPath,
+          width: size,
+          height: size,
+          colorFilter: color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
+        );
+      }
+      return Image.asset(iconPath, width: size, height: size, color: color);
+    }
+
+    return const SizedBox.shrink();
+  }
 }
