@@ -1,15 +1,17 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/my_profile_router.dart';
 
-// Events
-abstract class MyProfileEvent {}
-
 // States
-abstract class MyProfileState {}
+abstract class MyProfileState extends BaseBlocState {}
 class MyProfileInitial extends MyProfileState {}
 
-class MyProfileInteractor extends Cubit<MyProfileState> {
-  final MyProfileRoutable router;
+class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileState> {
+  MyProfileInteractor(MyProfileRoutable router) : super(MyProfileInitial(), router: router);
 
-  MyProfileInteractor(this.router) : super(MyProfileInitial());
+  @override
+  void onDidBecomeActive() {
+    super.onDidBecomeActive();
+    // Load initial profile data
+  }
 }

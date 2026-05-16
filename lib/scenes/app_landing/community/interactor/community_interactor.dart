@@ -1,15 +1,18 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/community/community_router.dart';
-
-// Events
-abstract class CommunityEvent {}
+import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
 
 // States
-abstract class CommunityState {}
+abstract class CommunityState extends BaseBlocState {}
 class CommunityInitial extends CommunityState {}
 
-class CommunityInteractor extends Cubit<CommunityState> {
-  final CommunityRoutable router;
+class CommunityInteractor extends CubitInteractor<CommunityRoutable, CommunityState> {
 
-  CommunityInteractor(this.router) : super(CommunityInitial());
+  CommunityInteractor(CommunityRoutable router) : super(CommunityInitial(), router: router);
+
+  @override
+  void onDidBecomeActive() {
+    super.onDidBecomeActive();
+    // Load data if needed
+  }
 }

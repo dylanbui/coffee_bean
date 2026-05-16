@@ -1,20 +1,18 @@
 import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/shopping_router.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_page.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-abstract class ShoppingBuildable implements DbNoteBuildable {}
-
-class ShoppingBuilder extends DbNoteBuilder implements ShoppingBuildable {
+class ShoppingBuilder extends DbNoteBuilder<ShoppingRouter> {
   @override
-  ViewController buildFactory() {
+  ShoppingRouter build() {
     final router = ShoppingRouter();
     final interactor = ShoppingInteractor(router);
-    final page = ShoppingPage();
+    final page = ShoppingPage(interactor: interactor);
 
-    return BlocProvider(create: (_) => interactor, child: page);
+    router.attach(interactor, BlocProvider<ShoppingInteractor>.value(value: interactor, child: page));
+
+    return router;
   }
 }

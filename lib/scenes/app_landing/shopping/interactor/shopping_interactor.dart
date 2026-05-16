@@ -1,15 +1,17 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/shopping_router.dart';
 
-// Events
-abstract class ShoppingEvent {}
-
 // States
-abstract class ShoppingState {}
+abstract class ShoppingState extends BaseBlocState {}
 class ShoppingInitial extends ShoppingState {}
 
-class ShoppingInteractor extends Cubit<ShoppingState> {
-  final ShoppingRoutable router;
+class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState> {
+  ShoppingInteractor(ShoppingRoutable router) : super(ShoppingInitial(), router: router);
 
-  ShoppingInteractor(this.router) : super(ShoppingInitial());
+  @override
+  void onDidBecomeActive() {
+    super.onDidBecomeActive();
+    // Load initial shop data
+  }
 }

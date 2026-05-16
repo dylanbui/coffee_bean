@@ -1,15 +1,17 @@
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:coffee_bean/scenes/app_landing/community/interactor/community_interactor.dart';
 import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 
-class CommunityPage extends StatefulWidget with ViewControllable {
-  const CommunityPage({super.key});
+//ignore: must_be_immutable
+class CommunityPage extends CubitStateFulWidget<CommunityInteractor, CommunityState> {
+  CommunityPage({super.key, required super.interactor});
 
   @override
   State<CommunityPage> createState() => _CommunityPageState();
 }
 
-class _CommunityPageState extends State<CommunityPage> with SingleTickerProviderStateMixin {
+class _CommunityPageState extends CubitState<CommunityPage, CommunityInteractor, CommunityState> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -25,36 +27,37 @@ class _CommunityPageState extends State<CommunityPage> with SingleTickerProvider
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          "Cộng đồng",
-          style: TextStyle(color: Color(0xFF0D1B3E), fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: const Color(0xFF0D1B3E),
-          unselectedLabelColor: Colors.grey,
-          indicatorColor: const Color(0xFF0D1B3E),
-          indicatorWeight: 3,
-          indicatorSize: TabBarIndicatorSize.label,
-          tabs: const [
-            Tab(text: "Tin tức"),
-            Tab(text: "Hoạt động"),
-          ],
-        ),
+  dynamic getAppBar(BuildContext context) {
+    return AppBar(
+      title: const Text(
+        "Cộng đồng",
+        style: TextStyle(color: Color(0xFF0D1B3E), fontWeight: FontWeight.bold),
       ),
-      body: TabBarView(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      bottom: TabBar(
         controller: _tabController,
-        children: [
-          _buildNewsList(),
-          _buildActivityList(),
+        labelColor: const Color(0xFF0D1B3E),
+        unselectedLabelColor: Colors.grey,
+        indicatorColor: const Color(0xFF0D1B3E),
+        indicatorWeight: 3,
+        indicatorSize: TabBarIndicatorSize.label,
+        tabs: const [
+          Tab(text: "Tin tức"),
+          Tab(text: "Hoạt động"),
         ],
       ),
+    );
+  }
+
+  @override
+  Widget getBody(BuildContext context) {
+    return TabBarView(
+      controller: _tabController,
+      children: [
+        _buildNewsList(),
+        _buildActivityList(),
+      ],
     );
   }
 

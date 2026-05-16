@@ -1,51 +1,60 @@
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/my_profile_interactor.dart';
 import 'package:flutter/material.dart';
 
-class MyProfilePage extends StatefulWidget with ViewControllable {
-  const MyProfilePage({super.key});
+//ignore: must_be_immutable
+class MyProfilePage extends CubitStateFulWidget<MyProfileInteractor, MyProfileState> {
+  MyProfilePage({super.key, required super.interactor});
 
   @override
   State<MyProfilePage> createState() => _MyProfilePageState();
 }
 
-class _MyProfilePageState extends State<MyProfilePage> {
+class _MyProfilePageState extends CubitState<MyProfilePage, MyProfileInteractor, MyProfileState> {
+  
   @override
   Widget build(BuildContext context) {
+    buildContext = context;
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // 1. Header Profile
-            _buildHeader(),
-            
-            // 2. Points & Rewards Card
-            _buildPointsCard(),
+      body: getBody(context),
+    );
+  }
 
-            const SizedBox(height: 10),
+  @override
+  Widget getBody(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // 1. Header Profile
+          _buildHeader(),
+          
+          // 2. Points & Rewards Card
+          _buildPointsCard(),
 
-            // 3. Settings List
-            _buildMenuItem(Icons.history, "Lịch sử mua hàng"),
-            _buildMenuItem(Icons.person_outline, "Thông tin cá nhân"),
-            _buildMenuItem(Icons.location_on_outlined, "Địa chỉ đã lưu"),
-            _buildMenuItem(Icons.payment_outlined, "Phương thức thanh toán"),
-            _buildMenuItem(Icons.notifications_none, "Thông báo"),
-            _buildMenuItem(Icons.help_outline, "Hỗ trợ & Góp ý"),
-            _buildMenuItem(Icons.info_outline, "Về Coffee Bean"),
-            
-            const SizedBox(height: 20),
-            
-            // 4. Logout Button
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: TextButton(
-                onPressed: () {},
-                child: const Text("Đăng xuất", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-              ),
+          const SizedBox(height: 10),
+
+          // 3. Settings List
+          _buildMenuItem(Icons.history, "Lịch sử mua hàng"),
+          _buildMenuItem(Icons.person_outline, "Thông tin cá nhân"),
+          _buildMenuItem(Icons.location_on_outlined, "Địa chỉ đã lưu"),
+          _buildMenuItem(Icons.payment_outlined, "Phương thức thanh toán"),
+          _buildMenuItem(Icons.notifications_none, "Thông báo"),
+          _buildMenuItem(Icons.help_outline, "Hỗ trợ & Góp ý"),
+          _buildMenuItem(Icons.info_outline, "Về Coffee Bean"),
+          
+          const SizedBox(height: 20),
+          
+          // 4. Logout Button
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: TextButton(
+              onPressed: () {},
+              child: const Text("Đăng xuất", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
             ),
-            const SizedBox(height: 40),
-          ],
-        ),
+          ),
+          const SizedBox(height: 40),
+        ],
       ),
     );
   }
