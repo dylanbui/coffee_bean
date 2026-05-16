@@ -1,4 +1,4 @@
-import 'package:coffee_bean/core/state_management/lib_bloc/base_cubit_statefull_widget.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/core/utils/logger.dart';
 import 'package:coffee_bean/utils/flash_utils/date_time_ext.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_calendar_config.dart';
@@ -13,14 +13,14 @@ import 'package:coffee_bean/scenes/rib_samples/flash_demo/interactor/flash_demo_
 import 'package:coffee_bean/scenes/rib_samples/flash_demo/interactor/flash_demo_event_state.dart';
 
 //ignore: must_be_immutable
-class FlashDemoPage extends BaseCubitStateFulWidget {
-  FlashDemoPage({super.key});
+class FlashDemoPage extends CubitStateFulWidget<FlashDemoInteractor, FlashDemoState> {
+  FlashDemoPage({super.key, required super.interactor});
 
   @override
   State<FlashDemoPage> createState() => _FlashDemoPageState();
 }
 
-class _FlashDemoPageState extends BaseCubitState<FlashDemoPage, FlashDemoInteractor, FlashDemoState> {
+class _FlashDemoPageState extends CubitState<FlashDemoPage, FlashDemoInteractor, FlashDemoState> {
   
   @override
   dynamic getAppBar(BuildContext context) => "Flash Library Demo";

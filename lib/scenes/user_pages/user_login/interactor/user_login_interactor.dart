@@ -10,12 +10,20 @@
 import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/user_pages/user_login/interactor/user_login_event_state.dart';
 import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:coffee_bean/scenes/user_pages/user_login/user_login_builder.dart';
 
 // Interactor
 
-class UserLoginInteractor extends CubitInteractor<DbNoteRoutable, UserLoginState> {
+// class ProblemReportInteractor extends CubitInteractor<ProblemReportRouter, ProblemReportState> {
+// final FileRepository _fileRepository = FileRepository();
+//
+// ProblemReportInteractor(ProblemReportRouter router) : super(const ProblemReportInitial(), router: router);
 
-  UserLoginInteractor({DbNoteRoutable? router}) : super(UserLoginEmptyState(), router: router);
+
+
+class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginState> {
+
+  UserLoginInteractor(UserLoginRouter router) : super(UserLoginEmptyState(), router: router);
 
   @override
   void onDidBecomeActive() {

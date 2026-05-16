@@ -1,12 +1,12 @@
-import 'package:coffee_bean/core/state_management/lib_bloc/base_cubit_statefull_widget.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/scenes/splash_page/splash_page_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 //ignore: must_be_immutable
-class SplashPagePage extends BaseCubitStateFulWidget {
-  SplashPagePage({super.key}) {
+class SplashPagePage extends CubitStateFulWidget<SplashPageInteractor, SplashPageState> {
+  SplashPagePage({super.key, required super.interactor}) {
     // Hide the default AppBar for this splash screen.
     showAppBar = false;
   }
@@ -15,7 +15,7 @@ class SplashPagePage extends BaseCubitStateFulWidget {
   State<SplashPagePage> createState() => _SplashPagePageState();
 }
 
-class _SplashPagePageState extends BaseCubitState<SplashPagePage, SplashPageInteractor, dynamic> {
+class _SplashPagePageState extends CubitState<SplashPagePage, SplashPageInteractor, SplashPageState> {
   @override
   void initState() {
     super.initState();

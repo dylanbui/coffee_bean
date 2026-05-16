@@ -12,22 +12,22 @@ import 'package:coffee_bean/scenes/user_pages/user_gift_pack/interactor/user_gif
 import 'package:coffee_bean/shared/widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/base_cubit_statefull_widget.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
 
 //ignore: must_be_immutable
-class UserGiftPackPage extends BaseCubitStateFulWidget with ViewControllable {
-  UserGiftPackPage({super.key});
+class UserGiftPackPage extends CubitStateFulWidget<UserGiftPackInteractor, UserGiftPackState> {
+  UserGiftPackPage({super.key, required super.interactor});
 
   @override
   State<UserGiftPackPage> createState() => _UserGiftPackPageState();
 }
 
-class _UserGiftPackPageState extends BaseCubitState<UserGiftPackPage, UserGiftPackInteractor, UserGiftPackState> {
+class _UserGiftPackPageState extends CubitState<UserGiftPackPage, UserGiftPackInteractor, UserGiftPackState> {
 
   @override
-  Widget? getLayout(BuildContext context) {
-    // Override layout để cho phép background tràn lên cả vùng AppBar (extendBodyBehindAppBar)
+  Widget build(BuildContext context) {
+    buildContext = context;
+    // Tùy chỉnh Scaffold với extendBodyBehindAppBar
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -169,9 +169,4 @@ class _UserGiftPackPageState extends BaseCubitState<UserGiftPackPage, UserGiftPa
   }
 
   // endregion
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

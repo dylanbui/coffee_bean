@@ -11,19 +11,14 @@ import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/scenes/problem_report/interactor/problem_report_interactor.dart';
 import 'package:coffee_bean/scenes/problem_report/interactor/problem_report_page.dart';
 import 'package:coffee_bean/scenes/problem_report/problem_report_router.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-
-class ProblemReportBuilder extends DbNoteBuilder {
+class ProblemReportBuilder extends DbNoteBuilder<ProblemReportRouter> {
     @override
-    Widget buildFactory() {
+    ProblemReportRouter build() {
         final router = ProblemReportRouter();
-        final problemReportInteractor = ProblemReportInteractor(router);
-        final page = ProblemReportPage();
-        return BlocProvider(create: (_) =>  problemReportInteractor, child: page,);
+        final interactor = ProblemReportInteractor(router);
+        final page = ProblemReportPage(interactor: interactor);
+        router.attach(interactor, page);
+        return router;
     }
-
-
-
 }

@@ -7,22 +7,11 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/core/architecture_ribs/navigator.dart';
 import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
+import 'package:coffee_bean/scenes/user_pages/forgot_password/forgot_password_router.dart';
 import 'package:coffee_bean/scenes/user_pages/forgot_password/interactor/forgot_password_interactor.dart';
 import 'package:coffee_bean/scenes/user_pages/forgot_password/interactor/forgot_password_page.dart';
-import 'package:coffee_bean/scenes/user_pages/set_password/set_password_builder.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-// --- LISTENER ---
-// Defines the "contract" that the parent module must implement to receive notifications
-// when this splash module completes.
-// abstract interface class ForgotPasswordListener {
-//   void onForgotPasswordCompleted();
-// }
 
 // --- ROUTE ---
 // A Route object to communicate the "completion" event from the Interactor to the Builder/Router.
@@ -30,31 +19,19 @@ class ForgotPasswordCompleteRoute implements DbNoteRoute {}
 
 // --- BUILDER ---
 // Responsible for initializing the Interactor, Page, and connecting them.
-class ForgotPasswordBuilder extends DbNoteBuilder with DbNavigator implements DbNoteRoutable {
-
+class ForgotPasswordBuilder extends DbNoteBuilder<ForgotPasswordRouter> {
 
   ForgotPasswordBuilder();
 
   @override
-  ViewController buildFactory() {
-    // The Interactor (Cubit) is created here. It receives a reference to the router (which is 'this').
-    final interactor = ForgotPasswordInteractor(router: this);
-    final page = ForgotPasswordPage();
+  ForgotPasswordRouter build() {
+    final router = ForgotPasswordRouter();
+    final interactor = ForgotPasswordInteractor(router);
+    final page = ForgotPasswordPage(interactor: interactor);
 
-    // BlocProvider "injects" the Cubit into the widget tree, making it accessible to the Page.
-    return BlocProvider<ForgotPasswordInteractor>.value(value: interactor, child: page);
+    // Attach interactor and page to router as per RIBs standard
+    router.attach(interactor, page);
+
+    return router;
   }
-
-  @override
-  void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
-    if (toRoute is ForgotPasswordCompleteRoute) {
-      // When the completion route is received, notify the parent module's listener.
-      SetPasswordBuilder setPasswordBuilder = SetPasswordBuilder();
-      push(setPasswordBuilder.build());
-    }
-  }
-
 }
-
-
-

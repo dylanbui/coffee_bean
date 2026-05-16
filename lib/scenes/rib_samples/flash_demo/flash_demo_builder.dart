@@ -15,7 +15,7 @@ class FlashDemoBuilder extends DbNoteBuilder implements FlashDemoBuildable {
   Widget buildFactory() {
     final router = FlashDemoRouter();
     final interactor = FlashDemoInteractor(router);
-    final page = FlashDemoPage();
-    return BlocProvider(create: (_) => interactor, child: page);
+    final page = FlashDemoPage(interactor: interactor);
+    return BlocProvider.value(value: interactor, child: page);
   }
 }

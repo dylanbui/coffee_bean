@@ -19,8 +19,8 @@ class GlobalSearchInteractor extends CubitInteractor<GlobalSearchRouter, GlobalS
   GlobalSearchInteractor(GlobalSearchRouter router) : super(GlobalSearchInitial(), router: router);
 
   @override
-  void didBecomeActive() {
-    super.didBecomeActive();
+  void onDidBecomeActive() {
+    super.onDidBecomeActive();
     // Simulate fetching categories from server
     _fetchCategories();
   }

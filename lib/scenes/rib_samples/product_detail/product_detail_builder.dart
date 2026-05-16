@@ -37,9 +37,9 @@ class ProductDetailBuilder extends DbNoteBuilder implements ProductDetailBuildab
   @override
   ViewController buildFactory() {
     final router = ProductDetailRouter();
-    final productDetailInteractor = ProductDetailInteractor(router, productId);
-    final page = ProductDetailPage();
-    return BlocProvider(create: (_) =>  productDetailInteractor, child: page,);
+    final interactor = ProductDetailInteractor(router, productId);
+    final page = ProductDetailPage(interactor: interactor);
+    return BlocProvider.value(value: interactor, child: page,);
   }
 
   @override

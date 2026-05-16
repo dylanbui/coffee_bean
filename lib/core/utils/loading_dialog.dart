@@ -92,7 +92,7 @@ class DbLoading {
   static void showPage({BuildContext? context, double appBarHeight = kToolbarHeight, Color backgroundColor = Colors.white, String? message, TextStyle? style}) {
     if (_lineController != null) return;
 
-    final effectiveContext = context ?? DbNavigator.navigatorState.currentContext;
+    final effectiveContext = context ?? DbNavigator.globalNavigatorState.currentContext;
     if (effectiveContext == null) return;
 
     final double topPadding = MediaQuery.of(effectiveContext).padding.top;
@@ -171,7 +171,7 @@ class DbPageLoading {
   static void show({BuildContext? context, double appBarHeight = kToolbarHeight, Color backgroundColor = Colors.white, String? message, TextStyle? style}) {
     if (_lineController != null) return;
 
-    final effectiveContext = context ?? DbNavigator.navigatorState.currentContext;
+    final effectiveContext = context ?? DbNavigator.globalNavigatorState.currentContext;
     if (effectiveContext == null) return;
 
     final double topPadding = MediaQuery.of(effectiveContext).padding.top;

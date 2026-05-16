@@ -24,7 +24,7 @@ class DbToast {
             TextStyle? style,
         }) {
         // 1. Lấy context thông qua Helper trung gian đã có
-        final effectiveContext = context ?? DbNavigator.navigatorState.currentContext;
+        final effectiveContext = context ?? DbNavigator.globalNavigatorState.currentContext;
         if (effectiveContext == null) return;
 
         final textStyle = style ?? DbCommonStyle.toastTextStyle;

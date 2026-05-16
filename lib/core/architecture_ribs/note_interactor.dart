@@ -4,38 +4,51 @@
  * User: dylanbui
  * Email: duc@propzy.com
  * Date: 15/08/2022 - 14:37
- * To change this template use File | Settings | File Templates.
  */
 
 import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
 
-/// The base builder protocol that all builders should conform to.
+/// DbNoteInteractable: Marker interface for components that can be interacted with.
 abstract class DbNoteInteractable {}
 
-/// Base Interactor for RIBs that only handles routing.
+/// DbNoteInteractor: Base class for RIBs business logic components.
+///
+/// The Interactor is responsible for processing business logic, handling events,
+/// and commanding navigation through the Router.
+///
+/// ### Usage:
+/// ```dart
+/// class MyInteractor extends DbNoteInteractor<MyRouter> {
+///   void onUserAction() {
+///     // Handle logic, then navigate
+///     router?.pushNext();
+///   }
+/// }
+/// ```
 abstract class DbNoteInteractor<T extends DbNoteRoutable> implements DbNoteInteractable {
+  /// The router associated with this interactor.
   late T? router;
-  void didBecomeActive();
-  void willResignActive();
 
   DbNoteInteractor({this.router});
-
 }
 
-/// An Interactor that also manages a Presenter.
+/// DbNotePresenterInteractor: An Interactor that also coordinates with a Presenter.
+///
+/// Used when UI formatting logic is complex enough to be separated from the business logic.
 abstract class DbNotePresenterInteractor<T extends DbNoteRoutable, P extends DbNotePresentable> extends DbNoteInteractor<T> {
+  /// The presenter responsible for UI-related data transformations.
   final P presenter;
 
   DbNotePresenterInteractor({required this.presenter, super.router});
 }
 
-/// The base protocol for all `Presenter`s.
+/// DbNotePresentable: Interface for UI data transformation components (Presenters).
 abstract class DbNotePresentable {
-  /// A lifecycle method for presenters to release resources.
+  /// Lifecycle method to release resources.
   void dispose();
 }
 
-/// The special empty dependency.
+/// DbNoteEmptyPresenter: A placeholder presenter for modules that don't require specific presentation logic.
 abstract class DbNoteEmptyPresenter extends DbNotePresentable {
   @override
   void dispose() {
@@ -43,20 +56,17 @@ abstract class DbNoteEmptyPresenter extends DbNotePresentable {
   }
 }
 
-/// The base class of all `Presenter`s. A `Presenter` translates business models into values the corresponding
-/// `ViewController` can consume and display. It also maps UI events to business logic method, invoked to
-/// its listener.
+/// DbNotePresenter: Base implementation of a Presenter.
+///
+/// It translates raw business models into view models consumable by the View.
 class DbNotePresenter<InteractorType> extends DbNotePresentable {
-  /// The view controller of this presenter.
+  /// Reference to the Interactor to communicate UI events back to business logic.
   final InteractorType interactor;
 
-  /// Initializer.
-  ///
-  /// - parameter viewController: The `ViewController` of this `Pesenters`.
   DbNotePresenter(this.interactor);
 
   @override
   void dispose() {
-    // No-op by default, can be overridden.
+    // No-op by default
   }
 }

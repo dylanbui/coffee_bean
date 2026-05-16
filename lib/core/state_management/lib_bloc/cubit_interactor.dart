@@ -57,8 +57,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// }
 /// ```
 
-/// Base class for Cubits that do NOT have a presenter.
-abstract class CubitInteractor<T extends DbNoteRoutable, State> extends Cubit<State>
+
+/// CubitInteractor: Central class combining Cubit (State Management) and Interactor (RIBs Business Logic).
+/// 
+/// [T]: DbNoteRoutable - Router responsible for navigation for this module.
+/// [S]: State - Data type of the state managed and emitted by this Cubit.
+///
+/// Interactor is responsible for handling business logic, calling APIs, and commanding navigation
+/// through the Router. It completely separates Logic from the UI.
+abstract class CubitInteractor<T extends DbNoteRoutable, S> extends Cubit<S>
     implements DbNoteInteractor<T> {
   @override
   T? router;
@@ -71,24 +78,22 @@ abstract class CubitInteractor<T extends DbNoteRoutable, State> extends Cubit<St
     // });
   }
 
-  /// ĐIỀU PHỐI (Orchestrator): Widget sẽ gọi hàm này. 
-  /// Hàm này đảm bảo onDidBecomeActive chỉ chạy 1 lần.
-  @override
+  /// COORDINATOR (Orchestrator): Widget will call this method. 
+  /// This method ensures onDidBecomeActive only runs once.
   void didBecomeActive() {
     if (_lifecycle == InteractorLifecycle.active) return;
     _lifecycle = InteractorLifecycle.active;
     onDidBecomeActive();
   }
 
-  /// ĐIỀU PHỐI (Orchestrator): Widget hoặc hàm close sẽ gọi hàm này.
-  @override
+  /// COORDINATOR (Orchestrator): Widget or close method will call this method.
   void willResignActive() {
     if (_lifecycle != InteractorLifecycle.active) return;
     _lifecycle = InteractorLifecycle.resigned;
     onWillResignActive();
   }
 
-  // --- HOOK METHODS: Lớp con sẽ override các hàm này ---
+  // --- HOOK METHODS: Subclasses will override these methods ---
 
   @protected
   void onDidBecomeActive() {}
@@ -97,22 +102,50 @@ abstract class CubitInteractor<T extends DbNoteRoutable, State> extends Cubit<St
   void onWillResignActive() {}  
   
   @override
-  void emit(State state) {
+  void emit(S state) {
     if (isClosed) return;
     super.emit(state);
   }
   
   @override
   Future<void> close() {
-    willResignActive(); // Chốt chặn cuối cùng đảm bảo tài nguyên được giải phóng
+    willResignActive(); // Final safeguard to ensure resources are released
     return super.close();
   }
 }
 
-/// Base class for Cubits that ARE coupled with a Presenter.
-/// The presenter is non-nullable, ensuring type safety.
-abstract class CubitPresenterInteractor<T extends DbNoteRoutable, P extends DbNotePresentable, State>
-    extends CubitInteractor<T, State> implements DbNotePresenterInteractor<T, P> {
+/// CubitPresenterInteractor: Extended version of CubitInteractor supporting a Presenter.
+/// 
+/// [T]: DbNoteRoutable - Router responsible for navigation.
+/// [P]: DbNotePresentable - Presenter responsible for data transformation (UI Logic).
+/// [S]: State - State of the Cubit.
+///
+/// Use this class when an Interactor becomes too large (Massive Interactor). The Presenter will help
+/// separate pure business logic (API calls, DB) from presentation logic (string formatting,
+/// complex display logic).
+/// 
+/// ### Sample Code:
+/// ```dart
+/// // 1. Define a Presenter
+/// abstract class MyPresenter extends DbNotePresentable {
+///   String formatData(List<String> raw);
+/// }
+/// 
+/// // 2. Create Interactor with Presenter
+/// class MyCubit extends CubitPresenterInteractor<MyRouter, MyPresenter, MyState> {
+///   MyCubit({required MyPresenter presenter, MyRouter? router}) 
+///     : super(MyInitial(), presenter: presenter, router: router);
+///
+///   void load() {
+///     final rawData = ['a', 'b'];
+///     // Use presenter to handle presentation logic before emitting state
+///     final displayData = presenter.formatData(rawData);
+///     emit(MySuccess(displayData));
+///   }
+/// }
+/// ```
+abstract class CubitPresenterInteractor<T extends DbNoteRoutable, P extends DbNotePresentable, S>
+    extends CubitInteractor<T, S> implements DbNotePresenterInteractor<T, P> {
   @override
   final P presenter;
 

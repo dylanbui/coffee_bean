@@ -1,6 +1,6 @@
 import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/base_bloc_statefull_widget.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/bloc_statefull_widget.dart';
 import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_list/interactor/user_list_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_list/interactor/user_list_interactor.dart';

@@ -5,10 +5,10 @@ import 'package:coffee_bean/data/repository/file_repository.dart';
 import 'package:coffee_bean/scenes/problem_report/problem_report_router.dart';
 import 'package:coffee_bean/scenes/problem_report/interactor/problem_report_event_state.dart';
 
-class ProblemReportInteractor extends CubitInteractor<DbNoteRoutable, ProblemReportState> {
+class ProblemReportInteractor extends CubitInteractor<ProblemReportRouter, ProblemReportState> {
   final FileRepository _fileRepository = FileRepository();
 
-  ProblemReportInteractor(ProblemReportRouter router) : super(const ProblemReportInitial());
+  ProblemReportInteractor(ProblemReportRouter router) : super(const ProblemReportInitial(), router: router);
 
   void onTextChanged(String text) {
     emit(ProblemReportUpdate(text: text, images: state.images));

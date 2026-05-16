@@ -107,27 +107,26 @@ Future<void> setupLocator() async {
 
 class App extends StatelessWidget {
 
-  late final AppBuilder _appBuilder ;
+  final AppBuilder _appBuilder = AppBuilder();
+  late final _appRouter = _appBuilder.build();
 
-  App({super.key}) {
-    _appBuilder = AppBuilder();
-  }
+  App({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
 
     // Run sync data
-    _appBuilder.init();
+    _appBuilder.startApp();
 
     return MaterialApp(
       // Connect GlobalKey from Router to Flutter Navigator
-      navigatorKey: DbNavigator.navigatorState,
+      navigatorKey: DbNavigator.globalNavigatorState,
       title: 'Coffee Bean',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: _appBuilder.build(),
+      home: _appRouter.viewController,
     );
   }
 }

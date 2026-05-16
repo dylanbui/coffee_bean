@@ -4,22 +4,37 @@
  * User: dylanbui
  * Email: duc@propzy.com
  * Date: 28/06/2022 - 10:35
- * To change this template use File | Settings | File Templates.
  */
 
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
-mixin class DbNavigator {
+/// DbNavigator: A utility class for handling navigation logic within the RIBs architecture.
+/// 
+/// It encapsulates the Flutter Navigator API and provides support for named routes, 
+/// custom transitions, and complex stack manipulations like `popUntilBefore`.
+///
+/// ### Usage:
+/// ```dart
+/// final navigator = DbNavigator(navigatorStateKey);
+/// navigator.push(MyWidget(), routeName: 'my_route');
+/// navigator.pop();
+/// ```
+class DbNavigator {
 
-  // Dùng static để tất cả các Router đều dùng chung một cổng điều hướng
-  static final GlobalKey<NavigatorState> navigatorState = GlobalKey<NavigatorState>();
+  /// Static global key to provide a default navigator state across all Routers.
+  static final GlobalKey<NavigatorState> globalNavigatorState = GlobalKey<NavigatorState>();
 
-  /// Hàm Push Modal: Hiển thị màn hình trượt từ dưới lên (Bottom to Top) transitionType: PageTransitionType.bottomToTop
-  /// Hàm Push: Thêm tùy chọn đặt tên (routeName)
+  final GlobalKey<NavigatorState> _navigatorState;
+
+  DbNavigator(this._navigatorState);
+
+  /// Pushes a [widget] onto the navigator stack.
+  /// 
+  /// [routeName]: Optional name for the route, useful for stack manipulation.
+  /// [transitionType]: Custom page transition animation (default: rightToLeft).
   void push(Widget widget, {BuildContext? fromContext, String? routeName, PageTransitionType transitionType = PageTransitionType.rightToLeft}) {
-    final state = navigatorState.currentState;
-    // Tạo Route với định danh
+    final state = _navigatorState.currentState;
     final route = PageTransition(child: widget, type: transitionType, settings: RouteSettings(name: routeName),);
     if (state != null) {
       state.push(route);
@@ -28,9 +43,9 @@ mixin class DbNavigator {
     }
   }
 
+  /// Pushes a [widget] and removes all previous routes.
   void pushSameRootPage(Widget widget, {BuildContext? fromContext, String? routeName, PageTransitionType transitionType = PageTransitionType.rightToLeft}) {
-    final state = navigatorState.currentState;
-    // Tạo Route với định danh
+    final state = _navigatorState.currentState;
     final route = PageTransition(child: widget, type: transitionType, settings: RouteSettings(name: routeName),);
     if (state != null) {
       state.pushAndRemoveUntil(route, (route) => false);
@@ -39,9 +54,11 @@ mixin class DbNavigator {
     }
   }
 
-  /// Hàm Pop: Thêm khả năng quay về một trang cụ thể theo tên
+  /// Pops the top route from the navigator.
+  /// 
+  /// [untilRouteName]: If provided, pops until the route with this name is found.
   void pop({BuildContext? fromContext, String? untilRouteName}) {
-    final state = navigatorState.currentState;
+    final state = _navigatorState.currentState;
     if (state != null) {
       if (untilRouteName != null) {
         // Nếu có tên, quay về cho đến khi gặp trang đó
@@ -63,20 +80,22 @@ mixin class DbNavigator {
     }
   }
 
-  /// Hàm đặc biệt: Quay về trang nằm ngay trước trang [targetRouteName]
-  /// Giúp thoát hoàn toàn một luồng (flow) mà không cần biết tên trang gốc.
+  /// Pops all routes until the route immediately BEFORE the [targetRouteName].
+  /// 
+  /// This is particularly useful for exiting an entire business flow without
+  /// knowing the specific name of the root page.
   void popUntilBefore(String targetRouteName, {BuildContext? fromContext}) {
-    final state = navigatorState.currentState;
+    final state = _navigatorState.currentState;
     bool foundTarget = false;
 
     // Make function do pop until
     bool funcPop(route, targetRouteName) {
       if (route.settings.name == targetRouteName) {
         foundTarget = true;
-        return false; // Tiếp tục xóa trang này để xuống trang bên dưới
+        return false; // Remove the target route
       }
       if (foundTarget) {
-        return true; // Dừng lại tại trang này
+        return true; // Stop at the route before the target
       }
       return false;
     }
@@ -104,11 +123,9 @@ mixin class DbNavigator {
     // }
 
   }
-
 }
 
-
-// https://stackoverflow.com/questions/46259751/how-to-push-multiple-routes-with-flutter-navigator
+/// A standard MaterialPageRoute without any entry/exit animations.
 class NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
   NoAnimationPageRoute({ required WidgetBuilder builder }) : super(builder: builder);
 
@@ -124,15 +141,9 @@ class NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
 
 extension PushWithoutAnimation on Navigator {
 
-  // Dung thang nay de push nhieu Page vao router, dung tao 1 line back app
+  /// Pushes a page without any animation.
   static Future pushWithoutAnimation(BuildContext context, Widget page) {
     Route route = NoAnimationPageRoute(builder: (BuildContext context) => page);
     return Navigator.of(context).push(route);
   }
-
-  // Future pushWithoutAnimation(BuildContext fromContext, Widget page) {
-  //   Route route = NoAnimationPageRoute(builder: (BuildContext context) => page);
-  //   return this.push(context, route);
-  // }
-
 }

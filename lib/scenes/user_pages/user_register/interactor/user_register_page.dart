@@ -1,6 +1,6 @@
 /*
  * Created with Android Studio
- * Package: coffee bean
+ * Package: coffee_bean
  * User: dylanbui
  * Email: buivantienduc@gmail.com
  * Date: 4/5/26 - 18:59
@@ -17,21 +17,20 @@ import 'package:coffee_bean/scenes/user_pages/user_register/user_register_builde
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/base_cubit_statefull_widget.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/shared/widget/phone_input_field.dart';
 import 'package:coffee_bean/shared/widget/underline_input_field.dart';
 import 'package:coffee_bean/shared/widget/app_button.dart';
 
 //ignore: must_be_immutable
-class UserRegisterPage extends BaseCubitStateFulWidget with ViewControllable {
-  UserRegisterPage({super.key, super.router});
+class UserRegisterPage extends CubitStateFulWidget<UserRegisterInteractor, UserRegisterState> {
+  UserRegisterPage({super.key, required super.interactor});
 
   @override
   State<UserRegisterPage> createState() => _UserRegisterPageState();
 }
 
-class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegisterInteractor, UserRegisterState> {
+class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterInteractor, UserRegisterState> {
 
   late RegisterController _registerController;
   bool _isKeyboardVisible = false;
@@ -55,23 +54,26 @@ class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegist
   }
 
   @override
-  dynamic getAppBar(BuildContext context) => "Register"; // Register
+  dynamic getAppBar(BuildContext context) => "Register";
 
   @override
-  Widget? getLayout(BuildContext context) {
-    // Override getLayout để cấu hình Scaffold duy nhất cho trang này
+  Widget build(BuildContext context) {
+    buildContext = context;
+
     var appBar = getAppBar(context);
     if (appBar is String) {
       appBar = CustomAppBar(appBar, appBarActions: getAppBarAction());
     }
 
+    if (widget.showAppBar == false) {
+      appBar = null;
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar as PreferredSizeWidget?,
-      // Tắt tính năng tự đẩy để chúng ta quản lý chiều cao thủ công qua availableHeight
-      resizeToAvoidBottomInset: false, 
+      resizeToAvoidBottomInset: false,
       body: GestureDetector(
-        // Chạm ra ngoài để ẩn bàn phím
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: DbKeyboardVisibility(
           onChanged: (info) {
@@ -113,11 +115,7 @@ class _UserRegisterPageState extends BaseCubitState<UserRegisterPage, UserRegist
                     ),
                     const SizedBox(height: 20),
                     _buildFooterLinks(),
-
-                    // PHẦN CO GIÃN: Expanded sẽ thu nhỏ về 0 khi phím hiện lên
                     const Expanded(child: SizedBox.shrink()),
-
-                    // PHẦN POLICY Ở ĐÁY
                     _buildPolicyAgreement(),
                     const SizedBox(height: 20),
                   ],

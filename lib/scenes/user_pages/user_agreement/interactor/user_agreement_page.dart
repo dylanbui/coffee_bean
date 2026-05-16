@@ -1,6 +1,6 @@
 /*
  * Created with Android Studio
- * Package: coffee bean
+ * Package: coffee_bean
  * User: dylanbui
  * Email: buivantienduc@gmail.com
  * Date: 5/5/26 - 14:14
@@ -12,18 +12,17 @@ import 'package:coffee_bean/scenes/user_pages/user_agreement/interactor/user_agr
 import 'package:coffee_bean/shared/widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/base_cubit_statefull_widget.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
 
 //ignore: must_be_immutable
-class UserAgreementPage extends BaseCubitStateFulWidget with ViewControllable {
-  UserAgreementPage({super.key});
+class UserAgreementPage extends CubitStateFulWidget<UserAgreementInteractor, UserAgreementState> {
+  UserAgreementPage({super.key, required super.interactor});
 
   @override
   State<UserAgreementPage> createState() => _UserAgreementPageState();
 }
 
-class _UserAgreementPageState extends BaseCubitState<UserAgreementPage, UserAgreementInteractor, UserAgreementState> {
+class _UserAgreementPageState extends CubitState<UserAgreementPage, UserAgreementInteractor, UserAgreementState> {
 
   @override
   dynamic getAppBar(BuildContext context) => "User Agreement";
@@ -64,11 +63,6 @@ class _UserAgreementPageState extends BaseCubitState<UserAgreementPage, UserAgre
         SnackBar(content: Text(state.message), backgroundColor: Colors.red),
       );
     }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
 }

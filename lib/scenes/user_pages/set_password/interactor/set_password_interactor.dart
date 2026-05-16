@@ -18,8 +18,8 @@ class SetPasswordInteractor extends CubitInteractor<DbNoteRoutable, SetPasswordS
   SetPasswordInteractor({DbNoteRoutable? router}) : super(SetPasswordInitial(), router: router);
 
   @override
-  void didBecomeActive() {
-    super.didBecomeActive();
+  void onDidBecomeActive() {
+    super.onDidBecomeActive();
     loadData();
   }
 

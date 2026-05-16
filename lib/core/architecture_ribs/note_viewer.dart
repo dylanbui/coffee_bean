@@ -4,22 +4,31 @@
  * User: dylanbui
  * Email: duc@propzy.com
  * Date: 15/08/2022 - 11:02
- * To change this template use File | Settings | File Templates.
  */
 
 import 'package:flutter/material.dart';
 
+/// ViewController: A type alias representing the UI component (Widget) of a RIB.
 typedef ViewController = Widget;
 
-// Framework Independent
-abstract interface class DbNoteViewer {
-  // Interface này có thể rỗng hoặc chứa các lệnh mà Router/Interactor
-  // có thể gọi trực tiếp lên View (ví dụ: showLoading, hideLoading)
-}
+/// DbNoteViewer: An interface representing the abstract view of a module.
+///
+/// It can contain methods for the Router or Interactor to invoke directly on the View,
+/// such as `showLoading` or `showError`.
+abstract interface class DbNoteViewer {}
 
-// Flutter Specific Adapter (Phần này sẽ thay đổi tùy framework)
-/// Basic interface between a `Router` and the UIKit `UIViewController`.
+/// ViewControllable: A mixin that adapts a Flutter Widget to the [DbNoteViewer] interface.
+///
+/// It provides a standardized way for a [Router] to access the Widget instance.
+///
+/// ### Usage:
+/// ```dart
+/// class MyPage extends StatelessWidget with ViewControllable {
+///   @override
+///   Widget build(BuildContext context) => Container();
+/// }
+/// ```
 mixin ViewControllable on Widget implements DbNoteViewer {
-  // Hàm trung gian giúp chuyển đổi từ Abstract View sang Flutter Widget
+  /// Returns the Widget instance itself.
   ViewController get viewController => this;
 }

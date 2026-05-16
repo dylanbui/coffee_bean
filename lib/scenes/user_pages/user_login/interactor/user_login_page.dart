@@ -1,6 +1,6 @@
 /*
  * Created with Android Studio
- * Package: coffee bean
+ * Package: coffee_bean
  * User: dylanbui
  * Email: buivantienduc@gmail.com
  * Date: 4/5/26 - 13:55
@@ -18,22 +18,21 @@ import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/base_cubit_statefull_widget.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/shared/widget/password_field.dart';
 import 'package:coffee_bean/shared/widget/phone_input_field.dart';
 import 'package:coffee_bean/shared/widget/underline_input_field.dart';
 import 'package:coffee_bean/shared/widget/app_button.dart';
 
 //ignore: must_be_immutable
-class UserLoginPage extends BaseCubitStateFulWidget with ViewControllable {
-  UserLoginPage({super.key});
+class UserLoginPage extends CubitStateFulWidget<UserLoginInteractor, UserLoginState> {
+  UserLoginPage({super.key, required super.interactor});
 
   @override
   State<UserLoginPage> createState() => _UserLoginPageState();
 }
 
-class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInteractor, UserLoginState>
+class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor, UserLoginState>
     with SingleTickerProviderStateMixin {
   late LoginController _loginController;
   late TabController _tabController;
@@ -63,10 +62,16 @@ class _UserLoginPageState extends BaseCubitState<UserLoginPage, UserLoginInterac
   dynamic getAppBar(BuildContext context) => "Login";
 
   @override
-  Widget? getLayout(BuildContext context) {
+  Widget build(BuildContext context) {
+    buildContext = context;
+
     var appBar = getAppBar(context);
     if (appBar is String) {
       appBar = CustomAppBar(appBar, appBarActions: getAppBarAction());
+    }
+
+    if (widget.showAppBar == false) {
+      appBar = null;
     }
 
     return Scaffold(

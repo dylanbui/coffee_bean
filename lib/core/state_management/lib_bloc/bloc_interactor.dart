@@ -11,6 +11,7 @@ import 'dart:async';
 
 import 'package:coffee_bean/core/architecture_ribs/note_interactor.dart';
 import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/bloc_lifecycle.dart';
 import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -75,8 +76,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 ///   }
 /// }
 /// ```
-/// Base class for BLoCs that do NOT have a presenter.
-abstract class BlocInteractor<T extends DbNoteRoutable, Event, State> extends Bloc<Event, State>
+/// BlocInteractor: Central class combining BLoC (Event-driven State Management) and Interactor (RIBs Business Logic).
+/// 
+/// [T]: DbNoteRoutable - Router responsible for navigation.
+/// [Event]: Data type of events that this BLoC receives.
+/// [State]: Data type of the state managed and emitted by this BLoC.
+///
+/// Inherits the Event-driven mechanism of BLoC to manage complex business logic 
+/// and asynchronous data streams.
+abstract class BlocInteractor<T extends DbNoteRoutable, Event, State> extends BlocLifecycle<Event, State>
     implements DbNoteInteractor<T> {
   @override
   T? router;
@@ -89,8 +97,8 @@ abstract class BlocInteractor<T extends DbNoteRoutable, Event, State> extends Bl
     // });
   }
 
-  /// ĐIỀU PHỐI (Orchestrator): Widget sẽ gọi hàm này. 
-  /// Hàm này đảm bảo onDidBecomeActive chỉ chạy 1 lần.
+  /// COORDINATOR (Orchestrator): Widget will call this method.
+  /// This method ensures onDidBecomeActive only runs once.
   @override
   void didBecomeActive() {
     if (_lifecycle == InteractorLifecycle.active) return;
@@ -98,7 +106,7 @@ abstract class BlocInteractor<T extends DbNoteRoutable, Event, State> extends Bl
     onDidBecomeActive();
   }
 
-  /// ĐIỀU PHỐI (Orchestrator): Widget hoặc hàm close sẽ gọi hàm này.
+  /// COORDINATOR (Orchestrator): Widget or close method will call this method.
   @override
   void willResignActive() {
     if (_lifecycle != InteractorLifecycle.active) return;
@@ -106,7 +114,7 @@ abstract class BlocInteractor<T extends DbNoteRoutable, Event, State> extends Bl
     onWillResignActive();
   }
 
-  // --- HOOK METHODS: Lớp con sẽ override các hàm này ---
+  // --- HOOK METHODS: Subclasses will override these methods ---
 
   @protected
   void onDidBecomeActive() {}
@@ -121,10 +129,18 @@ abstract class BlocInteractor<T extends DbNoteRoutable, Event, State> extends Bl
   }
 }
 
-/// Base class for BLoCs that ARE coupled with a Presenter.
-/// The presenter is non-nullable, ensuring type safety.
+/// BlocPresenterInteractor: Extended version of BlocInteractor supporting a Presenter.
+/// 
+/// [T]: DbNoteRoutable - Router responsible for navigation.
+/// [P]: DbNotePresentable - Presenter responsible for data transformation (UI Logic).
+/// [Event]: Event type.
+/// [State]: Cubit state.
+///
+/// Use this class when presentation logic becomes complex and needs to be separated from 
+/// pure event handling logic.
 abstract class BlocPresenterInteractor<T extends DbNoteRoutable, P extends DbNotePresentable, Event, State>
-    extends BlocInteractor<T, Event, State> implements DbNotePresenterInteractor<T, P> {
+    extends BlocInteractor<T, Event, State>
+    implements DbNotePresenterInteractor<T, P> {
   @override
   final P presenter;
 

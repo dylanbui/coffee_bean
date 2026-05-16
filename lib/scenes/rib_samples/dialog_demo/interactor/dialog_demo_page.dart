@@ -12,7 +12,7 @@ import 'package:coffee_bean/scenes/rib_samples/dialog_demo/interactor/dialog_dem
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/base_cubit_statefull_widget.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
 
 //ignore: must_be_immutable
 class DialogDemoPage extends BaseCubitStateFulWidget with ViewControllable {

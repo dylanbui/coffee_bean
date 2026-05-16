@@ -18,8 +18,8 @@ class PrivacyPolicyInteractor extends CubitInteractor<DbNoteRoutable, PrivacyPol
   PrivacyPolicyInteractor({DbNoteRoutable? router}) : super(PrivacyPolicyInitial(), router: router);
 
   @override
-  void didBecomeActive() {
-    super.didBecomeActive();
+  void onDidBecomeActive() {
+    super.onDidBecomeActive();
     loadData();
   }
 

@@ -1,6 +1,6 @@
 /*
  * Created with Android Studio
- * Package: coffee bean
+ * Package: coffee_bean
  * User: dylanbui
  * Email: buivantienduc@gmail.com
  * Date: 5/5/26 - 14:14
@@ -18,8 +18,8 @@ class UserAgreementInteractor extends CubitInteractor<DbNoteRoutable, UserAgreem
   UserAgreementInteractor({DbNoteRoutable? router}) : super(UserAgreementInitial(), router: router);
 
   @override
-  void didBecomeActive() {
-    super.didBecomeActive();
+  void onDidBecomeActive() {
+    super.onDidBecomeActive();
     loadData();
   }
 

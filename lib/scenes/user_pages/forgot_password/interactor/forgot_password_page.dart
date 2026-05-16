@@ -13,21 +13,20 @@ import 'package:coffee_bean/scenes/user_pages/forgot_password/interactor/forgot_
 import 'package:coffee_bean/scenes/user_pages/forgot_password/interactor/forgot_password_interactor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/base_cubit_statefull_widget.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/shared/widget/phone_input_field.dart';
 import 'package:coffee_bean/shared/widget/underline_input_field.dart';
 import 'package:coffee_bean/shared/widget/app_button.dart';
 
 //ignore: must_be_immutable
-class ForgotPasswordPage extends BaseCubitStateFulWidget with ViewControllable {
-  ForgotPasswordPage({super.key});
+class ForgotPasswordPage extends CubitStateFulWidget<ForgotPasswordInteractor, ForgotPasswordState> {
+  ForgotPasswordPage({super.key, required super.interactor});
 
   @override
   State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
 }
 
-class _ForgotPasswordPageState extends BaseCubitState<ForgotPasswordPage, ForgotPasswordInteractor, ForgotPasswordState> {
+class _ForgotPasswordPageState extends CubitState<ForgotPasswordPage, ForgotPasswordInteractor, ForgotPasswordState> {
   late ForgotPasswordController _forgotPwController;
 
   // Logic Countdown for SMS
@@ -67,8 +66,6 @@ class _ForgotPasswordPageState extends BaseCubitState<ForgotPasswordPage, Forgot
   void _onStateListener(BuildContext context, ForgotPasswordState state) {
     if (state is ForgotPasswordInProgress) {
       showLoading();
-
-    // check send code done
     } else if (state is ForgotPasswordSendCodeDone) {
       hideLoading();
     } else {

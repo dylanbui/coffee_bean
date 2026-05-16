@@ -28,7 +28,7 @@ mixin ViewUtilsMixin {
   /// Hiển thị loading sử dụng DbLoading (Flash)
   /// Nếu không truyền context, sẽ sử dụng navigator context mặc định
   void showLoading({String text = "Loading ..."}) {
-    final effectiveContext = DbNavigator.navigatorState.currentContext;
+    final effectiveContext = DbNavigator.globalNavigatorState.currentContext;
     if (effectiveContext != null) {
       DbLoading.show(effectiveContext, message: text);
     }
@@ -39,7 +39,7 @@ mixin ViewUtilsMixin {
   }
 
   void showPageLoading({String text = "Loading ..."}) {
-    final effectiveContext = DbNavigator.navigatorState.currentContext;
+    final effectiveContext = DbNavigator.globalNavigatorState.currentContext;
     if (effectiveContext != null) {
       DbPageLoading.show(context: effectiveContext);
     }
@@ -50,7 +50,7 @@ mixin ViewUtilsMixin {
   }
 
   void showProgressLoading({String? text = "Đang xử lý ..."}) {
-    final effectiveContext = DbNavigator.navigatorState.currentContext;
+    final effectiveContext = DbNavigator.globalNavigatorState.currentContext;
     if (effectiveContext != null) {
       DbLoading.show(effectiveContext, message: text);
     }
