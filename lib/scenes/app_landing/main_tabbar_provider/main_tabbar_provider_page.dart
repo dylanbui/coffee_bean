@@ -2,7 +2,7 @@ import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/core/state_management/lib_provider/base_provider_statefull_widget.dart';
 import 'package:coffee_bean/scenes/app_landing/home/home_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/community/community_builder.dart';
-import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_provider.dart';
+import 'package:coffee_bean/scenes/app_landing/main_tabbar_provider/main_tabbar_provider_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/my_profile_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/shopping_builder.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
@@ -12,16 +12,16 @@ import 'package:coffee_bean/shared/ui/app_strings.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
-class MainTabbarPage extends BaseProviderStateFulWidget {
-  MainTabbarPage({super.key}) {
+class MainTabbarProviderPage extends BaseProviderStateFulWidget {
+  MainTabbarProviderPage({super.key}) {
     showAppBar = false;
   }
 
   @override
-  State<StatefulWidget> createState() => _MainTabbarPageState();
+  State<StatefulWidget> createState() => _MainTabbarProviderPageState();
 }
 
-class _MainTabbarPageState extends BaseProviderState<MainTabbarPage, MainTabbarProvider> {
+class _MainTabbarProviderPageState extends BaseProviderState<MainTabbarProviderPage, MainTabbarProviderInteractor> {
   int _selectedIndexPage = 0;
   final List<_TabItem> _pages = [];
 

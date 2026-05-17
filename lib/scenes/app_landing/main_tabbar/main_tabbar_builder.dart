@@ -1,27 +1,17 @@
 import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_page.dart';
-import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_router.dart';
+import 'package:coffee_bean/scenes/app_landing/main_tabbar/interactor/main_tabbar_interactor.dart';
+import 'package:coffee_bean/scenes/app_landing/main_tabbar/interactor/main_tabbar_page.dart';
 
-class MainTabbarBuilder extends DbNoteRouter implements DbNoteBuilder<MainTabbarBuilder> {
+class MainTabbarBuilder extends DbNoteBuilder<MainTabbarRouter> {
   @override
-  MainTabbarBuilder build() {
-    final provider = MainTabbarProvider(this);
-    final page = MainTabbarPage();
+  MainTabbarRouter build() {
+    final router = MainTabbarRouter();
+    final interactor = MainTabbarInteractor(router);
+    final page = MainTabbarPage(interactor: interactor);
 
-    // Use RIBs attach to connect provider and view
-    attach(provider, ChangeNotifierProvider<MainTabbarProvider>.value(
-      value: provider, 
-      child: page
-    ));
+    router.attach(interactor, page);
 
-    return this;
-  }
-
-  @override
-  void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
-    // Implement navigation logic if needed
+    return router;
   }
 }
