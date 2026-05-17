@@ -1,4 +1,4 @@
-import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/core/state_management/lib_provider/base_provider_statefull_widget.dart';
 import 'package:coffee_bean/scenes/app_landing/home/home_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/community/community_builder.dart';
@@ -28,37 +28,37 @@ class _MainTabbarPageState extends BaseProviderState<MainTabbarPage, MainTabbarP
   @override
   void initState() {
     super.initState();
-    // Khởi tạo tab đầu tiên (Trang chủ)
+    // Initialize the first tab (Home)
     _navigateToPage(0);
   }
 
   void _navigateToPage(int index) {
     if (_pages.indexWhere((element) => element.index == index) == -1) {
-      DbNoteBuilder? builder;
+      DbNoteRouter? router;
       Widget? widget;
 
       switch (index) {
         case 0:
-          builder = HomeBuilder();
-          widget = (builder as HomeBuildable).build();
+          router = HomeBuilder().build();
+          widget = router.viewController;
           break;
         case 1:
-          builder = ShoppingBuilder();
-          widget = (builder as ShoppingBuildable).build();
+          router = ShoppingBuilder().build();
+          widget = router.viewController;
           break;
         case 2:
-          builder = CommunityBuilder();
-          widget = (builder as CommunityBuildable).build();
+          router = CommunityBuilder().build();
+          widget = router.viewController;
           break;
         case 3:
-          builder = MyProfileBuilder();
-          widget = (builder as MyProfileBuildable).build();
+          router = MyProfileBuilder().build();
+          widget = router.viewController;
           break;
       }
 
       if (widget != null) {
-        _pages.add(_TabItem(index: index, builder: builder, widget: widget));
-        // Sắp xếp lại list theo index để FadeIndexedStack hoạt động đúng
+        _pages.add(_TabItem(index: index, router: router, widget: widget));
+        // Re-sort the list by index for FadeIndexedStack to work correctly
         _pages.sort((a, b) => a.index.compareTo(b.index));
       }
     }
@@ -144,8 +144,8 @@ class _MainTabbarPageState extends BaseProviderState<MainTabbarPage, MainTabbarP
 
 class _TabItem {
   final int index;
-  final DbNoteBuilder? builder;
+  final DbNoteRouter? router;
   final Widget widget;
 
-  _TabItem({required this.index, this.builder, required this.widget});
+  _TabItem({required this.index, this.router, required this.widget});
 }

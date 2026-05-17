@@ -1,9 +1,9 @@
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_strings.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
@@ -12,26 +12,22 @@ import 'package:coffee_bean/scenes/app_landing/home/interactor/top_image_panel.d
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:marquee/marquee.dart';
 
-class HomePage extends StatefulWidget with ViewControllable {
-  const HomePage({super.key});
+//ignore: must_be_immutable
+class HomePage extends CubitStateFulWidget<HomeInteractor, HomeState> {
+  HomePage({super.key, required super.interactor});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends CubitState<HomePage, HomeInteractor, HomeState> {
 
   @override
-  void initState() {
-    super.initState();
-    // Trigger initial data load
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<HomeInteractor>().initData();
-    });
-  }
+  dynamic getAppBar(BuildContext context) => null;
 
   @override
   Widget build(BuildContext context) {
+    buildContext = context;
     return BlocBuilder<HomeInteractor, HomeState>(
       buildWhen: (previous, current) => previous.isInitialLoading != current.isInitialLoading,
       builder: (context, state) {
@@ -41,18 +37,27 @@ class _HomePageState extends State<HomePage> {
 
         return Scaffold(
           backgroundColor: Colors.white,
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const TopImagePanel(),
-                _QuickActionsRow(),
-                _AnnouncementBar(data: state.announcementData),
-                _PromoBanner(data: state.promoData),
-                _FeaturedCourses(data: state.featuredCoursesData),
-                const SizedBox(height: 100),
-              ],
-            ),
+          body: getBody(context),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget getBody(BuildContext context) {
+    return BlocBuilder<HomeInteractor, HomeState>(
+      builder: (context, state) {
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const TopImagePanel(),
+              _QuickActionsRow(),
+              _AnnouncementBar(data: state.announcementData),
+              _PromoBanner(data: state.promoData),
+              _FeaturedCourses(data: state.featuredCoursesData),
+              const SizedBox(height: 100),
+            ],
           ),
         );
       },
@@ -94,7 +99,7 @@ class _QuickActionsRow extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(color: Colors.transparent, shape: BoxShape.circle),
+                    decoration: const BoxDecoration(color: Colors.transparent, shape: BoxShape.circle),
                     child: AppIcon(item['icon'], size: 60,),
                   ),
                     Text(item['label'], style: const TextStyle(fontSize: 9)),
@@ -142,7 +147,7 @@ class _AnnouncementBar extends StatelessWidget {
               decelerationCurve: Curves.easeOut,
             ),
           ),
-          const Icon(Icons.arrow_forward_ios, color: Colors.white),
+          const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 14),
         ],
       ),
     );

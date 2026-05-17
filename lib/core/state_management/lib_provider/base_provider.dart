@@ -20,7 +20,7 @@ import 'package:flutter/foundation.dart';
 /// ### Sample Code:
 /// ```dart
 /// class LoginProvider extends BaseProvider<LoginRouter> {
-///   LoginProvider() : super(LoginRouter());
+///   LoginProvider(super.router);
 ///
 ///   Future<void> login(String email, String password) async {
 ///     isProcessing = true; // Show loading indicator on button
@@ -29,7 +29,7 @@ import 'package:flutter/foundation.dart';
 ///     final success = await _authApi.login(email, password);
 ///
 ///     if (success) {
-///       router.goToHomePage();
+///       router?.goToHomePage();
 ///     } else {
 ///       error = BaseError(message: "Invalid credentials");
 ///     }
@@ -39,7 +39,7 @@ import 'package:flutter/foundation.dart';
 /// ```
 abstract class BaseProvider<R extends DbNoteRoutable> extends ChangeNotifier {
 
-  late R router;
+  R? router;
   bool _isDisposed = false;
 
   BaseError? _error;

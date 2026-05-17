@@ -1,12 +1,17 @@
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/scenes/app_landing/home/home_router.dart';
 
-class HomeInteractor extends Cubit<HomeState> {
-  final HomeRoutable router;
+class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
 
-  HomeInteractor(this.router) : super(HomeInitial());
+  HomeInteractor(HomeRoutable router) : super(HomeInitial(), router: router);
+
+  @override
+  void onDidBecomeActive() {
+    super.onDidBecomeActive();
+    initData();
+  }
 
   void initData() async {
     // Simulate initial loading
@@ -42,7 +47,7 @@ class HomeInteractor extends Cubit<HomeState> {
         items: [
           CourseItem(title: "INNER CIRCLE TRADER", imageUrl: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=400&auto=format&fit=crop'),
           CourseItem(title: "QUẢN TRỊ TÀI SẢN TRONG GIAO DỊCH", imageUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=400&auto=format&fit=crop'),
-          CourseItem(title: "PHÂN TÍCH KỸ THUẬT NÂNG CAO", imageUrl: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=800&auto=format&fit=crop'),
+          CourseItem(title: "PHÂN TÍCH KỸ THUẬT NÂNG CAO", imageUrl: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=400&auto=format&fit=crop'),
         ],
       ),
     ));
@@ -59,22 +64,11 @@ class HomeInteractor extends Cubit<HomeState> {
   
   void selectStore() {
     // Logic to select store
-    router.navigate(ChooseStoreRoute());
+    router?.navigate(ChooseStoreRoute());
   }
 
   void quickActions(int index) {
-    // Logic to select store
-    switch (index) {
-      case 1:
-        ;
-      case 2:
-        ;
-    }
-    if (index == 0 ) {
-
-    }
-    router.navigate(ChooseStoreRoute());
+    // Logic for quick actions
+    router?.navigate(ChooseStoreRoute());
   }
-
-
 }
