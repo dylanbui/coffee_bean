@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/core/state_management/lib_bloc/bloc_statefull_widget.dart';
 import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean/data/model/user.dart';
@@ -8,25 +9,17 @@ import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-//ignore: must_be_immutable
-class UserDetailPage extends BaseBlocStateFulWidget {
-  final int userId;
-  UserDetailPage({super.key, required this.userId});
+// ignore: must_be_immutable
+class UserDetailPage extends BlocStatefulWidget<UserDetailInteractor, BaseBlocEvent, BaseBlocState> with ViewControllable {
+  UserDetailPage({super.key, required super.interactor});
 
   @override
   State<UserDetailPage> createState() => _UserDetailPageState();
 }
 
-class _UserDetailPageState extends BaseBlocViewState<UserDetailPage, UserDetailInteractor, dynamic> {
+class _UserDetailPageState extends BlocState<UserDetailPage, UserDetailInteractor, BaseBlocEvent, BaseBlocState> {
   @override
   String getAppBar(BuildContext context) => "User Detail";
-
-  @override
-  void initState() {
-    super.initState();
-    // Trigger the data fetch event with the user ID passed from the widget.
-    blocProvider.add(UserDetailFetchEvent(widget.userId));
-  }
 
   @override
   Widget getBody(BuildContext context) {
@@ -41,7 +34,7 @@ class _UserDetailPageState extends BaseBlocViewState<UserDetailPage, UserDetailI
         if (state is UserDetailGetDataSuccess) {
           return _buildUserDetail(context, state.user);
         }
-        return const SizedBox.shrink(); // Return an empty widget for the initial state.
+        return const SizedBox.shrink();
       },
     );
   }

@@ -6,16 +6,15 @@ import 'package:coffee_bean/data/model/product.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_cart/interactor/product_cart_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_cart/product_cart_router.dart';
 
-
-class ProductCartInteractor extends CubitInteractor<ProductCartRouter, ProductCartState> {
+class ProductCartInteractor extends CubitInteractor<ProductCartRoutable, ProductCartState> {
   final CartService _cartService = locator<CartService>();
   StreamSubscription? _cartSubscription;
 
-  ProductCartInteractor(ProductCartRouter router) : super(ProductCartInitial(), router: router);
+  ProductCartInteractor(ProductCartRoutable router) : super(ProductCartInitial(), router: router);
 
   @override
-  void didBecomeActive() {
-    super.didBecomeActive();
+  void onDidBecomeActive() {
+    super.onDidBecomeActive();
     _setupSubscription();
   }
 
@@ -34,12 +33,12 @@ class ProductCartInteractor extends CubitInteractor<ProductCartRouter, ProductCa
   }
 
   void gotoDetail(Product product) {
-      router?.navigate(ProductDetailRoute(product.id));
+    router?.gotoProductDetail(product.id);
   }
 
   @override
-  void willResignActive() {
+  void onWillResignActive() {
     _cartSubscription?.cancel();
-    super.willResignActive();
+    super.onWillResignActive();
   }
 }

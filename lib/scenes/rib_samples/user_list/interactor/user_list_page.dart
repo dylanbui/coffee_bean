@@ -1,31 +1,25 @@
 import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_bean/core/state_management/lib_bloc/bloc_statefull_widget.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_list/interactor/user_list_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_list/interactor/user_list_interactor.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
 
 // ignore: must_be_immutable
-class UserListPage extends BaseBlocStateFulWidget {
-  UserListPage({super.key});
+class UserListPage extends BlocStatefulWidget<UserListInteractor, BaseBlocEvent, BaseBlocState> with ViewControllable {
+  UserListPage({super.key, required super.interactor});
 
   @override
   State<UserListPage> createState() => _UserListPageState();
 }
 
-class _UserListPageState extends BaseBlocViewState<UserListPage, UserListInteractor, dynamic> {
+class _UserListPageState extends BlocState<UserListPage, UserListInteractor, BaseBlocEvent, BaseBlocState> {
+  
   @override
   String getAppBar(BuildContext context) => "User List";
-
-  @override
-  void initState() {
-    super.initState();
-    // Trigger the data fetch event when the page is initialized.
-    blocProvider.add(UserListFetchDataEvent());
-  }
 
   @override
   Widget getBody(BuildContext context) {

@@ -1,23 +1,20 @@
 import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/core/utils/locator.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_list/interactor/user_list_interactor.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_list/interactor/user_list_page.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:coffee_bean/scenes/rib_samples/user_list/user_list_router.dart';
 
-/// Builder for the UserList module.
-/// It's responsible for creating and wiring all the components of the module.
-class UserListBuilder extends DbNoteBuilder {
+class UserListBuilder extends DbNoteBuilder<UserListRouter> {
   @override
-  ViewController buildFactory() {
-    // Get the singleton instance of the repository from the service locator.
+  UserListRouter build() {
     final userRepository = locator.get<UserRepository>();
-    // The page widget.
-    final page = UserListPage();
+    final router = UserListRouter();
+    final interactor = UserListInteractor(userRepository, router);
+    final page = UserListPage(interactor: interactor);
 
-    // The BLoC (Interactor) is created and provided to the widget tree.
-    // The BLoC itself depends on the repository.
-    return BlocProvider<UserListInteractor>(create: (context) => UserListInteractor(userRepository), child: page);
+    router.attach(interactor, page);
+
+    return router;
   }
 }

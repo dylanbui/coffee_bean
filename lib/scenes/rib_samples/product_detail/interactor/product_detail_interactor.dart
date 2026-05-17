@@ -13,16 +13,16 @@ import 'package:coffee_bean/data/repository/product_repository.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_detail/interactor/product_detail_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_detail/product_detail_router.dart';
 
-class ProductDetailInteractor extends CubitInteractor<ProductDetailRouter, ProductDetailState> {
+class ProductDetailInteractor extends CubitInteractor<ProductDetailRoutable, ProductDetailState> {
 
   final _productRepository = ProductRepository();
   final int productId;
 
-  ProductDetailInteractor(ProductDetailRouter router, this.productId) : super(ProductDetailInitial(), router: router);
+  ProductDetailInteractor(ProductDetailRoutable router, this.productId) : super(ProductDetailInitial(), router: router);
 
   @override
-  void didBecomeActive() {
-    super.didBecomeActive();
+  void onDidBecomeActive() {
+    super.onDidBecomeActive();
     loadData();
   }
 

@@ -1,5 +1,4 @@
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
-import 'package:coffee_bean/core/custom_app_bar.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/data/local/live_service/model/cart_item.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_cart/interactor/product_cart_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_cart/interactor/product_cart_interactor.dart';
@@ -10,44 +9,42 @@ import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ProductCartPage extends StatefulWidget with ViewControllable {
-  const ProductCartPage({super.key});
+//ignore: must_be_immutable
+class ProductCartPage extends CubitStateFulWidget<ProductCartInteractor, ProductCartState> {
+  ProductCartPage({super.key, required super.interactor});
 
   @override
   State<ProductCartPage> createState() => _ProductCartPageState();
 }
 
-class _ProductCartPageState extends State<ProductCartPage> {
-  late ProductCartInteractor interactor;
+class _ProductCartPageState extends CubitState<ProductCartPage, ProductCartInteractor, ProductCartState> {
 
   @override
-  Widget build(BuildContext context) {
-    interactor = BlocProvider.of<ProductCartInteractor>(context);
+  dynamic getAppBar(BuildContext context) => "Giỏ hàng";
 
-    return Scaffold(
-      appBar: const CustomAppBar("Giỏ hàng", hideBackButton: false),
-      body: BlocBuilder<ProductCartInteractor, ProductCartState>(
-        builder: (context, state) {
-          if (state is ProductCartInitial) {
-            return const Center(child: LoadingView(width: 150, height: 150));
+  @override
+  Widget getBody(BuildContext context) {
+    return BlocBuilder<ProductCartInteractor, ProductCartState>(
+      builder: (context, state) {
+        if (state is ProductCartInitial) {
+          return const Center(child: LoadingView(width: 150, height: 150));
+        }
+
+        if (state is ProductCartGetDataSuccess) {
+          if (state.items.isEmpty) {
+            return const EmptyView(message: "Giỏ hàng của bạn đang trống");
           }
 
-          if (state is ProductCartGetDataSuccess) {
-            if (state.items.isEmpty) {
-              return const EmptyView(message: "Giỏ hàng của bạn đang trống");
-            }
+          return Column(
+            children: [
+              Expanded(child: _buildCartList(state.items)),
+              _buildBottomSummary(state.totalAmount),
+            ],
+          );
+        }
 
-            return Column(
-              children: [
-                Expanded(child: _buildCartList(state.items)),
-                _buildBottomSummary(state.totalAmount),
-              ],
-            );
-          }
-
-          return const SizedBox.shrink();
-        },
-      ),
+        return const SizedBox.shrink();
+      },
     );
   }
 
@@ -159,7 +156,7 @@ class _ProductCartPageState extends State<ProductCartPage> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),

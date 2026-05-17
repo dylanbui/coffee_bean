@@ -14,5 +14,5 @@ class ProductCartGetDataSuccess extends ProductCartState {
   ProductCartGetDataSuccess(this.items, this.totalAmount);
 
   @override
-  List<Object> get props => [items, totalAmount];
+  List<Object?> get props => [items, totalAmount];
 }

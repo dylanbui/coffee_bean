@@ -1,5 +1,6 @@
 import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/core/custom_app_bar.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/core/utils/locator.dart';
 import 'package:coffee_bean/core/utils/logger.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
@@ -7,7 +8,6 @@ import 'package:coffee_bean/data/local/live_service/model/cart_item.dart';
 import 'package:coffee_bean/data/model/product.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_list/interactor/product_list_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_list/interactor/product_list_interactor.dart';
-import 'package:coffee_bean/scenes/rib_samples/product_list/product_list_router.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
 import 'package:coffee_bean/shared/widget/empty_view.dart';
@@ -17,15 +17,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 //ignore: must_be_immutable
-class ProductListPage extends StatefulWidget with ViewControllable {
-  const ProductListPage({super.key});
+class ProductListPage extends CubitStateFulWidget<ProductListInteractor, ProductListState> {
+  ProductListPage({super.key, required super.interactor});
 
   @override
   State<ProductListPage> createState() => _ProductListPageState();
 }
 
-class _ProductListPageState extends State<ProductListPage> {
-  late ProductListInteractor pageInteractor;
+class _ProductListPageState extends CubitState<ProductListPage, ProductListInteractor, ProductListState> {
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -42,7 +41,7 @@ class _ProductListPageState extends State<ProductListPage> {
 
   void _onScroll() {
     if (_isBottom) {
-      pageInteractor.loadMoreData();
+      interactor.loadMoreData();
     }
   }
 
@@ -54,48 +53,57 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    pageInteractor = BlocProvider.of<ProductListInteractor>(context);
+  dynamic getAppBar(BuildContext context) {
+    return CustomAppBar(
+      "Sản phẩm", 
+      hideBackButton: true, 
+      appBarActions: [_CartBadge(onTap: () => interactor.router?.gotoProductCart())]
+    );
+  }
 
-    return Scaffold(
-      appBar: CustomAppBar("Sản phẩm", hideBackButton: true, appBarActions: [_CartBadge(onTap: () => pageInteractor.router?.gotoProductCart())]),
-      body: BlocConsumer<ProductListInteractor, ProductListState>(
-        listener: (context, state) {
-          if (state is ProductListGetDataError) {
-            eLog("Error: ${state.error.message}");
-          }
-        },
-        builder: (context, state) {
-          if (state is ProductListInitial || state is ProductListInProgress) {
-            return const Center(child: LoadingView(width: 150, height: 150));
-          }
+  @override
+  Widget getBody(BuildContext context) {
+    return BlocConsumer<ProductListInteractor, ProductListState>(
+      listener: (context, state) {
+        if (state is ProductListGetDataError) {
+          eLog("Error: ${state.error.message}");
+        }
+      },
+      builder: (context, state) {
+        if (state is ProductListInitial || state is ProductListInProgress) {
+          return const Center(child: LoadingView(width: 150, height: 150));
+        }
 
-          if (state is ProductListGetDataSuccess || state is ProductListInLoadMoreProgress) {
-            List<Product> items = [];
-            bool hasReachedMax = false;
+        if (state is ProductListGetDataSuccess || state is ProductListInLoadMoreProgress) {
+          List<Product> items = [];
+          bool hasReachedMax = false;
 
-            if (state is ProductListGetDataSuccess) {
-              items = state.items;
-              hasReachedMax = state.hasReachedMax;
-            } else if (state is ProductListInLoadMoreProgress) {
-              items = state.items;
-              hasReachedMax = false;
-            }
-
-            if (items.isEmpty) {
-              return const EmptyView(message: "Không tìm thấy sản phẩm nào");
-            }
-
-            return _ProductListView(products: items, hasReachedMax: hasReachedMax, scrollController: _scrollController, onRefresh: pageInteractor.onRefresh);
+          if (state is ProductListGetDataSuccess) {
+            items = state.items;
+            hasReachedMax = state.hasReachedMax;
+          } else if (state is ProductListInLoadMoreProgress) {
+            items = state.items;
+            hasReachedMax = false;
           }
 
-          if (state is ProductListGetDataError) {
-            return ErrorView(message: state.error.message, onRetry: () => pageInteractor.loadData());
+          if (items.isEmpty) {
+            return const EmptyView(message: "Không tìm thấy sản phẩm nào");
           }
 
-          return const SizedBox.shrink();
-        },
-      ),
+          return _ProductListView(
+            products: items, 
+            hasReachedMax: hasReachedMax, 
+            scrollController: _scrollController, 
+            onRefresh: interactor.onRefresh
+          );
+        }
+
+        if (state is ProductListGetDataError) {
+          return ErrorView(message: state.error.message, onRetry: () => interactor.loadData());
+        }
+
+        return const SizedBox.shrink();
+      },
     );
   }
 }
@@ -179,7 +187,7 @@ class _ProductCard extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(10),
       onTap: () {
-        interactor.router?.gotoPostDetail(ProductDetailRoute(product.id), nextContext: context);
+        interactor.router?.gotoProductDetail(product.id);
       },
       child: Card(
         elevation: 2,
@@ -230,7 +238,7 @@ class _LikeButton extends StatelessWidget {
       onTap: () => interactor.toggleLike(product),
       child: Container(
         padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(color: Colors.white.withOpacity(0.8), shape: BoxShape.circle),
+        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.8), shape: BoxShape.circle),
         child: Icon(isLiked ? Icons.favorite : Icons.favorite_border, color: Colors.red, size: 20),
       ),
     );

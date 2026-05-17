@@ -6,20 +6,11 @@ import 'package:coffee_bean/scenes/rib_samples/upload_files/interactor/upload_fi
 import 'package:coffee_bean/scenes/rib_samples/upload_files/upload_files_router.dart';
 
 /// Interactor for the UploadFiles module.
-/// Manages the business logic for file uploads.
 class UploadFilesInteractor extends CubitInteractor<UploadFilesRoutable, UploadFilesState> {
   final UploadFilesRepository _uploadRepository = locator.get<UploadFilesRepository>();
 
   UploadFilesInteractor(UploadFilesRoutable router) : super(UploadFilesInitial(), router: router);
 
-  @override
-  void didBecomeActive() {
-    super.didBecomeActive();
-    // Any initial setup or data loading for the interactor.
-  }
-
-  /// Initiates the file upload process.
-  /// [filePath] The path to the file to be uploaded.
   Future<void> uploadFile(String filePath) async {
     emit(const UploadFilesInProgress());
 
@@ -40,7 +31,6 @@ class UploadFilesInteractor extends CubitInteractor<UploadFilesRoutable, UploadF
     }
   }
 
-  /// Resets the state to initial.
   void resetState() {
     emit(UploadFilesInitial());
   }

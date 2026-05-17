@@ -2,20 +2,19 @@ import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/scenes/rib_samples/flash_demo/interactor/flash_demo_interactor.dart';
 import 'package:coffee_bean/scenes/rib_samples/flash_demo/interactor/flash_demo_page.dart';
 import 'package:coffee_bean/scenes/rib_samples/flash_demo/flash_demo_router.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-abstract class FlashDemoBuildable implements DbNoteBuildable {
-  // @override
-  // Widget build({bool showAppBarOnRootPage = true});
-}
+abstract class FlashDemoBuildable implements DbNoteBuildable {}
 
-class FlashDemoBuilder extends DbNoteBuilder implements FlashDemoBuildable {
+class FlashDemoBuilder extends DbNoteBuilder<FlashDemoRouter> implements FlashDemoBuildable {
   @override
-  Widget buildFactory() {
+  FlashDemoRouter build() {
     final router = FlashDemoRouter();
     final interactor = FlashDemoInteractor(router);
     final page = FlashDemoPage(interactor: interactor);
-    return BlocProvider.value(value: interactor, child: page);
+
+    router.attach(interactor, BlocProvider.value(value: interactor, child: page));
+
+    return router;
   }
 }

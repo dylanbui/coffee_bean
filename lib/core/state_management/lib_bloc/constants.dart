@@ -7,7 +7,7 @@ import 'package:equatable/equatable.dart';
 abstract class BaseBlocState extends Equatable {
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 
 }
 
@@ -18,6 +18,6 @@ enum InteractorLifecycle { initialized, active, resigned }
 abstract class BaseBlocEvent extends Equatable {
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 
 }

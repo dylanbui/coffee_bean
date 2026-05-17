@@ -49,7 +49,9 @@ class ProductListInteractor extends CubitInteractor<ProductListRoutable, Product
     _likesSubscription = _likesService.likedStream.listen((likedIds) {
       final currentState = state;
       if (currentState is ProductListGetDataSuccess) {
-        // Force refresh UI by emitting new state with updated like status
+        // Force refresh UI by emitting new state. 
+        // Since we made Product immutable and Equatable, and we emit a new List instance,
+        // it signals a change. We can remove dateTime now as we'll use list replacement.
         emit(ProductListGetDataSuccess(
           List.from(currentState.items),
           currentState.hasReachedMax,

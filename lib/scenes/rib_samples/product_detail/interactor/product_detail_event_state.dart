@@ -25,7 +25,7 @@ class ProductDetailGetDataSuccess extends ProductDetailState {
   ProductDetailGetDataSuccess(this.item);
 
   @override
-  List<Object> get props => [item];
+  List<Object?> get props => [item];
 }
 
 class ProductDetailGetDataError<T extends BaseError> extends ProductDetailState {
@@ -34,5 +34,5 @@ class ProductDetailGetDataError<T extends BaseError> extends ProductDetailState 
   ProductDetailGetDataError(this.error);
 
   @override
-  List<Object> get props => [error];
+  List<Object?> get props => [error];
 }

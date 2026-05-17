@@ -1,31 +1,21 @@
-/*
- * Created with Android Studio
- * Package: coffee bean
- * User: dylanbui
- * Email: buivantienduc@gmail.com
- * Date: 1/5/26 - 14:45
- * To change this template use File | Settings | File Templates.
- */
-
 import 'package:coffee_bean/scenes/rib_samples/dialog_demo/interactor/dialog_demo_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/dialog_demo/interactor/dialog_demo_interactor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
 
 //ignore: must_be_immutable
-class DialogDemoPage extends BaseCubitStateFulWidget with ViewControllable {
-  DialogDemoPage({super.key});
+class DialogDemoPage extends CubitStateFulWidget<DialogDemoInteractor, DialogDemoState> {
+  DialogDemoPage({super.key, required super.interactor});
 
   @override
   State<DialogDemoPage> createState() => _DialogDemoPageState();
 }
 
-class _DialogDemoPageState extends BaseCubitState<DialogDemoPage, DialogDemoInteractor, DialogDemoState> {
+class _DialogDemoPageState extends CubitState<DialogDemoPage, DialogDemoInteractor, DialogDemoState> {
 
   @override
-  dynamic getAppBar(BuildContext context) => "DialogDemo";
+  dynamic getAppBar(BuildContext context) => "Dialog Demo";
 
   @override
   Widget getBody(BuildContext context) {
@@ -46,16 +36,11 @@ class _DialogDemoPageState extends BaseCubitState<DialogDemoPage, DialogDemoInte
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 20),
+              const Text("Dialog Demo Content"),
             ],
           ),
         );
       },
     );
   }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
 }

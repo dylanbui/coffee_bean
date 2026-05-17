@@ -43,7 +43,7 @@ class ProductListInLoadMoreProgress extends ProductListState {
   ProductListInLoadMoreProgress(this.items);
 
   @override
-  List<Object> get props => [items];
+  List<Object?> get props => [items];
 }
 
 class ProductListGetDataSuccess extends ProductListState {
@@ -55,7 +55,7 @@ class ProductListGetDataSuccess extends ProductListState {
   ProductListGetDataSuccess(this.items, this.hasReachedMax, this.totalItems, this.currentPage);
 
   @override
-  List<Object> get props => [items, hasReachedMax, totalItems];
+  List<Object?> get props => [items, hasReachedMax, totalItems, currentPage];
 }
 
 class ProductListGetDataError<T extends BaseError> extends ProductListState {
@@ -64,5 +64,5 @@ class ProductListGetDataError<T extends BaseError> extends ProductListState {
   ProductListGetDataError(this.error);
 
   @override
-  List<Object> get props => [error];
+  List<Object?> get props => [error];
 }

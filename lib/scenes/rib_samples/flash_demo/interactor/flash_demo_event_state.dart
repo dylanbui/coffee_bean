@@ -1,17 +1,17 @@
-import 'package:equatable/equatable.dart';
+import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
 
-abstract class FlashDemoState extends Equatable {
+abstract class FlashDemoState extends BaseBlocState {
   final String selectedValue;
-  const FlashDemoState({this.selectedValue = ""});
+  FlashDemoState({this.selectedValue = ""});
 
   @override
   List<Object?> get props => [selectedValue];
 }
 
 class FlashDemoInitial extends FlashDemoState {
-  const FlashDemoInitial() : super();
+  FlashDemoInitial() : super();
 }
 
 class FlashDemoUpdate extends FlashDemoState {
-  const FlashDemoUpdate({required super.selectedValue});
+  FlashDemoUpdate({required super.selectedValue});
 }

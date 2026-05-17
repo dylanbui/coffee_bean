@@ -1,32 +1,26 @@
-/*
- * Created with Android Studio
- * Package: coffee bean
- * User: dylanbui
- * Email: buivantienduc@gmail.com
- * Date: 1/5/26 - 14:45
- * To change this template use File | Settings | File Templates.
- */
-
-import 'package:flutter/material.dart';
 import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
+import 'package:flutter/material.dart';
 
+// --- Routes ---
 
-// Route
 class DialogDemoRoute implements DbNoteRoute {
   final int id;
-
   DialogDemoRoute(this.id);
 }
 
-// Router
-class DialogDemoRouter extends DbNoteRouter {
+// --- Routable ---
 
+abstract class DialogDemoRoutable implements DbNoteRoutable {
+  // Add specific navigation methods here if needed
+}
+
+// --- Router ---
+
+class DialogDemoRouter extends DbNoteRouter implements DialogDemoRoutable {
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
     if (toRoute is DialogDemoRoute) {
-      // Implementation for navigating to or within DialogDemo
-      // Ví dụ: xử lý điều hướng logic nội bộ của RIB DialogDemo
+      // Implementation for navigating within Dialog Demo if any
     }
   }
-
 }
