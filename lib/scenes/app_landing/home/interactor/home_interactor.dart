@@ -168,6 +168,11 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
     // router?.navigate(SellerDetailRoute(item));
   }
 
+  void selectCourse(CourseItem item) {
+    // Logic for select course
+    debugPrint("Selected course: ${item.title}");
+  }
+
   void selectMarketTag(MarketData data) {
     // Logic for select market tag
   }

@@ -99,9 +99,8 @@ class _QuickActionsRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: items.map((item) {
-          return InkWell(
+          return TapEffect(
             onTap: item['onTap'],
-            borderRadius: BorderRadius.circular(8),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Column(
@@ -227,7 +226,7 @@ class _FeaturedCourses extends StatelessWidget {
                 AppStrings.featuredCourses,
                 style: TMLabsStyle.semibold.copyWith(fontSize: 24, color: TMLabsColor.primary),
               ),
-              InkWell(
+              TapEffect(
                 onTap: () {},
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -252,39 +251,43 @@ class _FeaturedCourses extends StatelessWidget {
             itemCount: items.length,
             itemBuilder: (context, index) {
               final item = items[index];
-              return Container(
-                width: 160,
-                margin: const EdgeInsets.only(right: 12),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      CachedImageWidget(imageUrl: item.imageUrl, fit: BoxFit.cover),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        height: 240 * 0.4,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [TMLabsColor.primary.withOpacity(0), TMLabsColor.primary],
+              final interactor = context.read<HomeInteractor>();
+              return TapEffect(
+                onTap: () => interactor.selectCourse(item),
+                child: Container(
+                  width: 160,
+                  margin: const EdgeInsets.only(right: 12),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        CachedImageWidget(imageUrl: item.imageUrl, fit: BoxFit.cover),
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          height: 240 * 0.4,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [TMLabsColor.primary.withOpacity(0), TMLabsColor.primary],
+                              ),
+                            ),
+                            padding: const EdgeInsets.all(12),
+                            alignment: Alignment.bottomLeft,
+                            child: Text(
+                              item.title,
+                              style: TMLabsStyle.semibold.copyWith(color: Colors.white, fontSize: 16),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          padding: const EdgeInsets.all(12),
-                          alignment: Alignment.bottomLeft,
-                          child: Text(
-                            item.title,
-                            style: TMLabsStyle.semibold.copyWith(color: Colors.white, fontSize: 16),
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -332,11 +335,13 @@ class _CourseSellers extends StatelessWidget {
                 width: 70,
                 child: Column(
                   children: [
-                    AvatarWidget(
-                      imageUrl: item.imageUrl,
-                      size: 70,
-                      // onTap: () => interactor.selectSeller(item),
-                      backgroundColor: TMLabsColor.primary,
+                    TapEffect(
+                      onTap: () => interactor.selectSeller(item),
+                      child: AvatarWidget(
+                        imageUrl: item.imageUrl,
+                        size: 70,
+                        backgroundColor: TMLabsColor.primary,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
