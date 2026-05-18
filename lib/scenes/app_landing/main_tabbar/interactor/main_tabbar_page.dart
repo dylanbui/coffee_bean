@@ -31,6 +31,8 @@ class _MainTabbarPageState extends CubitState<MainTabbarPage, MainTabbarInteract
     _ensurePageLoaded(0);
   }
 
+
+
   void _ensurePageLoaded(int index) {
     if (_pages.indexWhere((element) => element.index == index) == -1) {
       DbNoteRouter? router;
@@ -66,18 +68,22 @@ class _MainTabbarPageState extends CubitState<MainTabbarPage, MainTabbarInteract
   int _indexInStack(int selectedIndex) => _pages.indexWhere((element) => element.index == selectedIndex);
 
   @override
-  Widget? getLayout(BuildContext context) {
-    return BlocBuilder<MainTabbarInteractor, MainTabbarState>(
-      builder: (context, state) {
-        _ensurePageLoaded(state.selectedIndex);
-        return Scaffold(
-          body: FadeIndexedStack(
-            index: _indexInStack(state.selectedIndex),
-            children: _pages.map((e) => e.widget).toList(),
-          ),
-          bottomNavigationBar: _buildBottomNavigationBar(state.selectedIndex),
-        );
-      },
+  Widget build(BuildContext context) {
+    buildContext = context;
+    return BlocProvider.value(
+      value: interactor,
+      child: BlocBuilder<MainTabbarInteractor, MainTabbarState>(
+        builder: (context, state) {
+          _ensurePageLoaded(state.selectedIndex);
+          return Scaffold(
+            body: FadeIndexedStack(
+              index: _indexInStack(state.selectedIndex),
+              children: _pages.map((e) => e.widget).toList(),
+            ),
+            bottomNavigationBar: _buildBottomNavigationBar(state.selectedIndex),
+          );
+        },
+      ),
     );
   }
 
@@ -87,7 +93,7 @@ class _MainTabbarPageState extends CubitState<MainTabbarPage, MainTabbarInteract
       height: 90,
       decoration: const BoxDecoration(
         color: Colors.white,
-        border: Border(top: BorderSide(color: TMLabsColor.grey  , width: 0.5)),
+        border: Border(top: BorderSide(color: TMLabsColor.grey , width: 0.1)),
       ),
       child: Column(
         children: [

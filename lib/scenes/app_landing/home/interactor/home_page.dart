@@ -59,6 +59,8 @@ class _HomePageState extends CubitState<HomePage, HomeInteractor, HomeState> {
               _FeaturedCourses(data: state.featuredCoursesData),
               _CourseSellers(data: state.courseSellersData),
               _PostsList(data: state.postsData),
+              _CourseVideos(data: state.courseVideosData),
+              _FinancialCourses(data: state.financialCoursesData),
               const SizedBox(height: 50),
             ],
           ),
@@ -399,7 +401,7 @@ class _PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 380,
+      height: 390,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: const Color(0xFFF2F2F2), borderRadius: BorderRadius.circular(20)),
@@ -490,21 +492,22 @@ class _PostCard extends StatelessWidget {
               ),
             ),
           const Spacer(),
-          // Footer (Status Bar + Action Icons) ~60px
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(color: const Color(0xFFD9D9D9), borderRadius: BorderRadius.circular(10)),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "Trạng thái bài đăng: Online",
-                  style: TMLabsStyle.regular.copyWith(fontSize: 10, color: Colors.black54),
+          // Footer - Market Tags
+          if (item.marketData.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 5, bottom: 8),
+              child: SizedBox(
+                height: 28,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: item.marketData.length,
+                  separatorBuilder: (context, index) => const SizedBox(width: 8),
+                  itemBuilder: (context, index) {
+                    return _MarketTag(data: item.marketData[index]);
+                  },
                 ),
-              ],
+              ),
             ),
-          ),
-          const SizedBox(height: 5),
           Row(
             children: [
               _buildActionIcon(AppAssets.icons.icShare, item.shareCount.formatCompact()),
@@ -527,6 +530,291 @@ class _PostCard extends StatelessWidget {
         const SizedBox(width: 6),
         Text(count, style: const TextStyle(fontSize: 14, color: Colors.grey)),
       ],
+    );
+  }
+}
+
+class _MarketTag extends StatelessWidget {
+  final MarketData data;
+  const _MarketTag({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final interactor = context.read<HomeInteractor>();
+
+    return Material(
+      color: const Color(0xFFD9D9D9),
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: () => interactor.selectMarketTag(data),
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                data.symbol,
+                style: TMLabsStyle.regular.copyWith(fontSize: 11, color: Colors.black87),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                data.change,
+                style: TMLabsStyle.semibold.copyWith(
+                  fontSize: 11,
+                  color: data.isPositive ? const Color(0xFF2E7D32) : const Color(0xFFD32F2F),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// --- Phần 8: Video về các khóa học (Scroll ngang) ---
+class _CourseVideos extends StatelessWidget {
+  final CourseVideosData? data;
+  const _CourseVideos({this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final items = data?.items ?? [];
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+          child: Text(
+            AppStrings.courseVideos,
+            style: TMLabsStyle.semibold.copyWith(fontSize: 24, color: TMLabsColor.primary),
+          ),
+        ),
+        SizedBox(
+          height: 250,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.only(left: 16),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              return _CourseVideoCard(item: items[index]);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CourseVideoCard extends StatelessWidget {
+  final CourseVideoItem item;
+  const _CourseVideoCard({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    final interactor = context.read<HomeInteractor>();
+
+    return Container(
+      width: 180,
+      margin: const EdgeInsets.only(right: 12),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Thumbnail
+            CachedImageWidget(imageUrl: item.imageUrl, fit: BoxFit.cover),
+
+            // Play Icon
+            Positioned(
+              top: 15,
+              right: 15,
+              child: GestureDetector(
+                onTap: () => interactor.playVideo(item),
+                child: AppIcon(AppAssets.icons.icPlayVideo, size: 26),
+              ),
+            ),
+
+            // Bottom Gradient and Info
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 250 * 0.6, // Gradient covers bottom 60%
+              child: Container(
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      TMLabsColor.primary.withOpacity(0),
+                      TMLabsColor.primary.withOpacity(0.9),
+                      TMLabsColor.primary,
+                    ],
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      item.title.toUpperCase(),
+                      style: TMLabsStyle.semibold.copyWith(color: Colors.white, fontSize: 13, height: 1.3),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: const BoxDecoration(color: Color(0xFF3E4A68), shape: BoxShape.circle),
+                          child: ClipOval(
+                            child: item.authorAvatar != null
+                                ? CachedImageWidget(imageUrl: item.authorAvatar!, fit: BoxFit.cover)
+                                : const SizedBox.shrink(),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            item.authorName,
+                            style: TMLabsStyle.regular.copyWith(color: Colors.white.withOpacity(0.8), fontSize: 12),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// --- Phần 9: Khóa học tài chính (Scroll ngang) ---
+class _FinancialCourses extends StatelessWidget {
+  final FinancialCoursesData? data;
+  const _FinancialCourses({this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final items = data?.items ?? [];
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+          child: Text(
+            AppStrings.financialCourses,
+            style: TMLabsStyle.semibold.copyWith(fontSize: 24, color: TMLabsColor.primary),
+          ),
+        ),
+        SizedBox(
+          height: 230,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.only(left: 16),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              return _FinancialCourseCard(item: items[index]);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FinancialCourseCard extends StatelessWidget {
+  final FinancialCourseItem item;
+  const _FinancialCourseCard({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    final interactor = context.read<HomeInteractor>();
+
+    return Container(
+      width: 160,
+      margin: const EdgeInsets.only(right: 12),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Thumbnail
+            CachedImageWidget(imageUrl: item.imageUrl, fit: BoxFit.cover),
+
+            // Bottom Gradient and Info
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 230 * 0.55, // Gradient covers bottom 55%
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      TMLabsColor.primary.withOpacity(0),
+                      TMLabsColor.primary.withOpacity(0.9),
+                      TMLabsColor.primary,
+                    ],
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      item.title,
+                      style: TMLabsStyle.semibold.copyWith(color: Colors.white, fontSize: 13, height: 1.3),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          item.price.toVnd(),
+                          style: TMLabsStyle.semibold.copyWith(color: Colors.white, fontSize: 14),
+                        ),
+                        Material(
+                          color: const Color(0xFFA6B5C5).withOpacity(0.5),
+                          shape: const CircleBorder(),
+                          child: InkWell(
+                            onTap: () => interactor.addToCart(item),
+                            customBorder: const CircleBorder(),
+                            child: const Padding(
+                              padding: EdgeInsets.all(6),
+                              child: Icon(Icons.add, color: Colors.white, size: 20),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

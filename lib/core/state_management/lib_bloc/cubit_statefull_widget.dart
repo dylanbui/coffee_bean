@@ -7,6 +7,8 @@ import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart
 import 'package:coffee_bean/core/state_management/lib_bloc/view_utils_mixin.dart';
 import 'package:flutter/material.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 /// CubitStateFulWidget: Base class for StatefulWidget using Cubit in RIBs architecture.
 /// 
 /// [B]: CubitInteractor - Component for coordinating logic (Business Logic) and routing (Routing).
@@ -72,9 +74,12 @@ abstract class CubitState<T extends CubitStateFulWidget<B, S>, B extends CubitIn
       appBar = null;
     }
 
-    return Scaffold(
-        appBar: appBar is PreferredSizeWidget ? appBar : null,
-        body: getBody(context)
+    return BlocProvider.value(
+      value: interactor,
+      child: Scaffold(
+          appBar: appBar is PreferredSizeWidget ? appBar : null,
+          body: getBody(context)
+      ),
     );
   }
 }

@@ -51,6 +51,95 @@ class FeaturedCoursesData {
   FeaturedCoursesData({this.items = const []});
 }
 
+class CourseVideoItem {
+  final String title;
+  final String imageUrl;
+  final String videoUrl;
+  final String authorName;
+  final String? authorAvatar;
+
+  CourseVideoItem({
+    required this.title,
+    required this.imageUrl,
+    required this.videoUrl,
+    required this.authorName,
+    this.authorAvatar,
+  });
+}
+
+class CourseVideosData {
+  final List<CourseVideoItem> items;
+  CourseVideosData({this.items = const []});
+}
+
+class FinancialCourseItem {
+  final String title;
+  final String imageUrl;
+  final double price;
+
+  FinancialCourseItem({
+    required this.title,
+    required this.imageUrl,
+    required this.price,
+  });
+}
+
+class FinancialCoursesData {
+  final List<FinancialCourseItem> items;
+  FinancialCoursesData({this.items = const []});
+}
+
+class SellerItem {
+  final String name;
+  final String? imageUrl;
+  SellerItem({required this.name, this.imageUrl});
+}
+
+class CourseSellersData {
+  final List<SellerItem> items;
+  CourseSellersData({this.items = const []});
+}
+
+class PostItem {
+  final String authorName;
+  final String? authorAvatar;
+  final String postDate;
+  final String title;
+  final String content;
+  final List<String> images;
+  final int shareCount;
+  final int commentCount;
+  final int likeCount;
+  final bool isFollowing;
+  final List<MarketData> marketData;
+
+  PostItem({
+    required this.authorName,
+    this.authorAvatar,
+    required this.postDate,
+    required this.title,
+    required this.content,
+    this.images = const [],
+    this.shareCount = 0,
+    this.commentCount = 0,
+    this.likeCount = 0,
+    this.isFollowing = false,
+    this.marketData = const [],
+  });
+}
+
+class MarketData {
+  final String symbol;
+  final String change;
+  final bool isPositive;
+  MarketData({required this.symbol, required this.change, required this.isPositive});
+}
+
+class PostsData {
+  final List<PostItem> items;
+  PostsData({this.items = const []});
+}
+
 // --- Events ---
 abstract class HomeEvent extends BaseBlocEvent {}
 
@@ -62,6 +151,10 @@ class HomeState extends BaseBlocState {
   final AnnouncementData? announcementData;
   final PromoData? promoData;
   final FeaturedCoursesData? featuredCoursesData;
+  final CourseSellersData? courseSellersData;
+  final CourseVideosData? courseVideosData;
+  final FinancialCoursesData? financialCoursesData;
+  final PostsData? postsData;
 
   HomeState({
     this.isInitialLoading = true,
@@ -70,6 +163,10 @@ class HomeState extends BaseBlocState {
     this.announcementData,
     this.promoData,
     this.featuredCoursesData,
+    this.courseSellersData,
+    this.courseVideosData,
+    this.financialCoursesData,
+    this.postsData,
   });
 
   HomeState copyWith({
@@ -79,6 +176,10 @@ class HomeState extends BaseBlocState {
     AnnouncementData? announcementData,
     PromoData? promoData,
     FeaturedCoursesData? featuredCoursesData,
+    CourseSellersData? courseSellersData,
+    CourseVideosData? courseVideosData,
+    FinancialCoursesData? financialCoursesData,
+    PostsData? postsData,
   }) {
     return HomeState(
       isInitialLoading: isInitialLoading ?? this.isInitialLoading,
@@ -87,6 +188,10 @@ class HomeState extends BaseBlocState {
       announcementData: announcementData ?? this.announcementData,
       promoData: promoData ?? this.promoData,
       featuredCoursesData: featuredCoursesData ?? this.featuredCoursesData,
+      courseSellersData: courseSellersData ?? this.courseSellersData,
+      courseVideosData: courseVideosData ?? this.courseVideosData,
+      financialCoursesData: financialCoursesData ?? this.financialCoursesData,
+      postsData: postsData ?? this.postsData,
     );
   }
 }

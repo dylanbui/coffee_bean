@@ -21,7 +21,7 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
       isInitialLoading: false,
       topImageData: TopImageData(
         images: [
-          'https://images.unsplash.com/photo-1501339819358-ee5969a1f18c?q=80&w=800&auto=format&fit=crop',
+          'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=800&auto=format&fit=crop',
           'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=800&auto=format&fit=crop',
           'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop',
           'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=800&auto=format&fit=crop',
@@ -45,11 +45,102 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
       ),
       featuredCoursesData: FeaturedCoursesData(
         items: [
-          CourseItem(title: "INNER CIRCLE TRADER", imageUrl: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=400&auto=format&fit=crop'),
+          CourseItem(title: "INNER CIRCLE TRADER", imageUrl: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=400&auto=format&fit=crop'),
           CourseItem(title: "QUẢN TRỊ TÀI SẢN TRONG GIAO DỊCH", imageUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=400&auto=format&fit=crop'),
           CourseItem(title: "PHÂN TÍCH KỸ THUẬT NÂNG CAO", imageUrl: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=400&auto=format&fit=crop'),
         ],
       ),
+      courseSellersData: CourseSellersData(
+        items: [
+          SellerItem(name: "Tyler Ballmer One", imageUrl: "https://i.pravatar.cc/300"),
+          SellerItem(name: "Julia Two", imageUrl: "https://i.pravatar.cc/310"),
+          SellerItem(name: "Stella Three", imageUrl: "https://i.pravatar.cc/320"),
+          SellerItem(name: "Henry", imageUrl: "https://i.pravatar.cc/330"),
+          SellerItem(name: "Henry Four", imageUrl: "https://i.pravatar.cc/340"),
+          SellerItem(name: "Henry Five", imageUrl: "https://i.pravatar.cc/350"),
+          SellerItem(name: "My Team", imageUrl: "https://picsum.photos/id/34/200/200"),
+          SellerItem(name: "Coffee Four", imageUrl: "https://picsum.photos/id/35/200/200"),
+          SellerItem(name: "Tea Five", imageUrl: "https://picsum.photos/id/36/200/200"),
+        ],
+      ),
+      courseVideosData: CourseVideosData(
+        items: [
+          CourseVideoItem(
+            title: "KHÓA HỌC QUẢN TRỊ TÀI SẢN TRONG GIAO DỊCH",
+            imageUrl: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=400&auto=format&fit=crop',
+            videoUrl: 'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+            authorName: "Lorem ipsum",
+            authorAvatar: "https://i.pravatar.cc/100",
+          ),
+          CourseVideoItem(
+            title: "KHÓA HỌC QUẢN TRỊ TÀI SẢN TRONG GIAO DỊCH",
+            imageUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=400&auto=format&fit=crop',
+            videoUrl: 'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+            authorName: "Lorem ipsum",
+            authorAvatar: "https://i.pravatar.cc/110",
+          ),
+          CourseVideoItem(
+            title: "KHÓA HỌC QUẢN TRỊ TÀI SẢN TRONG GIAO DỊCH",
+            imageUrl: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=400&auto=format&fit=crop',
+            videoUrl: 'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+            authorName: "Lorem ipsum",
+            authorAvatar: "https://i.pravatar.cc/120",
+          ),
+        ],
+      ),
+      postsData: PostsData(
+        items: List.generate(
+          5,
+          (index) => PostItem(
+            authorName: "TylerBallmer invest",
+            authorAvatar: "https://i.pravatar.cc/300",
+            postDate: "23/04/2026",
+            title: "Lorem ipsum dolor sit amet, con",
+            content:
+                "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper s...",
+            images: [
+              'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=400&auto=format&fit=crop',
+              'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=400&auto=format&fit=crop',
+              'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=400&auto=format&fit=crop',
+              'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=400&auto=format&fit=crop',
+              'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=400&auto=format&fit=crop',
+              'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=400&auto=format&fit=crop',
+            ],
+            shareCount: 200,
+            commentCount: 1250,
+            likeCount: 1000,
+            marketData: [
+              MarketData(symbol: "XAU/USD", change: "+16%", isPositive: true),
+              MarketData(symbol: "EUR/USD", change: "+1.25%", isPositive: true),
+              MarketData(symbol: "BTC/USD", change: "-36%", isPositive: false),
+              MarketData(symbol: "BTC/USD", change: "-36%", isPositive: false),
+              MarketData(symbol: "BTC/USD", change: "-36%", isPositive: false),
+              MarketData(symbol: "BTC/USD", change: "-36%", isPositive: false),
+            ],
+          ),
+        ),
+      ),
+
+      financialCoursesData: FinancialCoursesData(
+        items: [
+          FinancialCourseItem(
+            title: "Mua khóa học thực chiến giao dịch Stock",
+            imageUrl: 'https://images.unsplash.com/photo-1535320903710-d993d3d77d29?q=80&w=400&auto=format&fit=crop',
+            price: 54330000,
+          ),
+          FinancialCourseItem(
+            title: "Mua khóa học thực chiến giao dịch Stock",
+            imageUrl: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=400&auto=format&fit=crop',
+            price: 5433000,
+          ),
+          FinancialCourseItem(
+            title: "Mua khóa học thực chiến giao dịch Stock",
+            imageUrl: 'https://images.unsplash.com/photo-1535320903710-d993d3d77d29?q=80&w=400&auto=format&fit=crop',
+            price: 543300000,
+          ),
+        ],
+      ),
+
     ));
   }
 
@@ -70,5 +161,25 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
   void quickActions(int index) {
     // Logic for quick actions
     router?.navigate(ChooseStoreRoute());
+  }
+
+  void selectSeller(SellerItem item) {
+    // Logic for select seller
+    // router?.navigate(SellerDetailRoute(item));
+  }
+
+  void selectMarketTag(MarketData data) {
+    // Logic for select market tag
+  }
+
+  void playVideo(CourseVideoItem item) {
+    // Logic to play video
+    // Use flick_video_player or chewie for video playback
+    debugPrint("Playing video: ${item.videoUrl}");
+  }
+
+  void addToCart(FinancialCourseItem item) {
+    // Logic to add to cart
+    debugPrint("Added to cart: ${item.title}");
   }
 }

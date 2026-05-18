@@ -24,6 +24,13 @@ class _Icons {
   final String icKhoaHoc = 'assets/icons/ic_khoa_hoc.svg';
   final String icTrungTam = 'assets/icons/ic_trung_tam.svg';
   final String icSearch = 'assets/icons/ic_search.svg';
+  final String icComment = 'assets/icons/ic_comment.svg';
+  final String icLike = 'assets/icons/ic_like.svg';
+  final String icShare = 'assets/icons/ic_share.svg';
+  final String icPlayVideo = 'assets/icons/ic_play_video.svg';
+  final String icPlusCycle = 'assets/icons/ic_plus_cycle.svg';
+
+
 }
 
 class _Images {

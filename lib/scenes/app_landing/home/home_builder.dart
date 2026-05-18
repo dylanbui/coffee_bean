@@ -10,9 +10,7 @@ class HomeBuilder extends DbNoteBuilder<HomeRouter> {
     final router = HomeRouter();
     final interactor = HomeInteractor(router);
     final page = HomePage(interactor: interactor);
-
     router.attach(interactor, page);
-
     // Set showAppBar nếu cần thiết (giống product_list_builder)
     // page.showAppBar = showAppBarOnRootPage;
 

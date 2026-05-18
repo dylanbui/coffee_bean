@@ -14,4 +14,9 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
     super.onDidBecomeActive();
     // Load initial profile data
   }
+
+  void doLogout() {
+    // TODO: clean user data
+    router?.doLogout();
+  }
 }

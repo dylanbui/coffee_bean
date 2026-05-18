@@ -1,5 +1,6 @@
 import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/my_profile_interactor.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:flutter/material.dart';
 
 //ignore: must_be_immutable
@@ -45,12 +46,37 @@ class _MyProfilePageState extends CubitState<MyProfilePage, MyProfileInteractor,
           
           const SizedBox(height: 20),
           
-          // 4. Logout Button
+          // 4. Auth Buttons
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: TextButton(
-              onPressed: () {},
-              child: const Text("Đăng xuất", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () => interactor.router?.doLogin(),
+                  child: const Text("Đăng nhập", style: TextStyle(color: Color(0xFF0D1B3E), fontWeight: FontWeight.bold)),
+                ),
+                const SizedBox(width: 20),
+                TextButton(
+                  onPressed: () async {
+                    final res = await FlashDialogHelper.show<int>(
+                      context: context,
+                      persistent: true,
+                      title: "Xác nhận đăng xuất",
+                      content: "Bạn có chắc chắn muốn đăng xuất khỏi tài khoản này?",
+                      icon: const Icon(Icons.logout, color: Colors.red, size: 40),
+                      actions: [
+                        FlashDialogAction(label: "Hủy", value: 1, color: Colors.grey),
+                        FlashDialogAction(label: "Đăng xuất", value: 2, color: Colors.red),
+                      ],
+                    );
+                    if (res == 2) {
+                      interactor.doLogout();
+                    }
+                  },
+                  child: const Text("Đăng xuất", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 40),

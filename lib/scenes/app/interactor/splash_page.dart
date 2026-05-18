@@ -32,14 +32,6 @@ class SplashPage extends StatelessWidget {
                   child: Image.asset(AppAssets.images.logoTmLabs, fit: BoxFit.scaleDown),
                 ),
               ),
-              const Positioned(
-                bottom: 80,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: LoadingView(width: 100, height: 100),
-                ),
-              ),
             ],
           ),
         ),

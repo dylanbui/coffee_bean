@@ -13,6 +13,12 @@ class AppStrings {
 
   // Home Page - Sections
   static const String featuredCourses = 'Khóa học nổi bật';
+  static const String courseSellers = 'Người bán khóa học';
+  static const String courseVideos = 'Video về các khóa học';
+  static const String financialCourses = 'Khóa học tài chính';
+  static const String posts = 'Bài viết';
+  static const String follow = 'Theo dõi';
+  static const String postedOn = 'Đã đăng ngày';
   static const String seeMore = 'Xem thêm';
   static const String searchHint = 'Tìm kiếm...';
   static const String selectStore = 'Cửa hàng tp.HCM';
