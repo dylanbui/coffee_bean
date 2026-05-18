@@ -9,6 +9,8 @@ import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.d
 import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/top_image_panel.dart';
+import 'package:coffee_bean/utils/extensions.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_image_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:marquee/marquee.dart';
 
@@ -56,6 +58,7 @@ class _HomePageState extends CubitState<HomePage, HomeInteractor, HomeState> {
               _PromoBanner(data: state.promoData),
               _FeaturedCourses(data: state.featuredCoursesData),
               _CourseSellers(data: state.courseSellersData),
+              _PostsList(data: state.postsData),
               const SizedBox(height: 50),
             ],
           ),
@@ -299,6 +302,9 @@ class _CourseSellers extends StatelessWidget {
     final items = data?.items ?? [];
     if (items.isEmpty) return const SizedBox.shrink();
 
+    // Access interactor from context
+    final interactor = context.read<HomeInteractor>();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -322,14 +328,18 @@ class _CourseSellers extends StatelessWidget {
                 width: 70,
                 child: Column(
                   children: [
-                    Container(
-                      width: 70,
-                      height: 70,
-                      decoration: const BoxDecoration(color: TMLabsColor.primary, shape: BoxShape.circle),
-                      child: ClipOval(
-                        child: item.imageUrl != null && item.imageUrl!.isNotEmpty
-                            ? CachedImageWidget(imageUrl: item.imageUrl!, fit: BoxFit.cover)
-                            : const SizedBox.shrink(),
+                    InkWell(
+                      onTap: () => interactor.selectSeller(item),
+                      borderRadius: BorderRadius.circular(35),
+                      child: Container(
+                        width: 70,
+                        height: 70,
+                        decoration: const BoxDecoration(color: TMLabsColor.primary, shape: BoxShape.circle),
+                        child: ClipOval(
+                          child: item.imageUrl != null && item.imageUrl!.isNotEmpty
+                              ? CachedImageWidget(imageUrl: item.imageUrl!, fit: BoxFit.cover)
+                              : const SizedBox.shrink(),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -346,6 +356,176 @@ class _CourseSellers extends StatelessWidget {
             },
           ),
         ),
+      ],
+    );
+  }
+}
+
+// --- Phần 7: Bài viết (Danh sách dọc) ---
+class _PostsList extends StatelessWidget {
+  final PostsData? data;
+  const _PostsList({this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final items = data?.items ?? [];
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 15, 16, 0),
+          child: Text(AppStrings.posts, style: TMLabsStyle.semibold.copyWith(fontSize: 24, color: TMLabsColor.primary)),
+        ),
+        ListView.builder(
+          padding: EdgeInsets.zero,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: items.length > 5 ? 5 : items.length,
+          itemBuilder: (context, index) {
+            return _PostCard(item: items[index]);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _PostCard extends StatelessWidget {
+  final PostItem item;
+  const _PostCard({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 380,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(color: const Color(0xFFF2F2F2), borderRadius: BorderRadius.circular(20)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header (Avatar + Name/Date + Follow) ~40px + 12px spacing = 52px
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: const BoxDecoration(color: TMLabsColor.primary, shape: BoxShape.circle),
+                child: ClipOval(
+                  child: item.authorAvatar != null
+                      ? CachedImageWidget(imageUrl: item.authorAvatar!, fit: BoxFit.cover)
+                      : const SizedBox.shrink(),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.authorName,
+                      style: TMLabsStyle.semibold.copyWith(fontSize: 14, color: TMLabsColor.primary),
+                    ),
+                    Text(
+                      "${AppStrings.postedOn} ${item.postDate}",
+                      style: TMLabsStyle.regular.copyWith(fontSize: 10, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFA6B5C5),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  minimumSize: const Size(80, 32),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                ),
+                child: const Text(AppStrings.follow, style: TextStyle(fontSize: 11)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Center - Title ~24px + 8px spacing = 32px
+          Text(
+            item.title,
+            style: TMLabsStyle.semibold.copyWith(fontSize: 20, color: TMLabsColor.primary),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 8),
+          // Content ~72px (4 lines) + 12px spacing = 84px
+          Text(
+            item.content,
+            style: TMLabsStyle.regular.copyWith(fontSize: 13, color: Colors.grey[700]),
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 12),
+          // Images ~100px height
+          if (item.images.isNotEmpty)
+            SizedBox(
+              height: 100,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: item.images.length,
+                separatorBuilder: (context, index) => const SizedBox(width: 10),
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () =>
+                        FlashImageHelper.showGallery(context: context, imageUrls: item.images, initialIndex: index),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: SizedBox(
+                        width: 100,
+                        child: CachedImageWidget(imageUrl: item.images[index], fit: BoxFit.cover),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          const Spacer(),
+          // Footer (Status Bar + Action Icons) ~60px
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(color: const Color(0xFFD9D9D9), borderRadius: BorderRadius.circular(10)),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Trạng thái bài đăng: Online",
+                  style: TMLabsStyle.regular.copyWith(fontSize: 10, color: Colors.black54),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 5),
+          Row(
+            children: [
+              _buildActionIcon(AppAssets.icons.icShare, item.shareCount.formatCompact()),
+              const SizedBox(width: 10),
+              _buildActionIcon(AppAssets.icons.icComment, item.commentCount.formatCompact()),
+              const SizedBox(width: 10),
+              _buildActionIcon(AppAssets.icons.icLike, item.likeCount.formatCompact()),
+              const Spacer(),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionIcon(dynamic icon, String count) {
+    return Row(
+      children: [
+        AppIcon(icon, size: 18, color: Colors.grey[600]),
+        const SizedBox(width: 6),
+        Text(count, style: const TextStyle(fontSize: 14, color: Colors.grey)),
       ],
     );
   }
