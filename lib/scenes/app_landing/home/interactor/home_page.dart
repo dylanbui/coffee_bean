@@ -7,6 +7,8 @@ import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
+import 'package:coffee_bean/shared/widget/avatar_widget.dart';
+import 'package:coffee_bean/shared/widget/tap_effect.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/top_image_panel.dart';
 import 'package:coffee_bean/utils/extensions.dart';
@@ -330,19 +332,11 @@ class _CourseSellers extends StatelessWidget {
                 width: 70,
                 child: Column(
                   children: [
-                    InkWell(
-                      onTap: () => interactor.selectSeller(item),
-                      borderRadius: BorderRadius.circular(35),
-                      child: Container(
-                        width: 70,
-                        height: 70,
-                        decoration: const BoxDecoration(color: TMLabsColor.primary, shape: BoxShape.circle),
-                        child: ClipOval(
-                          child: item.imageUrl != null && item.imageUrl!.isNotEmpty
-                              ? CachedImageWidget(imageUrl: item.imageUrl!, fit: BoxFit.cover)
-                              : const SizedBox.shrink(),
-                        ),
-                      ),
+                    AvatarWidget(
+                      imageUrl: item.imageUrl,
+                      size: 70,
+                      // onTap: () => interactor.selectSeller(item),
+                      backgroundColor: TMLabsColor.primary,
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -411,14 +405,12 @@ class _PostCard extends StatelessWidget {
           // Header (Avatar + Name/Date + Follow) ~40px + 12px spacing = 52px
           Row(
             children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: const BoxDecoration(color: TMLabsColor.primary, shape: BoxShape.circle),
-                child: ClipOval(
-                  child: item.authorAvatar != null
-                      ? CachedImageWidget(imageUrl: item.authorAvatar!, fit: BoxFit.cover)
-                      : const SizedBox.shrink(),
+              TapEffect(
+                onTap: () => {}, // Thêm action click cho avatar bài viết ở đây
+                child: AvatarWidget(
+                  imageUrl: item.authorAvatar,
+                  size: 40,
+                  backgroundColor: TMLabsColor.primary
                 ),
               ),
               const SizedBox(width: 10),
@@ -510,11 +502,11 @@ class _PostCard extends StatelessWidget {
             ),
           Row(
             children: [
-              _buildActionIcon(AppAssets.icons.icShare, item.shareCount.formatCompact()),
+              TapEffect(onTap: () => {}, child: _buildActionIcon(AppAssets.icons.icShare, item.shareCount.formatCompact())),
               const SizedBox(width: 10),
-              _buildActionIcon(AppAssets.icons.icComment, item.commentCount.formatCompact()),
+              TapEffect(onTap: () => {}, child: _buildActionIcon(AppAssets.icons.icComment, item.commentCount.formatCompact())),
               const SizedBox(width: 10),
-              _buildActionIcon(AppAssets.icons.icLike, item.likeCount.formatCompact()),
+              TapEffect(onTap: () => {}, child: _buildActionIcon(AppAssets.icons.icLike, item.likeCount.formatCompact())),
               const Spacer(),
             ],
           ),
@@ -542,31 +534,24 @@ class _MarketTag extends StatelessWidget {
   Widget build(BuildContext context) {
     final interactor = context.read<HomeInteractor>();
 
-    return Material(
-      color: const Color(0xFFD9D9D9),
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        onTap: () => interactor.selectMarketTag(data),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                data.symbol,
-                style: TMLabsStyle.regular.copyWith(fontSize: 11, color: Colors.black87),
+    return TapEffect(
+      onTap: () => interactor.selectMarketTag(data),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(color: const Color(0xFFD9D9D9), borderRadius: BorderRadius.circular(12)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(data.symbol, style: TMLabsStyle.regular.copyWith(fontSize: 11, color: Colors.black87)),
+            const SizedBox(width: 4),
+            Text(
+              data.change,
+              style: TMLabsStyle.semibold.copyWith(
+                fontSize: 11,
+                color: data.isPositive ? const Color(0xFF2E7D32) : const Color(0xFFD32F2F),
               ),
-              const SizedBox(width: 4),
-              Text(
-                data.change,
-                style: TMLabsStyle.semibold.copyWith(
-                  fontSize: 11,
-                  color: data.isPositive ? const Color(0xFF2E7D32) : const Color(0xFFD32F2F),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -632,7 +617,7 @@ class _CourseVideoCard extends StatelessWidget {
             Positioned(
               top: 15,
               right: 15,
-              child: GestureDetector(
+              child: TapEffect(
                 onTap: () => interactor.playVideo(item),
                 child: AppIcon(AppAssets.icons.icPlayVideo, size: 26),
               ),
@@ -670,14 +655,12 @@ class _CourseVideoCard extends StatelessWidget {
                     const SizedBox(height: 15),
                     Row(
                       children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: const BoxDecoration(color: Color(0xFF3E4A68), shape: BoxShape.circle),
-                          child: ClipOval(
-                            child: item.authorAvatar != null
-                                ? CachedImageWidget(imageUrl: item.authorAvatar!, fit: BoxFit.cover)
-                                : const SizedBox.shrink(),
+                        TapEffect(
+                          onTap: () => {}, // Thêm action click cho avatar ở đây
+                          child: AvatarWidget(
+                            imageUrl: item.authorAvatar,
+                            size: 40,
+                            backgroundColor: TMLabsColor.primary,
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -794,16 +777,15 @@ class _FinancialCourseCard extends StatelessWidget {
                           item.price.toVnd(),
                           style: TMLabsStyle.semibold.copyWith(color: Colors.white, fontSize: 14),
                         ),
-                        Material(
-                          color: const Color(0xFFA6B5C5).withOpacity(0.5),
-                          shape: const CircleBorder(),
-                          child: InkWell(
-                            onTap: () => interactor.addToCart(item),
-                            customBorder: const CircleBorder(),
-                            child: const Padding(
-                              padding: EdgeInsets.all(6),
-                              child: Icon(Icons.add, color: Colors.white, size: 20),
+                        TapEffect(
+                          onTap: () => interactor.addToCart(item),
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFA6B5C5),
+                              shape: BoxShape.circle,
                             ),
+                            child: const Icon(Icons.add, color: Colors.white, size: 20),
                           ),
                         ),
                       ],
