@@ -102,10 +102,11 @@ dependencies:
   flutter_native_splash: ^2.4.7
   # make icon app for Android + iOS
   flutter_launcher_icons: ^0.14.4
-
   table_calendar: ^3.2.0
   easy_date_timeline: ^2.0.9
   marquee: ^2.3.0
+  # Flutter widget to create a group of buttons fast
+  group_button: ^5.3.4
 
 
 

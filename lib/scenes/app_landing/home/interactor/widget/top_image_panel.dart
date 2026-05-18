@@ -1,0 +1,231 @@
+import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
+import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.dart';
+import 'package:coffee_bean/shared/ui/app_assets.dart';
+import 'package:coffee_bean/shared/ui/app_strings.dart';
+import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class TopImagePanel extends StatefulWidget {
+  final HomeInteractor interactor;
+  const TopImagePanel({super.key, required this.interactor});
+
+  @override
+  State<TopImagePanel> createState() => _TopImagePanelState();
+}
+
+class _TopImagePanelState extends State<TopImagePanel> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
+
+    return BlocBuilder<HomeInteractor, HomeState>(
+      buildWhen: (previous, current) => previous.topImageData != current.topImageData,
+      builder: (context, state) {
+        final data = state.topImageData;
+        final images = data?.images ?? [];
+        final userName = data?.userName ?? "";
+
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.light,
+          ),
+          child: Stack(
+            children: [
+              _buildImageSlider(images),
+              _buildPageIndicators(images.length),
+              _buildHeader(statusBarHeight),
+              _buildWelcomeText(userName),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildImageSlider(List<String> images) {
+    const double sliderHeight = 420;
+    if (images.isEmpty) return const SizedBox(height: sliderHeight);
+    
+    return SizedBox(
+      height: sliderHeight,
+      child: PageView.builder(
+        controller: _pageController,
+        itemCount: images.length,
+        onPageChanged: (index) => setState(() => _currentPage = index),
+        itemBuilder: (context, index) => Stack(
+          fit: StackFit.expand,
+          children: [
+            CachedImageWidget(
+              imageUrl: images[index],
+              width: double.infinity,
+              height: sliderHeight,
+              borderRadius: 0,
+              fit: BoxFit.cover,
+            ),
+            _buildGradientOverlay(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGradientOverlay() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.black.withOpacity(0.3),
+            Colors.transparent,
+            Colors.black.withOpacity(0.7),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPageIndicators(int count) {
+    if (count <= 1) return const SizedBox.shrink();
+    return Positioned(
+      bottom: 25,
+      left: 0,
+      right: 0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(count, (index) {
+          final isSelected = _currentPage == index;
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            height: 4,
+            width: isSelected ? 18 : 8,
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.white : Colors.white.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildHeader(double statusBarHeight) {
+    return Positioned(
+      top: statusBarHeight + 10,
+      left: 16,
+      right: 16,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildLocationButton(),
+          _buildSearchButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLocationButton() {
+    const Color navyColor = Color(0xFF0D1B3E);
+    
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(25),
+      child: InkWell(
+        onTap: () => widget.interactor.selectStore(),
+        borderRadius: BorderRadius.circular(25),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              AppIcon(Icons.location_on_outlined, size: 20, color: navyColor),
+              SizedBox(width: 8),
+              Text(
+                AppStrings.selectStore,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: navyColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(width: 4),
+              AppIcon(Icons.chevron_right, size: 20, color: navyColor),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchButton() {
+    const Color navyColor = Color(0xFF0D1B3E);
+
+    return Material(
+      color: navyColor.withOpacity(0.85),
+      borderRadius: BorderRadius.circular(25),
+      child: InkWell(
+        onTap: () => widget.interactor.openSearch(),
+        borderRadius: BorderRadius.circular(25),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                AppStrings.searchHint,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              const SizedBox(width: 8),
+              AppIcon(AppAssets.icons.icSearch, color: Colors.white, size: 22),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWelcomeText(String name) {
+    return Positioned(
+      bottom: 60,
+      left: 20,
+      child: IgnorePointer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "${AppStrings.morningWelcome} $name", 
+              style: const TextStyle(color: Colors.white, fontSize: 15)
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              AppStrings.welcomeBack,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                height: 1.2,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -1,3 +1,4 @@
+import 'package:coffee_bean/shared/widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 
@@ -106,6 +107,26 @@ class BasicStyle {
 
 class TMLabsStyle {
   static const _fontFamily = 'Source Sans Pro';
+
+  // --- App Button Styles ---
+  static const primaryButton = AppButtonStyleConfig(
+    backgroundColor: Color(0xFF0D1B3E), // Navy
+    textColor: Colors.white,
+    borderRadius: 25,
+  );
+
+  static const outlineButton = AppButtonStyleConfig(
+    backgroundColor: Colors.transparent,
+    textColor: Color(0xFF0D1B3E),
+    borderColor: Color(0xFF0D1B3E),
+    borderRadius: 25,
+  );
+
+  static const whiteButton = AppButtonStyleConfig(
+    backgroundColor: Colors.white,
+    textColor: Color(0xFF0D1B3E),
+    borderRadius: 25,
+  );
 
   static const semibold = TextStyle(
     fontFamily: _fontFamily,
