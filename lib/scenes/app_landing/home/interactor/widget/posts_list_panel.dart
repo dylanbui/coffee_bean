@@ -6,7 +6,7 @@ import 'package:coffee_bean/shared/ui/app_strings.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/avatar_widget.dart';
 import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
-import 'package:coffee_bean/shared/widget/tap_effect.dart';
+import 'package:coffee_bean/core/utils/tap_effect.dart';
 import 'package:coffee_bean/utils/extensions.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_image_helper.dart';
 import 'package:flutter/material.dart';

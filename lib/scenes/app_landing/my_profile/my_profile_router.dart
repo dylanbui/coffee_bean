@@ -1,5 +1,5 @@
 import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/scenes/user_pages/user_login/user_login_builder.dart';
+import 'package:coffee_bean/scenes/user_features/user_login/user_login_builder.dart';
 import 'package:flutter/cupertino.dart';
 
 class UserLoginRoute implements DbNoteRoute {}

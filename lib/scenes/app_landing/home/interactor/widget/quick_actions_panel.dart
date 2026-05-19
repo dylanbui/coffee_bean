@@ -2,7 +2,7 @@ import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_strings.dart';
-import 'package:coffee_bean/shared/widget/tap_effect.dart';
+import 'package:coffee_bean/core/utils/tap_effect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
