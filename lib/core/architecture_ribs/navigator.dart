@@ -126,8 +126,8 @@ class DbNavigator {
 }
 
 /// A standard MaterialPageRoute without any entry/exit animations.
-class NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
-  NoAnimationPageRoute({ required WidgetBuilder builder }) : super(builder: builder);
+class _NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
+  _NoAnimationPageRoute({ required super.builder, super.settings });
 
   @override
   Widget buildTransitions(
@@ -139,11 +139,42 @@ class NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
   }
 }
 
-extension PushWithoutAnimation on Navigator {
+/// Extension for complex navigation patterns like pushing multiple pages at once.
+extension DbNavigatorMultiple on DbNavigator {
 
-  /// Pushes a page without any animation.
-  static Future pushWithoutAnimation(BuildContext context, Widget page) {
-    Route route = NoAnimationPageRoute(builder: (BuildContext context) => page);
-    return Navigator.of(context).push(route);
+  /// Pushes multiple [widgets] onto the navigator stack.
+  /// 
+  /// All widgets except the last one are pushed without animation using [_NoAnimationPageRoute].
+  /// The last widget is pushed with the specified [transitionType] and standard animation.
+  /// 
+  /// This is particularly useful for deep-linking scenarios (e.g., from a Notification)
+  /// where you want to build a navigation stack [List -> Detail] in one go.
+  /// 
+  /// ### Example:
+  /// ```dart
+  /// // When receiving a notification for a specific product
+  /// navigator.pushMultiple([
+  ///   ProductListWidget(),
+  ///   ProductDetailWidget(productId: '123'),
+  /// ], transitionType: PageTransitionType.rightToLeft);
+  /// ```
+  /// The user will see the ProductDetailWidget trandition in, and pressing 'Back' 
+  /// will reveal the ProductListWidget already loaded underneath.
+  void pushMultiple(List<Widget> widgets, {PageTransitionType transitionType = PageTransitionType.rightToLeft}) {
+    final state = _navigatorState.currentState;
+    if (state == null || widgets.isEmpty) return;
+
+    if (widgets.length == 1) {
+      push(widgets.first, transitionType: transitionType);
+      return;
+    }
+
+    // 1. Push all pages except the last one without animation
+    for (int i = 0; i < widgets.length - 1; i++) {
+      state.push(_NoAnimationPageRoute(builder: (_) => widgets[i]));
+    }
+
+    // 2. Push the last page with standard animation using existing push method
+    push(widgets.last, transitionType: transitionType);
   }
 }
