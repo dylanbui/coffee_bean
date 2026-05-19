@@ -7,12 +7,13 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/core/custom_app_bar.dart';
 import 'package:coffee_bean/scenes/user_pages/privacy_policy/interactor/privacy_policy_event_state.dart';
 import 'package:coffee_bean/scenes/user_pages/privacy_policy/interactor/privacy_policy_interactor.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
 import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
 
 //ignore: must_be_immutable
@@ -29,6 +30,29 @@ class _PrivacyPolicyPageState extends CubitState<PrivacyPolicyPage, PrivacyPolic
   dynamic getAppBar(BuildContext context) => "Privacy Policy";
 
   @override
+  Widget build(BuildContext context) {
+    buildContext = context;
+
+    var appBar = getAppBar(context);
+    if (appBar is String) {
+      appBar = CustomAppBar(appBar, appBarActions: getAppBarAction());
+    }
+
+    if (widget.showAppBar == false) {
+      appBar = null;
+    }
+
+    return BlocProvider.value(
+      value: interactor,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: appBar as PreferredSizeWidget?,
+        body: getBody(context),
+      ),
+    );
+  }
+
+  @override
   Widget getBody(BuildContext context) {
     return BlocConsumer<PrivacyPolicyInteractor, PrivacyPolicyState>(
       listener: _onStateListener,
@@ -43,8 +67,9 @@ class _PrivacyPolicyPageState extends CubitState<PrivacyPolicyPage, PrivacyPolic
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 40),
-              AppButton.secondary(
+              AppButton(
                 text: "Close",
+                style: TMLabsStyle.outlineButton,
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ],

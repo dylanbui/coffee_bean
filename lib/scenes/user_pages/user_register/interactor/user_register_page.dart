@@ -69,19 +69,22 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
       appBar = null;
     }
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: appBar as PreferredSizeWidget?,
-      resizeToAvoidBottomInset: false,
-      body: GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: DbKeyboardVisibility(
-          onChanged: (info) {
-            if (mounted && _isKeyboardVisible != info.isVisible) {
-              setState(() => _isKeyboardVisible = info.isVisible);
-            }
-          },
-          child: getBody(context),
+    return BlocProvider.value(
+      value: interactor,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: appBar as PreferredSizeWidget?,
+        resizeToAvoidBottomInset: false,
+        body: GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: DbKeyboardVisibility(
+            onChanged: (info) {
+              if (mounted && _isKeyboardVisible != info.isVisible) {
+                setState(() => _isKeyboardVisible = info.isVisible);
+              }
+            },
+            child: getBody(context),
+          ),
         ),
       ),
     );
@@ -107,8 +110,9 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
                     _buildLogo(),
                     _buildInputs(),
                     const SizedBox(height: 40),
-                    AppButton.primary(
+                    AppButton(
                       text: "Register",
+                      isLoading: state is UserRegisterInProgress,
                       onPressed: () {
                         _registerController.validateRegister(interactor, _showError);
                       },

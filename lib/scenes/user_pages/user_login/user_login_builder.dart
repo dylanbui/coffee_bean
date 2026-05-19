@@ -61,7 +61,7 @@ class UserLoginBuilder implements DbNoteBuilder<UserLoginRouter> {
     final interactor = UserLoginInteractor(router);
     final page = UserLoginPage(interactor: interactor);
 
-    router.attach(interactor, BlocProvider<UserLoginInteractor>.value(value: interactor, child: page));
+    router.attach(interactor, page);
 
     return router;
   }

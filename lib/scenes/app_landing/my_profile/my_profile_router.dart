@@ -13,8 +13,8 @@ class MyProfileRouter extends DbNoteRouter implements MyProfileRoutable {
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
     if (toRoute is UserLoginRoute) {
-      // UserLoginBuilder builder = UserLoginBuilder();
-      // navigator.push(builder.build().viewController, fromContext: fromContext);
+      UserLoginBuilder builder = UserLoginBuilder();
+      navigator.push(builder.build().viewController, fromContext: fromContext);
     }
   }
 

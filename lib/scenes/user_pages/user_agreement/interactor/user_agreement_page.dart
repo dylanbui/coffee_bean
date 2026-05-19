@@ -7,6 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/core/custom_app_bar.dart';
 import 'package:coffee_bean/scenes/user_pages/user_agreement/interactor/user_agreement_event_state.dart';
 import 'package:coffee_bean/scenes/user_pages/user_agreement/interactor/user_agreement_interactor.dart';
 import 'package:coffee_bean/shared/widget/app_button.dart';
@@ -28,6 +29,30 @@ class _UserAgreementPageState extends CubitState<UserAgreementPage, UserAgreemen
   dynamic getAppBar(BuildContext context) => "User Agreement";
 
   @override
+  Widget build(BuildContext context) {
+    buildContext = context;
+
+    var appBar = getAppBar(context);
+    if (appBar is String) {
+      appBar = CustomAppBar(appBar, appBarActions: getAppBarAction());
+    }
+
+    if (widget.showAppBar == false) {
+      appBar = null;
+    }
+
+    return BlocProvider.value(
+      value: interactor,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: appBar as PreferredSizeWidget?,
+        resizeToAvoidBottomInset: false,
+        body: getBody(context),
+      ),
+    );
+  }
+
+  @override
   Widget getBody(BuildContext context) {
     return BlocConsumer<UserAgreementInteractor, UserAgreementState>(
       listener: _onStateListener,
@@ -42,8 +67,9 @@ class _UserAgreementPageState extends CubitState<UserAgreementPage, UserAgreemen
                 style: TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 40),
-              AppButton.primary(
+              AppButton(
                 text: "Accept and Continue",
+                isLoading: state is UserAgreementInProgress, // Assuming state exists
                 onPressed: () {
                   // Handle accept logic
                 },

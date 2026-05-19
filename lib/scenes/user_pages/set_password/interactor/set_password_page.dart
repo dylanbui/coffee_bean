@@ -7,6 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/core/custom_app_bar.dart';
 import 'package:coffee_bean/scenes/user_pages/set_password/interactor/set_password_event_state.dart';
 import 'package:coffee_bean/scenes/user_pages/set_password/interactor/set_password_interactor.dart';
 import 'package:coffee_bean/shared/widget/password_field.dart';
@@ -36,10 +37,34 @@ class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInter
   dynamic getAppBar(BuildContext context) => "Set Password";
 
   @override
+  Widget build(BuildContext context) {
+    buildContext = context;
+
+    var appBar = getAppBar(context);
+    if (appBar is String) {
+      appBar = CustomAppBar(appBar, appBarActions: getAppBarAction());
+    }
+
+    if (widget.showAppBar == false) {
+      appBar = null;
+    }
+
+    return BlocProvider.value(
+      value: interactor,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: appBar as PreferredSizeWidget?,
+        resizeToAvoidBottomInset: false,
+        body: getBody(context),
+      ),
+    );
+  }
+
+  @override
   Widget getBody(BuildContext context) {
     return BlocConsumer<SetPasswordInteractor, SetPasswordState>(
       listener: _onStateListener,
-      builder: (context, state) => _buildMainContent(context),
+      builder: (context, state) => _buildMainContent(context, state),
     );
   }
 
@@ -47,7 +72,7 @@ class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInter
 
   void _onStateListener(BuildContext context, SetPasswordState state) {
     if (state is SetPasswordInProgress) {
-      showLoading();
+      // showLoading(); // Removed to use button loading
     } else {
       hideLoading();
       if (state is SetPasswordSuccess) {
@@ -64,7 +89,7 @@ class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInter
     );
   }
 
-  Widget _buildMainContent(BuildContext context) {
+  Widget _buildMainContent(BuildContext context, SetPasswordState state) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -83,8 +108,9 @@ class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInter
                   const SizedBox(height: 40),
                   _buildInputs(),
                   const SizedBox(height: 40),
-                  AppButton.primary(
+                  AppButton(
                     text: "Change Password",
+                    isLoading: state is SetPasswordInProgress,
                     onPressed: _handleSubmit,
                   ),
                   const Spacer(),

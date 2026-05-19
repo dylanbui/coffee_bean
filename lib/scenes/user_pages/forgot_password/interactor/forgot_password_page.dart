@@ -9,6 +9,7 @@
 
 import 'dart:async';
 
+import 'package:coffee_bean/core/custom_app_bar.dart';
 import 'package:coffee_bean/scenes/user_pages/forgot_password/interactor/forgot_password_event_state.dart';
 import 'package:coffee_bean/scenes/user_pages/forgot_password/interactor/forgot_password_interactor.dart';
 import 'package:flutter/material.dart';
@@ -54,10 +55,38 @@ class _ForgotPasswordPageState extends CubitState<ForgotPasswordPage, ForgotPass
   dynamic getAppBar(BuildContext context) => "Forgot Password";
 
   @override
+  Widget build(BuildContext context) {
+    buildContext = context;
+
+    var appBar = getAppBar(context);
+    if (appBar is String) {
+      appBar = CustomAppBar(appBar, appBarActions: getAppBarAction());
+    }
+
+    if (widget.showAppBar == false) {
+      appBar = null;
+    }
+
+    return BlocProvider.value(
+      value: interactor,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: appBar as PreferredSizeWidget?,
+        resizeToAvoidBottomInset: false,
+        body: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: getBody(context),
+        ),
+      ),
+    );
+  }
+
+  @override
   Widget getBody(BuildContext context) {
     return BlocConsumer<ForgotPasswordInteractor, ForgotPasswordState>(
       listener: _onStateListener,
-      builder: (context, state) => _buildMainContent(context),
+      builder: (context, state) => _buildMainContent(context, state),
     );
   }
 
@@ -65,13 +94,13 @@ class _ForgotPasswordPageState extends CubitState<ForgotPasswordPage, ForgotPass
 
   void _onStateListener(BuildContext context, ForgotPasswordState state) {
     if (state is ForgotPasswordInProgress) {
-      showLoading();
+      // showLoading(); // Use button loading
     } else if (state is ForgotPasswordSendCodeDone) {
       hideLoading();
     } else {
       hideLoading();
       if (state is ForgotPasswordSuccess) {
-        // Xử lý khi thành công (e.g., chuyển trang)
+        // Handle success
       } else if (state is ForgotPasswordError) {
         _showError(state.message);
       }
@@ -84,38 +113,35 @@ class _ForgotPasswordPageState extends CubitState<ForgotPasswordPage, ForgotPass
     );
   }
 
-  Widget _buildMainContent(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildInstructionText(),
-                  _buildInputs(),
-                  const SizedBox(height: 50),
-                  AppButton.primary(
-                    text: "Reset Password",
-                    onPressed: () => _forgotPwController.validateAndSubmit(
-                      interactor,
-                      _showError,
-                    ),
+  Widget _buildMainContent(BuildContext context, ForgotPasswordState state) {
+    return CustomScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      slivers: [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildInstructionText(),
+                _buildInputs(),
+                const SizedBox(height: 50),
+                AppButton(
+                  text: "Reset Password",
+                  isLoading: state is ForgotPasswordInProgress,
+                  onPressed: () => _forgotPwController.validateAndSubmit(
+                    interactor,
+                    _showError,
                   ),
-                  const Spacer(),
-                  const SizedBox(height: 20),
-                ],
-              ),
+                ),
+                const Spacer(),
+                const SizedBox(height: 20),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

@@ -9,6 +9,7 @@
 
 import 'package:coffee_bean/scenes/user_pages/user_gift_pack/interactor/user_gift_pack_event_state.dart';
 import 'package:coffee_bean/scenes/user_pages/user_gift_pack/interactor/user_gift_pack_interactor.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,22 +29,25 @@ class _UserGiftPackPageState extends CubitState<UserGiftPackPage, UserGiftPackIn
   Widget build(BuildContext context) {
     buildContext = context;
     // Tùy chỉnh Scaffold với extendBodyBehindAppBar
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: const Text(
-          "Newcomer Gift Pack",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
+    return BlocProvider.value(
+      value: interactor,
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          centerTitle: true,
+          title: const Text(
+            "Newcomer Gift Pack",
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.close, color: Colors.black),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        body: getBody(context),
       ),
-      body: getBody(context),
     );
   }
 
@@ -51,7 +55,7 @@ class _UserGiftPackPageState extends CubitState<UserGiftPackPage, UserGiftPackIn
   Widget getBody(BuildContext context) {
     return BlocConsumer<UserGiftPackInteractor, UserGiftPackState>(
       listener: _onStateListener,
-      builder: (context, state) => _buildMainContent(context),
+      builder: (context, state) => _buildMainContent(context, state),
     );
   }
 
@@ -76,7 +80,7 @@ class _UserGiftPackPageState extends CubitState<UserGiftPackPage, UserGiftPackIn
     );
   }
 
-  Widget _buildMainContent(BuildContext context) {
+  Widget _buildMainContent(BuildContext context, UserGiftPackState state) {
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -92,7 +96,7 @@ class _UserGiftPackPageState extends CubitState<UserGiftPackPage, UserGiftPackIn
             const Spacer(flex: 3),
             _buildCenterContent(),
             const Spacer(flex: 4),
-            _buildBottomButtons(),
+            _buildBottomButtons(state),
             const SizedBox(height: 20), // Cách cạnh dưới 20px
           ],
         ),
@@ -135,18 +139,20 @@ class _UserGiftPackPageState extends CubitState<UserGiftPackPage, UserGiftPackIn
     );
   }
 
-  Widget _buildBottomButtons() {
+  Widget _buildBottomButtons(UserGiftPackState state) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Column(
         children: [
-          AppButton.primary(
+          AppButton(
             text: "View Gift Pack",
+            isLoading: state is UserGiftPackInProgress,
             onPressed: () => _handleButtonClick("View Gift Pack"),
           ),
           const SizedBox(height: 10), // Cách nhau 10px
-          AppButton.outline(
+          AppButton(
             text: "Back",
+            style: TMLabsStyle.outlineButton,
             onPressed: () => _handleButtonClick("Back"),
           ),
         ],

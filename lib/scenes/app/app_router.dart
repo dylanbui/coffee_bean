@@ -4,6 +4,7 @@
 
 import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_builder.dart';
+import 'package:coffee_bean/scenes/user_pages/user_login/user_login_builder.dart';
 import 'package:flutter/cupertino.dart';
 
 
@@ -13,9 +14,15 @@ class AppRouter extends DbNoteRouter {
 
   void successSyncDataFormServer() {
     // Load trang dau tien
-      MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
-      final router = mainTabbarBuilder.build();
-      navigator.pushSameRootPage(router.viewController);
+    //   MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
+    //   final router = mainTabbarBuilder.build();
+    //   navigator.pushSameRootPage(router.viewController);
+
+
+    UserLoginBuilder builder = UserLoginBuilder();
+    navigator.pushSameRootPage(builder.build().viewController,);
+
+
   }
 
   @override

@@ -27,7 +27,7 @@ class UserAgreementBuilder extends DbNoteRouter implements DbNoteBuilder<UserAgr
     final interactor = UserAgreementInteractor(router: this);
     final page = UserAgreementPage(interactor: interactor);
 
-    attach(interactor, BlocProvider<UserAgreementInteractor>.value(value: interactor, child: page));
+    attach(interactor, page);
 
     return this;
   }

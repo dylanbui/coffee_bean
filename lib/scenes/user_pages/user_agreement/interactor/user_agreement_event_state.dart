@@ -18,6 +18,8 @@ abstract class UserAgreementState extends BaseBlocState {}
 
 class UserAgreementInitial extends UserAgreementState {}
 
+class UserAgreementInProgress extends UserAgreementState {}
+
 class UserAgreementSuccess extends UserAgreementState {}
 
 class UserAgreementError extends UserAgreementState {

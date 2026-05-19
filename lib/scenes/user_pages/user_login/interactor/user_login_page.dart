@@ -74,20 +74,23 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
       appBar = null;
     }
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: appBar as PreferredSizeWidget?,
-      resizeToAvoidBottomInset: false,
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: DbKeyboardVisibility(
-          onChanged: (info) {
-            if (mounted && _isKeyboardVisible != info.isVisible) {
-              setState(() => _isKeyboardVisible = info.isVisible);
-            }
-          },
-          child: getBody(context),
+    return BlocProvider.value(
+      value: interactor,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: appBar as PreferredSizeWidget?,
+        resizeToAvoidBottomInset: false,
+        body: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: DbKeyboardVisibility(
+            onChanged: (info) {
+              if (mounted && _isKeyboardVisible != info.isVisible) {
+                setState(() => _isKeyboardVisible = info.isVisible);
+              }
+            },
+            child: getBody(context),
+          ),
         ),
       ),
     );
@@ -100,7 +103,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
       builder: (context, state) {
         return LayoutBuilder(
           builder: (context, constraints) {
-            // TODO: show loading
+            // Return loading all widget
             if (state is UserLoginInitial) {
               return const Center(child: LoadingView(width: 150, height: 150));
             }
@@ -140,7 +143,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
       showPageLoading();
     } else if (state is UserLoginStarted) {
       iLog("UserLoginStarted");
-      // hidePageLoading();
+      hidePageLoading();
     } else if (state is UserLoginInProgress) {
       iLog(state.message);
       showLoading(text: state.message);
@@ -155,9 +158,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: Colors.red));
   }
 
   void _startCountdown() {
@@ -180,16 +181,10 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
 
   Widget _buildLogo() {
     return Padding(
-      padding: EdgeInsets.only(
-        top: _isKeyboardVisible ? 20.0 : 50.0,
-        bottom: _isKeyboardVisible ? 15.0 : 40.0,
-      ),
+      padding: EdgeInsets.only(top: _isKeyboardVisible ? 20.0 : 50.0, bottom: _isKeyboardVisible ? 15.0 : 40.0),
       child: Text(
         "TMLabs Coffee",
-        style: TextStyle(
-          fontSize: _isKeyboardVisible ? 22 : 28,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: _isKeyboardVisible ? 22 : 28, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -219,10 +214,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
       child: TabBarView(
         controller: _tabController,
         physics: const NeverScrollableScrollPhysics(),
-        children: [
-          _buildPasswordTab(),
-          _buildSMSTab(),
-        ],
+        children: [_buildPasswordTab(), _buildSMSTab()],
       ),
     );
   }
@@ -238,12 +230,9 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
           onChanged: (val) => _loginController.countryCode1 = val.countryCode,
         ),
         const SizedBox(height: 20),
-        PasswordField(
-          controller: _loginController.passwordController,
-          hint: "Enter Password",
-        ),
+        PasswordField(controller: _loginController.passwordController, hint: "Enter Password"),
         const SizedBox(height: 30),
-        AppButton.primary(
+        AppButton(
           text: "Login",
           onPressed: () {
             setState(() {
@@ -275,7 +264,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
           keyboardType: TextInputType.number,
         ),
         const SizedBox(height: 30),
-        AppButton.primary(
+        AppButton(
           text: "Login",
           onPressed: () {
             setState(() {
@@ -294,12 +283,12 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
       onTap: _isCountingDown
           ? null
           : () {
-        if (_loginController.phoneSmsLogin.text.isEmpty) {
-          _showError("Please enter phone number");
-          return;
-        }
-        _startCountdown();
-      },
+              if (_loginController.phoneSmsLogin.text.isEmpty) {
+                _showError("Please enter phone number");
+                return;
+              }
+              _startCountdown();
+            },
       child: Text(
         _isCountingDown ? "Resend (${_start}s)" : "Send Code",
         style: TextStyle(
@@ -361,15 +350,13 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
                 TextSpan(
                   text: "User Agreement",
                   style: const TextStyle(decoration: TextDecoration.underline),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () => interactor.router?.navigate(UserAgreementRoute()),
+                  recognizer: TapGestureRecognizer()..onTap = () => interactor.router?.navigate(UserAgreementRoute()),
                 ),
                 const TextSpan(text: " and "),
                 TextSpan(
                   text: "Privacy Policy",
                   style: const TextStyle(decoration: TextDecoration.underline),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () => interactor.router?.navigate(PrivacyPolicyRoute()),
+                  recognizer: TapGestureRecognizer()..onTap = () => interactor.router?.navigate(PrivacyPolicyRoute()),
                 ),
               ],
             ),

@@ -52,7 +52,7 @@ class UserRegisterBuilder implements DbNoteBuilder<UserRegisterRouter> {
     final interactor = UserRegisterInteractor(router);
     final page = UserRegisterPage(interactor: interactor);
 
-    router.attach(interactor, BlocProvider<UserRegisterInteractor>.value(value: interactor, child: page));
+    router.attach(interactor, page);
 
     return router;
   }

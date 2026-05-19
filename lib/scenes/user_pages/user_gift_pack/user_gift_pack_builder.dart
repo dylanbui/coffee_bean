@@ -27,7 +27,7 @@ class UserGiftPackBuilder extends DbNoteRouter implements DbNoteBuilder<UserGift
     final interactor = UserGiftPackInteractor(router: this);
     final page = UserGiftPackPage(interactor: interactor);
 
-    attach(interactor, BlocProvider<UserGiftPackInteractor>.value(value: interactor, child: page));
+    attach(interactor, page);
 
     return this;
   }

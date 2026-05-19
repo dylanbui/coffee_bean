@@ -27,7 +27,7 @@ class SetPasswordBuilder extends DbNoteRouter implements DbNoteBuilder<SetPasswo
     final interactor = SetPasswordInteractor(router: this);
     final page = SetPasswordPage(interactor: interactor);
 
-    attach(interactor, BlocProvider<SetPasswordInteractor>.value(value: interactor, child: page));
+    attach(interactor, page);
 
     return this;
   }
