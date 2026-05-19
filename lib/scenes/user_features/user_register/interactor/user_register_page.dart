@@ -8,12 +8,13 @@
  */
 
 import 'dart:async';
-import 'package:coffee_bean/core/custom_app_bar.dart';
 import 'package:coffee_bean/core/utils/logger.dart';
 import 'package:coffee_bean/core/utils/keyboard_visibility.dart';
 import 'package:coffee_bean/scenes/user_features/user_register/interactor/user_register_event_state.dart';
 import 'package:coffee_bean/scenes/user_features/user_register/interactor/user_register_interactor.dart';
 import 'package:coffee_bean/scenes/user_features/user_register/user_register_builder.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,16 +55,13 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
   }
 
   @override
-  dynamic getAppBar(BuildContext context) => "Register";
+  dynamic getAppBar(BuildContext context) => coffeeAppBar("Register");
 
   @override
   Widget build(BuildContext context) {
     buildContext = context;
 
     var appBar = getAppBar(context);
-    if (appBar is String) {
-      appBar = CustomAppBar(appBar, appBarActions: getAppBarAction());
-    }
 
     if (widget.showAppBar == false) {
       appBar = null;

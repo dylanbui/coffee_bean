@@ -100,7 +100,9 @@ abstract class DbNoteRouter implements DbNoteRoutable {
   void didBecomeActiveRouter() {}
 
   @override
-  void pop() {}
+  void pop() {
+    navigator.pop();
+  }
 
   @override
   void push() {}

@@ -8,12 +8,13 @@
  */
 
 import 'dart:async';
-import 'package:coffee_bean/core/custom_app_bar.dart';
 import 'package:coffee_bean/core/utils/logger.dart';
 import 'package:coffee_bean/core/utils/keyboard_visibility.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/interactor/user_login_event_state.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/interactor/user_login_interactor.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/user_login_builder.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +63,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
   @override
   Widget build(BuildContext context) {
     buildContext = context;
-    final appBar = CustomAppBar("Login", appBarActions: getAppBarAction());
+    final appBar = coffeeAppBar("Login");
     // GestureDetector,  DbKeyboardVisibility first
     // BlocProvider inject Interactor
     return BlocProvider.value(

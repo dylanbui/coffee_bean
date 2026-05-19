@@ -1,4 +1,5 @@
 import 'package:coffee_bean/core/utils/app_button.dart';
+import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 
@@ -154,5 +155,40 @@ class TMLabsStyle {
     color: TMLabsColor.primary,
     fontSize: 14,
     fontWeight: FontWeight.w400,
+  );
+}
+
+class TmLabAppBarStyle {
+  static const whiteStyle = CoffeeAppBarStyleConfig(
+    backgroundColor: Colors.white,
+    foregroundColor: TMLabsColor.primary,
+    titleTextStyle: TextStyle(
+      fontFamily: 'Source Sans Pro',
+      color: TMLabsColor.primary,
+      fontSize: 18,
+      fontWeight: FontWeight.w700,
+    ),
+  );
+
+  static const transparentStyle = CoffeeAppBarStyleConfig(
+    backgroundColor: Colors.transparent,
+    foregroundColor: TMLabsColor.primary,
+    titleTextStyle: TextStyle(
+      fontFamily: 'Source Sans Pro',
+      color: TMLabsColor.primary,
+      fontSize: 18,
+      fontWeight: FontWeight.w700,
+    ),
+  );
+
+  static const navyStyle = CoffeeAppBarStyleConfig(
+    backgroundColor: Color(0xFF0D1B3E),
+    foregroundColor: Colors.white,
+    titleTextStyle: TextStyle(
+      fontFamily: 'Source Sans Pro',
+      color: Colors.white,
+      fontSize: 18,
+      fontWeight: FontWeight.w700,
+    ),
   );
 }

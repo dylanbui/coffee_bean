@@ -7,9 +7,10 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/core/custom_app_bar.dart';
 import 'package:coffee_bean/scenes/user_features/user_agreement/interactor/user_agreement_event_state.dart';
 import 'package:coffee_bean/scenes/user_features/user_agreement/interactor/user_agreement_interactor.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:coffee_bean/core/utils/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,16 +27,13 @@ class UserAgreementPage extends CubitStateFulWidget<UserAgreementInteractor, Use
 class _UserAgreementPageState extends CubitState<UserAgreementPage, UserAgreementInteractor, UserAgreementState> {
 
   @override
-  dynamic getAppBar(BuildContext context) => "User Agreement";
+  dynamic getAppBar(BuildContext context) => coffeeAppBar("User Agreement");
 
   @override
   Widget build(BuildContext context) {
     buildContext = context;
 
     var appBar = getAppBar(context);
-    if (appBar is String) {
-      appBar = CustomAppBar(appBar, appBarActions: getAppBarAction());
-    }
 
     if (widget.showAppBar == false) {
       appBar = null;

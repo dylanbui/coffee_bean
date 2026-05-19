@@ -9,9 +9,10 @@
 
 import 'dart:async';
 
-import 'package:coffee_bean/core/custom_app_bar.dart';
 import 'package:coffee_bean/scenes/user_features/forgot_password/interactor/forgot_password_event_state.dart';
 import 'package:coffee_bean/scenes/user_features/forgot_password/interactor/forgot_password_interactor.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
@@ -52,16 +53,13 @@ class _ForgotPasswordPageState extends CubitState<ForgotPasswordPage, ForgotPass
   }
 
   @override
-  dynamic getAppBar(BuildContext context) => "Forgot Password";
+  dynamic getAppBar(BuildContext context) => coffeeAppBar("Forgot Password");
 
   @override
   Widget build(BuildContext context) {
     buildContext = context;
 
     var appBar = getAppBar(context);
-    if (appBar is String) {
-      appBar = CustomAppBar(appBar, appBarActions: getAppBarAction());
-    }
 
     if (widget.showAppBar == false) {
       appBar = null;

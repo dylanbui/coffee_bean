@@ -10,6 +10,7 @@
 import 'package:coffee_bean/scenes/user_features/user_gift_pack/interactor/user_gift_pack_event_state.dart';
 import 'package:coffee_bean/scenes/user_features/user_gift_pack/interactor/user_gift_pack_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:coffee_bean/core/utils/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,19 +34,10 @@ class _UserGiftPackPageState extends CubitState<UserGiftPackPage, UserGiftPackIn
       value: interactor,
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          centerTitle: true,
-          title: const Text(
-            "Newcomer Gift Pack",
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
-          ),
-          leading: IconButton(
-            icon: const Icon(Icons.close, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ),
+        appBar: coffeeAppBar("Newcomer Gift Pack", leading: IconButton(
+          icon: const Icon(Icons.close, color: Colors.black),
+          onPressed: () => interactor.router?.pop(), //  Navigator.of(context).pop()
+        ),),
         body: getBody(context),
       ),
     );
