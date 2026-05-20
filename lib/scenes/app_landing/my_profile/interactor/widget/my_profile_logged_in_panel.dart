@@ -1,3 +1,4 @@
+import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/my_profile_interactor.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:flutter/material.dart';
@@ -9,11 +10,16 @@ class MyProfileLoggedInPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = UserManager().currentUser;
+    
     return SingleChildScrollView(
       child: Column(
         children: [
           // 1. Header Profile
-          _buildHeader(),
+          _buildHeader(
+            fullName: user?.fullName ?? "Dylan Bui",
+            avatarUrl: user?.avatarUrl ?? 'https://i.pravatar.cc/150?u=gigi',
+          ),
           
           // 2. Points & Rewards Card
           _buildPointsCard(),
@@ -65,32 +71,40 @@ class MyProfileLoggedInPanel extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(
+      {required String fullName, required String avatarUrl}) {
     return Container(
       padding: const EdgeInsets.only(top: 60, bottom: 30, left: 20, right: 20),
       decoration: const BoxDecoration(
         color: Color(0xFF0D1B3E),
-        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+        borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
       ),
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 35,
-            backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=gigi'),
+            backgroundImage: NetworkImage(avatarUrl),
             backgroundColor: Colors.white,
           ),
           const SizedBox(width: 16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
-                "Gigi Nguyen",
-                style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                fullName,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 4),
-              Text(
+              const SizedBox(height: 4),
+              const Text(
                 "Thành viên Vàng",
-                style: TextStyle(color: Colors.amber, fontSize: 14, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                    color: Colors.amber,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500),
               ),
             ],
           ),

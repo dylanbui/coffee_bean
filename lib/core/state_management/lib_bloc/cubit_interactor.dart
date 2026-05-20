@@ -41,6 +41,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 ///   void onDidBecomeActive() {
 ///     // Logic call here
 ///     fetchData();
+/// 
+///     // 4. Use collect() to manage StreamSubscriptions automatically
+///     // collect(locator<DbEventBus>().on<SomeEvent>().listen((event) {
+///     //   doSomething();
+///     // }));
 ///   }
 ///
 ///   Future<void> fetchData() async {
@@ -71,12 +76,11 @@ abstract class CubitInteractor<T extends DbNoteRoutable, S> extends Cubit<S>
   T? router;
 
   InteractorLifecycle _lifecycle = InteractorLifecycle.initialized;
-  
-  CubitInteractor(super.initialState, {this.router}) {
-    // scheduleMicrotask(() {
-    //   if (!isClosed) didBecomeActive();
-    // });
-  }
+
+  /// Internal list of subscriptions to be automatically cancelled when the interactor is deactivated.
+  final List<StreamSubscription> _autoDisposables = [];
+
+  CubitInteractor(super.initialState, {this.router});
 
   /// COORDINATOR (Orchestrator): Widget will call this method. 
   /// This method ensures onDidBecomeActive only runs once.
@@ -90,7 +94,21 @@ abstract class CubitInteractor<T extends DbNoteRoutable, S> extends Cubit<S>
   void willResignActive() {
     if (_lifecycle != InteractorLifecycle.active) return;
     _lifecycle = InteractorLifecycle.resigned;
+
+    // Automatically cancel all registered subscriptions
+    for (var subscription in _autoDisposables) {
+      subscription.cancel();
+    }
+    _autoDisposables.clear();
+
     onWillResignActive();
+  }
+
+  /// Registers a [StreamSubscription] to be automatically cancelled when [willResignActive] is called.
+  /// This helps prevent memory leaks without manually overriding [onWillResignActive].
+  @protected
+  void collect(StreamSubscription subscription) {
+    _autoDisposables.add(subscription);
   }
 
   // --- HOOK METHODS: Subclasses will override these methods ---

@@ -7,6 +7,9 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/config/constants.dart';
+import 'package:coffee_bean/core/services/event_bus.dart';
+import 'package:coffee_bean/core/utils/locator.dart';
 import 'package:coffee_bean/core/utils/logger.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
@@ -46,6 +49,9 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
       // Lưu vào hệ thống
       await UserManager().saveSession(userSession);
 
+      // Bắn event thông báo login thành công cho toàn hệ thống
+      locator<DbEventBus>().fire(UserLoginSuccessEvent());
+
       emit(UserLoginSuccess());
     } else {
       emit(UserLoginFailure(error: "Account does not exist. Please check your phone number and password."));
@@ -71,6 +77,9 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
 
       // Lưu vào hệ thống
       await UserManager().saveSession(userSession);
+
+      // Bắn event thông báo login thành công cho toàn hệ thống
+      locator<DbEventBus>().fire(UserLoginSuccessEvent());
 
       emit(UserLoginSuccess());
     } else {

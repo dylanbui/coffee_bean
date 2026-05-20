@@ -1,5 +1,19 @@
 
 
+
+import 'package:coffee_bean/core/services/event_bus.dart';
+
+/// --- AUTH EVENTS ---
+abstract class AuthEvent extends DbBaseEvent {}
+
+class UserLoginSuccessEvent extends AuthEvent {
+  UserLoginSuccessEvent();
+}
+
+class UserLogoutEvent extends AuthEvent {
+  UserLogoutEvent();
+}
+
 // import 'dart:core';
 
 // import 'package:equatable/equatable.dart';
