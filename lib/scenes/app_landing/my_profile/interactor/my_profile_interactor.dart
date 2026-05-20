@@ -1,6 +1,7 @@
 import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:coffee_bean/data/local/user_session.dart';
+import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
+import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/my_profile_router.dart';
 
 // States
@@ -30,12 +31,12 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
   }
 
   Future<void> checkLoginStatus() async {
-    final session = await UserSession.fromSystem();
-    emit(MyProfileLoaded(isLoggedIn: session.isLogin()));
+    // final session = await UserSession.fromSystem();
+    emit(MyProfileLoaded(isLoggedIn: UserManager().isLogin));
   }
 
   void doLogout() async {
-    await UserSession.doLogout();
+    UserManager().doLogoutAndClearAll();
     await checkLoginStatus();
     router?.doLogout();
   }

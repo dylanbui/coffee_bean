@@ -33,7 +33,7 @@ class UserLoginRouter extends DbNoteRouter {
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
     if (toRoute is LoginSuccessRoute) {
-      // Implement navigation or listener callback for successful login
+      navigator.pop(fromContext: fromContext);
     } else if (toRoute is UserRegisterRoute) {
       UserRegisterBuilder userRegisterBuilder = UserRegisterBuilder();
       navigator.push(userRegisterBuilder.build().viewController, fromContext: fromContext);

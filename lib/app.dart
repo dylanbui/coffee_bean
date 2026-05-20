@@ -9,16 +9,16 @@
 
 import 'package:chuck_interceptor/chuck_interceptor.dart';
 import 'package:coffee_bean/core/architecture_ribs/navigator.dart';
+import 'package:coffee_bean/core/network/network_client.dart';
 import 'package:coffee_bean/core/network/network_common.dart';
 import 'package:coffee_bean/core/services/event_bus.dart';
 import 'package:coffee_bean/core/utils/shared_preferences.dart';
 import 'package:coffee_bean/config/app_config.dart';
-import 'package:coffee_bean/data/local/user_session.dart';
+import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
+import 'package:coffee_bean/data/network/token_interceptor.dart';
 import 'package:coffee_bean/scenes/app/app_builder.dart';
-import 'package:coffee_bean/scenes/app/app_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:coffee_bean/core/utils/locator.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/live_service/likes_service.dart';
@@ -35,26 +35,21 @@ Future<Widget> initializeApp() async {
   Specifies the set of orientations the application interface can be displayed in.
   The orientation argument is a list of DeviceOrientation enum values. The empty list causes the application to defer to the operating system default.
   * */
-  WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  // Xu ly trong main.dart
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
 
-  // Load share preferences data when start app
-  await DbSharedPreferences().loadPreferences();
-  // Load current data
-  AppConfig().currentUser = await UserSession.fromSystem();
-  // 1. Initialize Network Service
-  NetworkServiceProvider.init(NetworkConfig(
-    baseUrl: AppConfig().url,
-    timeout: Duration(seconds: 30),
-    interceptors: [chuck.dioInterceptor],
+  // UserManager + SecureStorage
+  await _setupStoreManager();
 
-  ));
+  // Initialize Network Service
+  await _setupNetwork();
 
   // Initialize locator and services, Always load AFTER Load share preferences
-  await setupLocator();
+  await _setupLocator();
 
   // Check if we're running on Android
   if (defaultTargetPlatform == TargetPlatform.android) {
@@ -67,7 +62,44 @@ Future<Widget> initializeApp() async {
   return App();
 }
 
-Future<void> setupLocator() async {
+Future<void> _setupStoreManager() async {
+  // 1. Load share preferences data when start app
+  await DbSharedPreferences().loadPreferences();
+  // 2. Nạp dữ liệu từ SecureStorage lên RAM của UserManager ngay lập tức
+  await UserManager().init();
+
+
+  // TODO: 3. Demo, moi khi chay lai app se xoa sach du lieu
+  await UserManager().doLogoutAndClearAll();
+}
+
+Future<void> _setupNetwork() async {
+  // 3. Initialize Private Network Service
+  // Khởi tạo Client API chính của hệ thống (Dữ liệu URL lấy từ AppConfig sạch của bạn)
+  final networkClient = NetworkClient(NetworkConfig(baseUrl: AppConfig().url));
+  // 4. Cấu hình Interceptor và tiêm UserManager trực tiếp vào
+  final tokenInterceptor = TokenInterceptor(
+    client: networkClient,
+    refreshPath: "/auth/refresh", // Thay bằng endpoint thực tế của bạn
+    tokenProvider: UserManager(), // Truyền trực tiếp instance UserManager vào đây
+    onLogout: () {
+      // Thực hiện logic điều hướng ép buộc ra màn Login ở tầng Giao diện
+      // Ví dụ nếu bạn dùng GoRouter hoặc Navigator:
+      // navigatorKey.currentState?.pushNamedAndRemoveUntil('/login', (route) => false);
+    },
+  );
+
+  // Khởi tạo Client API chính của hệ thống (Dữ liệu URL lấy từ AppConfig sạch của bạn)
+  // final networkClient = NetworkClient(NetworkConfig(baseUrl: AppConfig().url));
+  NetworkServiceProvider.init(NetworkConfig(
+    baseUrl: AppConfig().url,
+    timeout: Duration(seconds: 30),
+    interceptors: [chuck.dioInterceptor, tokenInterceptor],
+
+  ));
+}
+
+Future<void> _setupLocator() async {
   // Register Broadcast Service same EventBus
   locator.registerLazySingleton<DbEventBus>(() => DbEventBus());
   // Register DeepLink Service
@@ -77,7 +109,7 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton<LikesService>(() => LikesService());
 }
 
-
+/*
 class App extends StatefulWidget {
   const App({super.key});
 
@@ -88,7 +120,6 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   // Khởi tạo instance duy nhất ở đây
   // late final AppBuildable _appBuilder;
-
 
   late final AppBuilder _appBuilder;
   late final AppRouter _appRouter;
@@ -114,31 +145,31 @@ class _AppState extends State<App> {
   }
 }
 
-// class App extends StatelessWidget {
-//
-//   final AppBuilder _appBuilder = AppBuilder();
-//   late final _appRouter = _appBuilder.build();
-//
-//   App({super.key});
-//
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//
-//     // Run sync data
-//     _appBuilder.startApp();
-//
-//     return MaterialApp(
-//       // Connect GlobalKey from Router to Flutter Navigator
-//       navigatorKey: DbNavigator.globalNavigatorState,
-//       title: 'Coffee Bean',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: _appRouter.viewController,
-//     );
-//   }
-// }
+ */
+
+class App extends StatelessWidget {
+
+  final AppBuilder _appBuilder = AppBuilder();
+  late final _appRouter = _appBuilder.build();
+
+  App({super.key});
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+
+    // Run sync data
+    _appBuilder.startApp();
+
+    return MaterialApp(
+      // Connect GlobalKey from Router to Flutter Navigator
+      navigatorKey: DbNavigator.globalNavigatorState,
+      title: 'Coffee Bean',
+      theme: ThemeData(primarySwatch: Colors.blue,),
+      home: _appRouter.viewController,
+    );
+  }
+}
 
 
 //

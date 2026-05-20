@@ -225,6 +225,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
           countryCodes: const ["+86", "+84", "+1"],
           initialCountryCode: _loginController.countryCode1,
           errorText: _loginController.phonePwError,
+          hintText: "0988818597",
           onChanged: (val) => _loginController.countryCode1 = val.countryCode,
         ),
         const SizedBox(height: 20),
@@ -366,10 +367,10 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
 }
 
 class LoginController {
-  final phonePwLogin = TextEditingController();
-  final passwordController = TextEditingController();
-  final phoneSmsLogin = TextEditingController();
-  final smsController = TextEditingController();
+  final phonePwLogin = TextEditingController(text: "0988818597");
+  final passwordController = TextEditingController(text: "1234567890");
+  final phoneSmsLogin = TextEditingController(text: "0988818597");
+  final smsController = TextEditingController(text: "999999");
 
   String countryCode1 = "+86";
   String countryCode2 = "+86";

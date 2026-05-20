@@ -5,6 +5,7 @@ import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean/core/utils/locator.dart';
 import 'package:coffee_bean/core/utils/logger.dart';
 import 'package:coffee_bean/config/app_config.dart';
+import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/scenes/app/app_router.dart';
 import 'package:coffee_bean/scenes/app/interactor/deep_link_service.dart';
 
@@ -44,7 +45,7 @@ class AppInteractor extends DbNoteInteractor<AppRouter> {
 
     // --- Phase 1: Load Critical Data ---
     // For example: Checking login status, fetching remote config.
-    if (AppConfig().currentUser?.isLogin() ?? false) {
+    if (UserManager().isLogin) {
       dLog("AppInteractor: User is logged in. Navigating to Main App.");
     } else {
       dLog("AppInteractor: User is not logged in. Navigating to Login flow.");
