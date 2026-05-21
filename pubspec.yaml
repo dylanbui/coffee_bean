@@ -108,7 +108,8 @@ dependencies:
   marquee: ^2.3.0
   # Flutter widget to create a group of buttons fast
   group_button: ^5.3.4
-
+  # automatically resizes text to fit perfectly within its bounds
+  flutter_auto_size_text: ^5.0.0
 
 
 dev_dependencies:

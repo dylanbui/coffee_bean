@@ -29,8 +29,9 @@ class AppButtonStyleConfig {
   final Color textColor;
   final Color? borderColor;
   final double borderRadius;
-  final double height;
+  final double? height;
   final TextStyle? textStyle;
+  final MainAxisSize mainAxisSize;
 
   const AppButtonStyleConfig({
     required this.backgroundColor,
@@ -39,6 +40,7 @@ class AppButtonStyleConfig {
     this.borderRadius = 12.0,
     this.height = 48.0,
     this.textStyle,
+    this.mainAxisSize = MainAxisSize.max,
   });
 }
 
@@ -52,6 +54,8 @@ class AppButton extends StatelessWidget {
   final Widget? rightIcon;
   final Widget? loadingWidget;
   final double? width;
+  final double? height;
+  final MainAxisSize? mainAxisSize;
   final EdgeInsetsGeometry? padding;
 
   const AppButton({
@@ -64,19 +68,22 @@ class AppButton extends StatelessWidget {
     this.rightIcon,
     this.loadingWidget,
     this.width,
+    this.height,
+    this.mainAxisSize,
     this.padding,
   });
 
   @override
   Widget build(BuildContext context) {
     final isEnabled = onPressed != null && !isLoading;
+    final effectiveMainAxisSize = mainAxisSize ?? style.mainAxisSize;
 
     return TapEffect(
       onClickScale: 0.96,
       onTap: isEnabled ? onPressed : null,
       child: Container(
-        width: width ?? double.infinity,
-        height: style.height,
+        width: effectiveMainAxisSize == MainAxisSize.min ? width : (width ?? double.infinity),
+        height: height ?? style.height,
         padding: padding ?? const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           color: (onPressed == null) 

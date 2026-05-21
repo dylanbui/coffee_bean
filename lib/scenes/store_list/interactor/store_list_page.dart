@@ -10,6 +10,8 @@ import 'package:coffee_bean/core/utils/tap_effect.dart';
 import 'package:coffee_bean/core/utils/app_button.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:coffee_bean/shared/widget/search_bar.dart';
+import 'package:coffee_bean/shared/widget/app_label.dart';
+import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
 
 //ignore: must_be_immutable
 class StoreListPage extends CubitStateFulWidget<StoreListInteractor, StoreListState> {
@@ -72,7 +74,7 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
             onPressed: interactor.enableManualSelection,
           ),
         ],
-      ),    
+      ),
     );
   }
 
@@ -83,9 +85,9 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
       child: SizedBox(
         height: 50,
         child: AppSearchBar(
-          hintText: "Search store name",
+          hintText: "Tìm kiếm tên cửa hàng",
           backgroundColor: AppColor.basicSearchBg,
-          rightIcon: AppAssets.icons.icSearch, // Đưa icon sang bên phải
+          leftIcon: AppAssets.icons.icSearch,
           minLength: 5,
           onSearch: interactor.onSearchChanged,
         ),
@@ -104,11 +106,8 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      itemCount: state.stores.length + 1,
+      itemCount: state.stores.length,
       itemBuilder: (context, index) {
-        if (index == state.stores.length) {
-          return _buildFooter();
-        }
         return _buildStoreCard(state.stores[index]);
       },
     );
@@ -119,63 +118,113 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
       enableSound: false,
       onTap: () => interactor.onStoreSelected(store),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2)),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        margin: const EdgeInsets.only(bottom: 16),
+        constraints: const BoxConstraints(minHeight: 140), // Chiều cao tối thiểu 140px
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    store.name,
-                    style: TMLabsStyle.semibold.copyWith(fontSize: 16),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text("${store.distance} away", style: TMLabsStyle.regular.copyWith(color: Colors.blue, fontSize: 12)),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(Icons.location_on_outlined, size: 16, color: AppColor.basicSecondaryText),
-                const SizedBox(width: 4),
-                Expanded(child: Text(store.address, style: TMLabsStyle.regular.copyWith(color: AppColor.basicSecondaryText))),
-                const SizedBox(width: 16),
-                const Icon(Icons.near_me, size: 24, color: Colors.black),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                const Icon(Icons.access_time, size: 16, color: AppColor.basicSecondaryText),
-                const SizedBox(width: 4),
-                Text(store.hours, style: TMLabsStyle.regular.copyWith(color: AppColor.basicSecondaryText)),
-                if (!store.isOpen) ...[
-                  const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(color: AppColor.grayF0, borderRadius: BorderRadius.circular(4)),
-                    child: Text("Closed", style: TMLabsStyle.regular.copyWith(color: AppColor.basicSecondaryText, fontSize: 12)),
-                  ),
+            // Main Card Container - Không dùng Positioned để nó tự co giãn theo nội dung
+            Container(
+              margin: const EdgeInsets.only(top: 15),
+              constraints: const BoxConstraints(minHeight: 125),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 5)),
                 ],
-              ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(25),
+                child: Stack(
+                  children: [
+                    // Background Image - Dùng Positioned.fill để nó lấp đầy chiều cao thay đổi của card
+                    Positioned.fill(
+                      child: CachedImageWidget(
+                        imageUrl: store.imageUrl,
+                        width: double.infinity,
+                        height: double.infinity,
+                        borderRadius: 25,
+                      ),
+                    ),
+                    // Dark Overlay
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [Colors.black.withValues(alpha: 0.8), Colors.black.withValues(alpha: 0.2)],
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Content - Phần này sẽ quyết định chiều cao của card
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min, // Cực kỳ quan trọng để card co giãn theo text
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            store.name,
+                            style: TMLabsStyle.semibold.copyWith(color: Colors.white, fontSize: 18),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.location_on, color: Colors.red, size: 20),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: AppLabel(
+                                  store.address,
+                                  style: TMLabsStyle.regular.copyWith(color: Colors.white, fontSize: 16, height: 1.2),
+                                  maxLines: 2,
+                                  minFontSize: 11,
+                                  padding: EdgeInsets.zero,
+                                  alignment: Alignment.centerLeft,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(Icons.access_time_filled, color: Colors.white, size: 19),
+                              const SizedBox(width: 6),
+                              Text(store.hours, style: TMLabsStyle.regular.copyWith(color: Colors.white, fontSize: 13)),
+                              const SizedBox(width: 12),
+                              _buildStatusBadge(store.isOpen),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Distance Label with Slanted Edge
+            Positioned(
+              top: 0,
+              right: 0,
+              child: ClipPath(
+                clipper: DiagonalLabelClipper(),
+                child: Container(
+                  padding: const EdgeInsets.only(left: 35, right: 20, top: 6, bottom: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 1),
+                    borderRadius: const BorderRadius.only(topRight: Radius.circular(25)),
+                  ),
+                  child: Text(
+                    "Cách bạn ${store.distance}",
+                    style: TMLabsStyle.semibold.copyWith(color: Colors.black, fontSize: 12),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -183,10 +232,13 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
     );
   }
 
-  Widget _buildFooter() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Center(child: Text("No more stores", style: TMLabsStyle.regular.copyWith(color: AppColor.basicSecondaryText, fontSize: 12))),
+  Widget _buildStatusBadge(bool isOpen) {
+    return AppLabel(
+      isOpen ? "Đang mở cửa" : "Đóng cửa",
+      backgroundColor: isOpen ? Colors.green : Colors.grey,
+      borderRadius: 12,
+      style: TMLabsStyle.regular.copyWith(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
     );
   }
 
@@ -202,4 +254,20 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
       ),
     );
   }
+}
+
+class DiagonalLabelClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    path.moveTo(0, 0); // Top-left sharp corner
+    path.lineTo(size.width, 0); // Top-right
+    path.lineTo(size.width, size.height); // Bottom-right
+    path.lineTo(35, size.height); // Bottom-left indented (slanted)
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

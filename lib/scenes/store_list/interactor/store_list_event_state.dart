@@ -7,6 +7,7 @@ class Store {
   final String hours;
   final String distance;
   final bool isOpen;
+  final String? imageUrl;
 
   Store({
     required this.id,
@@ -15,6 +16,7 @@ class Store {
     required this.hours,
     required this.distance,
     this.isOpen = true,
+    this.imageUrl,
   });
 }
 

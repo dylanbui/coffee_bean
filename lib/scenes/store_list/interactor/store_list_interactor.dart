@@ -95,19 +95,21 @@ class StoreListInteractor extends CubitInteractor<StoreListRouter, StoreListStat
     final mockStores = [
       Store(
         id: '1',
-        name: position != null ? 'Nearby Store ABC' : 'Store Name ABC',
-        address: 'No. XX, XX Road, XX Town, Jing\'an District, Shanghai',
-        hours: '09:00-23:00',
-        distance: position != null ? '200m' : '198m',
+        name: 'TMLabs coffee',
+        address: '84a Nguyễn Cửu Vân, phường Gia Định, tp.HCM',
+        hours: '6h00\' - 23h00\'',
+        distance: '1.3km',
         isOpen: true,
+        imageUrl: 'https://picsum.photos/id/237/400/300',
       ),
       Store(
         id: '2',
-        name: 'Long Store Name ABC Placeholder',
-        address: 'Very long address example in Jing\'an District, Shanghai, showing how it wraps to multiple lines',
-        hours: '09:00-21:30',
-        distance: '1.2km',
+        name: 'TMLabs coffee (Chi nhánh 2)',
+        address: '123 Đường Nguyen thi thap , dong van cong, nguyen van truong dinh, Quận XYZ, tp.HCM',
+        hours: '09:00 - 21:30',
+        distance: '3.5km',
         isOpen: false,
+        imageUrl: 'https://picsum.photos/id/235/400/300',
       ),
     ];
 

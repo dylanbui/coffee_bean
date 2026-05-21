@@ -1,3 +1,4 @@
+import 'package:coffee_bean/core/utils/app_button.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
@@ -139,65 +140,48 @@ class _TopImagePanelState extends State<TopImagePanel> {
 
   Widget _buildLocationButton() {
     const Color navyColor = Color(0xFF0D1B3E);
-    
-    return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(25),
-      child: InkWell(
-        onTap: () => widget.interactor.openSelectStore(),
-        borderRadius: BorderRadius.circular(25),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              AppIcon(Icons.location_on_outlined, size: 20, color: navyColor),
-              SizedBox(width: 8),
-              Text(
-                AppStrings.selectStore,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: navyColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(width: 4),
-              AppIcon(Icons.chevron_right, size: 20, color: navyColor),
-            ],
-          ),
+
+    return AppButton(
+      text: AppStrings.selectStore,
+      onPressed: () => widget.interactor.openSelectStore(),
+      mainAxisSize: MainAxisSize.min,
+      leftIcon: const AppIcon(Icons.location_on_outlined, size: 20, color: navyColor),
+      rightIcon: const AppIcon(Icons.chevron_right, size: 20, color: navyColor),
+      style: AppButtonStyleConfig(
+        backgroundColor: Colors.white,
+        textColor: navyColor,
+        borderRadius: 25,
+        height: 38,
+        textStyle: const TextStyle(
+          fontSize: 14,
+          color: navyColor,
+          fontWeight: FontWeight.w600,
         ),
       ),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
     );
   }
 
   Widget _buildSearchButton() {
     const Color navyColor = Color(0xFF0D1B3E);
 
-    return Material(
-      color: navyColor.withValues(alpha: 0.85),
-      borderRadius: BorderRadius.circular(25),
-      child: InkWell(
-        onTap: () => widget.interactor.openGlobalSearch(),
-        borderRadius: BorderRadius.circular(25),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                AppStrings.searchHint,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              const SizedBox(width: 8),
-              AppIcon(AppAssets.icons.icSearch, color: Colors.white, size: 22),
-            ],
-          ),
+    return AppButton(
+      text: AppStrings.searchHint,
+      onPressed: () => widget.interactor.openGlobalSearch(),
+      mainAxisSize: MainAxisSize.min,
+      rightIcon: AppIcon(AppAssets.icons.icSearch, color: Colors.white, size: 22),
+      style: AppButtonStyleConfig(
+        backgroundColor: navyColor.withValues(alpha: 0.85),
+        textColor: Colors.white,
+        borderRadius: 25,
+        height: 38,
+        textStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
         ),
       ),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
     );
   }
 

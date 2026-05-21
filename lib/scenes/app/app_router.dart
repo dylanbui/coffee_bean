@@ -10,9 +10,9 @@ import 'package:flutter/cupertino.dart';
 class AppRouter extends DbNoteRouter {
   void successSyncDataFormServer() {
     // Load trang dau tien
-    //   MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
-    //   final router = mainTabbarBuilder.build();
-    //   navigator.pushSameRootPage(router.viewController);
+    // MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
+    // final router = mainTabbarBuilder.build();
+    // navigator.pushSameRootPage(router.viewController);
 
     final builder = StoreListBuilder();
     navigator.pushSameRootPage(builder.build().viewController);

@@ -1,5 +1,6 @@
 import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/global_search/global_search_builder.dart';
+import 'package:coffee_bean/scenes/store_list/store_list_builder.dart';
 import 'package:flutter/material.dart';
 
 // Route
@@ -12,7 +13,7 @@ class HomeRouter extends DbNoteRouter implements HomeRoutable {
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
     if (toRoute is ChooseStoreRoute) {
-      final nextBuilder = GlobalSearchBuilder();
+      final nextBuilder = StoreListBuilder();
       final nextRouter = nextBuilder.build();
       navigator.push(nextRouter.viewController);
     } else if (toRoute is GlobalSearchRoute) {
