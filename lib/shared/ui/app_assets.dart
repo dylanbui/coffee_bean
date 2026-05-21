@@ -29,6 +29,12 @@ class _Icons {
   final String icShare = 'assets/icons/ic_share.svg';
   final String icPlayVideo = 'assets/icons/ic_play_video.svg';
   final String icPlusCycle = 'assets/icons/ic_plus_cycle.svg';
+  final String icPlusCycleWhite = 'assets/icons/ic_plus_cycle_white.svg';
+  final String icCatCake = 'assets/icons/ic_cat_cake.svg';
+  final String icCatCoffee = 'assets/icons/ic_cat_coffee.svg';
+  final String icCatMilkTea = 'assets/icons/ic_cat_milk_tea.svg';
+  final String icCatSnack = 'assets/icons/ic_cat_snack.svg';
+  final String icCatTea = 'assets/icons/ic_cat_tea.svg';
 
 
 }

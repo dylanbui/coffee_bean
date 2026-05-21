@@ -84,6 +84,7 @@ class _AppSearchBarState extends State<AppSearchBar> {
         onPressed: () {
           _controller.clear();
           widget.onSearch('');
+          FocusScope.of(context).unfocus();
           setState(() {});
         },
       );

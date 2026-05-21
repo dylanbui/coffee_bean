@@ -1,7 +1,12 @@
 import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_interactor.dart';
-import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
+import 'package:coffee_bean/scenes/app_landing/shopping/interactor/widget/shopping_category_list.dart';
+import 'package:coffee_bean/scenes/app_landing/shopping/interactor/widget/shopping_footer.dart';
+import 'package:coffee_bean/scenes/app_landing/shopping/interactor/widget/shopping_header.dart';
+import 'package:coffee_bean/scenes/app_landing/shopping/interactor/widget/shopping_product_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 //ignore: must_be_immutable
 class ShoppingPage extends CubitStateFulWidget<ShoppingInteractor, ShoppingState> {
@@ -12,80 +17,147 @@ class ShoppingPage extends CubitStateFulWidget<ShoppingInteractor, ShoppingState
 }
 
 class _ShoppingPageState extends CubitState<ShoppingPage, ShoppingInteractor, ShoppingState> {
-  final List<String> _categories = ["Tất cả", "Cà phê gói", "Dụng cụ pha", "Quà tặng", "Phụ kiện"];
-  int _selectedCategoryIndex = 0;
+  final ScrollController _categoryScrollController = ScrollController();
+  final ScrollController _productScrollController = ScrollController();
+  final double _itemHeight = 110.0;
+  final double _headerHeight = 40.0;
+  final double _spacing = 12.0;
+
+  bool _isAutoScrolling = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _productScrollController.addListener(_onProductScroll);
+  }
+
+  @override
+  void dispose() {
+    _categoryScrollController.dispose();
+    _productScrollController.dispose();
+    super.dispose();
+  }
+
+  void _onProductScroll() {
+    if (_isAutoScrolling) return;
+
+    final state = interactor.state;
+    if (state.isSearching) return;
+
+    double offset = _productScrollController.offset;
+    double currentTotalHeight = 0;
+    int newIndex = 0;
+
+    for (int i = 0; i < state.categories.length; i++) {
+      final catId = state.categories[i].id!;
+      final productsCount = state.productsByCategory[catId]?.length ?? 0;
+      double sectionHeight = _headerHeight + (productsCount * (_itemHeight + _spacing));
+      
+      if (offset >= currentTotalHeight && offset < currentTotalHeight + sectionHeight) {
+        newIndex = i;
+        break;
+      }
+      currentTotalHeight += sectionHeight;
+    }
+
+    if (newIndex != state.selectedCategoryIndex) {
+      interactor.selectCategory(newIndex);
+      _categoryScrollController.animateTo(
+        newIndex * 90.0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  void _scrollToCategory(int categoryIndex) {
+    _isAutoScrolling = true;
+    interactor.selectCategory(categoryIndex);
+
+    final state = interactor.state;
+    double targetOffset = 0;
+    for (int i = 0; i < categoryIndex; i++) {
+      final catId = state.categories[i].id!;
+      final productsCount = state.productsByCategory[catId]?.length ?? 0;
+      targetOffset += _headerHeight + (productsCount * (_itemHeight + _spacing));
+    }
+
+    _productScrollController.animateTo(
+      targetOffset,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    ).then((_) => _isAutoScrolling = false);
+  }
 
   @override
   dynamic getAppBar(BuildContext context) {
-    return AppBar(
-      title: const Text(
-        "Cửa hàng",
-        style: TextStyle(color: Color(0xFF0D1B3E), fontWeight: FontWeight.bold),
-      ),
-      backgroundColor: Colors.white,
-      elevation: 0,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.shopping_cart_outlined, color: Color(0xFF0D1B3E)),
-          onPressed: () {},
-        ),
-      ],
-    );
+    return null; // Custom header in body
   }
 
   @override
   Widget getBody(BuildContext context) {
-    return Column(
+    return BlocBuilder<ShoppingInteractor, ShoppingState>(
+      builder: (context, state) {
+        return Stack(
+          children: [
+            Column(
+              children: [
+                ShoppingHeader(interactor: interactor, state: state),
+                const SizedBox(height: 20),
+                Expanded(
+                  child: state.isSearching ? _buildSearchResults(state) : _buildMainContent(state),
+                ),
+              ],
+            ),
+            ShoppingFooter(interactor: interactor),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildMainContent(ShoppingState state) {
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 1. Categories
-        SizedBox(
-          height: 50,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: _categories.length,
-            itemBuilder: (context, index) {
-              bool isSelected = _selectedCategoryIndex == index;
-              return GestureDetector(
-                onTap: () => setState(() => _selectedCategoryIndex = index),
-                child: Container(
-                  margin: const EdgeInsets.only(right: 12),
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: isSelected ? const Color(0xFF0D1B3E) : Colors.grey[100],
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: Text(
-                    _categories[index],
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.grey[600],
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
+        // Left: Categories
+        ShoppingCategoryList(
+          state: state,
+          controller: _categoryScrollController,
+          onCategoryTap: _scrollToCategory,
         ),
 
-        const SizedBox(height: 16),
-
-        // 2. Product Grid
+        // Right: Products
         Expanded(
-          child: GridView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.7,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-            ),
-            itemCount: 6, // Fake data
+          child: ListView.builder(
+            controller: _productScrollController,
+            padding: const EdgeInsets.only(left: 8, right: 16),
+            itemCount: state.categories.length + 1, // +1 for bottom spacing item
             itemBuilder: (context, index) {
-              return _buildProductCard(index);
+              if (index == state.categories.length) {
+                return const SizedBox(height: 100); // Spacer for footer
+              }
+
+              final category = state.categories[index];
+              final products = state.productsByCategory[category.id] ?? [];
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: _headerHeight,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      category.name?.toUpperCase() ?? "",
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.grey),
+                    ),
+                  ),
+                  ...products.map((p) => Padding(
+                    padding: EdgeInsets.only(bottom: _spacing),
+                    child: ShoppingProductItem(product: p, interactor: interactor, height: _itemHeight),
+                  )),
+                ],
+              );
             },
           ),
         ),
@@ -93,70 +165,19 @@ class _ShoppingPageState extends CubitState<ShoppingPage, ShoppingInteractor, Sh
     );
   }
 
-  Widget _buildProductCard(int index) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-              child: CachedImageWidget(
-                imageUrl: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?q=80&w=400&auto=format&fit=crop',
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Coffee Bean House Blend",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "250.000đ",
-                      style: TextStyle(
-                        color: Color(0xFF0D1B3E),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF0D1B3E),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.add, color: Colors.white, size: 16),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+  Widget _buildSearchResults(ShoppingState state) {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      itemCount: state.filteredProducts.length + 1,
+      itemBuilder: (context, index) {
+        if (index == state.filteredProducts.length) {
+          return const SizedBox(height: 100);
+        }
+        return Padding(
+          padding: EdgeInsets.only(bottom: _spacing),
+          child: ShoppingProductItem(product: state.filteredProducts[index], interactor: interactor, height: _itemHeight),
+        );
+      },
     );
   }
 }

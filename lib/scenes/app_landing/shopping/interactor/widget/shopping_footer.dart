@@ -1,0 +1,104 @@
+import 'package:coffee_bean/core/utils/app_button.dart';
+import 'package:coffee_bean/data/local/live_service/model/cart_item.dart';
+import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_interactor.dart';
+import 'package:coffee_bean/shared/ui/app_assets.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/utils/number_to_vietnamese.dart';
+import 'package:flutter/material.dart';
+
+class ShoppingFooter extends StatelessWidget {
+  final ShoppingInteractor interactor;
+
+  const ShoppingFooter({super.key, required this.interactor});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<CartItem>>(
+      stream: interactor.cartService.cartStream,
+      builder: (context, snapshot) {
+        final items = snapshot.data ?? [];
+        final totalQuantity = items.fold(0, (sum, item) => sum + item.quantity);
+        final totalPrice = items.fold(0.0, (sum, item) => sum + item.totalPrice);
+
+        return Positioned(
+          left: 16,
+          right: 16,
+          bottom: 10,
+          child: Container(
+            height: 64,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: TMLabsColor.navy,
+              borderRadius: BorderRadius.circular(32),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 10, offset: const Offset(0, 5)),
+              ],
+            ),
+            child: Row(
+              children: [
+                Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: AppIcon(AppAssets.icons.icShopping, color: Colors.white, size: 28),
+                    ),
+                    if (totalQuantity > 0)
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(color: TMLabsColor.red, shape: BoxShape.circle),
+                          constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                          child: Text(
+                            "$totalQuantity",
+                            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        NumberToVietnamese.formatNumber(totalPrice, "đ") ?? "0 đ",
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      const Text(
+                        "Ưu đãi đã áp dụng",
+                        style: TextStyle(color: Colors.white70, fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
+                AppButton(
+                  text: "THANH TOÁN",
+                  width: 110,
+                  height: 38,
+                  style: TMLabsStyle.primaryButton.copyWith(
+                    backgroundColor: TMLabsColor.grey,
+                    textColor: Colors.white,
+                    borderRadius: 19,
+                    textStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                  onPressed: () {
+                    if (totalQuantity > 0) {
+                      // Xử lý thanh toán
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}

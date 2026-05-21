@@ -42,6 +42,26 @@ class AppButtonStyleConfig {
     this.textStyle,
     this.mainAxisSize = MainAxisSize.max,
   });
+
+  AppButtonStyleConfig copyWith({
+    Color? backgroundColor,
+    Color? textColor,
+    Color? borderColor,
+    double? borderRadius,
+    double? height,
+    TextStyle? textStyle,
+    MainAxisSize? mainAxisSize,
+  }) {
+    return AppButtonStyleConfig(
+      backgroundColor: backgroundColor ?? this.backgroundColor,
+      textColor: textColor ?? this.textColor,
+      borderColor: borderColor ?? this.borderColor,
+      borderRadius: borderRadius ?? this.borderRadius,
+      height: height ?? this.height,
+      textStyle: textStyle ?? this.textStyle,
+      mainAxisSize: mainAxisSize ?? this.mainAxisSize,
+    );
+  }
 }
 
 class AppButton extends StatelessWidget {

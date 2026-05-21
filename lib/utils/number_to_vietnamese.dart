@@ -78,11 +78,11 @@ class NumberToVietnamese {
     }
   }
 
-  static String? formatNumber(double? price) {
+  static String? formatNumber(double? price, String? subfix) {
     if (price == null) {
       return null;
     }
-    var format = NumberFormat("###.##", "en_US");
-    return format.format(price).replaceAll(".", ",");
+    var format = NumberFormat("#,###", "vi_VN");
+    return "${format.format(price).replaceAll(",", ".")} ${subfix ?? ""}";
   }
 }
