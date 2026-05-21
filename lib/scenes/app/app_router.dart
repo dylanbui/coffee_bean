@@ -15,13 +15,13 @@ class AppRouter extends DbNoteRouter {
     // final router = mainTabbarBuilder.build();
     // navigator.pushSameRootPage(router.viewController);
 
-    // final builder = StoreListBuilder();
-    // navigator.pushSameRootPage(builder.build().viewController);
+    final builder = StoreListBuilder();
+    navigator.pushSameRootPage(builder.build().viewController);
     // UserLoginBuilder builder = UserLoginBuilder();
     // navigator.pushSameRootPage(builder.build().viewController,);
 
-    final builder = ShoppingBuilder();
-    navigator.pushSameRootPage(builder.build().viewController);
+    // final builder = ShoppingBuilder();
+    // navigator.pushSameRootPage(builder.build().viewController);
 
   }
 

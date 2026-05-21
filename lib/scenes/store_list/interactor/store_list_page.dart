@@ -209,21 +209,20 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
             ),
             // Distance Label with Slanted Edge
             Positioned(
-              top: 0,
-              right: 0,
-              child: ClipPath(
-                clipper: DiagonalLabelClipper(),
-                child: Container(
-                  padding: const EdgeInsets.only(left: 35, right: 20, top: 6, bottom: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 1),
-                    borderRadius: const BorderRadius.only(topRight: Radius.circular(25)),
+              top: 3, // Nhích lên một chút để hiện bóng đổ phía trên
+              right: -7, // Nhích sang phải một chút để hiện bóng đổ bên phải
+              child: Stack(
+                alignment: Alignment.centerRight,
+                children: [
+                  AppIcon(AppAssets.images.imgBgKhoangCach),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20, right: 10, top: 5, bottom: 5),
+                    child: Text(
+                      "Cách bạn ${store.distance}",
+                      style: TMLabsStyle.semibold.copyWith(color: Colors.black, fontSize: 12),
+                    ),
                   ),
-                  child: Text(
-                    "Cách bạn ${store.distance}",
-                    style: TMLabsStyle.semibold.copyWith(color: Colors.black, fontSize: 12),
-                  ),
-                ),
+                ],
               ),
             ),
           ],
@@ -256,18 +255,4 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
   }
 }
 
-class DiagonalLabelClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = Path();
-    path.moveTo(0, 0); // Top-left sharp corner
-    path.lineTo(size.width, 0); // Top-right
-    path.lineTo(size.width, size.height); // Bottom-right
-    path.lineTo(35, size.height); // Bottom-left indented (slanted)
-    path.close();
-    return path;
-  }
 
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-}

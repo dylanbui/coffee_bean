@@ -63,7 +63,7 @@ class _ShoppingPageState extends CubitState<ShoppingPage, ShoppingInteractor, Sh
     if (newIndex != state.selectedCategoryIndex) {
       interactor.selectCategory(newIndex);
       _categoryScrollController.animateTo(
-        newIndex * 90.0,
+        newIndex * 120.0, // Updated: height 110 + margin 10
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
       );
@@ -131,7 +131,7 @@ class _ShoppingPageState extends CubitState<ShoppingPage, ShoppingInteractor, Sh
         Expanded(
           child: ListView.builder(
             controller: _productScrollController,
-            padding: const EdgeInsets.only(left: 8, right: 16),
+            padding: const EdgeInsets.only(left: 8, right: 8),
             itemCount: state.categories.length + 1, // +1 for bottom spacing item
             itemBuilder: (context, index) {
               if (index == state.categories.length) {

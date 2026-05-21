@@ -18,11 +18,11 @@ class ShoppingCategoryList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 90, // Increased width
-      color: TMLabsColor.lightGrey.withValues(alpha: 0.15), // Slightly darker background
+      width: 80, // Fixed width as requested
+      color: Colors.white, // Parent background can be white
       child: ListView.builder(
         controller: controller,
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 0),
         itemCount: state.categories.length,
         itemBuilder: (context, index) {
           final category = state.categories[index];
@@ -30,31 +30,26 @@ class ShoppingCategoryList extends StatelessWidget {
           return GestureDetector(
             onTap: () => onCategoryTap(index),
             child: Container(
-              height: 96,
-              margin: const EdgeInsets.only(bottom: 4), // Space between items
+              width: 80,
+              height: 110, // Fixed height as requested
+              margin: const EdgeInsets.only(bottom: 10), // Spacing between items
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white : Colors.transparent,
-                border: isSelected ? const Border(left: BorderSide(color: TMLabsColor.primary, width: 4)) : null,
+                color: TMLabsColor.lightGrey.withValues(alpha: 0.5), // Background for all items
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
+                ),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 54,
-                    height: 54,
-                    decoration: BoxDecoration(
-                      color: isSelected ? TMLabsColor.primary.withValues(alpha: 0.1) : TMLabsColor.lightGrey.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Center(
-                      child: AppIcon(
-                        category.image ?? AppAssets.icons.icHome,
-                        color: isSelected ? TMLabsColor.primary : TMLabsColor.grey,
-                        size: 28,
-                      ),
-                    ),
+                  AppIcon(
+                    category.image ?? AppAssets.icons.icHome,
+                    // Active: #8D95A0, Deactive: #CECCCD (TMLabsColor.lightGrey)
+                    color: isSelected ? const Color(0xFF8D95A0) : TMLabsColor.lightGrey,
+                    size: 32,
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: Text(
@@ -63,7 +58,9 @@ class ShoppingCategoryList extends StatelessWidget {
                         fontSize: 11,
                         height: 1.2,
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                        color: isSelected ? TMLabsColor.primary : TMLabsColor.grey,
+                        // Match icon color for consistency or keep as is? 
+                        // User only mentioned icon color, but usually text follows.
+                        color: isSelected ? const Color(0xFF8D95A0) : TMLabsColor.grey,
                       ),
                       textAlign: TextAlign.center,
                       maxLines: 2,
