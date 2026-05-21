@@ -16,6 +16,7 @@ import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/interactor/user_login_event_state.dart';
 import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/user_login_builder.dart';
+import 'package:coffee_bean/utils/utils.dart';
 
 // Interactor
 class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginState> {
@@ -31,7 +32,7 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
   void doLoginWithPw(String phoneNumber, String password) async {
     emit(UserLoginInProgress());
     iLog("Login with Password: $phoneNumber / $password");
-    await Future.delayed(const Duration(seconds: 3));
+    await Utils.delay();
 
     // Giả lập logic kiểm tra thông tin đăng nhập
     // Chấp nhận số điện thoại có chứa 0988818597 (để bỏ qua mã quốc gia nếu có)
@@ -49,10 +50,15 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
       // Lưu vào hệ thống
       await UserManager().saveSession(userSession);
 
-      // Bắn event thông báo login thành công cho toàn hệ thống
-      locator<DbEventBus>().fire(UserLoginSuccessEvent());
-
+      // Bao ve UI da thuc hien task xong
       emit(UserLoginSuccess());
+
+      // Bắn event thông báo login thành công cho toàn hệ thống
+      // locator<DbEventBus>().fire(UserLoginSuccessEvent());
+
+      // Thuc hien chuyen thong bao di, khong can push voi EventBus
+      router?.navigate(LoginSuccessRoute());
+
     } else {
       emit(UserLoginFailure(error: "Account does not exist. Please check your phone number and password."));
     }
@@ -61,7 +67,7 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
   void doLoginWithSms(String phoneNumber, String sms) async {
     emit(UserLoginInProgress());
     iLog("Login with SMS: $phoneNumber / $sms");
-    await Future.delayed(const Duration(seconds: 3));
+    await Utils.delay();
 
     // Giả lập logic kiểm tra mã SMS
     if (phoneNumber.contains("0988818597") && sms == "999999") {

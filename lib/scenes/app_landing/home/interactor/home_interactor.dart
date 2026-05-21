@@ -149,11 +149,12 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
     initData();
   }
 
-  void openSearch() {
+  void openGlobalSearch() {
     // Logic to navigate to Global Search
+    router?.navigate(GlobalSearchRoute());
   }
   
-  void selectStore() {
+  void openSelectStore() {
     // Logic to select store
     router?.navigate(ChooseStoreRoute());
   }

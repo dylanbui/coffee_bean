@@ -94,4 +94,9 @@ class Utils {
     return url.toString().startsWith("http") ||
         url.toString().startsWith("https");
   }
+
+  static Future<void> delay({int second = 3}) async {
+    await Future.delayed(Duration(seconds: second));
+  }
+
 }

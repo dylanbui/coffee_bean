@@ -13,10 +13,6 @@ import 'package:coffee_bean/scenes/user_features/forgot_password/forgot_password
 import 'package:coffee_bean/scenes/user_features/forgot_password/interactor/forgot_password_interactor.dart';
 import 'package:coffee_bean/scenes/user_features/forgot_password/interactor/forgot_password_page.dart';
 
-// --- ROUTE ---
-// A Route object to communicate the "completion" event from the Interactor to the Builder/Router.
-class ForgotPasswordCompleteRoute implements DbNoteRoute {}
-
 // --- BUILDER ---
 // Responsible for initializing the Interactor, Page, and connecting them.
 class ForgotPasswordBuilder extends DbNoteBuilder<ForgotPasswordRouter> {

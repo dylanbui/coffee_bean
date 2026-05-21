@@ -29,7 +29,7 @@ class MyProfileLoggedOutPanel extends StatelessWidget {
                 AppButton(
                   text: "Đăng nhập",
                   style: TMLabsStyle.primaryButton,
-                  onPressed: () => interactor.router?.doLogin(),
+                  onPressed: () => interactor.router?.doLoginFlow(interactor),
                 ),
                 const SizedBox(height: 16),
                 AppButton(
@@ -37,7 +37,7 @@ class MyProfileLoggedOutPanel extends StatelessWidget {
                   style: TMLabsStyle.outlineButton,
                   onPressed: () {
                     // Navigate to register if available
-                    interactor.router?.doRegister();
+                    interactor.router?.doRegisterFlow(interactor);
                   },
                 ),
               ],

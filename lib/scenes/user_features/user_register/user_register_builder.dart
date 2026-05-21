@@ -10,7 +10,9 @@
 import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/user_features/privacy_policy/privacy_policy_builder.dart';
+import 'package:coffee_bean/scenes/user_features/set_password/set_password_builder.dart';
 import 'package:coffee_bean/scenes/user_features/user_agreement/user_agreement_builder.dart';
+import 'package:coffee_bean/scenes/user_features/user_login/user_login_builder.dart';
 import 'package:coffee_bean/scenes/user_features/user_register/interactor/user_register_interactor.dart';
 import 'package:coffee_bean/scenes/user_features/user_register/interactor/user_register_page.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +20,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 // --- ROUTE ---
 class UserRegisterCompleteRoute implements DbNoteRoute {}
+class UserSetPasswordRoute implements DbNoteRoute {}
 class UserLoginRoute implements DbNoteRoute {}
 class UserAgreementRoute implements DbNoteRoute {}
 class PrivacyPolicyRoute implements DbNoteRoute {}
@@ -28,16 +31,30 @@ class UserRegisterRouter extends DbNoteRouter {
 
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
-    if (toRoute is UserRegisterCompleteRoute) {
-      // Handle completion
-    } else if (toRoute is UserLoginRoute) {
-      navigator.pop(fromContext: fromContext);
-    } else if (toRoute is UserAgreementRoute) {
+    // Day la nhung luong phu, xu ly o day cho nhe, luong chinh se day len parent
+    if (toRoute is UserAgreementRoute) {
       UserAgreementBuilder userAgreementBuilder = UserAgreementBuilder();
-      navigator.push(userAgreementBuilder.build().viewController, fromContext: fromContext);
+      // Neu can xu ly thi set router => userAgreementRouter.parentRouter = parentRouter;
+      parentRouter?.navigator.push(userAgreementBuilder.build().viewController);
+
     } else if (toRoute is PrivacyPolicyRoute) {
       PrivacyPolicyBuilder privacyPolicyBuilder = PrivacyPolicyBuilder();
-      navigator.push(privacyPolicyBuilder.build().viewController, fromContext: fromContext);
+      // Neu can xu ly thi set router => privacyPolicyRouter.parentRouter = parentRouter;
+      parentRouter?.navigator.push(privacyPolicyBuilder.build().viewController);
+
+    } else if (toRoute is UserSetPasswordRoute) {
+      final setPasswordRouter = SetPasswordBuilder().build();
+      setPasswordRouter.parentRouter = parentRouter;
+      parentRouter?.navigator.push(setPasswordRouter.viewController);
+
+    } else if (toRoute is UserLoginRoute) {
+      final userLoginRouter = UserLoginBuilder().build();
+      userLoginRouter.parentRouter = this;
+      parentRouter?.navigator.push(userLoginRouter.viewController);
+
+    } else {
+      // Đẩy các route khác (UserLoginRoute, UserRegisterCompleteRoute) lên cho Flow xử lý
+      parentRouter?.navigate(toRoute, fromContext: fromContext, routeName: routeName, parameters: parameters);
     }
   }
 }

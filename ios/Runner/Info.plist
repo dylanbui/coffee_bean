@@ -74,5 +74,9 @@
 		<string>Cho phép ứng dụng sử dụng camera để chụp ảnh báo cáo.</string>
 		<key>NSMicrophoneUsageDescription</key>
 		<string>Cho phép ứng dụng sử dụng microphone (khi quay video báo cáo).</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Cho phép ứng dụng truy cập vị trí của bạn để tìm cửa hàng gần nhất.</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>Cho phép ứng dụng truy cập vị trí của bạn để tìm cửa hàng gần nhất.</string>
 	</dict>
 </plist>

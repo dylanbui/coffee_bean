@@ -88,9 +88,9 @@ class _TopImagePanelState extends State<TopImagePanel> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.black.withOpacity(0.3),
+            Colors.black.withValues(alpha: 0.3),
             Colors.transparent,
-            Colors.black.withOpacity(0.7),
+            Colors.black.withValues(alpha: 0.7),
           ],
         ),
       ),
@@ -113,7 +113,7 @@ class _TopImagePanelState extends State<TopImagePanel> {
             height: 4,
             width: isSelected ? 18 : 8,
             decoration: BoxDecoration(
-              color: isSelected ? Colors.white : Colors.white.withOpacity(0.5),
+              color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(2),
             ),
           );
@@ -144,7 +144,7 @@ class _TopImagePanelState extends State<TopImagePanel> {
       color: Colors.white,
       borderRadius: BorderRadius.circular(25),
       child: InkWell(
-        onTap: () => widget.interactor.selectStore(),
+        onTap: () => widget.interactor.openSelectStore(),
         borderRadius: BorderRadius.circular(25),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -174,10 +174,10 @@ class _TopImagePanelState extends State<TopImagePanel> {
     const Color navyColor = Color(0xFF0D1B3E);
 
     return Material(
-      color: navyColor.withOpacity(0.85),
+      color: navyColor.withValues(alpha: 0.85),
       borderRadius: BorderRadius.circular(25),
       child: InkWell(
-        onTap: () => widget.interactor.openSearch(),
+        onTap: () => widget.interactor.openGlobalSearch(),
         borderRadius: BorderRadius.circular(25),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

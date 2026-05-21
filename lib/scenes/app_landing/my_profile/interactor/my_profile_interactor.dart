@@ -7,6 +7,8 @@ import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart
 import 'package:coffee_bean/core/utils/locator.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/my_profile_router.dart';
+import 'package:coffee_bean/scenes/user_features/user_auth_flow.dart';
+import 'package:flutter/cupertino.dart';
 
 // States
 abstract class MyProfileState extends BaseBlocState {
@@ -25,7 +27,7 @@ class MyProfileLoaded extends MyProfileState {
   MyProfileLoaded({required super.isLoggedIn});
 }
 
-class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileState> {
+class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileState> implements UserAuthFlowListener {
 
   MyProfileInteractor(MyProfileRoutable router) : super(MyProfileInitial(), router: router);
 
@@ -51,4 +53,22 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
     await checkLoginStatus();
     router?.doLogout();
   }
+
+// --- UserAuthFlowListener ---
+
+  @override
+  void onAuthSuccess() {
+    debugPrint("Auth Flow Success - Reload Profile Data");
+    // Interactor có thể lắng nghe UserLoginSuccessEvent qua EventBus để cập nhật UI
+    checkLoginStatus();
+
+    // co the them thong ba de nhung thang khac update vi da login roi
+    // locator<DbEventBus>().fire(UserLoginSuccessEvent());
+  }
+
+  @override
+  void onAuthCancelled() {
+    debugPrint("Auth Flow Cancelled");
+  }
+
 }

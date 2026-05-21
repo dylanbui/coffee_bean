@@ -42,11 +42,6 @@ class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInter
     buildContext = context;
 
     var appBar = getAppBar(context);
-
-    if (widget.showAppBar == false) {
-      appBar = null;
-    }
-
     return BlocProvider.value(
       value: interactor,
       child: Scaffold(
@@ -70,7 +65,7 @@ class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInter
 
   void _onStateListener(BuildContext context, SetPasswordState state) {
     if (state is SetPasswordInProgress) {
-      // showLoading(); // Removed to use button loading
+      showLoading(); // Removed to use button loading
     } else {
       hideLoading();
       if (state is SetPasswordSuccess) {
@@ -107,7 +102,7 @@ class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInter
                   _buildInputs(),
                   const SizedBox(height: 40),
                   AppButton(
-                    text: "Change Password",
+                    text: "Set Password",
                     isLoading: state is SetPasswordInProgress,
                     onPressed: _handleSubmit,
                   ),
@@ -154,10 +149,7 @@ class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInter
   // region Logic Handlers
 
   void _handleSubmit() {
-    _setPasswordController.validateSetPassword(
-      interactor,
-      _showError,
-    );
+    _setPasswordController.validateSetPassword(interactor, _showError,);
   }
 
   // endregion
@@ -175,7 +167,7 @@ class SetPasswordController {
       onError("Password must be at least 6 characters");
       return;
     }
-    // interactor.doSetPassword(passwordController.text);
+    interactor.doSetPassword(passwordController.text);
   }
 
   void dispose() {

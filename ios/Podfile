@@ -46,6 +46,12 @@ post_install do |installer|
     target.build_configurations.each do |config|
       # Loại bỏ arm64 cho simulator để tránh xung đột với MLKit
       config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+
+      # Setup permission_handler for Location
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
+        '$(inherited)',
+        'PERMISSION_LOCATION=1',
+      ]
     end
   end
 end

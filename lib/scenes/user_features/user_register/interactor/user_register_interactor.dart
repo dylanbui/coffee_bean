@@ -11,6 +11,8 @@ import 'package:coffee_bean/scenes/user_features/user_register/interactor/user_r
 import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/user_features/user_register/user_register_builder.dart';
+import 'package:coffee_bean/utils/utils.dart';
+import 'package:flutter/cupertino.dart';
 
 // Interactor
 
@@ -30,14 +32,15 @@ class UserRegisterInteractor extends CubitInteractor<UserRegisterRouter, UserReg
 
   void sendSmsCode(String phoneNumber) async {
     // Logic gửi mã SMS
-    print("Interactor: Send SMS to $phoneNumber");
+    debugPrint("Interactor: Send SMS to $phoneNumber");
   }
 
   void doRegister(String phoneNumber, String smsCode, String? invitationCode) async {
     emit(UserRegisterInProgress());
     // Giả lập xử lý đăng ký
-    print("Interactor: Register with $phoneNumber / $smsCode / $invitationCode");
-    await Future.delayed(const Duration(seconds: 2));
-    emit(UserRegisterSuccess());
+    debugPrint("Interactor: Register with $phoneNumber / $smsCode / $invitationCode");
+    Utils.delay(second: 2);
+    emit(UserSetPassword());
+    router?.navigate(UserSetPasswordRoute());
   }
 }

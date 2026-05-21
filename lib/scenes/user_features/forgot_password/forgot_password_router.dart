@@ -12,19 +12,24 @@ import 'package:coffee_bean/scenes/user_features/forgot_password/forgot_password
 import 'package:coffee_bean/scenes/user_features/set_password/set_password_builder.dart';
 import 'package:flutter/material.dart';
 
+// --- ROUTE ---
+// A Route object to communicate the "completion" event from the Interactor to the Builder/Router.
+class ForgotPasswordCompleteRoute implements DbNoteRoute {}
+
 class ForgotPasswordRouter extends DbNoteRouter {
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
     if (toRoute is ForgotPasswordCompleteRoute) {
       // When the completion route is received, navigate to SetPassword.
       SetPasswordBuilder setPasswordBuilder = SetPasswordBuilder();
-      
       // In RIBs architecture, building a module returns its Router.
       // We then push the Router's viewController (the Widget).
       final nextRouter = setPasswordBuilder.build();
-      
       // Use the navigator inherited from DbNoteRouter
-      navigator.push(nextRouter.viewController);
+      parentRouter?.navigator.push(nextRouter.viewController);
+    }
+    else {
+      parentRouter?.navigate(toRoute, fromContext: fromContext, routeName: routeName, parameters: parameters);
     }
   }
 }

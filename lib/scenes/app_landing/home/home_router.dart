@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 // Route
 class ChooseStoreRoute implements DbNoteRoute {}
+class GlobalSearchRoute implements DbNoteRoute {}
 
 abstract class HomeRoutable implements DbNoteRoutable {}
 
@@ -13,7 +14,11 @@ class HomeRouter extends DbNoteRouter implements HomeRoutable {
     if (toRoute is ChooseStoreRoute) {
       final nextBuilder = GlobalSearchBuilder();
       final nextRouter = nextBuilder.build();
-      navigator.push(nextRouter.viewController, fromContext: fromContext);
+      navigator.push(nextRouter.viewController);
+    } else if (toRoute is GlobalSearchRoute) {
+      final nextBuilder = GlobalSearchBuilder();
+      final nextRouter = nextBuilder.build();
+      navigator.push(nextRouter.viewController);
     }
   }
 }

@@ -10,6 +10,8 @@
 import 'package:coffee_bean/scenes/user_features/set_password/interactor/set_password_event_state.dart';
 import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:coffee_bean/scenes/user_features/user_register/user_register_builder.dart';
+import 'package:coffee_bean/utils/utils.dart';
 
 // Interactor
 
@@ -25,5 +27,12 @@ class SetPasswordInteractor extends CubitInteractor<DbNoteRoutable, SetPasswordS
 
   Future loadData() async {
     // emit(SetPasswordInProgress());
+  }
+
+  Future<void> doSetPassword(String password) async {
+    emit(SetPasswordInProgress());
+    await Utils.delay();
+    emit(SetPasswordSuccess());
+    router?.navigate(UserRegisterCompleteRoute());
   }
 }

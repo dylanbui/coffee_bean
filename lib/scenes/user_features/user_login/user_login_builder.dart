@@ -32,20 +32,16 @@ class UserLoginRouter extends DbNoteRouter {
 
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
-    if (toRoute is LoginSuccessRoute) {
-      navigator.pop(fromContext: fromContext);
-    } else if (toRoute is UserRegisterRoute) {
-      UserRegisterBuilder userRegisterBuilder = UserRegisterBuilder();
-      navigator.push(userRegisterBuilder.build().viewController, fromContext: fromContext);
-    } else if (toRoute is ForgotPasswordRoute) {
-      ForgotPasswordBuilder forgotPasswordBuilder = ForgotPasswordBuilder();
-      navigator.push(forgotPasswordBuilder.build().viewController, fromContext: fromContext);
-    } else if (toRoute is UserAgreementRoute) {
+    // Day la nhung luong phu, xu ly o day cho nhe, luong chinh se day len parent
+    if (toRoute is UserAgreementRoute) {
       UserAgreementBuilder userAgreementBuilder = UserAgreementBuilder();
-      navigator.push(userAgreementBuilder.build().viewController, fromContext: fromContext);
+      parentRouter?.navigator.push(userAgreementBuilder.build().viewController, fromContext: fromContext);
     } else if (toRoute is PrivacyPolicyRoute) {
       PrivacyPolicyBuilder privacyPolicyBuilder = PrivacyPolicyBuilder();
-      navigator.push(privacyPolicyBuilder.build().viewController, fromContext: fromContext);
+      parentRouter?.navigator.push(privacyPolicyBuilder.build().viewController, fromContext: fromContext);
+    } else {
+      // Đẩy các route khác (LoginSuccess, UserRegister, ForgotPassword) lên cho Flow xử lý
+      parentRouter?.navigate(toRoute, fromContext: fromContext, routeName: routeName, parameters: parameters);
     }
   }
 }

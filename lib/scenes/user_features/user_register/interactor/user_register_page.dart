@@ -137,7 +137,9 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
       showLoading();
     } else {
       hideLoading();
-      if (state is UserRegisterSuccess) {
+      if (state is UserSetPassword) {
+        // Dang chuyen trang qua set password
+      } else if (state is UserRegisterSuccess) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Register Success!"), backgroundColor: Colors.green),
         );
@@ -222,8 +224,8 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
         const Text("Already have an account? ", style: TextStyle(fontSize: 14)),
         InkWell(
           onTap: () {
-            iLog("Tap: Go to Login");
-            interactor.router?.navigate(UserLoginRoute());
+            iLog("Tap: Go to Login - khong cho phep o day, se bi cycle app");
+            // interactor.router?.navigate(UserLoginRoute());
           },
           child: const Text(
             "Go to Login",

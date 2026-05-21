@@ -23,19 +23,22 @@ class SetPasswordBuilder extends DbNoteRouter implements DbNoteBuilder<SetPasswo
   SetPasswordBuilder();
 
   @override
-  SetPasswordBuilder build() {
-    final interactor = SetPasswordInteractor(router: this);
-    final page = SetPasswordPage(interactor: interactor);
+  void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
+    // if (toRoute is SetPasswordCompleteRoute) {
+    //   navigator.pop(fromContext: fromContext);
+    // }
 
-    attach(interactor, page);
-
-    return this;
+    // Day toan bo cho router cha xu ly
+    parentRouter?.navigate(toRoute, fromContext: fromContext, routeName: routeName, parameters: parameters);
   }
 
   @override
-  void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
-    if (toRoute is SetPasswordCompleteRoute) {
-      navigator.pop(fromContext: fromContext);
-    }
+  SetPasswordBuilder build() {
+    final interactor = SetPasswordInteractor(router: this);
+    final page = SetPasswordPage(interactor: interactor);
+    attach(interactor, page);
+    return this;
   }
+
+
 }
