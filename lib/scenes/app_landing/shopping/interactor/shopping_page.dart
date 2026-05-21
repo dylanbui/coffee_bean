@@ -1,4 +1,6 @@
 import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:coffee_bean/data/model/category.dart';
+import 'package:coffee_bean/data/model/product.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/widget/shopping_category_list.dart';
@@ -6,7 +8,9 @@ import 'package:coffee_bean/scenes/app_landing/shopping/interactor/widget/shoppi
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/widget/shopping_header.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/widget/shopping_product_item.dart';
 import 'package:flutter/material.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 //ignore: must_be_immutable
 class ShoppingPage extends CubitStateFulWidget<ShoppingInteractor, ShoppingState> {
@@ -17,53 +21,59 @@ class ShoppingPage extends CubitStateFulWidget<ShoppingInteractor, ShoppingState
 }
 
 class _ShoppingPageState extends CubitState<ShoppingPage, ShoppingInteractor, ShoppingState> {
-  final ScrollController _categoryScrollController = ScrollController();
-  final ScrollController _productScrollController = ScrollController();
+  final ItemScrollController _productScrollController = ItemScrollController();
+  final ItemPositionsListener _productPositionsListener = ItemPositionsListener.create();
+
+  final ItemScrollController _categoryScrollController = ItemScrollController();
+
   final double _itemHeight = 110.0;
   final double _headerHeight = 40.0;
   final double _spacing = 12.0;
 
   bool _isAutoScrolling = false;
+  List<dynamic> _flattenedItems = [];
+  Map<int, int> _categoryToIndexMap = {}; // CategoryIndex -> FlattenedIndex
 
   @override
   void initState() {
     super.initState();
-    _productScrollController.addListener(_onProductScroll);
+    _productPositionsListener.itemPositions.addListener(_onItemPositionsChanged);
   }
 
   @override
   void dispose() {
-    _categoryScrollController.dispose();
-    _productScrollController.dispose();
+    _productPositionsListener.itemPositions.removeListener(_onItemPositionsChanged);
     super.dispose();
   }
 
-  void _onProductScroll() {
-    if (_isAutoScrolling) return;
+  void _onItemPositionsChanged() {
+    if (_isAutoScrolling || interactor.state.isSearching) return;
 
-    final state = interactor.state;
-    if (state.isSearching) return;
+    final positions = _productPositionsListener.itemPositions.value;
+    if (positions.isEmpty) return;
 
-    double offset = _productScrollController.offset;
-    double currentTotalHeight = 0;
-    int newIndex = 0;
+    // Find the first visible item that is fully or mostly at the top
+    final firstVisibleIndex = positions
+        .where((pos) => pos.itemTrailingEdge > 0)
+        .reduce((min, pos) => pos.itemLeadingEdge < min.itemLeadingEdge ? pos : min)
+        .index;
 
-    for (int i = 0; i < state.categories.length; i++) {
-      final catId = state.categories[i].id!;
-      final productsCount = state.productsByCategory[catId]?.length ?? 0;
-      double sectionHeight = _headerHeight + (productsCount * (_itemHeight + _spacing));
-      
-      if (offset >= currentTotalHeight && offset < currentTotalHeight + sectionHeight) {
-        newIndex = i;
+    // Determine which category this index belongs to
+    int newCategoryIndex = -1;
+    for (int i = 0; i < interactor.state.categories.length; i++) {
+      int headerIndex = _categoryToIndexMap[i] ?? -1;
+      int nextHeaderIndex = _categoryToIndexMap[i + 1] ?? _flattenedItems.length;
+
+      if (firstVisibleIndex >= headerIndex && firstVisibleIndex < nextHeaderIndex) {
+        newCategoryIndex = i;
         break;
       }
-      currentTotalHeight += sectionHeight;
     }
 
-    if (newIndex != state.selectedCategoryIndex) {
-      interactor.selectCategory(newIndex);
-      _categoryScrollController.animateTo(
-        newIndex * 120.0, // Updated: height 110 + margin 10
+    if (newCategoryIndex != -1 && newCategoryIndex != interactor.state.selectedCategoryIndex) {
+      interactor.selectCategory(newCategoryIndex);
+      _categoryScrollController.scrollTo(
+        index: newCategoryIndex,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
       );
@@ -71,22 +81,31 @@ class _ShoppingPageState extends CubitState<ShoppingPage, ShoppingInteractor, Sh
   }
 
   void _scrollToCategory(int categoryIndex) {
+    final targetIndex = _categoryToIndexMap[categoryIndex];
+    if (targetIndex == null) return;
+
     _isAutoScrolling = true;
     interactor.selectCategory(categoryIndex);
 
-    final state = interactor.state;
-    double targetOffset = 0;
-    for (int i = 0; i < categoryIndex; i++) {
-      final catId = state.categories[i].id!;
-      final productsCount = state.productsByCategory[catId]?.length ?? 0;
-      targetOffset += _headerHeight + (productsCount * (_itemHeight + _spacing));
-    }
-
-    _productScrollController.animateTo(
-      targetOffset,
+    _productScrollController.scrollTo(
+      index: targetIndex,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     ).then((_) => _isAutoScrolling = false);
+  }
+
+  void _prepareFlattenedItems(ShoppingState state) {
+    _flattenedItems = [];
+    _categoryToIndexMap = {};
+
+    for (int i = 0; i < state.categories.length; i++) {
+      final category = state.categories[i];
+      _categoryToIndexMap[i] = _flattenedItems.length;
+      _flattenedItems.add(category); // Add Header
+
+      final products = state.productsByCategory[category.id] ?? [];
+      _flattenedItems.addAll(products); // Add Products
+    }
   }
 
   @override
@@ -96,23 +115,32 @@ class _ShoppingPageState extends CubitState<ShoppingPage, ShoppingInteractor, Sh
 
   @override
   Widget getBody(BuildContext context) {
-    return BlocBuilder<ShoppingInteractor, ShoppingState>(
-      builder: (context, state) {
-        return Stack(
+    return Stack(
+      children: [
+        Column(
           children: [
-            Column(
-              children: [
-                ShoppingHeader(interactor: interactor, state: state),
-                const SizedBox(height: 20),
-                Expanded(
-                  child: state.isSearching ? _buildSearchResults(state) : _buildMainContent(state),
-                ),
-              ],
+            ShoppingHeader(interactor: interactor),
+            const SizedBox(height: 10),
+            Expanded(
+              child: BlocBuilder<ShoppingInteractor, ShoppingState>(
+                buildWhen: (p, c) =>
+                    p.categories != c.categories ||
+                    p.productsByCategory != c.productsByCategory ||
+                    p.isSearching != c.isSearching ||
+                    p.filteredProducts != c.filteredProducts,
+                builder: (context, state) {
+                  if (state.isSearching) {
+                    return _buildSearchResults(state);
+                  }
+                  _prepareFlattenedItems(state);
+                  return _buildMainContent(state);
+                },
+              ),
             ),
-            ShoppingFooter(interactor: interactor),
           ],
-        );
-      },
+        ),
+        ShoppingFooter(interactor: interactor),
+      ],
     );
   }
 
@@ -121,43 +149,47 @@ class _ShoppingPageState extends CubitState<ShoppingPage, ShoppingInteractor, Sh
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Left: Categories
-        ShoppingCategoryList(
-          state: state,
-          controller: _categoryScrollController,
-          onCategoryTap: _scrollToCategory,
+        BlocBuilder<ShoppingInteractor, ShoppingState>(
+          buildWhen: (p, c) => p.selectedCategoryIndex != c.selectedCategoryIndex || p.categories != c.categories,
+          builder: (context, state) {
+            return ShoppingCategoryList(
+              categories: state.categories,
+              selectedIndex: state.selectedCategoryIndex,
+              itemScrollController: _categoryScrollController,
+              onCategoryTap: _scrollToCategory,
+            );
+          },
         ),
 
         // Right: Products
         Expanded(
-          child: ListView.builder(
-            controller: _productScrollController,
-            padding: const EdgeInsets.only(left: 8, right: 8),
-            itemCount: state.categories.length + 1, // +1 for bottom spacing item
+          child: ScrollablePositionedList.builder(
+            itemScrollController: _productScrollController,
+            itemPositionsListener: _productPositionsListener,
+            padding: const EdgeInsets.only(left: 8, right: 8, bottom: 100),
+            itemCount: _flattenedItems.length,
             itemBuilder: (context, index) {
-              if (index == state.categories.length) {
-                return const SizedBox(height: 100); // Spacer for footer
+              final item = _flattenedItems[index];
+
+              if (item is Category) {
+                return Container(
+                  height: _headerHeight,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    item.name?.toUpperCase() ?? "",
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: TMLabsColor.grey),
+                  ),
+                );
               }
 
-              final category = state.categories[index];
-              final products = state.productsByCategory[category.id] ?? [];
+              if (item is Product) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: _spacing),
+                  child: ShoppingProductItem(product: item, interactor: interactor, height: _itemHeight),
+                );
+              }
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: _headerHeight,
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      category.name?.toUpperCase() ?? "",
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.grey),
-                    ),
-                  ),
-                  ...products.map((p) => Padding(
-                    padding: EdgeInsets.only(bottom: _spacing),
-                    child: ShoppingProductItem(product: p, interactor: interactor, height: _itemHeight),
-                  )),
-                ],
-              );
+              return const SizedBox.shrink();
             },
           ),
         ),

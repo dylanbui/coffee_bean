@@ -1,17 +1,20 @@
-import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_event_state.dart';
+import 'package:coffee_bean/data/model/category.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class ShoppingCategoryList extends StatelessWidget {
-  final ShoppingState state;
-  final ScrollController controller;
+  final List<Category> categories;
+  final int selectedIndex;
+  final ItemScrollController itemScrollController;
   final Function(int) onCategoryTap;
 
   const ShoppingCategoryList({
     super.key,
-    required this.state,
-    required this.controller,
+    required this.categories,
+    required this.selectedIndex,
+    required this.itemScrollController,
     required this.onCategoryTap,
   });
 
@@ -20,13 +23,13 @@ class ShoppingCategoryList extends StatelessWidget {
     return Container(
       width: 80, // Fixed width as requested
       color: Colors.white, // Parent background can be white
-      child: ListView.builder(
-        controller: controller,
+      child: ScrollablePositionedList.builder(
+        itemScrollController: itemScrollController,
         padding: const EdgeInsets.symmetric(vertical: 0),
-        itemCount: state.categories.length,
+        itemCount: categories.length,
         itemBuilder: (context, index) {
-          final category = state.categories[index];
-          bool isSelected = state.selectedCategoryIndex == index;
+          final category = categories[index];
+          bool isSelected = selectedIndex == index;
           return GestureDetector(
             onTap: () => onCategoryTap(index),
             child: Container(
@@ -46,7 +49,7 @@ class ShoppingCategoryList extends StatelessWidget {
                   AppIcon(
                     category.image ?? AppAssets.icons.icHome,
                     // Active: #8D95A0, Deactive: #CECCCD (TMLabsColor.lightGrey)
-                    color: isSelected ? const Color(0xFF8D95A0) : TMLabsColor.lightGrey,
+                    color: isSelected ? TMLabsColor.grey : TMLabsColor.lightGrey,
                     size: 32,
                   ),
                   const SizedBox(height: 8),
@@ -58,9 +61,7 @@ class ShoppingCategoryList extends StatelessWidget {
                         fontSize: 11,
                         height: 1.2,
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                        // Match icon color for consistency or keep as is? 
-                        // User only mentioned icon color, but usually text follows.
-                        color: isSelected ? const Color(0xFF8D95A0) : TMLabsColor.grey,
+                        color: isSelected ? TMLabsColor.grey : TMLabsColor.lightGrey,
                       ),
                       textAlign: TextAlign.center,
                       maxLines: 2,

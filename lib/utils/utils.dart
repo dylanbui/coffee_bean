@@ -1,5 +1,6 @@
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -97,6 +98,14 @@ class Utils {
 
   static Future<void> delay({int second = 3}) async {
     await Future.delayed(Duration(seconds: second));
+  }
+
+  static double getSafeAreaTop(BuildContext context) {
+    return MediaQuery.of(context).padding.top;
+  }
+
+  static EdgeInsets getTopPadding(BuildContext context, {double horizontal = 10, double extraTop = 10}) {
+    return EdgeInsets.fromLTRB(horizontal, getSafeAreaTop(context) + extraTop, horizontal, 0);
   }
 
 }

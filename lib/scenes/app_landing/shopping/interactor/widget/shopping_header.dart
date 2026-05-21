@@ -5,22 +5,21 @@ import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/search_bar.dart';
+import 'package:coffee_bean/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class ShoppingHeader extends StatelessWidget {
   final ShoppingInteractor interactor;
-  final ShoppingState state;
 
   const ShoppingHeader({
     super.key,
     required this.interactor,
-    required this.state,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 60, 16, 0),
+      padding: Utils.getTopPadding(context),
       child: Row(
         children: [
           AppButton(
@@ -33,7 +32,7 @@ class ShoppingHeader extends StatelessWidget {
             ),
             onPressed: () {},
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: AppSearchBar(
               onSearch: (value) => interactor.onSearchChanged(value),
