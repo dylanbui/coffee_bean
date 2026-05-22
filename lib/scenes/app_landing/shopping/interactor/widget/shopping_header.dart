@@ -19,7 +19,7 @@ class ShoppingHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: Utils.getTopPadding(context),
+      padding: Utils.getTopPadding(context, extraTop: 5),
       child: Row(
         children: [
           AppButton(

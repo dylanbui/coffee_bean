@@ -8,10 +8,10 @@
 
 import 'package:coffee_bean/core/architecture_ribs/note_flow.dart';
 import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/scenes/auth_flow_sample/auth_flow_rib.dart';
-import 'package:coffee_bean/scenes/auth_flow_sample/login_rib.dart';
-import 'package:coffee_bean/scenes/auth_flow_sample/register_rib.dart';
-import 'package:coffee_bean/scenes/auth_flow_sample/forgot_pw_rib.dart';
+import 'package:coffee_bean/scenes/rib_samples/auth_flow_sample/auth_flow_rib.dart';
+import 'package:coffee_bean/scenes/rib_samples/auth_flow_sample/login_rib.dart';
+import 'package:coffee_bean/scenes/rib_samples/auth_flow_sample/register_rib.dart';
+import 'package:coffee_bean/scenes/rib_samples/auth_flow_sample/forgot_pw_rib.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
