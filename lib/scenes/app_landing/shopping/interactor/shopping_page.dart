@@ -1,6 +1,5 @@
 import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
-import 'package:coffee_bean/data/model/category.dart';
-import 'package:coffee_bean/data/model/product.dart';
+import 'package:coffee_bean/data/database/app_database.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/widget/shopping_category_list.dart';
@@ -171,18 +170,18 @@ class _ShoppingPageState extends CubitState<ShoppingPage, ShoppingInteractor, Sh
             itemBuilder: (context, index) {
               final item = _flattenedItems[index];
 
-              if (item is Category) {
+              if (item is TblCategory) {
                 return Container(
                   height: _headerHeight,
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    item.name?.toUpperCase() ?? "",
+                    item.name.toUpperCase(),
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: TMLabsColor.grey),
                   ),
                 );
               }
 
-              if (item is Product) {
+              if (item is TblFood) {
                 return Padding(
                   padding: EdgeInsets.only(bottom: _spacing),
                   child: ShoppingProductItem(product: item, interactor: interactor, height: _itemHeight),
@@ -198,6 +197,22 @@ class _ShoppingPageState extends CubitState<ShoppingPage, ShoppingInteractor, Sh
   }
 
   Widget _buildSearchResults(ShoppingState state) {
+    if (state.filteredProducts.isEmpty && state.searchQuery.isNotEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.search_off, size: 80, color: Colors.grey[300]),
+            const SizedBox(height: 16),
+            Text(
+              "Không tìm thấy sản phẩm nào cho \"${state.searchQuery}\"",
+              style: TextStyle(color: Colors.grey[600], fontSize: 16),
+            ),
+          ],
+        ),
+      );
+    }
+
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       itemCount: state.filteredProducts.length + 1,

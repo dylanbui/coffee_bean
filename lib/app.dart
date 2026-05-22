@@ -16,7 +16,9 @@ import 'package:coffee_bean/core/utils/shared_preferences.dart';
 import 'package:coffee_bean/config/app_config.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/network/token_interceptor.dart';
+import 'package:coffee_bean/data/database/database_service.dart';
 import 'package:coffee_bean/scenes/app/app_builder.dart';
+import 'package:coffee_bean/scenes/app/app_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/core/utils/locator.dart';
@@ -100,6 +102,11 @@ Future<void> _setupNetwork() async {
 }
 
 Future<void> _setupLocator() async {
+  // Register Database Service
+  final dbService = DatabaseService();
+  await dbService.init();
+  locator.registerSingleton<DatabaseService>(dbService);
+
   // Register Broadcast Service same EventBus
   locator.registerLazySingleton<DbEventBus>(() => DbEventBus());
   // Register DeepLink Service
@@ -109,7 +116,7 @@ Future<void> _setupLocator() async {
   locator.registerLazySingleton<LikesService>(() => LikesService());
 }
 
-/*
+
 class App extends StatefulWidget {
   const App({super.key});
 
@@ -145,31 +152,31 @@ class _AppState extends State<App> {
   }
 }
 
- */
-
-class App extends StatelessWidget {
-
-  final AppBuilder _appBuilder = AppBuilder();
-  late final _appRouter = _appBuilder.build();
-
-  App({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-
-    // Run sync data
-    _appBuilder.startApp();
-
-    return MaterialApp(
-      // Connect GlobalKey from Router to Flutter Navigator
-      navigatorKey: DbNavigator.globalNavigatorState,
-      title: 'Coffee Bean',
-      theme: ThemeData(primarySwatch: Colors.blue,),
-      home: _appRouter.viewController,
-    );
-  }
-}
+//
+//
+// class App extends StatelessWidget {
+//
+//   final AppBuilder _appBuilder = AppBuilder();
+//   late final _appRouter = _appBuilder.build();
+//
+//   App({super.key});
+//
+//   // This widget is the root of your application.
+//   @override
+//   Widget build(BuildContext context) {
+//
+//     // Run sync data
+//     _appBuilder.startApp();
+//
+//     return MaterialApp(
+//       // Connect GlobalKey from Router to Flutter Navigator
+//       navigatorKey: DbNavigator.globalNavigatorState,
+//       title: 'Coffee Bean',
+//       theme: ThemeData(primarySwatch: Colors.blue,),
+//       home: _appRouter.viewController,
+//     );
+//   }
+// }
 
 
 //

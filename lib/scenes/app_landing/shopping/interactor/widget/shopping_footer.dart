@@ -1,5 +1,5 @@
 import 'package:coffee_bean/core/utils/app_button.dart';
-import 'package:coffee_bean/data/local/live_service/model/cart_item.dart';
+import 'package:coffee_bean/data/database/app_database.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
@@ -14,7 +14,7 @@ class ShoppingFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<CartItem>>(
+    return StreamBuilder<List<TblCartItem>>(
       stream: interactor.cartService.cartStream,
       builder: (context, snapshot) {
         final items = snapshot.data ?? [];

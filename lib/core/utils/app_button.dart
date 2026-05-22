@@ -93,6 +93,7 @@ class AppButton extends StatelessWidget {
   final double? height;
   final MainAxisSize? mainAxisSize;
   final EdgeInsetsGeometry? padding;
+  final bool applyIconColor;
 
   const AppButton({
     super.key,
@@ -109,17 +110,21 @@ class AppButton extends StatelessWidget {
     this.height,
     this.mainAxisSize,
     this.padding,
+    this.applyIconColor = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Trạng thái vô hiệu hóa
+    // 1. Xác định trạng thái vô hiệu hóa thực tế
     final bool effectivelyDisabled = isDisabled || isLoading || onPressed == null;
     final effectiveMainAxisSize = mainAxisSize ?? style.mainAxisSize;
-
-    // Cấu hình ButtonStyle tập trung
     final double targetHeight = height ?? style.height ?? 48.0;
-    
+
+    // 2. Tính toán màu Foreground thực tế (dùng cho Text, Icon, Loading)
+    final Color currentForegroundColor = effectivelyDisabled
+        ? (style.disabledTextColor ?? Colors.grey.shade500)
+        : style.textColor;
+
     final buttonStyle = ButtonStyle(
       backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
         if (states.contains(WidgetState.disabled)) {
@@ -127,12 +132,7 @@ class AppButton extends StatelessWidget {
         }
         return style.backgroundColor;
       }),
-      foregroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
-        if (states.contains(WidgetState.disabled)) {
-          return style.disabledTextColor ?? Colors.grey.shade500;
-        }
-        return style.textColor;
-      }),
+      foregroundColor: WidgetStateProperty.all(currentForegroundColor),
       side: WidgetStateProperty.resolveWith<BorderSide?>((states) {
         final color = states.contains(WidgetState.disabled)
             ? (style.disabledBorderColor ?? Colors.transparent)
@@ -140,34 +140,35 @@ class AppButton extends StatelessWidget {
         return BorderSide(color: color, width: 1.5);
       }),
       elevation: WidgetStateProperty.all(0),
-      // Đặt vertical padding về 0 để không làm nở chiều cao của Button
-      padding: WidgetStateProperty.all(padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 0)),
-      // Khóa chiều cao cố định bằng cách set cả min và max size
+      // Để Material tự tính toán hoặc dùng padding người dùng truyền vào
+      padding: WidgetStateProperty.all(padding ?? const EdgeInsets.symmetric(horizontal: 12)),
+      // Khóa chiều cao tối thiểu bằng targetHeight
       minimumSize: WidgetStateProperty.all(Size(
-        effectiveMainAxisSize == MainAxisSize.min ? 0 : (width ?? double.infinity),
-        targetHeight,
-      )),
-      maximumSize: WidgetStateProperty.all(Size(
-        width ?? double.infinity,
+        width ?? (effectiveMainAxisSize == MainAxisSize.min ? 0 : double.infinity),
         targetHeight,
       )),
       shape: WidgetStateProperty.all(
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(style.borderRadius)),
       ),
-      splashFactory: useTapEffect ? NoSplash.splashFactory : InkRipple.splashFactory,
+      // Luôn tắt Splash của Material nếu dùng TapEffect hoặc khi Loading/Disabled
+      splashFactory: NoSplash.splashFactory,
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      visualDensity: VisualDensity.standard, // Quay lại standard để tránh bị thu nhỏ quá mức
+      visualDensity: VisualDensity.standard,
     );
 
+    // 3. Xử lý Logic Tap để tránh Double Click nhưng vẫn giữ Visual Active
+    // Bỏ AbsorbPointer vì nó làm mất hit-test vùng nút, khiến click bị xuyên thấu.
+    // Thay vào đó, ElevatedButton với onPressed: () {} sẽ tự chiếm quyền ưu tiên 
+    // trong Gesture Arena, giúp ngăn sự kiện truyền ra ngoài.
     Widget current = ElevatedButton(
-      onPressed: effectivelyDisabled ? null : onPressed,
+      onPressed: effectivelyDisabled ? null : (useTapEffect ? () {} : onPressed),
       style: buttonStyle,
-      child: isLoading 
-          ? (loadingWidget ?? _buildDefaultLoading(style.textColor)) 
-          : _buildContent(),
+      child: isLoading
+          ? (loadingWidget ?? _buildDefaultLoading(currentForegroundColor))
+          : _buildContent(currentForegroundColor),
     );
 
-    // Bọc TapEffect để giữ hiệu ứng scale cũ, chỉ áp dụng khi không bị disabled
+    // 4. Bọc TapEffect để giữ hiệu ứng scale cũ, chỉ áp dụng khi không bị disabled
     if (useTapEffect && !effectivelyDisabled) {
       return TapEffect(
         onTap: onPressed,
@@ -190,32 +191,48 @@ class AppButton extends StatelessWidget {
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(Color foregroundColor) {
+    final bool hasLeftIcon = leftIcon != null;
+    final bool hasRightIcon = rightIcon != null;
+    final bool hasText = text != null && text!.isNotEmpty;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (leftIcon != null) ...[
-          leftIcon!,
-          const SizedBox(width: 8),
-        ],
-        if (text != null)
+        if (hasLeftIcon) _buildIconWrapper(leftIcon!, foregroundColor),
+        if (hasLeftIcon && hasText) const SizedBox(width: 8),
+        if (hasText)
           Flexible(
             child: Text(
               text!,
               style: (style.textStyle ?? const TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 15,
-              )).copyWith(color: null), // Màu chữ sẽ lấy từ foregroundColor của ButtonStyle
+              )).copyWith(color: foregroundColor),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ),
-        if (rightIcon != null) ...[
-          const SizedBox(width: 8),
-          rightIcon!,
-        ],
+        if (hasText && hasRightIcon) const SizedBox(width: 8),
+        if (hasRightIcon) _buildIconWrapper(rightIcon!, foregroundColor),
       ],
     );
+  }
+
+  Widget _buildIconWrapper(Widget icon, Color color) {
+    Widget currentIcon = IconTheme(
+      data: IconThemeData(color: color, size: 18),
+      child: icon,
+    );
+
+    if (applyIconColor) {
+      currentIcon = ColorFiltered(
+        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+        child: currentIcon,
+      );
+    }
+
+    return currentIcon;
   }
 }

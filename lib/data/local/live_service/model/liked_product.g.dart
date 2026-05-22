@@ -7,9 +7,9 @@ part of 'liked_product.dart';
 // **************************************************************************
 
 LikedProduct _$LikedProductFromJson(Map<String, dynamic> json) => LikedProduct(
-  product: Product.fromJson(json['product'] as Map<String, dynamic>),
-  likedAt: DateTime.parse(json['likedAt'] as String),
-);
+      product: Product.fromJson(json['product'] as Map<String, dynamic>),
+      likedAt: DateTime.parse(json['likedAt'] as String),
+    );
 
 Map<String, dynamic> _$LikedProductToJson(LikedProduct instance) =>
     <String, dynamic>{

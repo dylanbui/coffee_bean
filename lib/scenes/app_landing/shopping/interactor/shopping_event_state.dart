@@ -1,13 +1,12 @@
 import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
-import 'package:coffee_bean/data/model/category.dart';
-import 'package:coffee_bean/data/model/product.dart';
+import 'package:coffee_bean/data/database/app_database.dart';
 
 // States
 class ShoppingState extends BaseBlocState {
-  final List<Category> categories;
-  final Map<int, List<Product>> productsByCategory;
-  final List<Product> allProducts;
-  final List<Product> filteredProducts;
+  final List<TblCategory> categories;
+  final Map<int, List<TblFood>> productsByCategory;
+  final List<TblFood> allProducts;
+  final List<TblFood> filteredProducts;
   final int selectedCategoryIndex;
   final bool isSearching;
   final String searchQuery;
@@ -25,10 +24,10 @@ class ShoppingState extends BaseBlocState {
   });
 
   ShoppingState copyWith({
-    List<Category>? categories,
-    Map<int, List<Product>>? productsByCategory,
-    List<Product>? allProducts,
-    List<Product>? filteredProducts,
+    List<TblCategory>? categories,
+    Map<int, List<TblFood>>? productsByCategory,
+    List<TblFood>? allProducts,
+    List<TblFood>? filteredProducts,
     int? selectedCategoryIndex,
     bool? isSearching,
     String? searchQuery,

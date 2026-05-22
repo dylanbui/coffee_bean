@@ -57,6 +57,9 @@ class _TopImagePanelState extends State<TopImagePanel> {
 
   Widget _buildImageSlider(List<String> images) {
     const double sliderHeight = 420;
+    // Lấy chiều rộng màn hình thực tế để tránh dùng double.infinity
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     if (images.isEmpty) return const SizedBox(height: sliderHeight);
     
     return SizedBox(
@@ -70,7 +73,7 @@ class _TopImagePanelState extends State<TopImagePanel> {
           children: [
             CachedImageWidget(
               imageUrl: images[index],
-              width: double.infinity,
+              width: screenWidth, // Concrete size (FHD/HD standard)
               height: sliderHeight,
               borderRadius: 0,
               fit: BoxFit.cover,

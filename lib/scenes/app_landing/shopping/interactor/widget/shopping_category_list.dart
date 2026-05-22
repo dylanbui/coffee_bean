@@ -1,11 +1,12 @@
-import 'package:coffee_bean/data/model/category.dart';
+import 'package:coffee_bean/config/constants.dart';
+import 'package:coffee_bean/data/database/app_database.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class ShoppingCategoryList extends StatelessWidget {
-  final List<Category> categories;
+  final List<TblCategory> categories;
   final int selectedIndex;
   final ItemScrollController itemScrollController;
   final Function(int) onCategoryTap;
@@ -47,7 +48,7 @@ class ShoppingCategoryList extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   AppIcon(
-                    category.image ?? AppAssets.icons.icHome,
+                    CategoryIcons.getIcon(category.serverId),
                     // Active: #8D95A0, Deactive: #CECCCD (TMLabsColor.lightGrey)
                     color: isSelected ? TMLabsColor.grey : TMLabsColor.lightGrey,
                     size: 32,
@@ -56,7 +57,7 @@ class ShoppingCategoryList extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: Text(
-                      category.name ?? "",
+                      category.name,
                       style: TextStyle(
                         fontSize: 11,
                         height: 1.2,

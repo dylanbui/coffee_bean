@@ -1,0 +1,322 @@
+{
+  "categories": [
+    {"id": 1, "name": "Coffee", "type": "FOOD", "sort_order": 1, "is_active": true},
+    {"id": 2, "name": "Milk Tea", "type": "FOOD", "sort_order": 2, "is_active": true},
+    {"id": 3, "name": "Cake", "type": "FOOD", "sort_order": 3, "is_active": true},
+    {"id": 4, "name": "Snack", "type": "FOOD", "sort_order": 4, "is_active": true},
+    {"id": 5, "name": "Tea", "type": "FOOD", "sort_order": 5, "is_active": true},
+    {"id": 6, "name": "Online Course", "type": "COURSE", "sort_order": 6, "is_active": true}
+  ],
+  "products": [
+    {"id": 1, "category_id": 1, "type": "FOOD", "name": "Espresso Single Shot", "price": 30000, "sku": "CF-ESP-01", "image": "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=100&q=80", "description": "Classic espresso shot", "is_active": true},
+    {"id": 2, "category_id": 1, "type": "FOOD", "name": "Cà Phê Sữa Đá Sài Gòn", "price": 35000, "sku": "CF-VNC-02", "image": "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=100&q=80", "description": "Vietnamese traditional coffee", "is_active": true},
+    {"id": 3, "category_id": 1, "type": "FOOD", "name": "Cappuccino Art", "price": 45000, "sku": "CF-CAP-03", "image": "https://images.unsplash.com/photo-1534778101976-62847782c213?w=100&q=80", "description": "Smooth milk and espresso", "is_active": true},
+    {"id": 4, "category_id": 1, "type": "FOOD", "name": "Caramel Macchiato", "price": 55000, "sku": "CF-MAC-04", "image": "https://images.unsplash.com/photo-1485808191679-5f86510681a2?w=100&q=80", "description": "Sweet caramel flavor", "is_active": true},
+    {"id": 5, "category_id": 1, "type": "FOOD", "name": "Latte Vanilla", "price": 50000, "sku": "CF-LAT-05", "image": "https://images.unsplash.com/photo-1529892485617-25f63cd7b1e9?w=100&q=80", "description": "Vanilla scented latte", "is_active": true},
+    {"id": 6, "category_id": 1, "type": "FOOD", "name": "Cold Brew Orange", "price": 60000, "sku": "CF-CLD-06", "image": "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=100&q=80", "description": "Refreshing cold brew with orange", "is_active": true},
+    {"id": 7, "category_id": 1, "type": "FOOD", "name": "Mocha Chocolate", "price": 55000, "sku": "CF-MOC-07", "image": "https://images.unsplash.com/photo-1528698853170-815ad79fd0f1?w=100&q=80", "description": "Coffee mixed with chocolate", "is_active": true},
+    {"id": 8, "category_id": 1, "type": "FOOD", "name": "Americano Ice", "price": 35000, "sku": "CF-AME-08", "image": "https://images.unsplash.com/photo-1551033406-611cf9a28f67?w=100&q=80", "description": "Strong black coffee", "is_active": true},
+    {"id": 9, "category_id": 1, "type": "FOOD", "name": "Flat White Classic", "price": 45000, "sku": "CF-FLT-09", "image": "https://images.unsplash.com/photo-1577968897966-3d4325b36b61?w=100&q=80", "description": "Creamy flat white", "is_active": true},
+    {"id": 10, "category_id": 1, "type": "FOOD", "name": "Irish Coffee Special", "price": 75000, "sku": "CF-IRI-10", "image": "https://images.unsplash.com/photo-1551033406-611cf9a28f67?w=100&q=80", "description": "Coffee with a kick", "is_active": true},
+
+    {"id": 11, "category_id": 2, "type": "FOOD", "name": "Trà Sữa Trân Châu Đen", "price": 45000, "sku": "MT-BLK-11", "image": "https://images.unsplash.com/photo-1544333346-64e4fe18274b?w=100&q=80", "description": "Classic boba tea", "is_active": true},
+    {"id": 12, "category_id": 2, "type": "FOOD", "name": "Trà Sữa Khoai Môn", "price": 45000, "sku": "MT-TAR-12", "image": "https://images.unsplash.com/photo-1558857563-b3c30d652480?w=100&q=80", "description": "Purple taro flavor", "is_active": true},
+    {"id": 13, "category_id": 2, "type": "FOOD", "name": "Trà Sữa Matcha Đậu Đỏ", "price": 55000, "sku": "MT-MAT-13", "image": "https://images.unsplash.com/photo-1515823662273-0b7880589dd7?w=100&q=80", "description": "Japanese matcha with red bean", "is_active": true},
+    {"id": 14, "category_id": 2, "type": "FOOD", "name": "Trà Sữa Đường Đen", "price": 55000, "sku": "MT-BSG-14", "image": "https://images.unsplash.com/photo-1558160074-4d7d8bdf4256?w=100&q=80", "description": "Brown sugar pearl milk", "is_active": true},
+    {"id": 15, "category_id": 2, "type": "FOOD", "name": "Trà Sữa Ô Long", "price": 40000, "sku": "MT-OOL-15", "image": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=100&q=80", "description": "Fragrant oolong tea", "is_active": true},
+    {"id": 16, "category_id": 2, "type": "FOOD", "name": "Trà Sữa Thái Xanh", "price": 40000, "sku": "MT-THI-16", "image": "https://images.unsplash.com/photo-1542729779-11d8fe8e25f6?w=100&q=80", "description": "Thai green milk tea", "is_active": true},
+
+    {"id": 17, "category_id": 3, "type": "FOOD", "name": "Tiramisu Classic", "price": 45000, "sku": "CK-TIR-17", "image": "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=100&q=80", "description": "Italian coffee cake", "is_active": true},
+    {"id": 18, "category_id": 3, "type": "FOOD", "name": "New York Cheesecake", "price": 55000, "sku": "CK-CHK-18", "image": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=100&q=80", "description": "Rich and creamy", "is_active": true},
+    {"id": 19, "category_id": 3, "type": "FOOD", "name": "Chocolate Lava Cake", "price": 60000, "sku": "CK-LAV-19", "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=100&q=80", "description": "Warm melting chocolate", "is_active": true},
+    {"id": 20, "category_id": 3, "type": "FOOD", "name": "Red Velvet Slice", "price": 50000, "sku": "CK-RDV-20", "image": "https://images.unsplash.com/photo-1586788680434-30d324671ff6?w=100&q=80", "description": "Beautiful red cake", "is_active": true},
+    {"id": 21, "category_id": 3, "type": "FOOD", "name": "Matcha Roll Cake", "price": 40000, "sku": "CK-MRL-21", "image": "https://images.unsplash.com/photo-1506459225024-1428097a7e18?w=100&q=80", "description": "Green tea roll", "is_active": true},
+
+    {"id": 22, "category_id": 4, "type": "FOOD", "name": "Bánh Quy Bơ Pháp", "price": 25000, "sku": "SN-BTR-22", "image": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=100&q=80", "description": "French butter cookies", "is_active": true},
+    {"id": 23, "category_id": 4, "type": "FOOD", "name": "Hạt Điều Rang Muối", "price": 35000, "sku": "SN-CSW-23", "image": "https://images.unsplash.com/photo-1569438051124-2098e4b71e16?w=100&q=80", "description": "Roasted cashews", "is_active": true},
+    {"id": 24, "category_id": 4, "type": "FOOD", "name": "Khoai Tây Chiên Giòn", "price": 30000, "sku": "SN-POT-24", "image": "https://images.unsplash.com/photo-1518013031637-2744362760c2?w=100&q=80", "description": "Crispy potato chips", "is_active": true},
+    {"id": 25, "category_id": 4, "type": "FOOD", "name": "Bánh Sừng Bò Croissant", "price": 35000, "sku": "SN-CRO-25", "image": "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=100&q=80", "description": "Butter croissant", "is_active": true},
+
+    {"id": 26, "category_id": 5, "type": "FOOD", "name": "Trà Đào Cam Sả", "price": 45000, "sku": "TE-PCH-26", "image": "https://images.unsplash.com/photo-1499638673689-79a0b5115d87?w=100&q=80", "description": "Peach tea with orange and lemongrass", "is_active": true},
+    {"id": 27, "category_id": 5, "type": "FOOD", "name": "Trà Nhài Sen", "price": 35000, "sku": "TE-JAS-27", "image": "https://images.unsplash.com/photo-1500353391612-58efb1d65941?w=100&q=80", "description": "Jasmine lotus tea", "is_active": true},
+    {"id": 28, "category_id": 5, "type": "FOOD", "name": "Trà Earl Grey Nóng", "price": 40000, "sku": "TE-EGR-28", "image": "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=100&q=80", "description": "Classic hot earl grey", "is_active": true},
+    {"id": 29, "category_id": 5, "type": "FOOD", "name": "Trà Hoa Cúc Mật Ong", "price": 45000, "sku": "TE-CHA-29", "image": "https://images.unsplash.com/photo-1594631252845-29fc458695d7?w=100&q=80", "description": "Chamomile with honey", "is_active": true},
+    {"id": 30, "category_id": 5, "type": "FOOD", "name": "Trà Dâu Tây Đá Xay", "price": 55000, "sku": "TE-STR-30", "image": "https://images.unsplash.com/photo-1461023058943-07fcaf1f05a7?w=100&q=80", "description": "Strawberry blended tea", "is_active": true},
+
+    {"id": 101, "category_id": 6, "type": "COURSE", "name": "Kỹ thuật Pha Chế Barista Cơ Bản", "price": 1200000, "sku": "CS-BAR-01", "image": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=100&q=80", "description": "Learn basic barista skills", "instructor": "Huy Trần", "video_url": "https://example.com/barista-basic", "is_active": true},
+    {"id": 102, "category_id": 6, "type": "COURSE", "name": "Nghệ thuật Tạo Hình Latte Art", "price": 1500000, "sku": "CS-LAT-02", "image": "https://images.unsplash.com/photo-1512568400610-62da28bc8a13?w=100&q=80", "description": "Master the art of milk foam", "instructor": "Linh Nguyễn", "video_url": "https://example.com/latte-art", "is_active": true},
+    {"id": 103, "category_id": 6, "type": "COURSE", "name": "Rang Cà Phê Chuyên Nghiệp", "price": 5000000, "sku": "CS-RST-03", "image": "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=100&q=80", "description": "Professional roasting techniques", "instructor": "Đức Phạm", "video_url": "https://example.com/roasting", "is_active": true},
+    {"id": 104, "category_id": 6, "type": "COURSE", "name": "Quản Trị Vận Hành Quán Cà Phê", "price": 3500000, "sku": "CS-MNG-04", "image": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=100&q=80", "description": "Coffee shop management guide", "instructor": "Thảo Lê", "video_url": "https://example.com/management", "is_active": true},
+    {"id": 105, "category_id": 6, "type": "COURSE", "name": "Thủ Công Pha Cà Phê Tại Nhà", "price": 500000, "sku": "CS-HME-05", "image": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=100&q=80", "description": "Brewing coffee at home like a pro", "instructor": "Huy Trần", "video_url": "https://example.com/home-brew", "is_active": true},
+    {"id": 106, "category_id": 6, "type": "COURSE", "name": "Tìm Hiểu Về Các Loại Hạt Cà Phê", "price": 800000, "sku": "CS-BEA-06", "image": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=100&q=80", "description": "Understanding coffee beans types", "instructor": "Quân Ngô", "video_url": "https://example.com/beans", "is_active": true},
+    {"id": 107, "category_id": 6, "type": "COURSE", "name": "Kỹ Năng Phục Vụ Khách Hàng F&B", "price": 1000000, "sku": "CS-SVC-07", "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=100&q=80", "description": "Customer service for F&B industry", "instructor": "Mai Anh", "video_url": "https://example.com/service", "is_active": true},
+    {"id": 108, "category_id": 6, "type": "COURSE", "name": "Digital Marketing Cho Quán Cà Phê", "price": 2500000, "sku": "CS-MKT-08", "image": "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=100&q=80", "description": "Marketing strategies for cafes", "instructor": "Sơn Tùng", "video_url": "https://example.com/marketing", "is_active": true},
+    {"id": 109, "category_id": 6, "type": "COURSE", "name": "Thiết Kế Không Gian Quán Cà Phê", "price": 4000000, "sku": "CS-DSG-09", "image": "https://images.unsplash.com/photo-1525610553991-2bede1a236e2?w=100&q=80", "description": "Cafe interior design basics", "instructor": "Hoàng Nam", "video_url": "https://example.com/design", "is_active": true},
+    {"id": 110, "category_id": 6, "type": "COURSE", "name": "Pha Chế Các Loại Trà Hiện Đại", "price": 1200000, "sku": "CS-TEA-10", "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=100&q=80", "description": "Modern tea brewing techniques", "instructor": "Lan Hương", "video_url": "https://example.com/tea-course", "is_active": true},
+    {"id": 111, "category_id": 6, "type": "COURSE", "name": "Kỹ Thuật Espresso Nâng Cao", "price": 2000000, "sku": "CS-ESP-11", "image": "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=100&q=80", "description": "Advanced espresso extraction", "instructor": "Huy Trần", "video_url": "https://example.com/advanced-espresso", "is_active": true},
+    {"id": 112, "category_id": 6, "type": "COURSE", "name": "Phân Tích Cảm Quan Hương Vị Cà Phê", "price": 3000000, "sku": "CS-SEN-12", "image": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=100&q=80", "description": "Sensory analysis and cupping", "instructor": "Quân Ngô", "video_url": "https://example.com/sensory", "is_active": true},
+    {"id": 113, "category_id": 6, "type": "COURSE", "name": "Xây Dựng Thương Hiệu F&B", "price": 4500000, "sku": "CS-BRD-13", "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=100&q=80", "description": "Building an F&B brand", "instructor": "Thảo Lê", "video_url": "https://example.com/branding", "is_active": true},
+    {"id": 114, "category_id": 6, "type": "COURSE", "name": "Khởi Nghiệp Mô Hình Xe Đẩy Coffee", "price": 900000, "sku": "CS-CRT-14", "image": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=100&q=80", "description": "Starting a coffee cart business", "instructor": "Minh Tuấn", "video_url": "https://example.com/cart-business", "is_active": true},
+    {"id": 115, "category_id": 6, "type": "COURSE", "name": "Công Thức Đồ Uống Sáng Tạo", "price": 1800000, "sku": "CS-CRV-15", "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=100&q=80", "description": "Creative beverage recipes", "instructor": "Lan Hương", "video_url": "https://example.com/creative", "is_active": true},
+    {"id": 116, "category_id": 6, "type": "COURSE", "name": "An Toàn Vệ Sinh Thực Phẩm F&B", "price": 700000, "sku": "CS-SFY-16", "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=100&q=80", "description": "Food safety in F&B", "instructor": "Bác Sĩ An", "video_url": "https://example.com/safety", "is_active": true},
+    {"id": 117, "category_id": 6, "type": "COURSE", "name": "Kế Toán Cho Chủ Quán Cà Phê", "price": 1500000, "sku": "CS-ACC-17", "image": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=100&q=80", "description": "Accounting for cafe owners", "instructor": "Chị Tâm", "video_url": "https://example.com/accounting", "is_active": true},
+    {"id": 118, "category_id": 6, "type": "COURSE", "name": "Pha Chế Cocktail Nền Cà Phê", "price": 2200000, "sku": "CS-CKT-18", "image": "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=100&q=80", "description": "Coffee-based cocktails", "instructor": "Mixologist Ken", "video_url": "https://example.com/cocktails", "is_active": true},
+    {"id": 119, "category_id": 6, "type": "COURSE", "name": "Sử Dụng Phần Mềm Quản Lý Bán Hàng", "price": 400000, "sku": "CS-POS-19", "image": "https://images.unsplash.com/photo-1556742049-ec169067d4b3?w=100&q=80", "description": "Mastering POS systems", "instructor": "Kỹ thuật POS", "video_url": "https://example.com/pos-guide", "is_active": true},
+    {"id": 120, "category_id": 6, "type": "COURSE", "name": "Tối Ưu Hóa Lợi Nhuận F&B", "price": 3200000, "sku": "CS-PRF-20", "image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=100&q=80", "description": "Profit optimization in F&B", "instructor": "Thảo Lê", "video_url": "https://example.com/profit", "is_active": true}
+  ],
+  "properties": [
+    {
+      "id": 1,
+      "product_id": 2,
+      "group_name": "Size",
+      "is_required": true,
+      "options": [
+        {"id": 1, "name": "Nhỏ (S)", "extra_price": 0, "is_available": true, "sku": "S"},
+        {"id": 2, "name": "Vừa (M)", "extra_price": 6000, "is_available": true, "sku": "M"},
+        {"id": 3, "name": "Lớn (L)", "extra_price": 10000, "is_available": false, "sku": "L"}
+      ]
+    },
+    {
+      "id": 2,
+      "product_id": 2,
+      "group_name": "Độ ngọt",
+      "is_required": false,
+      "options": [
+        {"id": 4, "name": "100% Đường", "extra_price": 0, "is_available": true},
+        {"id": 5, "name": "50% Đường", "extra_price": 0, "is_available": true},
+        {"id": 6, "name": "Không đường", "extra_price": 0, "is_available": true}
+      ]
+    },
+    {
+      "id": 3,
+      "product_id": 11,
+      "group_name": "Topping",
+      "is_required": false,
+      "options": [
+        {"id": 7, "name": "Trân châu đen", "extra_price": 5000, "is_available": true},
+        {"id": 8, "name": "Thạch trái cây", "extra_price": 5000, "is_available": true},
+        {"id": 9, "name": "Kem cheese", "extra_price": 10000, "is_available": true}
+      ]
+    },
+    {
+      "id": 101,
+      "product_id": 101,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1011, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1012, "name": "Học Offline", "extra_price": 360000, "percent": 30, "is_available": true},
+        {"id": 1013, "name": "Học 1 kèm 1", "extra_price": 1200000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 102,
+      "product_id": 102,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1021, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1022, "name": "Học Offline", "extra_price": 450000, "percent": 30, "is_available": true},
+        {"id": 1023, "name": "Học 1 kèm 1", "extra_price": 1500000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 103,
+      "product_id": 103,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1031, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1032, "name": "Học Offline", "extra_price": 1500000, "percent": 30, "is_available": true},
+        {"id": 1033, "name": "Học 1 kèm 1", "extra_price": 5000000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 104,
+      "product_id": 104,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1041, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1042, "name": "Học Offline", "extra_price": 1050000, "percent": 30, "is_available": true},
+        {"id": 1043, "name": "Học 1 kèm 1", "extra_price": 3500000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 105,
+      "product_id": 105,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1051, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1052, "name": "Học Offline", "extra_price": 150000, "percent": 30, "is_available": true},
+        {"id": 1053, "name": "Học 1 kèm 1", "extra_price": 500000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 106,
+      "product_id": 106,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1061, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1062, "name": "Học Offline", "extra_price": 240000, "percent": 30, "is_available": true},
+        {"id": 1063, "name": "Học 1 kèm 1", "extra_price": 800000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 107,
+      "product_id": 107,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1071, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1072, "name": "Học Offline", "extra_price": 300000, "percent": 30, "is_available": true},
+        {"id": 1073, "name": "Học 1 kèm 1", "extra_price": 1000000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 108,
+      "product_id": 108,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1081, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1082, "name": "Học Offline", "extra_price": 750000, "percent": 30, "is_available": true},
+        {"id": 1083, "name": "Học 1 kèm 1", "extra_price": 2500000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 109,
+      "product_id": 109,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1091, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1092, "name": "Học Offline", "extra_price": 1200000, "percent": 30, "is_available": true},
+        {"id": 1093, "name": "Học 1 kèm 1", "extra_price": 4000000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 110,
+      "product_id": 110,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1101, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1102, "name": "Học Offline", "extra_price": 360000, "percent": 30, "is_available": true},
+        {"id": 1103, "name": "Học 1 kèm 1", "extra_price": 1200000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 111,
+      "product_id": 111,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1111, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1112, "name": "Học Offline", "extra_price": 600000, "percent": 30, "is_available": true},
+        {"id": 1113, "name": "Học 1 kèm 1", "extra_price": 2000000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 112,
+      "product_id": 112,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1121, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1122, "name": "Học Offline", "extra_price": 900000, "percent": 30, "is_available": true},
+        {"id": 1123, "name": "Học 1 kèm 1", "extra_price": 3000000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 113,
+      "product_id": 113,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1131, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1132, "name": "Học Offline", "extra_price": 1350000, "percent": 30, "is_available": true},
+        {"id": 1133, "name": "Học 1 kèm 1", "extra_price": 4500000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 114,
+      "product_id": 114,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1141, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1142, "name": "Học Offline", "extra_price": 270000, "percent": 30, "is_available": true},
+        {"id": 1143, "name": "Học 1 kèm 1", "extra_price": 900000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 115,
+      "product_id": 115,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1151, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1152, "name": "Học Offline", "extra_price": 540000, "percent": 30, "is_available": true},
+        {"id": 1153, "name": "Học 1 kèm 1", "extra_price": 1800000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 116,
+      "product_id": 116,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1161, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1162, "name": "Học Offline", "extra_price": 210000, "percent": 30, "is_available": true},
+        {"id": 1163, "name": "Học 1 kèm 1", "extra_price": 700000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 117,
+      "product_id": 117,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1171, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1172, "name": "Học Offline", "extra_price": 450000, "percent": 30, "is_available": true},
+        {"id": 1173, "name": "Học 1 kèm 1", "extra_price": 1500000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 118,
+      "product_id": 118,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1181, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1182, "name": "Học Offline", "extra_price": 660000, "percent": 30, "is_available": true},
+        {"id": 1183, "name": "Học 1 kèm 1", "extra_price": 2200000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 119,
+      "product_id": 119,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1191, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1192, "name": "Học Offline", "extra_price": 120000, "percent": 30, "is_available": true},
+        {"id": 1193, "name": "Học 1 kèm 1", "extra_price": 400000, "percent": 100, "is_available": true}
+      ]
+    },
+    {
+      "id": 120,
+      "product_id": 120,
+      "group_name": "Hình thức học",
+      "is_required": true,
+      "options": [
+        {"id": 1201, "name": "Học Online", "extra_price": 0, "percent": 0, "is_available": true},
+        {"id": 1202, "name": "Học Offline", "extra_price": 960000, "percent": 30, "is_available": true},
+        {"id": 1203, "name": "Học 1 kèm 1", "extra_price": 3200000, "percent": 100, "is_available": true}
+      ]
+    }
+  ]
+}

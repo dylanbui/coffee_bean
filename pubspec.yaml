@@ -18,6 +18,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # of the product and file versions while build-number is used as the build suffix.
 version: 1.0.0+3
 
+isar_version: &isar_version 3.1.0+1
+
 #environment:
 #  sdk: ^3.11.4
 environment:
@@ -77,9 +79,15 @@ dependencies:
 
   # soft
   # querying information about an application package.
+  # Crazy fast NoSQL database that is a joy to use.
+  isar: *isar_version
+  isar_flutter_libs: *isar_version
+  # Get location
   geolocator: ^14.0.2
   package_info_plus: ^9.0.1
   chuck_interceptor: ^2.3.1
+  # LƯU Ý: Hạ cấp json_annotation xuống ^4.9.0 để tương thích với json_serializable ^6.8.0 
+  # nhằm giải quyết xung đột với isar_generator 3.1.0+1
   json_annotation: ^4.9.0
   hive: ^2.2.3
   url_launcher: ^6.3.2
@@ -119,9 +127,23 @@ dev_dependencies:
 
   # hard fix: package ảnh hưởng trực tiếp tới compile / generated code / architecture
   # package generate code lúc build, không phải runtime package
-  retrofit_generator: 10.2.5
-  build_runner: 2.13.1
-  json_serializable: 6.13.1
+  
+  # LƯU Ý QUAN TRỌNG VỀ XUNG ĐỘT DEPENDENCY (Cần đọc trước khi nâng cấp):
+  # Các module sau bị hạ cấp/giữ phiên bản cũ để tương thích với isar_generator 3.1.0+1:
+  # 1. isar_generator: Dùng analyzer 5.x, source_gen 1.x
+  # 2. retrofit_generator: Phải dùng 8.1.0 (thay vì 10.x)
+  # 3. json_serializable: Phải dùng 6.8.0 (thay vì 6.13.x)
+  # 4. json_annotation: Phải dùng 4.9.0 (thay vì 4.11.x)
+  #
+  # Nguyên nhân: Xung đột phiên bản 'analyzer' (5.x vs 6.x) và 'source_gen' (1.x vs 4.x).
+  # Hướng giải quyết lâu dài: 
+  #   - Cách 1: Chờ Isar 4.0.0 stable để nâng cấp toàn bộ.
+  #   - Cách 2: Tách Database thành một local package/module riêng để cô lập dependency.
+
+  retrofit_generator: 8.1.0
+  isar_generator: *isar_version
+  build_runner: 2.4.6
+  json_serializable: 6.8.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

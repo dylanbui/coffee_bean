@@ -38,6 +38,9 @@ class CachedImageWidget extends StatelessWidget {
               width: width,
               height: height,
               fit: fit,
+              // Tối ưu bộ nhớ bằng cách giới hạn kích thước ảnh trong RAM
+              // memCacheWidth: (width * 2).toInt(),
+              // memCacheHeight: (height * 2).toInt(),
               placeholder: (context, url) =>
                   placeholder ??
                   Container(

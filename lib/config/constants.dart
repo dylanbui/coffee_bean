@@ -1,7 +1,5 @@
-
-
-
 import 'package:coffee_bean/core/services/event_bus.dart';
+import 'package:coffee_bean/shared/ui/app_assets.dart';
 
 /// --- AUTH EVENTS ---
 abstract class AuthEvent extends DbBaseEvent {}
@@ -12,6 +10,22 @@ class UserLoginSuccessEvent extends AuthEvent {
 
 class UserLogoutEvent extends AuthEvent {
   UserLogoutEvent();
+}
+
+/// --- CATEGORY ICONS MAPPING ---
+/// Sử dụng serverId để map icon vì đây là dữ liệu master không đổi.
+class CategoryIcons {
+  static final Map<int, String> _mapping = {
+    1: AppAssets.icons.icCatCoffee,   // Coffee
+    2: AppAssets.icons.icCatMilkTea,  // Milk Tea
+    3: AppAssets.icons.icCatCake,     // Cake
+    4: AppAssets.icons.icCatSnack,    // Snack
+    5: AppAssets.icons.icCatTea,      // Tea
+  };
+
+  static String getIcon(int serverId) {
+    return _mapping[serverId] ?? AppAssets.icons.icCatCoffee; // Trả về coffee nếu không tìm thấy
+  }
 }
 
 // import 'dart:core';

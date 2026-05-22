@@ -1,104 +1,143 @@
 import 'dart:async';
 import 'package:coffee_bean/core/utils/locator.dart';
 import 'package:coffee_bean/core/utils/logger.dart';
-import 'package:coffee_bean/core/utils/shared_preferences.dart';
-import 'package:coffee_bean/data/local/live_service/model/cart_item.dart';
+import 'package:coffee_bean/data/database/app_database.dart';
+import 'package:coffee_bean/data/database/database_service.dart';
 import 'package:coffee_bean/data/model/product.dart';
+import 'package:isar/isar.dart';
 
 class CartService implements DbLocatorDisposable {
-    static const String _cartKey = 'cache_cart_items';
+  final DatabaseService _dbService = locator<DatabaseService>();
+  final _cartController = StreamController<List<TblCartItem>>.broadcast();
+  List<TblCartItem> _items = [];
 
-    final _cartController = StreamController<List<CartItem>>.broadcast();
-    List<CartItem> _items = [];
+  CartService() {
+    _init();
+  }
 
-    CartService() {
-        // Since SharedPreferences is already initialized in main(),
-        // we can load data immediately.
-        _loadCart();
+  void _init() {
+    // Watch Isar for any changes in the TblCartItem collection
+    _dbService.isar.tblCartItems.watchLazy().listen((_) async {
+      await _refresh();
+    });
+    // Initial data fetch
+    _refresh();
+  }
+
+  Future<void> _refresh() async {
+    try {
+      _items = await _dbService.getCartItems();
+      _cartController.add(List.unmodifiable(_items));
+    } catch (e) {
+      eLog("Error refreshing cart from Isar: $e");
+    }
+  }
+
+  Stream<List<TblCartItem>> get cartStream {
+    return Stream<List<TblCartItem>>.multi((controller) {
+      // Emit current data immediately to the new listener
+      controller.add(List.unmodifiable(_items));
+
+      // Subscribe to updates from the main broadcast controller
+      final subscription = _cartController.stream.listen(
+        (event) => controller.add(event),
+        onError: (e) => controller.addError(e),
+        onDone: () => controller.close(),
+      );
+
+      controller.onCancel = () => subscription.cancel();
+    }, isBroadcast: true);
+  }
+
+  List<TblCartItem> get currentItems => List.unmodifiable(_items);
+
+  Future<void> addToCart(dynamic product, {int quantity = 1}) async {
+    int serverId;
+    ProductType productType;
+    String name;
+    String? image;
+    String? sku;
+    double price;
+
+    if (product is TblFood) {
+      serverId = product.serverId;
+      productType = ProductType.food;
+      name = product.name;
+      image = product.image;
+      sku = product.sku;
+      price = product.price;
+    } else if (product is TblCourse) {
+      serverId = product.serverId;
+      productType = ProductType.course;
+      name = product.name;
+      image = product.image;
+      sku = product.sku;
+      price = product.price;
+    } else if (product is Product) {
+      serverId = product.id;
+      productType = ProductType.food; // Default mapping
+      name = product.title ?? "";
+      image = product.images?.firstOrNull;
+      price = product.price ?? 0.0;
+    } else {
+      eLog("Unsupported product type for addToCart: ${product.runtimeType}");
+      return;
     }
 
-    Stream<List<CartItem>> get cartStream {
-        return Stream<List<CartItem>>.multi((controller) {
-            // When a new listener subscribes, emit the current value immediately
-            controller.add(List.unmodifiable(_items));
+    final isar = _dbService.isar;
+    await isar.writeTxn(() async {
+      final existing = await isar.tblCartItems.filter()
+          .serverIdEqualTo(serverId)
+          .and()
+          .typeEqualTo(productType.name)
+          .findFirst();
 
-            // Subscribe this listener to the main controller to receive future updates
-            final subscription = _cartController.stream.listen(
-                (event) => controller.add(event),
-                onError: (e) => controller.addError(e),
-                onDone: () => controller.close(),
-            );
+      if (existing != null) {
+        existing.quantity += quantity;
+        await isar.tblCartItems.put(existing);
+      } else {
+        final newItem = TblCartItem()
+          ..serverId = serverId
+          ..type = productType.name
+          ..name = name
+          ..image = image
+          ..sku = sku
+          ..finalPrice = price
+          ..quantity = quantity
+          ..addedAt = DateTime.now();
+        await isar.tblCartItems.put(newItem);
+      }
+    });
+  }
 
-            // Cancel internal subscription when the listener is cancelled
-            controller.onCancel = () => subscription.cancel();
-        }, isBroadcast: true);
-    }
-
-    List<CartItem> get currentItems => List.from(_items);
-
-    void addToCart(Product product, {int quantity = 1, String? note}) {
-        final newItem = CartItem(product: product, quantity: quantity, note: note);
-        int index = _items.indexWhere((item) => item.cartItemId == newItem.cartItemId);
-
-        if (index != -1) {
-            _items[index].quantity += quantity;
-        } else {
-            _items.add(newItem);
+  Future<void> updateQuantity(int id, int quantity) async {
+    await _dbService.isar.writeTxn(() async {
+      if (quantity <= 0) {
+        await _dbService.isar.tblCartItems.delete(id);
+      } else {
+        final item = await _dbService.isar.tblCartItems.get(id);
+        if (item != null) {
+          item.quantity = quantity;
+          await _dbService.isar.tblCartItems.put(item);
         }
+      }
+    });
+  }
 
-        _notifyChange();
-    }
+  Future<void> removeItem(int id) async {
+    await _dbService.isar.writeTxn(() async {
+      await _dbService.isar.tblCartItems.delete(id);
+    });
+  }
 
-    void updateQuantity(String cartItemId, int quantity) {
-        int index = _items.indexWhere((item) => item.cartItemId == cartItemId);
-        if (index != -1) {
-            if (quantity <= 0) {
-                _items.removeAt(index);
-            } else {
-                _items[index].quantity = quantity;
-            }
-            _notifyChange();
-        }
-    }
+  Future<void> clearCart() async {
+    await _dbService.isar.writeTxn(() async {
+      await _dbService.isar.tblCartItems.clear();
+    });
+  }
 
-    void removeItem(String cartItemId) {
-        _items.removeWhere((item) => item.cartItemId == cartItemId);
-        _notifyChange();
-    }
-
-    double get totalAmount => _items.fold(0, (sum, item) => sum + item.totalPrice);
-
-    @override
-    void dispose() {
-        _cartController.close();
-    }
-
-    // region Private functions
-    void _notifyChange() {
-        _cartController.add(List.from(_items));
-        _saveCart();
-    }
-
-    Future<void> _saveCart() async {
-        // Convert item list to JSON
-        final List<Map<String, dynamic>> jsonList = _items.map((e) => e.toJson()).toList();
-        // Use set(key, value) from DbSharedPreferences
-        await DbSharedPreferences().set(_cartKey, jsonList);
-    }
-
-    void _loadCart() {
-        try {
-            // DbSharedPreferences returns dynamic via get(key)
-            final dynamic data = DbSharedPreferences().get(_cartKey);
-            if (data != null && data is List) {
-                _items = data.map((e) => CartItem.fromJson(e)).toList();
-                _cartController.add(List.from(_items));
-            }
-        } catch (e) {
-            eLog("Error loading cart: $e");
-            _items = [];
-        }
-    }
-
-    // endregion
+  @override
+  void dispose() {
+    _cartController.close();
+  }
 }

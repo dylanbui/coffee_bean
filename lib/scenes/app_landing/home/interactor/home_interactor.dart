@@ -21,10 +21,10 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
       isInitialLoading: false,
       topImageData: TopImageData(
         images: [
-          'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=800&auto=format&fit=crop',
-          'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=800&auto=format&fit=crop',
-          'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop',
-          'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=800&auto=format&fit=crop',
+          'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=1080&auto=format&fit=crop',
+          'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1080&auto=format&fit=crop',
+          'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=1080&auto=format&fit=crop',
+          'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=1080&auto=format&fit=crop',
         ],
         userName: "Gigi",
       ),
@@ -161,7 +161,7 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
 
   void quickActions(int index) {
     // Logic for quick actions
-    router?.navigate(ChooseStoreRoute());
+    // router?.navigate(ChooseStoreRoute());
   }
 
   void selectSeller(SellerItem item) {
