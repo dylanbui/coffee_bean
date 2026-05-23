@@ -1,5 +1,5 @@
 import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
-import 'package:coffee_bean/data/database/app_database.dart';
+import 'package:coffee_bean_db/coffee_bean_db.dart';
 
 // States
 class ShoppingState extends BaseBlocState {

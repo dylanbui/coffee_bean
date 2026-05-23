@@ -7,7 +7,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:coffee_bean/core/utils/page_transition/page_transition.dart';
 
 /// DbNavigator: A utility class for handling navigation logic within the RIBs architecture.
 /// 

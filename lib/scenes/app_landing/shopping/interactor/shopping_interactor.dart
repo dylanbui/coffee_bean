@@ -1,6 +1,5 @@
 import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:coffee_bean/data/database/app_database.dart';
-import 'package:coffee_bean/data/database/database_service.dart';
+import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/shopping_router.dart';

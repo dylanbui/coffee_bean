@@ -1,5 +1,5 @@
 import 'package:coffee_bean/core/utils/app_button.dart';
-import 'package:coffee_bean/data/database/app_database.dart';
+import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';

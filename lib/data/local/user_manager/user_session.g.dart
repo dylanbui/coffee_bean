@@ -7,14 +7,14 @@ part of 'user_session.dart';
 // **************************************************************************
 
 UserSession _$UserSessionFromJson(Map<String, dynamic> json) => UserSession(
-      id: (json['id'] as num).toInt(),
-      userName: json['userName'] as String?,
-      email: json['email'] as String?,
-      avatarUrl: json['avatarUrl'] as String?,
-      fullName: json['fullName'] as String?,
-      accessToken: json['accessToken'] as String?,
-      refreshToken: json['refreshToken'] as String?,
-    );
+  id: (json['id'] as num).toInt(),
+  userName: json['userName'] as String?,
+  email: json['email'] as String?,
+  avatarUrl: json['avatarUrl'] as String?,
+  fullName: json['fullName'] as String?,
+  accessToken: json['accessToken'] as String?,
+  refreshToken: json['refreshToken'] as String?,
+);
 
 Map<String, dynamic> _$UserSessionToJson(UserSession instance) =>
     <String, dynamic>{

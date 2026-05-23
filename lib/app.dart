@@ -16,7 +16,7 @@ import 'package:coffee_bean/core/utils/shared_preferences.dart';
 import 'package:coffee_bean/config/app_config.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/network/token_interceptor.dart';
-import 'package:coffee_bean/data/database/database_service.dart';
+import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/scenes/app/app_builder.dart';
 import 'package:coffee_bean/scenes/app/app_router.dart';
 import 'package:flutter/foundation.dart';

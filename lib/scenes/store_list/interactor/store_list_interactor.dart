@@ -69,10 +69,12 @@ class StoreListInteractor extends CubitInteractor<StoreListRouter, StoreListStat
     fetchStores();
   }
 
-  Future<void> fetchStores() async {
+  Future<void> fetchStores({String? query}) async {
+    final searchKeyword = query ?? state.searchQuery;
+
     emit(StoreListLoading(
       stores: state.stores,
-      searchQuery: state.searchQuery,
+      searchQuery: searchKeyword,
       isLocationAuthorized: state.isLocationAuthorized,
       isManualSelection: state.isManualSelection,
     ));
@@ -90,7 +92,7 @@ class StoreListInteractor extends CubitInteractor<StoreListRouter, StoreListStat
     }
 
     // Simulate API call with coordinates if available
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 500));
 
     final mockStores = [
       Store(
@@ -113,22 +115,26 @@ class StoreListInteractor extends CubitInteractor<StoreListRouter, StoreListStat
       ),
     ];
 
+    // Filter local if query is present
+    var filteredStores = mockStores;
+    if (searchKeyword.isNotEmpty) {
+      filteredStores = mockStores.where((s) => 
+        s.name.toLowerCase().contains(searchKeyword.toLowerCase()) || 
+        s.address.toLowerCase().contains(searchKeyword.toLowerCase())
+      ).toList();
+    }
+
     emit(StoreListLoaded(
-      stores: mockStores,
+      stores: filteredStores,
       isLocationAuthorized: state.isLocationAuthorized,
       isManualSelection: state.isManualSelection,
-      searchQuery: state.searchQuery,
+      searchQuery: searchKeyword,
     ));
   }
 
   void onSearchChanged(String query) {
     debugPrint("Query == $query");
-    emit(StoreListLoaded(
-      stores: state.stores,
-      searchQuery: query,
-      isLocationAuthorized: state.isLocationAuthorized,
-      isManualSelection: state.isManualSelection,
-    ));
+    fetchStores(query: query);
   }
 
   void onStoreSelected(Store store) {
