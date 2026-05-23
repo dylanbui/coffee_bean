@@ -1,6 +1,6 @@
 import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
 import 'package:flutter/material.dart';
-import 'package:coffee_bean/core/utils/page_transition/page_transition.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/core/architecture_ribs/note_interactor.dart';
 

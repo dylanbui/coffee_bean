@@ -6,7 +6,6 @@ import 'package:coffee_bean/scenes/app_landing/shopping/shopping_router.dart';
 import 'package:coffee_bean/core/utils/locator.dart';
 import 'package:coffee_bean/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:isar/isar.dart';
 
 class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState> {
   final CartService _cartService = locator<CartService>();

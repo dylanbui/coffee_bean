@@ -4,7 +4,7 @@ import 'package:coffee_bean/scenes/user_features/forgot_password/forgot_password
 import 'package:coffee_bean/scenes/user_features/user_login/user_login_builder.dart';
 import 'package:coffee_bean/scenes/user_features/user_register/user_register_builder.dart';
 import 'package:flutter/material.dart';
-import 'package:coffee_bean/core/utils/page_transition/page_transition.dart';
+import 'package:page_transition/page_transition.dart';
 
 // --- START STEP ENUM ---
 enum AuthStartStep { login, register }

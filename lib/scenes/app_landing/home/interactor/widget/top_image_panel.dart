@@ -1,4 +1,5 @@
 import 'package:coffee_bean/core/utils/app_button.dart';
+import 'package:coffee_bean/core/utils/logger.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
@@ -146,7 +147,9 @@ class _TopImagePanelState extends State<TopImagePanel> {
 
     return AppButton(
       text: AppStrings.selectStore,
-      onPressed: () => widget.interactor.openSelectStore(),
+      onPressed: () {
+        widget.interactor.openSelectStore();
+        },
       mainAxisSize: MainAxisSize.min,
       leftIcon: const AppIcon(Icons.location_on_outlined, size: 20, color: navyColor),
       rightIcon: const AppIcon(Icons.chevron_right, size: 20, color: navyColor),
@@ -170,7 +173,9 @@ class _TopImagePanelState extends State<TopImagePanel> {
 
     return AppButton(
       text: AppStrings.searchHint,
-      onPressed: () => widget.interactor.openGlobalSearch(),
+      onPressed: () {
+        widget.interactor.openGlobalSearch();
+      },
       mainAxisSize: MainAxisSize.min,
       rightIcon: AppIcon(AppAssets.icons.icSearch, color: Colors.white, size: 22),
       style: AppButtonStyleConfig(
