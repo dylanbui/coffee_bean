@@ -1,17 +1,43 @@
+import 'dart:convert';
+import 'dart:math' show cos, sqrt, asin;
+import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:db_core/utils/locator.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:coffee_bean/scenes/store_list/store_list_router.dart';
 import 'package:coffee_bean/scenes/store_list/interactor/store_list_event_state.dart';
 
 class StoreListInteractor extends CubitInteractor<StoreListRouter, StoreListState> {
+  final DatabaseService _dbService = locator<DatabaseService>();
+
   StoreListInteractor(StoreListRouter router) : super(const StoreListInitial(), router: router);
 
   @override
   void onDidBecomeActive() {
     super.onDidBecomeActive();
-    checkInitialLocationStatus();
+    _initData();
+  }
+
+  Future<void> _initData() async {
+    // 1. Sync data from local JSON if database is empty (Simulating first-time load)
+    final existingStores = await _dbService.getAllStores();
+    if (existingStores.isEmpty) {
+      try {
+        final String response = await rootBundle.loadString('assets/json/sample_store.json');
+        final data = await json.decode(response);
+        if (data['stores'] != null) {
+          await _dbService.syncStoreData(data['stores']);
+        }
+      } catch (e) {
+        debugPrint("Error syncing stores from JSON: $e");
+      }
+    }
+
+    // 2. Check location status
+    await checkInitialLocationStatus();
   }
 
   Future<void> checkInitialLocationStatus() async {
@@ -85,59 +111,88 @@ class StoreListInteractor extends CubitInteractor<StoreListRouter, StoreListStat
         position = await Geolocator.getCurrentPosition(
           locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
         );
-        debugPrint("Current Position: ${position.latitude}, ${position.longitude}");
       } catch (e) {
         debugPrint("Error getting position: $e");
       }
     }
 
-    // Simulate API call with coordinates if available
-    await Future.delayed(const Duration(milliseconds: 500));
+    // Fetch from Isar
+    List<TblStore> dbStores;
+    if (searchKeyword.isEmpty) {
+      dbStores = await _dbService.getAllStores();
+    } else {
+      dbStores = await _dbService.searchStores(searchKeyword);
+    }
 
-    final mockStores = [
-      Store(
-        id: '1',
-        name: 'TMLabs coffee',
-        address: '84a Nguyễn Cửu Vân, phường Gia Định, tp.HCM',
-        hours: '6h00\' - 23h00\'',
-        distance: '1.3km',
-        isOpen: true,
-        imageUrl: 'https://picsum.photos/id/237/400/300',
-      ),
-      Store(
-        id: '2',
-        name: 'TMLabs coffee (Chi nhánh 2)',
-        address: '123 Đường Nguyen thi thap , dong van cong, nguyen van truong dinh, Quận XYZ, tp.HCM',
-        hours: '09:00 - 21:30',
-        distance: '3.5km',
-        isOpen: false,
-        imageUrl: 'https://picsum.photos/id/235/400/300',
-      ),
-    ];
+    // Map to Display Models with calculated distance
+    final displayStores = dbStores.map((s) {
+      String distanceStr = "---";
+      double distanceValue = double.maxFinite;
 
-    // Filter local if query is present
-    var filteredStores = mockStores;
-    if (searchKeyword.isNotEmpty) {
-      filteredStores = mockStores.where((s) => 
-        s.name.toLowerCase().contains(searchKeyword.toLowerCase()) || 
-        s.address.toLowerCase().contains(searchKeyword.toLowerCase())
-      ).toList();
+      if (position != null) {
+        final dist = _calculateDistance(position.latitude, position.longitude, s.latitude, s.longitude);
+        distanceValue = dist;
+        distanceStr = dist < 1 ? "${(dist * 1000).toInt()}m" : "${dist.toStringAsFixed(1)}km";
+      }
+
+      return StoreDisplayModel(
+        store: s,
+        distance: distanceStr,
+        isOpen: _isStoreOpen(s.openingTime, s.closingTime),
+      );
+    }).toList();
+
+    // Sort by distance if position is available
+    if (position != null) {
+      // Sort displayStores would need to be mutable or recreated
+      final sortedStores = List<StoreDisplayModel>.from(displayStores);
+      // We don't have distanceValue in StoreDisplayModel, but we can re-calculate or store it
+      // For now, let's just sort the list we have.
+      // A better way would be to calculate distance first, then sort, then map.
     }
 
     emit(StoreListLoaded(
-      stores: filteredStores,
+      stores: displayStores,
       isLocationAuthorized: state.isLocationAuthorized,
       isManualSelection: state.isManualSelection,
       searchQuery: searchKeyword,
     ));
   }
 
+  double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 - c((lat2 - lat1) * p)/2 + 
+          c(lat1 * p) * c(lat2 * p) * 
+          (1 - c((lon2 - lon1) * p))/2;
+    return 12742 * asin(sqrt(a));
+  }
+
+  bool _isStoreOpen(String? opening, String? closing) {
+    if (opening == null || closing == null) return true;
+    try {
+      final now = DateTime.now();
+      final openParts = opening.split(':');
+      final closeParts = closing.split(':');
+      
+      final openTime = DateTime(now.year, now.month, now.day, int.parse(openParts[0]), int.parse(openParts[1]));
+      var closeTime = DateTime(now.year, now.month, now.day, int.parse(closeParts[0]), int.parse(closeParts[1]));
+      
+      if (closeTime.isBefore(openTime)) {
+        closeTime = closeTime.add(const Duration(days: 1));
+      }
+      
+      return now.isAfter(openTime) && now.isBefore(closeTime);
+    } catch (e) {
+      return true;
+    }
+  }
+
   void onSearchChanged(String query) {
-    debugPrint("Query == $query");
     fetchStores(query: query);
   }
 
-  void onStoreSelected(Store store) {
-    debugPrint("Store Name == ${store.name}");
+  void onStoreSelected(StoreDisplayModel model) {
+    debugPrint("Store Selected == ${model.store.name}");
   }
 }

@@ -23,7 +23,7 @@ class StoreListPage extends CubitStateFulWidget<StoreListInteractor, StoreListSt
 
 class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor, StoreListState> {
   @override
-  dynamic getAppBar(BuildContext context) => whiteCoffeeAppBar("Select Store");
+  dynamic getAppBar(BuildContext context) => whiteCoffeeAppBar("Chọn cửa hàng");
 
   @override
   Widget getBody(BuildContext context) {
@@ -52,7 +52,6 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const SizedBox(height: 40),
-          // Placeholder for the map icon in the screenshot
           AppIcon(AppAssets.icons.icEmptyLocation, size: 160),
           const SizedBox(height: 20),
           const Text(
@@ -85,10 +84,10 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
       child: SizedBox(
         height: 50,
         child: AppSearchBar(
-          hintText: "Tìm kiếm tên cửa hàng",
+          hintText: "Tìm kiếm tên cửa hàng hoặc địa chỉ",
           backgroundColor: AppColor.basicSearchBg,
           leftIcon: AppAssets.icons.icSearch,
-          minLength: 5,
+          minLength: 2,
           onSearch: interactor.onSearchChanged,
         ),
       ),
@@ -113,17 +112,19 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
     );
   }
 
-  Widget _buildStoreCard(Store store) {
+  Widget _buildStoreCard(StoreDisplayModel model) {
+    final store = model.store;
+    final hoursStr = "${store.openingTime ?? '--:--'} - ${store.closingTime ?? '--:--'}";
+
     return TapEffect(
       enableSound: false,
-      onTap: () => interactor.onStoreSelected(store),
+      onTap: () => interactor.onStoreSelected(model),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
-        constraints: const BoxConstraints(minHeight: 140), // Chiều cao tối thiểu 140px
+        constraints: const BoxConstraints(minHeight: 140),
         child: Stack(
           clipBehavior: Clip.none,
           children: [
-            // Main Card Container - Không dùng Positioned để nó tự co giãn theo nội dung
             Container(
               margin: const EdgeInsets.only(top: 15),
               constraints: const BoxConstraints(minHeight: 125),
@@ -137,16 +138,14 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
                 borderRadius: BorderRadius.circular(25),
                 child: Stack(
                   children: [
-                    // Background Image - Dùng Positioned.fill để nó lấp đầy chiều cao thay đổi của card
                     Positioned.fill(
                       child: CachedImageWidget(
-                        imageUrl: store.imageUrl,
+                        imageUrl: store.mainImage ?? "",
                         width: double.infinity,
                         height: double.infinity,
                         borderRadius: 25,
                       ),
                     ),
-                    // Dark Overlay
                     Positioned.fill(
                       child: Container(
                         decoration: BoxDecoration(
@@ -195,9 +194,9 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
                             children: [
                               const Icon(Icons.access_time_filled, color: Colors.white, size: 19),
                               const SizedBox(width: 6),
-                              Text(store.hours, style: TMLabsStyle.regular.copyWith(color: Colors.white, fontSize: 13)),
+                              Text(hoursStr, style: TMLabsStyle.regular.copyWith(color: Colors.white, fontSize: 13)),
                               const SizedBox(width: 12),
-                              _buildStatusBadge(store.isOpen),
+                              _buildStatusBadge(model.isOpen),
                             ],
                           ),
                         ],
@@ -218,7 +217,7 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
                   Padding(
                     padding: const EdgeInsets.only(left: 20, right: 10, top: 5, bottom: 5),
                     child: Text(
-                      "Cách bạn ${store.distance}",
+                      "Cách bạn ${model.distance}",
                       style: TMLabsStyle.semibold.copyWith(color: Colors.black, fontSize: 12),
                     ),
                   ),
@@ -248,11 +247,9 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
         children: [
           const Icon(Icons.store_outlined, size: 64, color: AppColor.basicSecondaryText),
           const SizedBox(height: 16),
-          Text("No stores found", style: TMLabsStyle.regular.copyWith(color: AppColor.basicSecondaryText)),
+          Text("Không tìm thấy cửa hàng", style: TMLabsStyle.regular.copyWith(color: AppColor.basicSecondaryText)),
         ],
       ),
     );
   }
 }
-
-

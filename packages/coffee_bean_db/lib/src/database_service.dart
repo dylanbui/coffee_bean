@@ -16,7 +16,13 @@ class DatabaseService {
   // --- INITIALIZATION ---
   Future<void> init() async {
     final dir = await getApplicationDocumentsDirectory();
-    isar = await Isar.open([TblCategorySchema, TblFoodSchema, TblCourseSchema, TblCartItemSchema], directory: dir.path);
+    isar = await Isar.open([
+      TblCategorySchema,
+      TblFoodSchema,
+      TblCourseSchema,
+      TblCartItemSchema,
+      TblStoreSchema,
+    ], directory: dir.path);
   }
 
   // --- STORE OPERATIONS ---
@@ -28,6 +34,7 @@ class DatabaseService {
       await isar.tblFoods.clear();
       await isar.tblCourses.clear();
       await isar.tblCartItems.clear();
+      await isar.tblStores.clear();
     });
   }
 
@@ -141,6 +148,28 @@ class DatabaseService {
     return {ProductType.food: foodResults, ProductType.course: courseResults};
   }
 
+  // --- STORE QUERIES ---
+
+  Future<List<TblStore>> getAllStores() => isar.tblStores.filter().isActiveEqualTo(true).findAll();
+
+  Future<List<TblStore>> searchStores(String query) async {
+    final searchTerms = _toNoSign(query);
+    return isar.tblStores
+        .filter()
+        .isActiveEqualTo(true)
+        .and()
+        .searchNameContains(searchTerms, caseSensitive: false)
+        .findAll();
+  }
+
+  Future<void> syncStoreData(List<dynamic> storesJson) async {
+    await isar.writeTxn(() async {
+      final stores = storesJson.map((json) => _mapToStore(json)).toList();
+      await isar.tblStores.clear();
+      await isar.tblStores.putAll(stores);
+    });
+  }
+
   // --- CART OPERATIONS ---
 
   Future<List<TblCartItem>> getCartItems() => isar.tblCartItems.where().sortByAddedAtDesc().findAll();
@@ -214,6 +243,23 @@ class DatabaseService {
       ..instructor = json['instructor']
       ..videoUrl = json['video_url']
       ..properties = props;
+  }
+
+  TblStore _mapToStore(dynamic json) {
+    final name = json['name'] ?? '';
+    final address = json['address'] ?? '';
+    return TblStore()
+      ..serverId = json['id']
+      ..name = name
+      ..address = address
+      ..searchName = _toNoSign("$name $address")
+      ..phone = json['phone']
+      ..latitude = (json['latitude'] ?? 0.0).toDouble()
+      ..longitude = (json['longitude'] ?? 0.0).toDouble()
+      ..openingTime = json['opening_time']
+      ..closingTime = json['closing_time']
+      ..images = _mapImages(json)
+      ..isActive = json['is_active'] ?? true;
   }
   List<TblImage>? _mapImages(dynamic json) {
     if (json['images'] != null && json['images'] is List) {

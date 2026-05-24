@@ -57,6 +57,7 @@ class _Images {
   final String logoSplash = 'assets/images/logo_splash.png';
   final String logoTmLabs = 'assets/images/logo_tmlabs.png';
   final String imgBgKhoangCach = 'assets/images/img_bg_khoang_cach.png';
+  final String imgNoImage = 'assets/images/app_coffee.png';
 }
 
 class _Json {

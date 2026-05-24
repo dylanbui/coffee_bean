@@ -1,27 +1,20 @@
 import 'package:equatable/equatable.dart';
+import 'package:coffee_bean_db/coffee_bean_db.dart';
 
-class Store {
-  final String id;
-  final String name;
-  final String address;
-  final String hours;
+class StoreDisplayModel {
+  final TblStore store;
   final String distance;
   final bool isOpen;
-  final String? imageUrl;
 
-  Store({
-    required this.id,
-    required this.name,
-    required this.address,
-    required this.hours,
+  const StoreDisplayModel({
+    required this.store,
     required this.distance,
-    this.isOpen = true,
-    this.imageUrl,
+    required this.isOpen,
   });
 }
 
 abstract class StoreListState extends Equatable {
-  final List<Store> stores;
+  final List<StoreDisplayModel> stores;
   final String searchQuery;
   final bool isLocationAuthorized;
   final bool isManualSelection;

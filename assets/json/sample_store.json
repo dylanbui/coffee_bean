@@ -1,0 +1,64 @@
+{
+  "stores": [
+    {
+      "id": 1,
+      "name": "Coffee Bean - Hàn Thuyên",
+      "address": "27 Hàn Thuyên, P. Bến Nghé, Quận 1, TP. HCM",
+      "phone": "028 3827 3001",
+      "latitude": 10.7788,
+      "longitude": 106.6994,
+      "opening_time": "07:00",
+      "closing_time": "22:00",
+      "images": [{"url": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&q=80", "is_primary": true}],
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "name": "Coffee Bean - Nguyễn Huệ",
+      "address": "99 Nguyễn Huệ, P. Bến Nghé, Quận 1, TP. HCM",
+      "phone": "028 3821 3002",
+      "latitude": 10.7745,
+      "longitude": 106.7032,
+      "opening_time": "07:00",
+      "closing_time": "23:00",
+      "images": [{"url": "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=400&q=80", "is_primary": true}],
+      "is_active": true
+    },
+    {
+      "id": 3,
+      "name": "Coffee Bean - Crescent Mall",
+      "address": "Tầng Trệt, Crescent Mall, Quận 7, TP. HCM",
+      "phone": "028 5413 3003",
+      "latitude": 10.7289,
+      "longitude": 106.7215,
+      "opening_time": "08:00",
+      "closing_time": "22:00",
+      "images": [{"url": "https://images.unsplash.com/photo-1521017432531-fbd92d744264?w=400&q=80", "is_primary": true}],
+      "is_active": true
+    },
+    {
+      "id": 4,
+      "name": "Coffee Bean - Bitexco",
+      "address": "Tòa nhà Bitexco, 2 Hải Triều, Quận 1, TP. HCM",
+      "phone": "028 3915 3004",
+      "latitude": 10.7715,
+      "longitude": 106.7042,
+      "opening_time": "07:00",
+      "closing_time": "22:00",
+      "images": [{"url": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&q=80", "is_primary": true}],
+      "is_active": true
+    },
+    {
+      "id": 5,
+      "name": "Coffee Bean - Phan Xích Long",
+      "address": "120 Phan Xích Long, Quận Phú Nhuận, TP. HCM",
+      "phone": "028 3517 3005",
+      "latitude": 10.7951,
+      "longitude": 106.6847,
+      "opening_time": "07:00",
+      "closing_time": "22:30",
+      "images": [{"url": "https://images.unsplash.com/photo-1511920170033-f8396924c348?w=400&q=80", "is_primary": true}],
+      "is_active": true
+    }
+  ]
+}
