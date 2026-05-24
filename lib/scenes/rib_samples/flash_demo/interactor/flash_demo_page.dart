@@ -1,5 +1,5 @@
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
-import 'package:coffee_bean/core/utils/logger.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:db_core/utils/logger.dart';
 import 'package:coffee_bean/utils/flash_utils/date_time_ext.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_calendar_config.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_calendar_helper.dart';

@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
+import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/user_features/forgot_password/forgot_password_builder.dart';
 import 'package:coffee_bean/scenes/user_features/set_password/set_password_builder.dart';
 import 'package:flutter/material.dart';

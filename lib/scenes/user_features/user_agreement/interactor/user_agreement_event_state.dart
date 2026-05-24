@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
+import 'package:db_core/state_management/lib_bloc/constants.dart';
 
 // ----------- EVENT ---------------
 abstract class UserAgreementEvent extends BaseBlocEvent {}

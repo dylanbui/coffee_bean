@@ -8,8 +8,8 @@
  */
 
 import 'package:coffee_bean/scenes/user_features/privacy_policy/interactor/privacy_policy_event_state.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:db_core/architecture_ribs/note_router.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 
 // Interactor
 

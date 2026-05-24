@@ -1,4 +1,4 @@
-import 'package:coffee_bean/core/utils/shared_preferences.dart';
+import 'package:db_core/utils/shared_preferences.dart';
 
 class AppPrefs {
 

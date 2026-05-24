@@ -1,5 +1,5 @@
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
-import 'package:coffee_bean/core/utils/logger.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:db_core/utils/logger.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_detail/interactor/product_detail_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_detail/interactor/product_detail_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';

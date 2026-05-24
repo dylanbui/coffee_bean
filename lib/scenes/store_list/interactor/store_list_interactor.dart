@@ -1,4 +1,4 @@
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';

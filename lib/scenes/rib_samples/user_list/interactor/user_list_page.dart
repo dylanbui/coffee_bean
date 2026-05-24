@@ -1,12 +1,12 @@
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
+import 'package:db_core/architecture_ribs/note_viewer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/bloc_statefull_widget.dart';
+import 'package:db_core/state_management/lib_bloc/bloc_statefull_widget.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_list/interactor/user_list_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_list/interactor/user_list_interactor.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
+import 'package:db_core/state_management/lib_bloc/constants.dart';
 
 // ignore: must_be_immutable
 class UserListPage extends BlocStatefulWidget<UserListInteractor, BaseBlocEvent, BaseBlocState> with ViewControllable {

@@ -1,4 +1,4 @@
-import 'package:coffee_bean/core/utils/shared_preferences.dart';
+import 'package:db_core/utils/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 
 // Demo gắn them chuc nang vao UserManager, UserPermissionMixin co the chon luu tru trong Isar hay Hevi, SQLite

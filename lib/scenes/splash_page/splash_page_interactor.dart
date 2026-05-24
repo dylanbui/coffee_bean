@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:db_core/architecture_ribs/note_router.dart';
+import 'package:db_core/state_management/lib_bloc/constants.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 
 // --- STATES ---
 // The states for the Splash screen. In this case, we only need an initial state.

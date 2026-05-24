@@ -1,5 +1,5 @@
-import 'package:coffee_bean/core/commons_constants.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
+import 'package:db_core/commons_constants.dart';
+import 'package:db_core/state_management/lib_bloc/constants.dart';
 import 'package:equatable/equatable.dart';
 
 /// Base state for the UploadFiles module.

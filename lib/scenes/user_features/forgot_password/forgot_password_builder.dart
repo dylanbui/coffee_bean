@@ -7,8 +7,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
+import 'package:db_core/architecture_ribs/note_builder.dart';
+import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/user_features/forgot_password/forgot_password_router.dart';
 import 'package:coffee_bean/scenes/user_features/forgot_password/interactor/forgot_password_interactor.dart';
 import 'package:coffee_bean/scenes/user_features/forgot_password/interactor/forgot_password_page.dart';

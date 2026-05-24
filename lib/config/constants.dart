@@ -1,4 +1,4 @@
-import 'package:coffee_bean/core/services/event_bus.dart';
+import 'package:db_core/services/event_bus.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 
 /// --- AUTH EVENTS ---

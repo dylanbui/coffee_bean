@@ -9,7 +9,7 @@
 
 import 'package:coffee_bean/scenes/global_search/global_search_router.dart';
 import 'package:coffee_bean/scenes/global_search/interactor/global_search_event_state.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 
 
 // Interactor

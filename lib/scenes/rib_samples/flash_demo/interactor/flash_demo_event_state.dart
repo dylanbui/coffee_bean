@@ -1,4 +1,4 @@
-import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
+import 'package:db_core/state_management/lib_bloc/constants.dart';
 
 abstract class FlashDemoState extends BaseBlocState {
   final String selectedValue;

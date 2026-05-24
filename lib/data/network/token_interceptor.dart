@@ -9,8 +9,8 @@
 
 import 'dart:ui';
 
-import 'package:coffee_bean/core/network/network_client.dart';
-import 'package:coffee_bean/core/network/network_common.dart';
+import 'package:db_core/network/network_client.dart';
+import 'package:db_core/network/network_common.dart';
 import 'package:dio/dio.dart';
 
 abstract class AuthTokenProvider {

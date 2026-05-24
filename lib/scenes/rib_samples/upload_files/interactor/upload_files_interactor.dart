@@ -1,6 +1,6 @@
-import 'package:coffee_bean/core/commons_constants.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:coffee_bean/core/utils/locator.dart';
+import 'package:db_core/commons_constants.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:db_core/utils/locator.dart';
 import 'package:coffee_bean/data/repository/upload_files_repository.dart';
 import 'package:coffee_bean/scenes/rib_samples/upload_files/interactor/upload_files_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/upload_files/upload_files_router.dart';

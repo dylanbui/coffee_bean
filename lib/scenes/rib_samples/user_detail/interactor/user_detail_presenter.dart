@@ -1,5 +1,5 @@
-import 'package:coffee_bean/core/architecture_ribs/note_interactor.dart';
-import 'package:coffee_bean/core/commons_constants.dart';
+import 'package:db_core/architecture_ribs/note_interactor.dart';
+import 'package:db_core/commons_constants.dart';
 import 'package:coffee_bean/data/model/user.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
 

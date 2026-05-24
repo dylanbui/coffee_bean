@@ -15,10 +15,10 @@ import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/shared/widget/phone_input_field.dart';
 import 'package:coffee_bean/shared/widget/underline_input_field.dart';
-import 'package:coffee_bean/core/utils/app_button.dart';
+import 'package:db_core/utils/app_button.dart';
 
 //ignore: must_be_immutable
 class ForgotPasswordPage extends CubitStateFulWidget<ForgotPasswordInteractor, ForgotPasswordState> {

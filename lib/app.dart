@@ -8,11 +8,11 @@
  */
 
 import 'package:chuck_interceptor/chuck_interceptor.dart';
-import 'package:coffee_bean/core/architecture_ribs/navigator.dart';
-import 'package:coffee_bean/core/network/network_client.dart';
-import 'package:coffee_bean/core/network/network_common.dart';
-import 'package:coffee_bean/core/services/event_bus.dart';
-import 'package:coffee_bean/core/utils/shared_preferences.dart';
+import 'package:db_core/architecture_ribs/navigator.dart';
+import 'package:db_core/network/network_client.dart';
+import 'package:db_core/network/network_common.dart';
+import 'package:db_core/services/event_bus.dart';
+import 'package:db_core/utils/shared_preferences.dart';
 import 'package:coffee_bean/config/app_config.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/network/token_interceptor.dart';
@@ -21,7 +21,7 @@ import 'package:coffee_bean/scenes/app/app_builder.dart';
 import 'package:coffee_bean/scenes/app/app_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:coffee_bean/core/utils/locator.dart';
+import 'package:db_core/utils/locator.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/live_service/likes_service.dart';
 import 'package:coffee_bean/scenes/app/interactor/deep_link_service.dart';

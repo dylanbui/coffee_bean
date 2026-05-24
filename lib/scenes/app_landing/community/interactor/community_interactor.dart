@@ -1,6 +1,6 @@
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/community/community_router.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
+import 'package:db_core/state_management/lib_bloc/constants.dart';
 
 // States
 abstract class CommunityState extends BaseBlocState {}

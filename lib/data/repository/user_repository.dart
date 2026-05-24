@@ -1,5 +1,5 @@
-import 'package:coffee_bean/core/network/base_repository.dart';
-import 'package:coffee_bean/core/network/network_common.dart';
+import 'package:db_core/network/base_repository.dart';
+import 'package:db_core/network/network_common.dart';
 import 'package:coffee_bean/data/model/user.dart';
 
 /// A repository that handles user related API requests.

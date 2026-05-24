@@ -1,4 +1,4 @@
-import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
+import 'package:db_core/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/community/community_router.dart';
 import 'package:coffee_bean/scenes/app_landing/community/interactor/community_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/community/interactor/community_page.dart';

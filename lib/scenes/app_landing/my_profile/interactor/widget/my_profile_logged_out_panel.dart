@@ -1,4 +1,4 @@
-import 'package:coffee_bean/core/utils/app_button.dart';
+import 'package:db_core/utils/app_button.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/my_profile_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:flutter/material.dart';

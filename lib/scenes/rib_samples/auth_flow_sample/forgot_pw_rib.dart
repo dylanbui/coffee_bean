@@ -6,11 +6,11 @@
  * Date: 5/5/26 - 15:00
  */
 
-import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
+import 'package:db_core/architecture_ribs/note_builder.dart';
+import 'package:db_core/architecture_ribs/note_router.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:db_core/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean/scenes/rib_samples/auth_flow_sample/auth_flow_rib.dart';
 import 'package:flutter/material.dart';
 

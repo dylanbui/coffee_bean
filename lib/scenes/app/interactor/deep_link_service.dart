@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
+import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/app/app_router.dart';
 
 // For a real implementation, you would use a package like uni_links:

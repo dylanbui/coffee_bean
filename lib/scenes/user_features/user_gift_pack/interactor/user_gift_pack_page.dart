@@ -11,10 +11,10 @@ import 'package:coffee_bean/scenes/user_features/user_gift_pack/interactor/user_
 import 'package:coffee_bean/scenes/user_features/user_gift_pack/interactor/user_gift_pack_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
-import 'package:coffee_bean/core/utils/app_button.dart';
+import 'package:db_core/utils/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 
 //ignore: must_be_immutable
 class UserGiftPackPage extends CubitStateFulWidget<UserGiftPackInteractor, UserGiftPackState> {

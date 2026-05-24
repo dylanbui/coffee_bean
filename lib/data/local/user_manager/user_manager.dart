@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:coffee_bean/core/utils/base_secure_storage.dart';
+import 'package:db_core/utils/base_secure_storage.dart';
 import 'package:coffee_bean/data/local/user_manager/user_permission_mixin.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:flutter/foundation.dart';

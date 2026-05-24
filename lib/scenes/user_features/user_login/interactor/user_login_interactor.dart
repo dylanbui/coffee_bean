@@ -8,13 +8,13 @@
  */
 
 import 'package:coffee_bean/config/constants.dart';
-import 'package:coffee_bean/core/services/event_bus.dart';
-import 'package:coffee_bean/core/utils/locator.dart';
-import 'package:coffee_bean/core/utils/logger.dart';
+import 'package:db_core/services/event_bus.dart';
+import 'package:db_core/utils/locator.dart';
+import 'package:db_core/utils/logger.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/interactor/user_login_event_state.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/user_login_builder.dart';
 import 'package:coffee_bean/utils/utils.dart';
 

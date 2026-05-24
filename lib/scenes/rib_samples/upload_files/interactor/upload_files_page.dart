@@ -1,5 +1,5 @@
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:db_core/architecture_ribs/note_viewer.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/scenes/rib_samples/upload_files/interactor/upload_files_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/upload_files/interactor/upload_files_interactor.dart';
 import 'package:flutter/material.dart';

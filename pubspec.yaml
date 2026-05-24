@@ -43,6 +43,8 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   # Local Packages (Isolated Modules)
+  db_core:
+    path: ./packages/db_core
 #  coffee_bean_core:
 #    path: ./packages/coffee_bean_core
   coffee_bean_db:

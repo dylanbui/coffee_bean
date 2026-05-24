@@ -1,4 +1,4 @@
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_interactor.dart';

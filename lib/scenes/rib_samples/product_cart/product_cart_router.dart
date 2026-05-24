@@ -1,4 +1,4 @@
-import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
+import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_detail/product_detail_builder.dart';
 import 'package:flutter/material.dart';
 

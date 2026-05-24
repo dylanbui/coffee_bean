@@ -7,8 +7,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
+import 'package:db_core/architecture_ribs/note_builder.dart';
+import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/user_features/privacy_policy/privacy_policy_builder.dart';
 import 'package:coffee_bean/scenes/user_features/set_password/set_password_builder.dart';
 import 'package:coffee_bean/scenes/user_features/user_agreement/user_agreement_builder.dart';

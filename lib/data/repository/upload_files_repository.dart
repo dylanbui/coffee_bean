@@ -1,6 +1,6 @@
-import 'package:coffee_bean/core/commons_constants.dart';
-import 'package:coffee_bean/core/network/network_client.dart';
-import 'package:coffee_bean/core/utils/locator.dart';
+import 'package:db_core/commons_constants.dart';
+import 'package:db_core/network/network_client.dart';
+import 'package:db_core/utils/locator.dart';
 import 'package:dio/dio.dart';
 
 /// Repository for handling file upload operations.

@@ -312,6 +312,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.7"
+  db_core:
+    dependency: "direct main"
+    description:
+      path: "packages/db_core"
+      relative: true
+    source: path
+    version: "1.0.0"
   dbus:
     dependency: transitive
     description:

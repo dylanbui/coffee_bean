@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:coffee_bean/core/architecture_ribs/note_interactor.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
-import 'package:coffee_bean/core/utils/locator.dart';
-import 'package:coffee_bean/core/utils/logger.dart';
+import 'package:db_core/architecture_ribs/note_interactor.dart';
+import 'package:db_core/state_management/lib_bloc/constants.dart';
+import 'package:db_core/utils/locator.dart';
+import 'package:db_core/utils/logger.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/scenes/app/app_router.dart';

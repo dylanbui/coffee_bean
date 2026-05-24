@@ -1,5 +1,5 @@
-import 'package:coffee_bean/core/architecture_ribs/note_flow.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
+import 'package:db_core/architecture_ribs/note_flow.dart';
+import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/user_features/forgot_password/forgot_password_builder.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/user_login_builder.dart';
 import 'package:coffee_bean/scenes/user_features/user_register/user_register_builder.dart';

@@ -1,8 +1,8 @@
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
-import 'package:coffee_bean/core/custom_app_bar.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
-import 'package:coffee_bean/core/utils/locator.dart';
-import 'package:coffee_bean/core/utils/logger.dart';
+import 'package:db_core/architecture_ribs/note_viewer.dart';
+import 'package:db_core/custom_app_bar.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:db_core/utils/locator.dart';
+import 'package:db_core/utils/logger.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/live_service/model/cart_item.dart';
 import 'package:coffee_bean/data/model/product.dart';

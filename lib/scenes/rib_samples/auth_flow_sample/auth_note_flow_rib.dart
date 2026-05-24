@@ -6,8 +6,8 @@
  * Date: 5/5/26 - 16:00
  */
 
-import 'package:coffee_bean/core/architecture_ribs/note_flow.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
+import 'package:db_core/architecture_ribs/note_flow.dart';
+import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/rib_samples/auth_flow_sample/auth_flow_rib.dart';
 import 'package:coffee_bean/scenes/rib_samples/auth_flow_sample/login_rib.dart';
 import 'package:coffee_bean/scenes/rib_samples/auth_flow_sample/register_rib.dart';

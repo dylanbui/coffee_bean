@@ -1,5 +1,5 @@
-import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/core/utils/locator.dart';
+import 'package:db_core/architecture_ribs/note_builder.dart';
+import 'package:db_core/utils/locator.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_list/interactor/user_list_interactor.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_list/interactor/user_list_page.dart';

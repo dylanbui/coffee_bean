@@ -1,4 +1,4 @@
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';

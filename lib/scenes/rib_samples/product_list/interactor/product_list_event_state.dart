@@ -7,8 +7,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/core/commons_constants.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
+import 'package:db_core/commons_constants.dart';
+import 'package:db_core/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean/data/model/product.dart';
 
 // -------------- EVENT ---------------------

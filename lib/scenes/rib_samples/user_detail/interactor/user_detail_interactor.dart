@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:coffee_bean/core/commons_constants.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/bloc_interactor.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
+import 'package:db_core/commons_constants.dart';
+import 'package:db_core/state_management/lib_bloc/bloc_interactor.dart';
+import 'package:db_core/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_presenter.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/user_detail_router.dart';

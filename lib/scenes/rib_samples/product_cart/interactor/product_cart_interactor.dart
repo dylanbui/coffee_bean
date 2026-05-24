@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:coffee_bean/core/utils/locator.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:db_core/utils/locator.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/model/product.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_cart/interactor/product_cart_event_state.dart';

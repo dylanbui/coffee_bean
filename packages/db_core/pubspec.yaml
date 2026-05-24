@@ -1,0 +1,51 @@
+name: db_core
+description: Core module containing shared utilities, network, and architecture for the project.
+version: 1.0.0
+publish_to: 'none'
+
+environment:
+  sdk: ">=3.10.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # --- Network & API ---
+  # HTTP client for making requests
+  dio: 5.9.2
+  # Logging interceptor for Dio to format request/response logs
+  pretty_dio_logger: ^1.4.0
+  # General purpose logging library
+  logger: ^2.7.0
+  # Check internet connection status
+  connectivity_plus: ^7.1.1
+
+  # --- State Management ---
+  # Bloc/Cubit implementation for predictable state management
+  flutter_bloc: 9.1.1
+  # Dependency injection and simple state management
+  provider: ^6.1.5+1
+
+  # --- Local Storage ---
+  # Store simple key-value pairs locally
+  shared_preferences: ^2.5.5
+  # Securely store sensitive data (tokens, keys)
+  flutter_secure_storage: ^10.0.0
+
+  # --- UI & Navigation ---
+  # Custom route transitions and animations
+  page_transition: ^2.2.1
+  # Highly customizable toast and snackbar notifications
+  flash: ^3.1.1
+  
+  # --- Utilities ---
+  # A set of utility libraries for Dart
+  quiver: ^3.2.2
+  # Find commonly used locations on the filesystem
+  path_provider: ^2.1.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0

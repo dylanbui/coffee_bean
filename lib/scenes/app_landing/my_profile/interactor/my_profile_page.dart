@@ -1,4 +1,4 @@
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/my_profile_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/widget/my_profile_logged_in_panel.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/widget/my_profile_logged_out_panel.dart';

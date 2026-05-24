@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
-import 'package:coffee_bean/core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:db_core/architecture_ribs/note_viewer.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // This import might be wrong if it's flutter_bloc.dart
 import 'package:image_picker/image_picker.dart';

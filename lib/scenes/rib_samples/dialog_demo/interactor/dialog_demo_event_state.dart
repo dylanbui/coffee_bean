@@ -1,4 +1,4 @@
-import 'package:coffee_bean/core/state_management/lib_bloc/constants.dart';
+import 'package:db_core/state_management/lib_bloc/constants.dart';
 
 // ----------- STATE ---------------
 abstract class DialogDemoState extends BaseBlocState {}

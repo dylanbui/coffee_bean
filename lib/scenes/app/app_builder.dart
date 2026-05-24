@@ -1,8 +1,8 @@
-import 'package:coffee_bean/core/architecture_ribs/navigator.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/core/architecture_ribs/note_viewer.dart';
-import 'package:coffee_bean/core/utils/logger.dart';
+import 'package:db_core/architecture_ribs/navigator.dart';
+import 'package:db_core/architecture_ribs/note_builder.dart';
+import 'package:db_core/architecture_ribs/note_router.dart';
+import 'package:db_core/architecture_ribs/note_viewer.dart';
+import 'package:db_core/utils/logger.dart';
 import 'package:coffee_bean/scenes/app/app_router.dart';
 import 'package:coffee_bean/scenes/app/interactor/app_interactor.dart';
 import 'package:coffee_bean/scenes/app/interactor/splash_page.dart';
