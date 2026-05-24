@@ -25,6 +25,12 @@ class TblCategory {
 }
 
 @embedded
+class TblImage {
+  String? url;
+  bool isPrimary = false;
+}
+
+@embedded
 class TblProductOption {
   int serverId = 0;
   String name = "";
@@ -61,7 +67,13 @@ class TblFood {
   @Index(type: IndexType.value, caseSensitive: false)
   String searchName = "";
 
-  String? image;
+  List<TblImage>? images;
+
+  String? get mainImage {
+    if (images == null || images!.isEmpty) return null;
+    return images!.firstWhere((img) => img.isPrimary, orElse: () => images!.first).url;
+  }
+
   double price = 0.0;
   String? description;
   bool isActive = true;
@@ -88,7 +100,13 @@ class TblCourse {
   @Index(type: IndexType.value, caseSensitive: false)
   String searchName = "";
 
-  String? image;
+  List<TblImage>? images;
+
+  String? get mainImage {
+    if (images == null || images!.isEmpty) return null;
+    return images!.firstWhere((img) => img.isPrimary, orElse: () => images!.first).url;
+  }
+
   double price = 0.0;
   String? description;
   bool isActive = true;

@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Script auto build cho local package và source chính
-# Lưu tại scripts/auto_build.sh
-# Cấp quyền thực thi: chmod +x scripts/auto_build.sh
+# Lưu tại scripts/auto_build_package.sh
 
-# Đường dẫn tới local package
-LOCAL_PACKAGE="./packages/coffee_bean_db"
+# Đường dẫn tới các local packages
+DB_CORE="./packages/db_core"
+COFFEE_DB="./packages/coffee_bean_db"
 ROOT_PROJECT="."
 
 # File lưu checksum để so sánh
@@ -13,9 +13,21 @@ CHECKSUM_FILE=".pubspec_checksum"
 
 function check_and_pubget() {
   local dir=$1
-  cd $dir || exit
+  if [ ! -d "$dir" ]; then
+    echo "⚠️ Thư mục $dir không tồn tại, bỏ qua."
+    return
+  fi
 
-  local checksum=$(md5sum pubspec.yaml | awk '{print $1}')
+  cd "$dir" || exit
+
+  # Hỗ trợ cả md5sum (Linux) và md5 (macOS)
+  local checksum=""
+  if command -v md5sum >/dev/null 2>&1; then
+    checksum=$(md5sum pubspec.yaml | awk '{print $1}')
+  else
+    checksum=$(md5 -q pubspec.yaml)
+  fi
+
   local old_checksum=""
 
   if [ -f $CHECKSUM_FILE ]; then
@@ -25,7 +37,7 @@ function check_and_pubget() {
   if [ "$checksum" != "$old_checksum" ]; then
     echo "📦 pubspec.yaml thay đổi trong $dir → chạy flutter pub get"
     flutter pub get
-    echo $checksum > $CHECKSUM_FILE
+    echo "$checksum" > $CHECKSUM_FILE
   else
     echo "✅ pubspec.yaml không thay đổi trong $dir → bỏ qua flutter pub get"
   fi
@@ -33,15 +45,23 @@ function check_and_pubget() {
   cd - >/dev/null || exit
 }
 
-echo "🔄 Auto build bắt đầu..."
+echo "🔄 Auto build hệ thống module bắt đầu..."
 
-# Bước 1: Kiểm tra và pub get cho local package
-check_and_pubget $LOCAL_PACKAGE
-cd $LOCAL_PACKAGE || exit
-dart run build_runner build
+# Bước 1: Build db_core (Nền tảng)
+echo "--- [1/3] Processing db_core ---"
+check_and_pubget $DB_CORE
+
+# Bước 2: Build coffee_bean_db (Phụ thuộc vào db_core)
+echo "--- [2/3] Processing coffee_bean_db ---"
+check_and_pubget $COFFEE_DB
+cd $COFFEE_DB || exit
+if grep -q "build_runner" pubspec.yaml; then
+    dart run build_runner build
+fi
 cd - >/dev/null || exit
 
-# Bước 2: Kiểm tra và pub get cho source chính
+# Bước 3: Build source chính
+echo "--- [3/3] Processing Root Project ---"
 check_and_pubget $ROOT_PROJECT
 dart run build_runner build
 

@@ -7,6 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:db_core/utils/common_style.dart';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
@@ -90,11 +91,11 @@ class AppAlert {
     return DialogButton(
       child: Text(
         title ?? "OK",
-        style: const TextStyle(color: Colors.white, fontSize: 20),
+        style: const TextStyle(color: Colors.white, fontSize: 18),
       ),
       onPressed: btnOkAction,
-      color: const Color.fromRGBO(0, 179, 134, 1.0),
-      radius: BorderRadius.circular(5.0),
+      color: DbCommonStyle.successColor,
+      radius: BorderRadius.circular(8.0),
     );
   }
 
@@ -102,11 +103,11 @@ class AppAlert {
     return DialogButton(
       child: Text(
         title ?? "Bỏ qua",
-        style: const TextStyle(color: Colors.white, fontSize: 20),
+        style: const TextStyle(color: Colors.white, fontSize: 18),
       ),
       onPressed: btnCancelAction,
       color: Colors.black26,
-      radius: BorderRadius.circular(5.0),
+      radius: BorderRadius.circular(8.0),
     );
   }
 

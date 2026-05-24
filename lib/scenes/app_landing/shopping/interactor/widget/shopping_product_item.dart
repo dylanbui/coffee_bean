@@ -38,7 +38,7 @@ class ShoppingProductItem extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: CachedImageWidget(
-                    imageUrl: product.image ?? "",
+                    imageUrl: product.mainImage ?? "",
                     width: 90,
                     height: 90,
                     fit: BoxFit.cover,

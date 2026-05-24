@@ -61,14 +61,14 @@ class CartService implements DbLocatorDisposable {
       serverId = product.serverId;
       productType = ProductType.food;
       name = product.name;
-      image = product.image;
+      image = product.mainImage;
       sku = product.sku;
       price = product.price;
     } else if (product is TblCourse) {
       serverId = product.serverId;
       productType = ProductType.course;
       name = product.name;
-      image = product.image;
+      image = product.mainImage;
       sku = product.sku;
       price = product.price;
     } else if (product is Product) {

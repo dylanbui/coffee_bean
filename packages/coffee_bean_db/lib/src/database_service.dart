@@ -193,7 +193,7 @@ class DatabaseService {
       ..searchName = _toNoSign(name)
       ..sku = json['sku']
       ..price = (json['price'] ?? 0).toDouble()
-      ..image = json['image']
+      ..images = _mapImages(json)
       ..description = json['description']
       ..isActive = json['is_active'] ?? true
       ..properties = props;
@@ -208,12 +208,26 @@ class DatabaseService {
       ..searchName = _toNoSign(name)
       ..sku = json['sku']
       ..price = (json['price'] ?? 0).toDouble()
-      ..image = json['image']
+      ..images = _mapImages(json)
       ..description = json['description']
       ..isActive = json['is_active'] ?? true
       ..instructor = json['instructor']
       ..videoUrl = json['video_url']
       ..properties = props;
+  }
+  List<TblImage>? _mapImages(dynamic json) {
+    if (json['images'] != null && json['images'] is List) {
+      return (json['images'] as List)
+          .map((img) => TblImage()
+            ..url = img['url']
+            ..isPrimary = img['is_primary'] ?? false)
+          .toList();
+    }
+    // Fallback nếu server chỉ trả về 1 field image đơn lẻ
+    if (json['image'] != null && json['image'] is String) {
+      return [TblImage()..url = json['image']..isPrimary = true];
+    }
+    return null;
   }
 }
 

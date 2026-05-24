@@ -53,13 +53,14 @@ prepare_header() {
 }
 
 flutter_clean_and_build() {
-    echo "🧹 Executing flutter clean..."
-    flutter clean
-    echo "📦 Executing flutter pub get..."
-    flutter pub get
-    # Only run build_runner if your project uses code generation (like Bloc or RIBs)
-    echo "🛠 Executing build_runner..."
-    flutter packages pub run build_runner build --delete-conflicting-outputs
+    if [ "$CLEAN_BUILD" == "true" ]; then
+        echo "🧹 Executing flutter clean..."
+        flutter clean
+    fi
+
+    echo "📦 Executing auto_build_package.sh..."
+    chmod +x scripts/auto_build_package.sh
+    ./scripts/auto_build_package.sh
 }
 
 # 2. Function to get manual notes from file (Manual way)

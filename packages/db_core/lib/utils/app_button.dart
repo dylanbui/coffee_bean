@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:db_core/utils/tap_effect.dart';
-import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:db_core/utils/common_style.dart';
 
 /*
  * AppButton Usage Guide:
@@ -8,10 +8,10 @@ import 'package:coffee_bean/shared/ui/app_style.dart';
  * 1. Basic usage:
  *    AppButton(text: "Submit", onPressed: () => print("Tapped"))
  * 
- * 2. Using different styles:
+ * 2. Using different styles (styles should be defined in the app layer and passed here):
  *    AppButton(
  *      text: "Cancel",
- *      style: TMLabsStyle.outlineButton,
+ *      style: myCustomButtonStyle, 
  *      onPressed: () => Navigator.pop(context)
  *    )
  *
@@ -23,46 +23,6 @@ import 'package:coffee_bean/shared/ui/app_style.dart';
  *      onPressed: () => _handleProcess(),
  *    )
  */
-
-class AppButtonStyleConfig {
-  final Color backgroundColor;
-  final Color textColor;
-  final Color? borderColor;
-  final double borderRadius;
-  final double? height;
-  final TextStyle? textStyle;
-  final MainAxisSize mainAxisSize;
-
-  const AppButtonStyleConfig({
-    required this.backgroundColor,
-    required this.textColor,
-    this.borderColor,
-    this.borderRadius = 12.0,
-    this.height = 48.0,
-    this.textStyle,
-    this.mainAxisSize = MainAxisSize.max,
-  });
-
-  AppButtonStyleConfig copyWith({
-    Color? backgroundColor,
-    Color? textColor,
-    Color? borderColor,
-    double? borderRadius,
-    double? height,
-    TextStyle? textStyle,
-    MainAxisSize? mainAxisSize,
-  }) {
-    return AppButtonStyleConfig(
-      backgroundColor: backgroundColor ?? this.backgroundColor,
-      textColor: textColor ?? this.textColor,
-      borderColor: borderColor ?? this.borderColor,
-      borderRadius: borderRadius ?? this.borderRadius,
-      height: height ?? this.height,
-      textStyle: textStyle ?? this.textStyle,
-      mainAxisSize: mainAxisSize ?? this.mainAxisSize,
-    );
-  }
-}
 
 class AppButton extends StatelessWidget {
   final String? text;
@@ -83,7 +43,7 @@ class AppButton extends StatelessWidget {
     this.text,
     this.onPressed,
     this.isLoading = false,
-    this.style = TMLabsStyle.primaryButton,
+    this.style = DbCommonStyle.defaultButtonStyle,
     this.leftIcon,
     this.rightIcon,
     this.loadingWidget,

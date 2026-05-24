@@ -1748,24 +1748,35 @@ const TblFoodSchema = CollectionSchema(
       name: r'description',
       type: IsarType.string,
     ),
-    r'image': PropertySchema(id: 2, name: r'image', type: IsarType.string),
+    r'images': PropertySchema(
+      id: 2,
+      name: r'images',
+      type: IsarType.objectList,
+
+      target: r'TblImage',
+    ),
     r'isActive': PropertySchema(id: 3, name: r'isActive', type: IsarType.bool),
-    r'name': PropertySchema(id: 4, name: r'name', type: IsarType.string),
-    r'price': PropertySchema(id: 5, name: r'price', type: IsarType.double),
+    r'mainImage': PropertySchema(
+      id: 4,
+      name: r'mainImage',
+      type: IsarType.string,
+    ),
+    r'name': PropertySchema(id: 5, name: r'name', type: IsarType.string),
+    r'price': PropertySchema(id: 6, name: r'price', type: IsarType.double),
     r'properties': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'properties',
       type: IsarType.objectList,
 
       target: r'TblProductProperty',
     ),
     r'searchName': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'searchName',
       type: IsarType.string,
     ),
-    r'serverId': PropertySchema(id: 8, name: r'serverId', type: IsarType.long),
-    r'sku': PropertySchema(id: 9, name: r'sku', type: IsarType.string),
+    r'serverId': PropertySchema(id: 9, name: r'serverId', type: IsarType.long),
+    r'sku': PropertySchema(id: 10, name: r'sku', type: IsarType.string),
   },
 
   estimateSize: _tblFoodEstimateSize,
@@ -1842,6 +1853,7 @@ const TblFoodSchema = CollectionSchema(
   },
   links: {},
   embeddedSchemas: {
+    r'TblImage': TblImageSchema,
     r'TblProductProperty': TblProductPropertySchema,
     r'TblProductOption': TblProductOptionSchema,
   },
@@ -1865,7 +1877,20 @@ int _tblFoodEstimateSize(
     }
   }
   {
-    final value = object.image;
+    final list = object.images;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[TblImage]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += TblImageSchema.estimateSize(value, offsets, allOffsets);
+        }
+      }
+    }
+  }
+  {
+    final value = object.mainImage;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -1906,19 +1931,25 @@ void _tblFoodSerialize(
 ) {
   writer.writeLong(offsets[0], object.catId);
   writer.writeString(offsets[1], object.description);
-  writer.writeString(offsets[2], object.image);
+  writer.writeObjectList<TblImage>(
+    offsets[2],
+    allOffsets,
+    TblImageSchema.serialize,
+    object.images,
+  );
   writer.writeBool(offsets[3], object.isActive);
-  writer.writeString(offsets[4], object.name);
-  writer.writeDouble(offsets[5], object.price);
+  writer.writeString(offsets[4], object.mainImage);
+  writer.writeString(offsets[5], object.name);
+  writer.writeDouble(offsets[6], object.price);
   writer.writeObjectList<TblProductProperty>(
-    offsets[6],
+    offsets[7],
     allOffsets,
     TblProductPropertySchema.serialize,
     object.properties,
   );
-  writer.writeString(offsets[7], object.searchName);
-  writer.writeLong(offsets[8], object.serverId);
-  writer.writeString(offsets[9], object.sku);
+  writer.writeString(offsets[8], object.searchName);
+  writer.writeLong(offsets[9], object.serverId);
+  writer.writeString(offsets[10], object.sku);
 }
 
 TblFood _tblFoodDeserialize(
@@ -1931,19 +1962,24 @@ TblFood _tblFoodDeserialize(
   object.catId = reader.readLong(offsets[0]);
   object.description = reader.readStringOrNull(offsets[1]);
   object.id = id;
-  object.image = reader.readStringOrNull(offsets[2]);
+  object.images = reader.readObjectList<TblImage>(
+    offsets[2],
+    TblImageSchema.deserialize,
+    allOffsets,
+    TblImage(),
+  );
   object.isActive = reader.readBool(offsets[3]);
-  object.name = reader.readString(offsets[4]);
-  object.price = reader.readDouble(offsets[5]);
+  object.name = reader.readString(offsets[5]);
+  object.price = reader.readDouble(offsets[6]);
   object.properties = reader.readObjectList<TblProductProperty>(
-    offsets[6],
+    offsets[7],
     TblProductPropertySchema.deserialize,
     allOffsets,
     TblProductProperty(),
   );
-  object.searchName = reader.readString(offsets[7]);
-  object.serverId = reader.readLong(offsets[8]);
-  object.sku = reader.readStringOrNull(offsets[9]);
+  object.searchName = reader.readString(offsets[8]);
+  object.serverId = reader.readLong(offsets[9]);
+  object.sku = reader.readStringOrNull(offsets[10]);
   return object;
 }
 
@@ -1959,14 +1995,22 @@ P _tblFoodDeserializeProp<P>(
     case 1:
       return (reader.readStringOrNull(offset)) as P;
     case 2:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readObjectList<TblImage>(
+            offset,
+            TblImageSchema.deserialize,
+            allOffsets,
+            TblImage(),
+          ))
+          as P;
     case 3:
       return (reader.readBool(offset)) as P;
     case 4:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 5:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 6:
+      return (reader.readDouble(offset)) as P;
+    case 7:
       return (reader.readObjectList<TblProductProperty>(
             offset,
             TblProductPropertySchema.deserialize,
@@ -1974,11 +2018,11 @@ P _tblFoodDeserializeProp<P>(
             TblProductProperty(),
           ))
           as P;
-    case 7:
-      return (reader.readString(offset)) as P;
     case 8:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 9:
+      return (reader.readLong(offset)) as P;
+    case 10:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -3024,164 +3068,73 @@ extension TblFoodQueryFilter
     });
   }
 
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imageIsNull() {
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imagesIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        const FilterCondition.isNull(property: r'image'),
+        const FilterCondition.isNull(property: r'images'),
       );
     });
   }
 
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imageIsNotNull() {
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imagesIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        const FilterCondition.isNotNull(property: r'image'),
+        const FilterCondition.isNotNull(property: r'images'),
       );
     });
   }
 
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imageEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imagesLengthEqualTo(
+    int length,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'image',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.listLength(r'images', length, true, length, true);
     });
   }
 
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imageGreaterThan(
-    String? value, {
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imagesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'images', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imagesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'images', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imagesLengthLessThan(
+    int length, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'image',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.listLength(r'images', 0, true, length, include);
     });
   }
 
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imageLessThan(
-    String? value, {
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imagesLengthGreaterThan(
+    int length, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'image',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.listLength(r'images', length, include, 999999, true);
     });
   }
 
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imageBetween(
-    String? lower,
-    String? upper, {
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imagesLengthBetween(
+    int lower,
+    int upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'image',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imageStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'image',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imageEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'image',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imageContains(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'image',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imageMatches(
-    String pattern, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'image',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imageIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'image', value: ''),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imageIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'image', value: ''),
+      return query.listLength(
+        r'images',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
       );
     });
   }
@@ -3192,6 +3145,168 @@ extension TblFoodQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.equalTo(property: r'isActive', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'mainImage'),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'mainImage'),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'mainImage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'mainImage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'mainImage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'mainImage',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'mainImage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'mainImage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageContains(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'mainImage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'mainImage',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'mainImage', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'mainImage', value: ''),
       );
     });
   }
@@ -3853,6 +3968,14 @@ extension TblFoodQueryFilter
 
 extension TblFoodQueryObject
     on QueryBuilder<TblFood, TblFood, QFilterCondition> {
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> imagesElement(
+    FilterQuery<TblImage> q,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'images');
+    });
+  }
+
   QueryBuilder<TblFood, TblFood, QAfterFilterCondition> propertiesElement(
     FilterQuery<TblProductProperty> q,
   ) {
@@ -3890,18 +4013,6 @@ extension TblFoodQuerySortBy on QueryBuilder<TblFood, TblFood, QSortBy> {
     });
   }
 
-  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByImage() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'image', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByImageDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'image', Sort.desc);
-    });
-  }
-
   QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByIsActive() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isActive', Sort.asc);
@@ -3911,6 +4022,18 @@ extension TblFoodQuerySortBy on QueryBuilder<TblFood, TblFood, QSortBy> {
   QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByIsActiveDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isActive', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByMainImage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mainImage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByMainImageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mainImage', Sort.desc);
     });
   }
 
@@ -4013,18 +4136,6 @@ extension TblFoodQuerySortThenBy
     });
   }
 
-  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByImage() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'image', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByImageDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'image', Sort.desc);
-    });
-  }
-
   QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByIsActive() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isActive', Sort.asc);
@@ -4034,6 +4145,18 @@ extension TblFoodQuerySortThenBy
   QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByIsActiveDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isActive', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByMainImage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mainImage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByMainImageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mainImage', Sort.desc);
     });
   }
 
@@ -4114,17 +4237,17 @@ extension TblFoodQueryWhereDistinct
     });
   }
 
-  QueryBuilder<TblFood, TblFood, QDistinct> distinctByImage({
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'image', caseSensitive: caseSensitive);
-    });
-  }
-
   QueryBuilder<TblFood, TblFood, QDistinct> distinctByIsActive() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isActive');
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QDistinct> distinctByMainImage({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'mainImage', caseSensitive: caseSensitive);
     });
   }
 
@@ -4185,15 +4308,21 @@ extension TblFoodQueryProperty
     });
   }
 
-  QueryBuilder<TblFood, String?, QQueryOperations> imageProperty() {
+  QueryBuilder<TblFood, List<TblImage>?, QQueryOperations> imagesProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'image');
+      return query.addPropertyName(r'images');
     });
   }
 
   QueryBuilder<TblFood, bool, QQueryOperations> isActiveProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isActive');
+    });
+  }
+
+  QueryBuilder<TblFood, String?, QQueryOperations> mainImageProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'mainImage');
     });
   }
 
@@ -4252,31 +4381,42 @@ const TblCourseSchema = CollectionSchema(
       name: r'description',
       type: IsarType.string,
     ),
-    r'image': PropertySchema(id: 2, name: r'image', type: IsarType.string),
+    r'images': PropertySchema(
+      id: 2,
+      name: r'images',
+      type: IsarType.objectList,
+
+      target: r'TblImage',
+    ),
     r'instructor': PropertySchema(
       id: 3,
       name: r'instructor',
       type: IsarType.string,
     ),
     r'isActive': PropertySchema(id: 4, name: r'isActive', type: IsarType.bool),
-    r'name': PropertySchema(id: 5, name: r'name', type: IsarType.string),
-    r'price': PropertySchema(id: 6, name: r'price', type: IsarType.double),
+    r'mainImage': PropertySchema(
+      id: 5,
+      name: r'mainImage',
+      type: IsarType.string,
+    ),
+    r'name': PropertySchema(id: 6, name: r'name', type: IsarType.string),
+    r'price': PropertySchema(id: 7, name: r'price', type: IsarType.double),
     r'properties': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'properties',
       type: IsarType.objectList,
 
       target: r'TblProductProperty',
     ),
     r'searchName': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'searchName',
       type: IsarType.string,
     ),
-    r'serverId': PropertySchema(id: 9, name: r'serverId', type: IsarType.long),
-    r'sku': PropertySchema(id: 10, name: r'sku', type: IsarType.string),
+    r'serverId': PropertySchema(id: 10, name: r'serverId', type: IsarType.long),
+    r'sku': PropertySchema(id: 11, name: r'sku', type: IsarType.string),
     r'videoUrl': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'videoUrl',
       type: IsarType.string,
     ),
@@ -4356,6 +4496,7 @@ const TblCourseSchema = CollectionSchema(
   },
   links: {},
   embeddedSchemas: {
+    r'TblImage': TblImageSchema,
     r'TblProductProperty': TblProductPropertySchema,
     r'TblProductOption': TblProductOptionSchema,
   },
@@ -4379,13 +4520,26 @@ int _tblCourseEstimateSize(
     }
   }
   {
-    final value = object.image;
+    final list = object.images;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[TblImage]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += TblImageSchema.estimateSize(value, offsets, allOffsets);
+        }
+      }
+    }
+  }
+  {
+    final value = object.instructor;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
   }
   {
-    final value = object.instructor;
+    final value = object.mainImage;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -4432,21 +4586,27 @@ void _tblCourseSerialize(
 ) {
   writer.writeLong(offsets[0], object.catId);
   writer.writeString(offsets[1], object.description);
-  writer.writeString(offsets[2], object.image);
+  writer.writeObjectList<TblImage>(
+    offsets[2],
+    allOffsets,
+    TblImageSchema.serialize,
+    object.images,
+  );
   writer.writeString(offsets[3], object.instructor);
   writer.writeBool(offsets[4], object.isActive);
-  writer.writeString(offsets[5], object.name);
-  writer.writeDouble(offsets[6], object.price);
+  writer.writeString(offsets[5], object.mainImage);
+  writer.writeString(offsets[6], object.name);
+  writer.writeDouble(offsets[7], object.price);
   writer.writeObjectList<TblProductProperty>(
-    offsets[7],
+    offsets[8],
     allOffsets,
     TblProductPropertySchema.serialize,
     object.properties,
   );
-  writer.writeString(offsets[8], object.searchName);
-  writer.writeLong(offsets[9], object.serverId);
-  writer.writeString(offsets[10], object.sku);
-  writer.writeString(offsets[11], object.videoUrl);
+  writer.writeString(offsets[9], object.searchName);
+  writer.writeLong(offsets[10], object.serverId);
+  writer.writeString(offsets[11], object.sku);
+  writer.writeString(offsets[12], object.videoUrl);
 }
 
 TblCourse _tblCourseDeserialize(
@@ -4459,21 +4619,26 @@ TblCourse _tblCourseDeserialize(
   object.catId = reader.readLong(offsets[0]);
   object.description = reader.readStringOrNull(offsets[1]);
   object.id = id;
-  object.image = reader.readStringOrNull(offsets[2]);
+  object.images = reader.readObjectList<TblImage>(
+    offsets[2],
+    TblImageSchema.deserialize,
+    allOffsets,
+    TblImage(),
+  );
   object.instructor = reader.readStringOrNull(offsets[3]);
   object.isActive = reader.readBool(offsets[4]);
-  object.name = reader.readString(offsets[5]);
-  object.price = reader.readDouble(offsets[6]);
+  object.name = reader.readString(offsets[6]);
+  object.price = reader.readDouble(offsets[7]);
   object.properties = reader.readObjectList<TblProductProperty>(
-    offsets[7],
+    offsets[8],
     TblProductPropertySchema.deserialize,
     allOffsets,
     TblProductProperty(),
   );
-  object.searchName = reader.readString(offsets[8]);
-  object.serverId = reader.readLong(offsets[9]);
-  object.sku = reader.readStringOrNull(offsets[10]);
-  object.videoUrl = reader.readStringOrNull(offsets[11]);
+  object.searchName = reader.readString(offsets[9]);
+  object.serverId = reader.readLong(offsets[10]);
+  object.sku = reader.readStringOrNull(offsets[11]);
+  object.videoUrl = reader.readStringOrNull(offsets[12]);
   return object;
 }
 
@@ -4489,16 +4654,24 @@ P _tblCourseDeserializeProp<P>(
     case 1:
       return (reader.readStringOrNull(offset)) as P;
     case 2:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readObjectList<TblImage>(
+            offset,
+            TblImageSchema.deserialize,
+            allOffsets,
+            TblImage(),
+          ))
+          as P;
     case 3:
       return (reader.readStringOrNull(offset)) as P;
     case 4:
       return (reader.readBool(offset)) as P;
     case 5:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 6:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 7:
+      return (reader.readDouble(offset)) as P;
+    case 8:
       return (reader.readObjectList<TblProductProperty>(
             offset,
             TblProductPropertySchema.deserialize,
@@ -4506,13 +4679,13 @@ P _tblCourseDeserializeProp<P>(
             TblProductProperty(),
           ))
           as P;
-    case 8:
-      return (reader.readString(offset)) as P;
     case 9:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 10:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 11:
+      return (reader.readStringOrNull(offset)) as P;
+    case 12:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -5574,164 +5747,69 @@ extension TblCourseQueryFilter
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imageIsNull() {
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imagesIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        const FilterCondition.isNull(property: r'image'),
+        const FilterCondition.isNull(property: r'images'),
       );
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imageIsNotNull() {
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imagesIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        const FilterCondition.isNotNull(property: r'image'),
+        const FilterCondition.isNotNull(property: r'images'),
       );
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imageEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imagesLengthEqualTo(
+    int length,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'image',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.listLength(r'images', length, true, length, true);
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imageGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imagesIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'image',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.listLength(r'images', 0, true, 0, true);
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imageLessThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imagesIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'image',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.listLength(r'images', 0, false, 999999, true);
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imageBetween(
-    String? lower,
-    String? upper, {
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition>
+  imagesLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'images', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition>
+  imagesLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'images', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imagesLengthBetween(
+    int lower,
+    int upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'image',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imageStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'image',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imageEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'image',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imageContains(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'image',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imageMatches(
-    String pattern, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'image',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imageIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'image', value: ''),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imageIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'image', value: ''),
+      return query.listLength(
+        r'images',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
       );
     });
   }
@@ -5906,6 +5984,171 @@ extension TblCourseQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.equalTo(property: r'isActive', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'mainImage'),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition>
+  mainImageIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'mainImage'),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'mainImage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition>
+  mainImageGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'mainImage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'mainImage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'mainImage',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'mainImage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'mainImage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageContains(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'mainImage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'mainImage',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'mainImage', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition>
+  mainImageIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'mainImage', value: ''),
       );
     });
   }
@@ -6735,6 +6978,14 @@ extension TblCourseQueryFilter
 
 extension TblCourseQueryObject
     on QueryBuilder<TblCourse, TblCourse, QFilterCondition> {
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> imagesElement(
+    FilterQuery<TblImage> q,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'images');
+    });
+  }
+
   QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> propertiesElement(
     FilterQuery<TblProductProperty> q,
   ) {
@@ -6772,18 +7023,6 @@ extension TblCourseQuerySortBy on QueryBuilder<TblCourse, TblCourse, QSortBy> {
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> sortByImage() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'image', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> sortByImageDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'image', Sort.desc);
-    });
-  }
-
   QueryBuilder<TblCourse, TblCourse, QAfterSortBy> sortByInstructor() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'instructor', Sort.asc);
@@ -6805,6 +7044,18 @@ extension TblCourseQuerySortBy on QueryBuilder<TblCourse, TblCourse, QSortBy> {
   QueryBuilder<TblCourse, TblCourse, QAfterSortBy> sortByIsActiveDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isActive', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> sortByMainImage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mainImage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> sortByMainImageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mainImage', Sort.desc);
     });
   }
 
@@ -6919,18 +7170,6 @@ extension TblCourseQuerySortThenBy
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> thenByImage() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'image', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> thenByImageDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'image', Sort.desc);
-    });
-  }
-
   QueryBuilder<TblCourse, TblCourse, QAfterSortBy> thenByInstructor() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'instructor', Sort.asc);
@@ -6952,6 +7191,18 @@ extension TblCourseQuerySortThenBy
   QueryBuilder<TblCourse, TblCourse, QAfterSortBy> thenByIsActiveDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isActive', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> thenByMainImage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mainImage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> thenByMainImageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mainImage', Sort.desc);
     });
   }
 
@@ -7044,14 +7295,6 @@ extension TblCourseQueryWhereDistinct
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QDistinct> distinctByImage({
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'image', caseSensitive: caseSensitive);
-    });
-  }
-
   QueryBuilder<TblCourse, TblCourse, QDistinct> distinctByInstructor({
     bool caseSensitive = true,
   }) {
@@ -7063,6 +7306,14 @@ extension TblCourseQueryWhereDistinct
   QueryBuilder<TblCourse, TblCourse, QDistinct> distinctByIsActive() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isActive');
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QDistinct> distinctByMainImage({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'mainImage', caseSensitive: caseSensitive);
     });
   }
 
@@ -7131,9 +7382,9 @@ extension TblCourseQueryProperty
     });
   }
 
-  QueryBuilder<TblCourse, String?, QQueryOperations> imageProperty() {
+  QueryBuilder<TblCourse, List<TblImage>?, QQueryOperations> imagesProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'image');
+      return query.addPropertyName(r'images');
     });
   }
 
@@ -7146,6 +7397,12 @@ extension TblCourseQueryProperty
   QueryBuilder<TblCourse, bool, QQueryOperations> isActiveProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isActive');
+    });
+  }
+
+  QueryBuilder<TblCourse, String?, QQueryOperations> mainImageProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'mainImage');
     });
   }
 
@@ -9130,6 +9387,258 @@ extension TblCartItemQueryProperty
 // **************************************************************************
 // IsarEmbeddedGenerator
 // **************************************************************************
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+const TblImageSchema = Schema(
+  name: r'TblImage',
+  id: 6701782132220546062,
+  properties: {
+    r'isPrimary': PropertySchema(
+      id: 0,
+      name: r'isPrimary',
+      type: IsarType.bool,
+    ),
+    r'url': PropertySchema(id: 1, name: r'url', type: IsarType.string),
+  },
+
+  estimateSize: _tblImageEstimateSize,
+  serialize: _tblImageSerialize,
+  deserialize: _tblImageDeserialize,
+  deserializeProp: _tblImageDeserializeProp,
+);
+
+int _tblImageEstimateSize(
+  TblImage object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  {
+    final value = object.url;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  return bytesCount;
+}
+
+void _tblImageSerialize(
+  TblImage object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeBool(offsets[0], object.isPrimary);
+  writer.writeString(offsets[1], object.url);
+}
+
+TblImage _tblImageDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = TblImage();
+  object.isPrimary = reader.readBool(offsets[0]);
+  object.url = reader.readStringOrNull(offsets[1]);
+  return object;
+}
+
+P _tblImageDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readBool(offset)) as P;
+    case 1:
+      return (reader.readStringOrNull(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+extension TblImageQueryFilter
+    on QueryBuilder<TblImage, TblImage, QFilterCondition> {
+  QueryBuilder<TblImage, TblImage, QAfterFilterCondition> isPrimaryEqualTo(
+    bool value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isPrimary', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblImage, TblImage, QAfterFilterCondition> urlIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'url'),
+      );
+    });
+  }
+
+  QueryBuilder<TblImage, TblImage, QAfterFilterCondition> urlIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'url'),
+      );
+    });
+  }
+
+  QueryBuilder<TblImage, TblImage, QAfterFilterCondition> urlEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'url',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblImage, TblImage, QAfterFilterCondition> urlGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'url',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblImage, TblImage, QAfterFilterCondition> urlLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'url',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblImage, TblImage, QAfterFilterCondition> urlBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'url',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblImage, TblImage, QAfterFilterCondition> urlStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'url',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblImage, TblImage, QAfterFilterCondition> urlEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'url',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblImage, TblImage, QAfterFilterCondition> urlContains(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'url',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblImage, TblImage, QAfterFilterCondition> urlMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'url',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblImage, TblImage, QAfterFilterCondition> urlIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'url', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblImage, TblImage, QAfterFilterCondition> urlIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'url', value: ''),
+      );
+    });
+  }
+}
+
+extension TblImageQueryObject
+    on QueryBuilder<TblImage, TblImage, QFilterCondition> {}
 
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
