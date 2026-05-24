@@ -3,7 +3,6 @@ import 'package:coffee_bean/core/utils/locator.dart';
 import 'package:coffee_bean/core/utils/logger.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/data/model/product.dart';
-import 'package:isar/isar.dart';
 
 class CartService implements DbLocatorDisposable {
   final DatabaseService _dbService = locator<DatabaseService>();

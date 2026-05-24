@@ -11,16 +11,19 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  isar: ^3.1.0+1
-  isar_flutter_libs: ^3.1.0+1
+
+  isar_community: ^3.3.2
+  isar_community_flutter_libs: ^3.3.2
+
   path_provider: ^2.1.5
 
 dev_dependencies:
-  build_runner: ^2.4.13
   flutter_test:
     sdk: flutter
-  isar_generator: ^3.1.0+1
 
-# Su dung
-# install link https://isar.dev/tutorials/quickstart.html#_1-add-dependencies
+  isar_community_generator: ^3.3.2
+  build_runner: ^2.15.0
+
+# Su dung isar-community, mot phien ban update cua isar, ho tro fix bugs tot hon
+# install link https://isar-community.dev/v3/tutorials/quickstart.html
 # dart run build_runner build
