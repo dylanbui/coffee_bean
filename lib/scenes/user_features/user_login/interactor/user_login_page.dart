@@ -13,6 +13,7 @@ import 'package:db_core/utils/keyboard_visibility.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/interactor/user_login_event_state.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/interactor/user_login_interactor.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/user_login_builder.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
@@ -98,7 +99,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
           current is UserLoginInitial || current is UserLoginStarted || current is UserLoginEmptyState,
       builder: (context, state) {
         return FadeSwitcher(
-          duration: const Duration(milliseconds: 1000),
+          duration: const Duration(milliseconds: 500),
           showFirst: state is UserLoginInitial,
           first: const Center(child: LoadingView(width: 150, height: 150)),
           second: LayoutBuilder(
@@ -148,7 +149,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
     } else {
       hideLoading();
       if (state is UserLoginSuccess) {
-        interactor.router?.navigate(LoginSuccessRoute());
+        // interactor.router?.navigate(LoginSuccessRoute());
       } else if (state is UserLoginFailure) {
         _showError(state.error);
       }
@@ -182,7 +183,12 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
       padding: EdgeInsets.only(top: _isKeyboardVisible ? 20.0 : 50.0, bottom: _isKeyboardVisible ? 15.0 : 40.0),
       child: Text(
         "TMLabs Coffee",
-        style: TextStyle(fontSize: _isKeyboardVisible ? 22 : 28, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontFamily: 'Source Sans Pro',
+          color: TMLabsColor.primary,
+          fontSize: _isKeyboardVisible ? 22 : 28, 
+          fontWeight: FontWeight.bold
+        ),
       ),
     );
   }
@@ -194,10 +200,14 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
       dividerHeight: 0,
       overlayColor: WidgetStateProperty.all(Colors.transparent),
       splashFactory: NoSplash.splashFactory,
-      labelColor: Colors.black,
+      labelColor: TMLabsColor.primary,
       unselectedLabelColor: Colors.grey,
-      labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-      indicatorColor: Colors.black,
+      labelStyle: const TextStyle(
+        fontFamily: 'Source Sans Pro',
+        fontSize: 15, 
+        fontWeight: FontWeight.bold
+      ),
+      indicatorColor: TMLabsColor.primary,
       indicatorSize: TabBarIndicatorSize.label,
       indicatorWeight: 3,
       tabs: const [
@@ -233,6 +243,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
         const SizedBox(height: 30),
         AppButton(
           text: "Login",
+          style: TMLabsStyle.primaryButton,
           onPressed: () {
             setState(() {
               _loginController.validatePwLogin(interactor, _showError);
@@ -265,6 +276,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
         const SizedBox(height: 30),
         AppButton(
           text: "Login",
+          style: TMLabsStyle.primaryButton,
           onPressed: () {
             setState(() {
               _loginController.validateSmsLogin(interactor, _showError);
@@ -291,7 +303,8 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
       child: Text(
         _isCountingDown ? "Resend (${_start}s)" : "Send Code",
         style: TextStyle(
-          color: _isCountingDown ? Colors.grey : Colors.black,
+          fontFamily: 'Source Sans Pro',
+          color: _isCountingDown ? Colors.grey : TMLabsColor.primary,
           fontWeight: FontWeight.bold,
           fontSize: 14,
         ),
@@ -309,7 +322,14 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
             const Text("No account? ", style: TextStyle(fontSize: 14, color: Colors.grey)),
             InkWell(
               onTap: () => interactor.router?.navigate(UserRegisterRoute()),
-              child: const Text("Register Now", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              child: const Text(
+                "Register Now", 
+                style: TextStyle(
+                  color: TMLabsColor.primary,
+                  fontWeight: FontWeight.bold, 
+                  fontSize: 14
+                )
+              ),
             ),
           ],
         ),
@@ -333,8 +353,8 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
             height: 18,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: _loginController.isAgreed ? Colors.black : Colors.grey.shade300, width: 1.5),
-              color: _loginController.isAgreed ? Colors.black : Colors.transparent,
+              border: Border.all(color: _loginController.isAgreed ? TMLabsColor.primary : Colors.grey.shade300, width: 1.5),
+              color: _loginController.isAgreed ? TMLabsColor.primary : Colors.transparent,
             ),
             child: _loginController.isAgreed ? const Icon(Icons.check, size: 12, color: Colors.white) : null,
           ),

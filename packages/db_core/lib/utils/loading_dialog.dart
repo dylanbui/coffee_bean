@@ -12,6 +12,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:db_core/utils/common_style.dart';
 
+class DbLoadingStyle {
+  final TextStyle textStyle;
+  final Color progressColor;
+  final Color backgroundColor;
+  final double borderRadius;
+
+  const DbLoadingStyle({
+    required this.textStyle,
+    required this.progressColor,
+    this.backgroundColor = Colors.white,
+    this.borderRadius = 16.0,
+  });
+}
+
 /// Standard Dialog Loading (Blocks UI with a centered modal)
 class DbLoading {
   static FlashController? _currentController;
@@ -21,9 +35,9 @@ class DbLoading {
   static final ValueNotifier<String> _messageNotifier = ValueNotifier<String>("");
 
   /// Show global loading dialog
-  static void show(BuildContext context, {String? message, TextStyle? style}) {
+  static void show(BuildContext context, {String? message, DbLoadingStyle? style}) {
     final msg = message ?? "Processing...";
-    final textStyle = style ?? DbCommonStyle.loadingTextStyle;
+    final effectiveStyle = style ?? DbCommonStyle.defaultLoadingStyle;
 
     // If already showing, just update the message
     if (_isShowing || _currentController != null) {
@@ -47,15 +61,18 @@ class DbLoading {
             child: Material(
               type: MaterialType.transparency,
               child: DefaultTextStyle(
-                style: textStyle,
+                style: effectiveStyle.textStyle,
                 child: Center(
                   child: Container(
                     padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+                    decoration: BoxDecoration(
+                      color: effectiveStyle.backgroundColor,
+                      borderRadius: BorderRadius.circular(effectiveStyle.borderRadius),
+                    ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const CircularProgressIndicator(color: Colors.brown),
+                        CircularProgressIndicator(color: effectiveStyle.progressColor),
                         const SizedBox(height: 16),
                         ValueListenableBuilder<String>(
                           valueListenable: _messageNotifier,
@@ -96,7 +113,7 @@ class DbLoading {
     if (effectiveContext == null) return;
 
     final double topPadding = MediaQuery.of(effectiveContext).padding.top;
-    final textStyle = style ?? DbCommonStyle.loadingTextStyle;
+    final textStyle = style ?? DbCommonStyle.defaultLoadingStyle.textStyle;
 
     showFlash<void>(
       context: effectiveContext,
@@ -175,7 +192,7 @@ class DbPageLoading {
     if (effectiveContext == null) return;
 
     final double topPadding = MediaQuery.of(effectiveContext).padding.top;
-    final textStyle = style ?? DbCommonStyle.loadingTextStyle;
+    final textStyle = style ?? DbCommonStyle.defaultLoadingStyle.textStyle;
 
     showFlash<void>(
       context: effectiveContext,

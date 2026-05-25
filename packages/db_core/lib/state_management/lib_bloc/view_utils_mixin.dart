@@ -1,4 +1,5 @@
 import 'package:db_core/architecture_ribs/navigator.dart';
+import 'package:db_core/utils/common_style.dart';
 import 'package:db_core/utils/loading_dialog.dart';
 import 'package:db_core/utils/toast.dart';
 import 'package:flutter/material.dart';
@@ -27,10 +28,10 @@ mixin ViewUtilsMixin {
 
   /// Hiển thị loading sử dụng DbLoading (Flash)
   /// Nếu không truyền context, sẽ sử dụng navigator context mặc định
-  void showLoading({String text = "Loading ..."}) {
-    final effectiveContext = DbNavigator.globalNavigatorState.currentContext;
+  void showLoading({String text = "Loading ...", DbLoadingStyle? style, BuildContext? context}) {
+    final effectiveContext = context ??= DbNavigator.globalNavigatorState.currentContext;
     if (effectiveContext != null) {
-      DbLoading.show(effectiveContext, message: text);
+      DbLoading.show(effectiveContext, message: text, style: style);
     }
   }
 

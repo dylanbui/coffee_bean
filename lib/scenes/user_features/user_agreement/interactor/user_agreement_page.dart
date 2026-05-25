@@ -67,6 +67,7 @@ class _UserAgreementPageState extends CubitState<UserAgreementPage, UserAgreemen
               const SizedBox(height: 40),
               AppButton(
                 text: "Accept and Continue",
+                style: TMLabsStyle.primaryButton,
                 isLoading: state is UserAgreementInProgress, // Assuming state exists
                 onPressed: () {
                   // Handle accept logic

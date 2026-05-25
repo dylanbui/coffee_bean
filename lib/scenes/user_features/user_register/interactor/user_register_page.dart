@@ -13,6 +13,7 @@ import 'package:db_core/utils/keyboard_visibility.dart';
 import 'package:coffee_bean/scenes/user_features/user_register/interactor/user_register_event_state.dart';
 import 'package:coffee_bean/scenes/user_features/user_register/interactor/user_register_interactor.dart';
 import 'package:coffee_bean/scenes/user_features/user_register/user_register_builder.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:flutter/gestures.dart';
@@ -110,6 +111,7 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
                     const SizedBox(height: 40),
                     AppButton(
                       text: "Register",
+                      style: TMLabsStyle.primaryButton,
                       isLoading: state is UserRegisterInProgress,
                       onPressed: () {
                         _registerController.validateRegister(interactor, _showError);
@@ -164,6 +166,8 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
       child: Text(
         "TMLabs Coffee",
         style: TextStyle(
+          fontFamily: 'Source Sans Pro',
+          color: TMLabsColor.primary,
           fontSize: _isKeyboardVisible ? 22 : 28, 
           fontWeight: FontWeight.bold
         ),
@@ -209,7 +213,8 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
       child: Text(
         _isCountingDown ? "Resend (${_start}s)" : "Send Code",
         style: TextStyle(
-          color: _isCountingDown ? Colors.grey : Colors.black,
+          fontFamily: 'Source Sans Pro',
+          color: _isCountingDown ? Colors.grey : TMLabsColor.primary,
           fontWeight: FontWeight.bold,
           fontSize: 14,
         ),
@@ -229,7 +234,11 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
           },
           child: const Text(
             "Go to Login",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            style: TextStyle(
+              color: TMLabsColor.primary,
+              fontWeight: FontWeight.bold, 
+              fontSize: 14
+            ),
           ),
         ),
       ],
@@ -246,8 +255,8 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
             width: 18, height: 18,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: _registerController.isAgreed ? Colors.black : Colors.grey.shade300, width: 1.5),
-              color: _registerController.isAgreed ? Colors.black : Colors.transparent,
+              border: Border.all(color: _registerController.isAgreed ? TMLabsColor.primary : Colors.grey.shade300, width: 1.5),
+              color: _registerController.isAgreed ? TMLabsColor.primary : Colors.transparent,
             ),
             child: _registerController.isAgreed ? const Icon(Icons.check, size: 12, color: Colors.white) : null,
           ),

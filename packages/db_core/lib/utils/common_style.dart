@@ -5,6 +5,7 @@
  * Description: Định nghĩa style chung cho các widget trong thư viện commons.
  */
 
+import 'package:db_core/utils/loading_dialog.dart';
 import 'package:flutter/material.dart';
 
 class AppButtonStyleConfig {
@@ -73,11 +74,16 @@ class DbCommonStyle {
     decoration: TextDecoration.none, // Xóa gạch chân vàng
   );
 
-  static const TextStyle loadingTextStyle = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-    color: Colors.brown,
-    decoration: TextDecoration.none,
+  static const DbLoadingStyle defaultLoadingStyle = DbLoadingStyle(
+    textStyle: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      color: Colors.brown,
+      decoration: TextDecoration.none,
+    ),
+    progressColor: Colors.brown,
+    backgroundColor: Colors.white,
+    borderRadius: 16.0,
   );
   
   static const TextStyle toastTextStyle = TextStyle(

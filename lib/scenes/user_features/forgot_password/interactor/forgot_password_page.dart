@@ -11,6 +11,7 @@ import 'dart:async';
 
 import 'package:coffee_bean/scenes/user_features/forgot_password/interactor/forgot_password_event_state.dart';
 import 'package:coffee_bean/scenes/user_features/forgot_password/interactor/forgot_password_interactor.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:flutter/material.dart';
@@ -127,6 +128,7 @@ class _ForgotPasswordPageState extends CubitState<ForgotPasswordPage, ForgotPass
                 const SizedBox(height: 50),
                 AppButton(
                   text: "Reset Password",
+                  style: TMLabsStyle.primaryButton,
                   isLoading: state is ForgotPasswordInProgress,
                   onPressed: () => _forgotPwController.validateAndSubmit(
                     interactor,
@@ -179,7 +181,8 @@ class _ForgotPasswordPageState extends CubitState<ForgotPasswordPage, ForgotPass
       child: Text(
         _isCountingDown ? "Resend (${_start}s)" : "Send Code",
         style: TextStyle(
-          color: _isCountingDown ? Colors.grey : Colors.black,
+          fontFamily: 'Source Sans Pro',
+          color: _isCountingDown ? Colors.grey : TMLabsColor.primary,
           fontWeight: FontWeight.bold,
           fontSize: 14,
         ),

@@ -12,6 +12,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: WidgetsBinding.instance);
   
+  // Khóa hướng màn hình chỉ cho phép Portrait
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent, // Làm status bar trong suốt mặc định
     statusBarIconBrightness: Brightness.light, // Chữ trắng cho thanh trạng thái (tùy chọn)
