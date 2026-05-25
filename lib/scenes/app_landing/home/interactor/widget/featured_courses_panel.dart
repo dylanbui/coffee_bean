@@ -32,7 +32,7 @@ class FeaturedCoursesPanel extends StatelessWidget {
                 children: [
                   Text(
                     AppStrings.featuredCourses,
-                    style: TMLabsStyle.semibold.copyWith(fontSize: 24, color: TMLabsColor.primary),
+                    style: TMLabsTextStyle.semibold.copyWith(fontSize: 24, color: TMLabsColor.primary),
                   ),
                   TapEffect(
                     onTap: () {},
@@ -41,7 +41,7 @@ class FeaturedCoursesPanel extends StatelessWidget {
                       children: [
                         Text(
                           AppStrings.seeMore,
-                          style: TMLabsStyle.semibold.copyWith(fontSize: 14, color: TMLabsColor.primary),
+                          style: TMLabsTextStyle.semibold.copyWith(fontSize: 14, color: TMLabsColor.primary),
                         ),
                         const SizedBox(width: 4),
                         const Icon(Icons.arrow_forward, size: 18, color: TMLabsColor.primary),
@@ -88,7 +88,7 @@ class FeaturedCoursesPanel extends StatelessWidget {
                                 alignment: Alignment.bottomLeft,
                                 child: Text(
                                   item.title,
-                                  style: TMLabsStyle.semibold.copyWith(color: Colors.white, fontSize: 16),
+                                  style: TMLabsTextStyle.semibold.copyWith(color: Colors.white, fontSize: 16),
                                   maxLines: 3,
                                   overflow: TextOverflow.ellipsis,
                                 ),

@@ -28,13 +28,13 @@ class MyProfileLoggedOutPanel extends StatelessWidget {
               children: [
                 AppButton(
                   text: "Đăng nhập",
-                  style: TMLabsStyle.primaryButton,
+                  style: TMLabsButtonStyle.primary,
                   onPressed: () => interactor.router?.doLoginFlow(interactor),
                 ),
                 const SizedBox(height: 16),
                 AppButton(
                   text: "Đăng ký",
-                  style: TMLabsStyle.outlineButton,
+                  style: TMLabsButtonStyle.outline,
                   onPressed: () {
                     // Navigate to register if available
                     interactor.router?.doRegisterFlow(interactor);

@@ -30,7 +30,7 @@ class CourseVideosPanel extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 AppStrings.courseVideos,
-                style: TMLabsStyle.semibold.copyWith(fontSize: 24, color: TMLabsColor.primary),
+                style: TMLabsTextStyle.semibold.copyWith(fontSize: 24, color: TMLabsColor.primary),
               ),
             ),
             const SizedBox(height: 16),
@@ -100,7 +100,7 @@ class _CourseVideoCard extends StatelessWidget {
                   children: [
                     Text(
                       item.title.toUpperCase(),
-                      style: TMLabsStyle.semibold.copyWith(color: Colors.white, fontSize: 13, height: 1.3),
+                      style: TMLabsTextStyle.semibold.copyWith(color: Colors.white, fontSize: 13, height: 1.3),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -119,7 +119,7 @@ class _CourseVideoCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             item.authorName,
-                            style: TMLabsStyle.regular.copyWith(color: Colors.white.withOpacity(0.8), fontSize: 12),
+                            style: TMLabsTextStyle.regular.copyWith(color: Colors.white.withOpacity(0.8), fontSize: 12),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),

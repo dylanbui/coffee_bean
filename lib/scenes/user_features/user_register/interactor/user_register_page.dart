@@ -111,7 +111,7 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
                     const SizedBox(height: 40),
                     AppButton(
                       text: "Register",
-                      style: TMLabsStyle.primaryButton,
+                      style: TMLabsButtonStyle.primary,
                       isLoading: state is UserRegisterInProgress,
                       onPressed: () {
                         _registerController.validateRegister(interactor, _showError);

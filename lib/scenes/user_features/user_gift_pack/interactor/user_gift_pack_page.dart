@@ -144,7 +144,7 @@ class _UserGiftPackPageState extends CubitState<UserGiftPackPage, UserGiftPackIn
           const SizedBox(height: 10), // Cách nhau 10px
           AppButton(
             text: "Back",
-            style: TMLabsStyle.outlineButton,
+            style: TMLabsButtonStyle.outline,
             onPressed: () => _handleButtonClick("Back"),
           ),
         ],

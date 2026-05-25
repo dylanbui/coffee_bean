@@ -29,7 +29,7 @@ class FinancialCoursesPanel extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 AppStrings.financialCourses,
-                style: TMLabsStyle.semibold.copyWith(fontSize: 24, color: TMLabsColor.primary),
+                style: TMLabsTextStyle.semibold.copyWith(fontSize: 24, color: TMLabsColor.primary),
               ),
             ),
             const SizedBox(height: 16),
@@ -91,7 +91,7 @@ class _FinancialCourseCard extends StatelessWidget {
                   children: [
                     Text(
                       item.title,
-                      style: TMLabsStyle.semibold.copyWith(color: Colors.white, fontSize: 13, height: 1.3),
+                      style: TMLabsTextStyle.semibold.copyWith(color: Colors.white, fontSize: 13, height: 1.3),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -101,7 +101,7 @@ class _FinancialCourseCard extends StatelessWidget {
                       children: [
                         Text(
                           item.price.toVnd(),
-                          style: TMLabsStyle.semibold.copyWith(color: Colors.white, fontSize: 14),
+                          style: TMLabsTextStyle.semibold.copyWith(color: Colors.white, fontSize: 14),
                         ),
                         TapEffect(
                           onTap: () => interactor.addToCart(item),

@@ -128,7 +128,7 @@ class _ForgotPasswordPageState extends CubitState<ForgotPasswordPage, ForgotPass
                 const SizedBox(height: 50),
                 AppButton(
                   text: "Reset Password",
-                  style: TMLabsStyle.primaryButton,
+                  style: TMLabsButtonStyle.primary,
                   isLoading: state is ForgotPasswordInProgress,
                   onPressed: () => _forgotPwController.validateAndSubmit(
                     interactor,

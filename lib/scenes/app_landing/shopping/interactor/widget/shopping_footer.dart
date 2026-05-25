@@ -82,7 +82,7 @@ class ShoppingFooter extends StatelessWidget {
                   text: "THANH TOÁN",
                   width: 110,
                   height: 38,
-                  style: TMLabsStyle.primaryButton.copyWith(
+                  style: TMLabsButtonStyle.primary.copyWith(
                     backgroundColor: TMLabsColor.grey,
                     textColor: Colors.white,
                     borderRadius: 19,

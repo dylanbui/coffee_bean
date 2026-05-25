@@ -49,7 +49,7 @@ class FoodDetailFooter extends StatelessWidget {
                       child: AppButton(
                         text: "Thêm giỏ hàng",
                         onPressed: state.isAddingToCart ? null : () => interactor.addToCart(),
-                        style: TMLabsStyle.outlineButton,
+                        style: TMLabsButtonStyle.outline,
                         isLoading: state.isAddingToCart,
                       ),
                     ),
@@ -58,7 +58,7 @@ class FoodDetailFooter extends StatelessWidget {
                       child: AppButton(
                         text: "MUA NGAY",
                         onPressed: state.isAddingToCart ? null : () => interactor.buyNow(),
-                        style: TMLabsStyle.primaryButton,
+                        style: TMLabsButtonStyle.primary,
                       ),
                     ),
                   ],

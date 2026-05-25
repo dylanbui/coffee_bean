@@ -31,7 +31,7 @@ class PostsListPanel extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(AppStrings.posts,
-                  style: TMLabsStyle.semibold.copyWith(fontSize: 24, color: TMLabsColor.primary)),
+                  style: TMLabsTextStyle.semibold.copyWith(fontSize: 24, color: TMLabsColor.primary)),
             ),
             const SizedBox(height: 8),
             ListView.builder(
@@ -79,11 +79,11 @@ class _PostCard extends StatelessWidget {
                   children: [
                     Text(
                       item.authorName,
-                      style: TMLabsStyle.semibold.copyWith(fontSize: 14, color: TMLabsColor.primary),
+                      style: TMLabsTextStyle.semibold.copyWith(fontSize: 14, color: TMLabsColor.primary),
                     ),
                     Text(
                       "${AppStrings.postedOn} ${item.postDate}",
-                      style: TMLabsStyle.regular.copyWith(fontSize: 10, color: Colors.grey),
+                      style: TMLabsTextStyle.regular.copyWith(fontSize: 10, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -105,14 +105,14 @@ class _PostCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             item.title,
-            style: TMLabsStyle.semibold.copyWith(fontSize: 20, color: TMLabsColor.primary),
+            style: TMLabsTextStyle.semibold.copyWith(fontSize: 20, color: TMLabsColor.primary),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 8),
           Text(
             item.content,
-            style: TMLabsStyle.regular.copyWith(fontSize: 13, color: Colors.grey[700]),
+            style: TMLabsTextStyle.regular.copyWith(fontSize: 13, color: Colors.grey[700]),
             maxLines: 4,
             overflow: TextOverflow.ellipsis,
           ),
@@ -200,11 +200,11 @@ class _MarketTag extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(data.symbol, style: TMLabsStyle.regular.copyWith(fontSize: 11, color: Colors.black87)),
+            Text(data.symbol, style: TMLabsTextStyle.regular.copyWith(fontSize: 11, color: Colors.black87)),
             const SizedBox(width: 4),
             Text(
               data.change,
-              style: TMLabsStyle.semibold.copyWith(
+              style: TMLabsTextStyle.semibold.copyWith(
                 fontSize: 11,
                 color: data.isPositive ? const Color(0xFF2E7D32) : const Color(0xFFD32F2F),
               ),

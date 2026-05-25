@@ -66,7 +66,7 @@ class _PrivacyPolicyPageState extends CubitState<PrivacyPolicyPage, PrivacyPolic
               const SizedBox(height: 40),
               AppButton(
                 text: "Close",
-                style: TMLabsStyle.outlineButton,
+                style: TMLabsButtonStyle.outline,
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ],

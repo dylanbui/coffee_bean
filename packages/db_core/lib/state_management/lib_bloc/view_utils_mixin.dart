@@ -39,16 +39,16 @@ mixin ViewUtilsMixin {
     DbLoading.dismiss();
   }
 
-  void showPageLoading({String text = "Loading ..."}) {
-    final effectiveContext = DbNavigator.globalNavigatorState.currentContext;
-    if (effectiveContext != null) {
-      DbPageLoading.show(context: effectiveContext);
-    }
-  }
-
-  void hidePageLoading() {
-    DbPageLoading.dismiss();
-  }
+  // void showPageLoading({String text = "Loading ..."}) {
+  //   final effectiveContext = DbNavigator.globalNavigatorState.currentContext;
+  //   if (effectiveContext != null) {
+  //     DbPageLoading.show(context: effectiveContext);
+  //   }
+  // }
+  //
+  // void hidePageLoading() {
+  //   DbPageLoading.dismiss();
+  // }
 
   void showProgressLoading({String? text = "Đang xử lý ..."}) {
     final effectiveContext = DbNavigator.globalNavigatorState.currentContext;

@@ -1,5 +1,6 @@
 import 'package:db_core/utils/common_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
+import 'package:db_core/utils/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 
@@ -106,28 +107,10 @@ class BasicStyle {
   );
 }
 
-class TMLabsStyle {
+class TMLabsStyle {}
+
+class TMLabsTextStyle {
   static const _fontFamily = 'Source Sans Pro';
-
-  // --- App Button Styles ---
-  static const primaryButton = AppButtonStyleConfig(
-    backgroundColor: Color(0xFF0D1B3E), // Navy
-    textColor: Colors.white,
-    borderRadius: 25,
-  );
-
-  static const outlineButton = AppButtonStyleConfig(
-    backgroundColor: Colors.transparent,
-    textColor: Color(0xFF0D1B3E),
-    borderColor: Color(0xFF0D1B3E),
-    borderRadius: 25,
-  );
-
-  static const whiteButton = AppButtonStyleConfig(
-    backgroundColor: Colors.white,
-    textColor: Color(0xFF0D1B3E),
-    borderRadius: 25,
-  );
 
   static const semibold = TextStyle(
     fontFamily: _fontFamily,
@@ -155,6 +138,28 @@ class TMLabsStyle {
     color: TMLabsColor.primary,
     fontSize: 14,
     fontWeight: FontWeight.w400,
+  );
+}
+
+class TMLabsButtonStyle {
+  // --- App Button Styles ---
+  static const primary = AppButtonStyleConfig(
+    backgroundColor: TMLabsColor.primary,
+    textColor: Colors.white,
+    borderRadius: 25,
+  );
+
+  static const outline = AppButtonStyleConfig(
+    backgroundColor: Colors.transparent,
+    textColor: TMLabsColor.primary,
+    borderColor: TMLabsColor.primary,
+    borderRadius: 25,
+  );
+
+  static const white = AppButtonStyleConfig(
+    backgroundColor: Colors.white,
+    textColor: TMLabsColor.primary,
+    borderRadius: 25,
   );
 }
 
@@ -190,5 +195,19 @@ class TmLabAppBarStyle {
       fontSize: 18,
       fontWeight: FontWeight.w700,
     ),
+  );
+}
+
+class TMLabsLoadingStyle {
+  static const DbLoadingStyle defaultLoadingStyle = DbLoadingStyle(
+    textStyle: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      color: TMLabsColor.primary,
+      decoration: TextDecoration.none,
+    ),
+    progressColor: TMLabsColor.primary,
+    backgroundColor: Colors.white,
+    borderRadius: 16.0,
   );
 }

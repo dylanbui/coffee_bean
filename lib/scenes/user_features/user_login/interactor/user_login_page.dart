@@ -145,7 +145,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
       // hidePageLoading();
     } else if (state is UserLoginInProgress) {
       iLog(state.message);
-      showLoading(text: state.message);
+      showLoading(text: "Loading ...", style: TMLabsLoadingStyle.defaultLoadingStyle);
     } else {
       hideLoading();
       if (state is UserLoginSuccess) {
@@ -243,7 +243,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
         const SizedBox(height: 30),
         AppButton(
           text: "Login",
-          style: TMLabsStyle.primaryButton,
+          style: TMLabsButtonStyle.primary,
           onPressed: () {
             setState(() {
               _loginController.validatePwLogin(interactor, _showError);
@@ -276,7 +276,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
         const SizedBox(height: 30),
         AppButton(
           text: "Login",
-          style: TMLabsStyle.primaryButton,
+          style: TMLabsButtonStyle.primary,
           onPressed: () {
             setState(() {
               _loginController.validateSmsLogin(interactor, _showError);

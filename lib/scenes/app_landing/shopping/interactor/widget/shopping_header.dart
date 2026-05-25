@@ -26,7 +26,7 @@ class ShoppingHeader extends StatelessWidget {
             text: "Tự lấy",
             width: 100,
             height: 40,
-            style: TMLabsStyle.primaryButton.copyWith(
+            style: TMLabsButtonStyle.primary.copyWith(
               backgroundColor: TMLabsColor.navy,
               borderRadius: 20,
             ),
