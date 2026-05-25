@@ -7,7 +7,11 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/shared/ui/flash_toast_provider.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_image_helper.dart';
+import 'package:db_core/utils/flash_utils/flash_toast_helper.dart';
+
+import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_modal_helper.dart';
@@ -22,17 +26,28 @@ import 'package:coffee_bean/utils/flash_utils/flash_modal_helper.dart';
 extension FlashExtension on BuildContext {
 
     // ===========================================================================
-    // 1. QUICK DIALOGS (Sử dụng FlashDialogHelper)
+    // 1. QUICK TOASTS / SNACKBARS (Sử dụng FlashToastHelper)
     // ===========================================================================
 
-    /// Hiển thị thông báo Success nhanh
-    void showFlashSuccess(String message) => FlashDialogHelper.success(this, message);
+    /// Hiển thị Top SnackBar Success
+    void showFlashSuccess(String message, {String? title, FlashPosition position = FlashPosition.top, Duration duration = const Duration(seconds: 2)})
+        => DbFlashToastHelper.success(this, message, title: title, position: position, duration: duration);
 
-    /// Hiển thị thông báo Error nhanh
-    void showFlashError(String message) => FlashDialogHelper.error(this, message);
+    /// Hiển thị Top SnackBar Error
+    void showFlashError(String message, {String? title, FlashPosition position = FlashPosition.top, Duration duration = const Duration(seconds: 3)}) 
+        => DbFlashToastHelper.error(this, message, title: title, position: position, duration: duration);
 
-    /// Hiển thị thông báo Info nhanh
-    void showFlashInfo(String message) => FlashDialogHelper.info(this, message);
+    /// Hiển thị Top SnackBar Info
+    void showFlashInfo(String message, {String? title, FlashPosition position = FlashPosition.top, Duration duration = const Duration(seconds: 2)}) 
+        => DbFlashToastHelper.info(this, message, title: title, position: position, duration: duration);
+
+    /// Hiển thị Top SnackBar Warning
+    void showFlashWarning(String message, {String? title, FlashPosition position = FlashPosition.top, Duration duration = const Duration(seconds: 2)})
+        => DbFlashToastHelper.warning(this, message, title: title, position: position, duration: duration);
+
+    // ===========================================================================
+    // 2. QUICK DIALOGS (Sử dụng FlashDialogHelper)
+    // ===========================================================================
 
     /// Hiển thị Dialog xác nhận hoặc Form tùy biến
     /// Trả về kết quả kiểu [T]
@@ -56,7 +71,7 @@ extension FlashExtension on BuildContext {
     }
 
     // ===========================================================================
-    // 2. QUICK MODALS (Sử dụng FlashModalHelper)
+    // 3. QUICK MODALS (Sử dụng FlashModalHelper)
     // ===========================================================================
 
     /// Hiển thị Bottom hoặc Top Modal lửng (Custom Size)
@@ -97,11 +112,15 @@ extension FlashExtension on BuildContext {
 /// **************************************************************************
 
 /*
-  // --- Với Dialog ---
+  // --- Với Toast / SnackBar ---
 
-  void _testDialog(BuildContext context) {
-    // 1. Hiện thông báo nhanh
-    context.showFlashSuccess("Đã cập nhật đơn hàng!");
+  void _testToast(BuildContext context) {
+    // 1. Hiện thông báo nhanh ở Top
+    context.showFlashSuccess("Đã cập nhật đơn hàng thành công!");
+    context.showFlashError("Máy chủ đang bận, vui lòng thử lại.", title: "Lỗi kết nối");
+  }
+
+  // --- Với Dialog ---
 
     // 2. Hiện xác nhận xóa và đợi kết quả
     context.showFlashConfirm<bool>(

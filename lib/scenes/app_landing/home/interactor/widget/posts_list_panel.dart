@@ -58,7 +58,7 @@ class _PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 390,
+      height: 395,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: TMLabsColor.bgLight, borderRadius: BorderRadius.circular(20)),

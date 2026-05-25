@@ -8,6 +8,7 @@
  */
 
 import 'package:chuck_interceptor/chuck_interceptor.dart';
+import 'package:coffee_bean/shared/ui/flash_toast_provider.dart';
 import 'package:db_core/architecture_ribs/navigator.dart';
 import 'package:db_core/network/network_client.dart';
 import 'package:db_core/network/network_common.dart';
@@ -60,6 +61,9 @@ Future<Widget> initializeApp() async {
 
   // Remove the native splash screen when app is ready
   FlutterNativeSplash.remove();
+
+  // Khởi tạo Toast Helper với Style của dự án Coffee Bean
+  TMLabsToastStyleProvider.init();
 
   return App();
 }

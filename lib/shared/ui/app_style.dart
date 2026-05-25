@@ -1,3 +1,4 @@
+import 'package:coffee_bean/shared/ui/flash_toast_provider.dart';
 import 'package:db_core/utils/common_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:db_core/utils/loading_dialog.dart';
@@ -233,3 +234,43 @@ class TMLabsLoadingStyle {
     borderRadius: 16.0,
   );
 }
+
+/// Định nghĩa các Style mặc định theo Design System của TMLabs
+// class TMLabsFlashToastStyle {
+//   static FlashToastStyle get success => FlashToastStyle(
+//     backgroundColor: TMLabsColor.success,
+//     iconData: Icons.check_circle_outline,
+//     titleStyle: TMLabsTextStyle.title.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+//     messageStyle: TMLabsTextStyle.body.copyWith(color: Colors.white),
+//   );
+//
+//   static FlashToastStyle get error => FlashToastStyle(
+//     backgroundColor: TMLabsColor.error,
+//     iconData: Icons.error_outline,
+//     titleStyle: TMLabsTextStyle.title.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+//     messageStyle: TMLabsTextStyle.body.copyWith(color: Colors.white),
+//   );
+//
+//   static FlashToastStyle get warning => FlashToastStyle(
+//     backgroundColor: TMLabsColor.warning,
+//     iconData: Icons.warning_amber_rounded,
+//     titleStyle: TMLabsTextStyle.title.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+//     messageStyle: TMLabsTextStyle.body.copyWith(color: Colors.white),
+//   );
+//
+//   static FlashToastStyle get info => FlashToastStyle(
+//     backgroundColor: TMLabsColor.primary,
+//     iconData: Icons.info_outline,
+//     titleStyle: TMLabsTextStyle.title.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+//     messageStyle: TMLabsTextStyle.body.copyWith(color: Colors.white),
+//   );
+//
+//   static FlashToastStyle fromType(FlashToastType type) {
+//     switch (type) {
+//       case FlashToastType.success: return success;
+//       case FlashToastType.error: return error;
+//       case FlashToastType.warning: return warning;
+//       case FlashToastType.info: return info;
+//     }
+//   }
+// }

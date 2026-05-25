@@ -4,8 +4,6 @@ import 'package:coffee_bean/shared/widget/avatar_widget.dart';
 import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:photo_view/photo_view.dart';
-import 'package:photo_view/photo_view_gallery.dart';
 
 class FoodDetailCommentsSection extends StatelessWidget {
   const FoodDetailCommentsSection({super.key});
@@ -117,7 +115,7 @@ class FoodDetailCommentsSection extends StatelessWidget {
             const SizedBox(height: 15),
             if (images.length == 1)
               GestureDetector(
-                onTap: () => _showFullScreenImage(context, images, 0),
+                // onTap: () => _showFullScreenImage(context, images, 0),
                 child: CachedImageWidget(
                   imageUrl: images[0],
                   width: double.infinity,
@@ -135,7 +133,7 @@ class FoodDetailCommentsSection extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.only(right: 10),
                       child: GestureDetector(
-                        onTap: () => _showFullScreenImage(context, images, index),
+                        // onTap: () => _showFullScreenImage(context, images, index),
                         child: CachedImageWidget(
                           imageUrl: images[index],
                           width: 120,
@@ -153,34 +151,34 @@ class FoodDetailCommentsSection extends StatelessWidget {
     );
   }
 
-  void _showFullScreenImage(BuildContext context, List<String> images, int initialIndex) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          backgroundColor: Colors.black,
-          appBar: AppBar(
-            backgroundColor: Colors.black,
-            iconTheme: const IconThemeData(color: TMLabsColor.white),
-            elevation: 0,
-          ),
-          body: PhotoViewGallery.builder(
-            scrollPhysics: const BouncingScrollPhysics(),
-            builder: (BuildContext context, int index) {
-              return PhotoViewGalleryPageOptions(
-                imageProvider: NetworkImage(images[index]),
-                initialScale: PhotoViewComputedScale.contained,
-                heroAttributes: PhotoViewHeroAttributes(tag: images[index]),
-              );
-            },
-            itemCount: images.length,
-            loadingBuilder: (context, event) => const Center(
-              child: CircularProgressIndicator(color: TMLabsColor.white),
-            ),
-            pageController: PageController(initialPage: initialIndex),
-          ),
-        ),
-      ),
-    );
-  }
+  // void _showFullScreenImage(BuildContext context, List<String> images, int initialIndex) {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => Scaffold(
+  //         backgroundColor: Colors.black,
+  //         appBar: AppBar(
+  //           backgroundColor: Colors.black,
+  //           iconTheme: const IconThemeData(color: TMLabsColor.white),
+  //           elevation: 0,
+  //         ),
+  //         body: PhotoViewGallery.builder(
+  //           scrollPhysics: const BouncingScrollPhysics(),
+  //           builder: (BuildContext context, int index) {
+  //             return PhotoViewGalleryPageOptions(
+  //               imageProvider: NetworkImage(images[index]),
+  //               initialScale: PhotoViewComputedScale.contained,
+  //               heroAttributes: PhotoViewHeroAttributes(tag: images[index]),
+  //             );
+  //           },
+  //           itemCount: images.length,
+  //           loadingBuilder: (context, event) => const Center(
+  //             child: CircularProgressIndicator(color: TMLabsColor.white),
+  //           ),
+  //           pageController: PageController(initialPage: initialIndex),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 }
