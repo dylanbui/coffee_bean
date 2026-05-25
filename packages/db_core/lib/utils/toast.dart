@@ -20,7 +20,7 @@ class DbToast {
         String message, {
             BuildContext? context,
             DbToastGravity gravity = DbToastGravity.bottom,
-            Duration duration = const Duration(seconds: 2),
+            Duration duration = const Duration(seconds: 1),
             TextStyle? style,
         }) {
         // 1. Lấy context thông qua Helper trung gian đã có
@@ -40,17 +40,24 @@ class DbToast {
                 return Flash(
                     controller: controller,
                     position: position,
-                    child: DefaultTextStyle(
-                        style: textStyle,
-                        child: FlashBar(
-                            controller: controller,
-                            behavior: FlashBehavior.floating,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                            margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 80),
-                            backgroundColor: Colors.black87,
-                            content: Text(
-                                message,
-                                textAlign: TextAlign.center,
+                    child: FadeTransition(
+                        opacity: controller.controller,
+                        child: Align(
+                            alignment: gravity == DbToastGravity.top ? Alignment.topCenter : Alignment.bottomCenter,
+                            child: Container(
+                                margin: gravity == DbToastGravity.top 
+                                    ? const EdgeInsets.only(top: 50, left: 40, right: 40)
+                                    : const EdgeInsets.only(bottom: 80, left: 40, right: 40),
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                decoration: BoxDecoration(
+                                    color: Colors.black.withValues(alpha: 0.8),
+                                    borderRadius: BorderRadius.circular(25),
+                                ),
+                                child: Text(
+                                    message,
+                                    style: textStyle.copyWith(color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                ),
                             ),
                         ),
                     ),

@@ -124,6 +124,9 @@ dependencies:
   flutter_auto_size_text: ^5.0.0
   # that allows scrolling to a specific item in the list.
   scrollable_positioned_list: ^0.3.8
+  # a rating bar indicator, supporting any fraction of rating
+  flutter_rating_bar: ^4.0.1
+
 
 dev_dependencies:
   flutter_test:

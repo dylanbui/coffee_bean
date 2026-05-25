@@ -48,15 +48,16 @@ class FoodDetailFooter extends StatelessWidget {
                     Expanded(
                       child: AppButton(
                         text: "Thêm giỏ hàng",
-                        onPressed: () => interactor.addToCart(),
+                        onPressed: state.isAddingToCart ? null : () => interactor.addToCart(),
                         style: TMLabsStyle.outlineButton,
+                        isLoading: state.isAddingToCart,
                       ),
                     ),
                     const SizedBox(width: 15),
                     Expanded(
                       child: AppButton(
                         text: "MUA NGAY",
-                        onPressed: () => interactor.buyNow(),
+                        onPressed: state.isAddingToCart ? null : () => interactor.buyNow(),
                         style: TMLabsStyle.primaryButton,
                       ),
                     ),

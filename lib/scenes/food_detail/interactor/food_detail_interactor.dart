@@ -3,6 +3,7 @@ import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/scenes/food_detail/interactor/food_detail_event_state.dart';
 import 'package:coffee_bean/scenes/food_detail/food_detail_router.dart';
+import 'package:db_core/utils/toast.dart';
 import 'package:db_core/utils/locator.dart';
 import 'dart:math';
 
@@ -21,16 +22,16 @@ class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetai
   }
 
   void _initDefaultOptions() {
-    final defaultOptions = <int, TblProductOption>{};
-    if (state.product.properties != null) {
-      for (var prop in state.product.properties!) {
-        if (prop.options != null && prop.options!.isNotEmpty) {
-          final firstAvailable = prop.options!.firstWhere((o) => o.isAvailable, orElse: () => prop.options!.first);
-          defaultOptions[prop.serverId] = firstAvailable;
-        }
-      }
-    }
-    emit(state.copyWith(selectedOptions: defaultOptions));
+    final defaultOptions = state.product.defaultOptionsMap;
+
+    // Đồng bộ số lượng từ giỏ hàng cho tổ hợp mặc định
+    final optionsList = _getSelectedOptionsList(optionsMap: defaultOptions);
+    final cartQty = _cartService.getQuantity(state.product, optionsList);
+
+    emit(state.copyWith(
+      selectedOptions: defaultOptions,
+      quantity: cartQty > 0 ? cartQty : 1,
+    ));
   }
 
   Future<void> _loadSuggestedProducts() async {
@@ -60,7 +61,6 @@ class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetai
     final newQty = max(1, state.quantity + delta);
     if (newQty != state.quantity) {
       emit(state.copyWith(quantity: newQty));
-      _syncToCartIfNeeded();
     }
   }
 
@@ -69,17 +69,41 @@ class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetai
     
     final newOptions = Map<int, TblProductOption>.from(state.selectedOptions);
     newOptions[propertyId] = option;
-    emit(state.copyWith(selectedOptions: newOptions));
-    _syncToCartIfNeeded();
+
+    // Khi đổi option, kiểm tra xem tổ hợp mới này đã có trong giỏ hàng chưa
+    final optionsList = _getSelectedOptionsList(optionsMap: newOptions);
+    final cartQty = _cartService.getQuantity(state.product, optionsList);
+
+    emit(state.copyWith(
+      selectedOptions: newOptions,
+      quantity: cartQty > 0 ? cartQty : 1,
+    ));
   }
 
-  void _syncToCartIfNeeded() {
-    _cartService.updateQuantityIfInCart(state.product, state.quantity, _getSelectedOptionsList());
+  void addToCart() {
+    if (state.isAddingToCart) return;
+    
+    emit(state.copyWith(isAddingToCart: true));
+    
+    _cartService.upsertCartItem(state.product, state.quantity, _getSelectedOptionsList());
+    
+    DbToast.show(
+      "Đã thêm vào giỏ hàng thành công",
+      gravity: DbToastGravity.top,
+      duration: const Duration(milliseconds: 900),
+    );
+
+    // Sau khi hiện toast xong (milliseconds 600) thì mở khóa cho bấm lại
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      emit(state.copyWith(isAddingToCart: false));
+    });
   }
 
-  List<SelectedOption> _getSelectedOptionsList() {
+  List<SelectedOption> _getSelectedOptionsList({Map<int, TblProductOption>? optionsMap}) {
     final list = <SelectedOption>[];
-    state.selectedOptions.forEach((propId, option) {
+    final targetMap = optionsMap ?? state.selectedOptions;
+    
+    targetMap.forEach((propId, option) {
       final prop = state.product.properties?.firstWhere((p) => p.serverId == propId);
       list.add(SelectedOption()
         ..optionServerId = option.serverId
@@ -88,10 +112,6 @@ class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetai
         ..extraPrice = option.extraPrice);
     });
     return list;
-  }
-
-  void addToCart() {
-    _cartService.addToCart(state.product, quantity: state.quantity, options: _getSelectedOptionsList());
   }
 
   void buyNow() {

@@ -80,11 +80,10 @@ class ShoppingProductItem extends StatelessWidget {
                 stream: interactor.cartService.cartStream,
                 builder: (context, snapshot) {
                   final cartItems = snapshot.data ?? [];
-                  // Tìm sản phẩm này trong giỏ hàng
-                  final cartItem = cartItems.where((item) => 
-                    item.serverId == product.serverId && item.type == "FOOD"
-                  ).firstOrNull;
-                  final quantity = cartItem?.quantity ?? 0;
+                  // Tính tổng số lượng của sản phẩm này trong giỏ hàng (không phân biệt options)
+                  final quantity = cartItems
+                      .where((item) => item.serverId == product.serverId && item.type == "FOOD")
+                      .fold<int>(0, (sum, item) => sum + item.quantity);
 
                   return TapEffect(
                     onTap: () => interactor.addToCart(product),

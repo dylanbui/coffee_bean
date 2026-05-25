@@ -89,6 +89,36 @@ class TblFood {
 
   List<TblProductProperty>? properties;
   
+  List<SelectedOption> get defaultSelectedOptions {
+    final list = <SelectedOption>[];
+    if (properties == null) return list;
+    for (var prop in properties!) {
+      final options = prop.options;
+      if (options != null && options.isNotEmpty) {
+        final opt = options.firstWhere((o) => o.isAvailable, orElse: () => options.first);
+        list.add(SelectedOption()
+          ..optionServerId = opt.serverId
+          ..groupName = prop.groupName
+          ..optionName = opt.name
+          ..extraPrice = opt.extraPrice);
+      }
+    }
+    return list;
+  }
+
+  Map<int, TblProductOption> get defaultOptionsMap {
+    final map = <int, TblProductOption>{};
+    if (properties == null) return map;
+    for (var prop in properties!) {
+      final options = prop.options;
+      if (options != null && options.isNotEmpty) {
+        final opt = options.firstWhere((o) => o.isAvailable, orElse: () => options.first);
+        map[prop.serverId] = opt;
+      }
+    }
+    return map;
+  }
+
   @override
   String toString() {
     return 'TblFood{name: $name, images: ${images?.length ?? 0}, properties: ${properties?.length ?? 0}\n'
@@ -132,6 +162,36 @@ class TblCourse {
   String? videoUrl;
 
   List<TblProductProperty>? properties;
+
+  List<SelectedOption> get defaultSelectedOptions {
+    final list = <SelectedOption>[];
+    if (properties == null) return list;
+    for (var prop in properties!) {
+      final options = prop.options;
+      if (options != null && options.isNotEmpty) {
+        final opt = options.firstWhere((o) => o.isAvailable, orElse: () => options.first);
+        list.add(SelectedOption()
+          ..optionServerId = opt.serverId
+          ..groupName = prop.groupName
+          ..optionName = opt.name
+          ..extraPrice = opt.extraPrice);
+      }
+    }
+    return list;
+  }
+
+  Map<int, TblProductOption> get defaultOptionsMap {
+    final map = <int, TblProductOption>{};
+    if (properties == null) return map;
+    for (var prop in properties!) {
+      final options = prop.options;
+      if (options != null && options.isNotEmpty) {
+        final opt = options.firstWhere((o) => o.isAvailable, orElse: () => options.first);
+        map[prop.serverId] = opt;
+      }
+    }
+    return map;
+  }
 
   @override
   String toString() {

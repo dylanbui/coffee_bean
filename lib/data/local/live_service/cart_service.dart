@@ -95,7 +95,7 @@ class CartService implements DbLocatorDisposable {
       if (options == null || options.isEmpty) {
         existing = items.where((i) => i.selectedOptions == null || i.selectedOptions!.isEmpty).firstOrNull;
       } else {
-        existing = items.where((i) => _compareOptions(i.selectedOptions, options)).firstOrNull;
+        existing = items.where((i) => compareOptions(i.selectedOptions, options)).firstOrNull;
       }
 
       if (existing != null) {
@@ -120,7 +120,72 @@ class CartService implements DbLocatorDisposable {
     });
   }
 
-  Future<void> updateQuantityIfInCart(dynamic product, int quantity, List<SelectedOption>? options) async {
+  Future<void> upsertCartItem(dynamic product, int quantity, List<SelectedOption>? options) async {
+    int serverId;
+    ProductType productType;
+    String name;
+    String? image;
+    String? sku;
+    double price;
+
+    if (product is TblFood) {
+      serverId = product.serverId;
+      productType = ProductType.food;
+      name = product.name;
+      image = product.mainImage;
+      sku = product.sku;
+      price = product.price;
+    } else if (product is TblCourse) {
+      serverId = product.serverId;
+      productType = ProductType.course;
+      name = product.name;
+      image = product.mainImage;
+      sku = product.sku;
+      price = product.price;
+    } else return;
+
+    final isar = _dbService.isar;
+    await isar.writeTxn(() async {
+      final items = await isar.tblCartItems.filter()
+          .serverIdEqualTo(serverId)
+          .and()
+          .typeEqualTo(productType.name)
+          .findAll();
+
+      TblCartItem? existing;
+      if (options == null || options.isEmpty) {
+        existing = items.where((i) => i.selectedOptions == null || i.selectedOptions!.isEmpty).firstOrNull;
+      } else {
+        existing = items.where((i) => compareOptions(i.selectedOptions, options)).firstOrNull;
+      }
+
+      if (existing != null) {
+        // Trở lại logic Cộng dồn số lượng để hỗ trợ việc "Thêm thêm vào"
+        // existing.quantity += quantity;
+        // Khong co khai niem cong don, user phai tang so luong mong muon len
+        existing.quantity = quantity;
+        await isar.tblCartItems.put(existing);
+      } else {
+        // Insert mới
+        double finalPrice = price;
+        options?.forEach((o) => finalPrice += o.extraPrice);
+
+        final newItem = TblCartItem()
+          ..serverId = serverId
+          ..type = productType.name
+          ..name = name
+          ..image = image
+          ..sku = sku
+          ..finalPrice = finalPrice
+          ..quantity = quantity
+          ..selectedOptions = options
+          ..addedAt = DateTime.now();
+        await isar.tblCartItems.put(newItem);
+      }
+    });
+  }
+
+  int getQuantity(dynamic product, List<SelectedOption>? options) {
     int serverId;
     String type;
     if (product is TblFood) {
@@ -129,31 +194,17 @@ class CartService implements DbLocatorDisposable {
     } else if (product is TblCourse) {
       serverId = product.serverId;
       type = ProductType.course.name;
-    } else return;
+    } else return 0;
 
-    final isar = _dbService.isar;
-    await isar.writeTxn(() async {
-      final items = await isar.tblCartItems.filter()
-          .serverIdEqualTo(serverId)
-          .and()
-          .typeEqualTo(type)
-          .findAll();
+    final existing = _items.where((item) =>
+        item.serverId == serverId &&
+        item.type == type &&
+        compareOptions(item.selectedOptions, options)).firstOrNull;
 
-      TblCartItem? existing;
-      if (options == null || options.isEmpty) {
-        existing = items.where((i) => i.selectedOptions == null || i.selectedOptions!.isEmpty).firstOrNull;
-      } else {
-        existing = items.where((i) => _compareOptions(i.selectedOptions, options)).firstOrNull;
-      }
-
-      if (existing != null) {
-        existing.quantity = quantity;
-        await isar.tblCartItems.put(existing);
-      }
-    });
+    return existing?.quantity ?? 0;
   }
 
-  bool _compareOptions(List<SelectedOption>? list1, List<SelectedOption>? list2) {
+  bool compareOptions(List<SelectedOption>? list1, List<SelectedOption>? list2) {
     if (list1 == null && list2 == null) return true;
     if (list1 == null || list2 == null) return false;
     if (list1.length != list2.length) return false;

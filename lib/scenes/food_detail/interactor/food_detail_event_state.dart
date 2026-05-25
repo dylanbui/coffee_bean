@@ -7,6 +7,7 @@ class FoodDetailState extends BaseBlocState {
   final List<TblFood> suggestedProducts;
   final Map<int, TblProductOption> selectedOptions; // groupId -> selectedOption
   final bool isLoading;
+  final bool isAddingToCart;
 
   FoodDetailState({
     required this.product,
@@ -14,6 +15,7 @@ class FoodDetailState extends BaseBlocState {
     this.suggestedProducts = const [],
     this.selectedOptions = const {},
     this.isLoading = false,
+    this.isAddingToCart = false,
   });
 
   FoodDetailState copyWith({
@@ -22,6 +24,7 @@ class FoodDetailState extends BaseBlocState {
     List<TblFood>? suggestedProducts,
     Map<int, TblProductOption>? selectedOptions,
     bool? isLoading,
+    bool? isAddingToCart,
   }) {
     return FoodDetailState(
       product: product ?? this.product,
@@ -29,6 +32,7 @@ class FoodDetailState extends BaseBlocState {
       suggestedProducts: suggestedProducts ?? this.suggestedProducts,
       selectedOptions: selectedOptions ?? this.selectedOptions,
       isLoading: isLoading ?? this.isLoading,
+      isAddingToCart: isAddingToCart ?? this.isAddingToCart,
     );
   }
 
@@ -41,5 +45,5 @@ class FoodDetailState extends BaseBlocState {
   }
 
   @override
-  List<Object?> get props => [product, quantity, suggestedProducts, selectedOptions, isLoading];
+  List<Object?> get props => [product, quantity, suggestedProducts, selectedOptions, isLoading, isAddingToCart];
 }

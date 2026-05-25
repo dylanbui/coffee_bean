@@ -44,7 +44,8 @@ class FoodDetailContent extends StatelessWidget {
     if (options.isEmpty) return const SizedBox.shrink();
 
     final selectedOption = state.selectedOptions[prop.serverId];
-    final selectedIndex = options.indexOf(selectedOption ?? options.first);
+    int selectedIndex = options.indexOf(selectedOption ?? options.first);
+    if (selectedIndex == -1) selectedIndex = 0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

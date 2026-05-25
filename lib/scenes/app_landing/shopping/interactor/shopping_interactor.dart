@@ -70,7 +70,7 @@ class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState
   }
 
   void addToCart(TblFood product) {
-    _cartService.addToCart(product);
+    _cartService.addToCart(product, options: product.defaultSelectedOptions);
   }
 
   void routeToProductDetail(TblFood product) {

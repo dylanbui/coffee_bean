@@ -126,10 +126,11 @@ class StoreListInteractor extends CubitInteractor<StoreListRouter, StoreListStat
 
     // Map to Display Models with calculated distance
     final displayStores = dbStores.map((s) {
-      String distanceStr = "---";
-      double distanceValue = double.maxFinite;
+      String distanceStr = "15km"; // Du lieu demo
+
 
       if (position != null) {
+        double distanceValue = double.maxFinite;
         final dist = _calculateDistance(position.latitude, position.longitude, s.latitude, s.longitude);
         distanceValue = dist;
         distanceStr = dist < 1 ? "${(dist * 1000).toInt()}m" : "${dist.toStringAsFixed(1)}km";
