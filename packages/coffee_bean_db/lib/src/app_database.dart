@@ -28,6 +28,9 @@ class TblCategory {
 class TblImage {
   String? url;
   bool isPrimary = false;
+
+  @override
+  String toString() => 'TblImage(url: $url, isPrimary: $isPrimary)';
 }
 
 @embedded
@@ -38,6 +41,9 @@ class TblProductOption {
   int? percent;            // Lưu % nếu có (ví dụ: 30), dùng để hiển thị UI
   bool isAvailable = true;
   String? sku;
+
+  @override
+  String toString() => 'Option(name: $name, price: $extraPrice, available: $isAvailable)';
 }
 
 @embedded
@@ -46,6 +52,9 @@ class TblProductProperty {
   String groupName = "";
   bool isRequired = false;
   List<TblProductOption>? options;
+
+  @override
+  String toString() => 'Property(group: $groupName, options: ${options?.join(', ')})';
 }
 
 @collection
@@ -79,6 +88,14 @@ class TblFood {
   bool isActive = true;
 
   List<TblProductProperty>? properties;
+  
+  @override
+  String toString() {
+    return 'TblFood{name: $name, images: ${images?.length ?? 0}, properties: ${properties?.length ?? 0}\n'
+           '  Properties: ${properties?.map((p) => p.toString()).join('\n    ')}\n'
+           '}';
+  }
+  
 }
 
 @collection
@@ -115,6 +132,13 @@ class TblCourse {
   String? videoUrl;
 
   List<TblProductProperty>? properties;
+
+  @override
+  String toString() {
+    return 'TblCourse{name: $name, images: ${images?.length ?? 0}, properties: ${properties?.length ?? 0}\n'
+           '  Properties: ${properties?.map((p) => p.toString()).join('\n    ')}\n'
+           '}';
+  }
 }
 
 @collection

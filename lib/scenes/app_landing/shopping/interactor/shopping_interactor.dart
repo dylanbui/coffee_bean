@@ -74,8 +74,7 @@ class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState
   }
 
   void routeToProductDetail(TblFood product) {
-    // router.routeToProductDetail(product);
-    debugPrint(product.name);
+    router?.navigate(FoodDetailRoute(product));
   }
 
   CartService get cartService => _cartService;

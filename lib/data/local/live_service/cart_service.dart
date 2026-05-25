@@ -49,7 +49,7 @@ class CartService implements DbLocatorDisposable {
 
   List<TblCartItem> get currentItems => List.unmodifiable(_items);
 
-  Future<void> addToCart(dynamic product, {int quantity = 1}) async {
+  Future<void> addToCart(dynamic product, {int quantity = 1, List<SelectedOption>? options}) async {
     int serverId;
     ProductType productType;
     String name;
@@ -84,28 +84,85 @@ class CartService implements DbLocatorDisposable {
 
     final isar = _dbService.isar;
     await isar.writeTxn(() async {
-      final existing = await isar.tblCartItems.filter()
+      // Find items with same serverId and type
+      final items = await isar.tblCartItems.filter()
           .serverIdEqualTo(serverId)
           .and()
           .typeEqualTo(productType.name)
-          .findFirst();
+          .findAll();
+
+      TblCartItem? existing;
+      if (options == null || options.isEmpty) {
+        existing = items.where((i) => i.selectedOptions == null || i.selectedOptions!.isEmpty).firstOrNull;
+      } else {
+        existing = items.where((i) => _compareOptions(i.selectedOptions, options)).firstOrNull;
+      }
 
       if (existing != null) {
         existing.quantity += quantity;
         await isar.tblCartItems.put(existing);
       } else {
+        double finalPrice = price;
+        options?.forEach((o) => finalPrice += o.extraPrice);
+
         final newItem = TblCartItem()
           ..serverId = serverId
           ..type = productType.name
           ..name = name
           ..image = image
           ..sku = sku
-          ..finalPrice = price
+          ..finalPrice = finalPrice
           ..quantity = quantity
+          ..selectedOptions = options
           ..addedAt = DateTime.now();
         await isar.tblCartItems.put(newItem);
       }
     });
+  }
+
+  Future<void> updateQuantityIfInCart(dynamic product, int quantity, List<SelectedOption>? options) async {
+    int serverId;
+    String type;
+    if (product is TblFood) {
+      serverId = product.serverId;
+      type = ProductType.food.name;
+    } else if (product is TblCourse) {
+      serverId = product.serverId;
+      type = ProductType.course.name;
+    } else return;
+
+    final isar = _dbService.isar;
+    await isar.writeTxn(() async {
+      final items = await isar.tblCartItems.filter()
+          .serverIdEqualTo(serverId)
+          .and()
+          .typeEqualTo(type)
+          .findAll();
+
+      TblCartItem? existing;
+      if (options == null || options.isEmpty) {
+        existing = items.where((i) => i.selectedOptions == null || i.selectedOptions!.isEmpty).firstOrNull;
+      } else {
+        existing = items.where((i) => _compareOptions(i.selectedOptions, options)).firstOrNull;
+      }
+
+      if (existing != null) {
+        existing.quantity = quantity;
+        await isar.tblCartItems.put(existing);
+      }
+    });
+  }
+
+  bool _compareOptions(List<SelectedOption>? list1, List<SelectedOption>? list2) {
+    if (list1 == null && list2 == null) return true;
+    if (list1 == null || list2 == null) return false;
+    if (list1.length != list2.length) return false;
+
+    for (var o1 in list1) {
+      final found = list2.any((o2) => o2.optionServerId == o1.optionServerId && o2.groupName == o1.groupName);
+      if (!found) return false;
+    }
+    return true;
   }
 
   Future<void> updateQuantity(int id, int quantity) async {
