@@ -183,12 +183,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
       padding: EdgeInsets.only(top: _isKeyboardVisible ? 20.0 : 50.0, bottom: _isKeyboardVisible ? 15.0 : 40.0),
       child: Text(
         "TMLabs Coffee",
-        style: TextStyle(
-          fontFamily: 'Source Sans Pro',
-          color: TMLabsColor.primary,
-          fontSize: _isKeyboardVisible ? 22 : 28, 
-          fontWeight: FontWeight.bold
-        ),
+        style: _isKeyboardVisible ? TMLabsTextStyle.h2 : TMLabsTextStyle.h1,
       ),
     );
   }
@@ -201,12 +196,8 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
       overlayColor: WidgetStateProperty.all(Colors.transparent),
       splashFactory: NoSplash.splashFactory,
       labelColor: TMLabsColor.primary,
-      unselectedLabelColor: Colors.grey,
-      labelStyle: const TextStyle(
-        fontFamily: 'Source Sans Pro',
-        fontSize: 15, 
-        fontWeight: FontWeight.bold
-      ),
+      unselectedLabelColor: TMLabsColor.grey,
+      labelStyle: TMLabsTextStyle.title,
       indicatorColor: TMLabsColor.primary,
       indicatorSize: TabBarIndicatorSize.label,
       indicatorWeight: 3,
@@ -302,11 +293,8 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
             },
       child: Text(
         _isCountingDown ? "Resend (${_start}s)" : "Send Code",
-        style: TextStyle(
-          fontFamily: 'Source Sans Pro',
-          color: _isCountingDown ? Colors.grey : TMLabsColor.primary,
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
+        style: TMLabsTextStyle.bodyBold.copyWith(
+          color: _isCountingDown ? TMLabsColor.lightGrey : TMLabsColor.primary,
         ),
       ),
     );
@@ -319,16 +307,12 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text("No account? ", style: TextStyle(fontSize: 14, color: Colors.grey)),
+            Text("No account? ", style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey)),
             InkWell(
               onTap: () => interactor.router?.navigate(UserRegisterRoute()),
-              child: const Text(
+              child: Text(
                 "Register Now", 
-                style: TextStyle(
-                  color: TMLabsColor.primary,
-                  fontWeight: FontWeight.bold, 
-                  fontSize: 14
-                )
+                style: TMLabsTextStyle.bodyBold,
               ),
             ),
           ],
@@ -336,7 +320,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
         if (!hideForgotPw)
           InkWell(
             onTap: () => interactor.router?.navigate(ForgotPasswordRoute()),
-            child: const Text("Forgot Password", style: TextStyle(color: Colors.grey, fontSize: 14)),
+            child: Text("Forgot Password", style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey)),
           ),
       ],
     );
@@ -353,7 +337,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
             height: 18,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: _loginController.isAgreed ? TMLabsColor.primary : Colors.grey.shade300, width: 1.5),
+              border: Border.all(color: _loginController.isAgreed ? TMLabsColor.primary : TMLabsColor.lightGrey, width: 1.5),
               color: _loginController.isAgreed ? TMLabsColor.primary : Colors.transparent,
             ),
             child: _loginController.isAgreed ? const Icon(Icons.check, size: 12, color: Colors.white) : null,
@@ -363,7 +347,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
         Expanded(
           child: Text.rich(
             TextSpan(
-              style: const TextStyle(fontSize: 12, color: Colors.grey, height: 1.5),
+              style: TMLabsTextStyle.caption.copyWith(height: 1.5),
               children: [
                 const TextSpan(text: "I have read and agree to the "),
                 TextSpan(

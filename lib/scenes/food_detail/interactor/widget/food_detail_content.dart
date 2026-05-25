@@ -5,6 +5,7 @@ import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:group_button/group_button.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
 
 class FoodDetailContent extends StatelessWidget {
   final FoodDetailInteractor interactor;
@@ -23,11 +24,11 @@ class FoodDetailContent extends StatelessWidget {
             children: [
               Text(
                 state.product.name.toUpperCase(),
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+                style: TMLabsTextStyle.h1.copyWith(color: Colors.black),
               ),
               Text(
                 state.product.description ?? "",
-                style: const TextStyle(fontSize: 14, color: TMLabsColor.grey),
+                style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
               ),
               const SizedBox(height: 10),
               if (state.product.properties != null)
@@ -52,15 +53,15 @@ class FoodDetailContent extends StatelessWidget {
       children: [
         Text(
           prop.groupName,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TMLabsTextStyle.h2,
         ),
         const SizedBox(height: 12),
         GroupButton<TblProductOption>(
           options: GroupButtonOptions(
             selectedColor: TMLabsColor.primary,
             unselectedColor: TMLabsColor.lightGrey.withValues(alpha: 0.5),
-            selectedTextStyle: const TextStyle(color: Colors.white, fontSize: 13),
-            unselectedTextStyle: const TextStyle(color: TMLabsColor.primary, fontSize: 13),
+            selectedTextStyle: TMLabsTextStyle.body.copyWith(color: Colors.white),
+            unselectedTextStyle: TMLabsTextStyle.body,
             borderRadius: BorderRadius.circular(20),
             spacing: 10,
             runSpacing: 10,

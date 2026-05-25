@@ -28,7 +28,7 @@ class CourseSellersPanel extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 AppStrings.courseSellers,
-                style: TMLabsTextStyle.semibold.copyWith(fontSize: 24, color: TMLabsColor.primary),
+                style: TMLabsTextStyle.h1,
               ),
             ),
             const SizedBox(height: 16),
@@ -56,7 +56,7 @@ class CourseSellersPanel extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           item.name,
-                          style: TMLabsTextStyle.regular.copyWith(fontSize: 12, color: TMLabsColor.primary),
+                          style: TMLabsTextStyle.caption,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,

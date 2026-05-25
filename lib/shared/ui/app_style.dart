@@ -111,33 +111,55 @@ class TMLabsStyle {}
 
 class TMLabsTextStyle {
   static const _fontFamily = 'Source Sans Pro';
+  static const _defaultColor = TMLabsColor.primary;
 
-  static const semibold = TextStyle(
+  static const h1 = TextStyle(
     fontFamily: _fontFamily,
-    color: TMLabsColor.primary,
-    fontSize: 14,
+    color: _defaultColor,
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+  );
+
+  static const h2 = TextStyle(
+    fontFamily: _fontFamily,
+    color: _defaultColor,
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+  );
+
+  static const title = TextStyle(
+    fontFamily: _fontFamily,
+    color: _defaultColor,
+    fontSize: 16,
     fontWeight: FontWeight.w600,
   );
 
-  static const light = TextStyle(
+  static const body = TextStyle(
     fontFamily: _fontFamily,
-    color: TMLabsColor.primary,
+    color: _defaultColor,
     fontSize: 14,
-    fontWeight: FontWeight.w300,
+    fontWeight: FontWeight.normal,
   );
 
-  static const extraLight = TextStyle(
+  static const bodyBold = TextStyle(
     fontFamily: _fontFamily,
-    color: TMLabsColor.primary,
+    color: _defaultColor,
     fontSize: 14,
-    fontWeight: FontWeight.w200,
+    fontWeight: FontWeight.bold,
   );
 
-  static const regular = TextStyle(
+  static const caption = TextStyle(
     fontFamily: _fontFamily,
-    color: TMLabsColor.primary,
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
+    color: _defaultColor,
+    fontSize: 12,
+    fontWeight: FontWeight.normal,
+  );
+
+  static const small = TextStyle(
+    fontFamily: _fontFamily,
+    color: _defaultColor,
+    fontSize: 10,
+    fontWeight: FontWeight.w600,
   );
 }
 

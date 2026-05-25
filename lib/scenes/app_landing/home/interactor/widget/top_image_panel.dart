@@ -5,6 +5,8 @@ import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_strings.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -204,15 +206,14 @@ class _TopImagePanelState extends State<TopImagePanel> {
           children: [
             Text(
               "${AppStrings.morningWelcome} $name", 
-              style: const TextStyle(color: Colors.white, fontSize: 15)
+              style: TMLabsTextStyle.title.copyWith(color: Colors.white),
             ),
             const SizedBox(height: 10),
-            const Text(
+            Text(
               AppStrings.welcomeBack,
-              style: TextStyle(
+              style: TMLabsTextStyle.h1.copyWith(
                 color: Colors.white,
                 fontSize: 28,
-                fontWeight: FontWeight.bold,
                 height: 1.2,
               ),
             ),

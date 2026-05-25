@@ -3,6 +3,7 @@ import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.d
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:marquee/marquee.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
 
 class AnnouncementBarPanel extends StatelessWidget {
   final HomeInteractor interactor;
@@ -28,7 +29,7 @@ class AnnouncementBarPanel extends StatelessWidget {
               Expanded(
                 child: Marquee(
                   text: message,
-                  style: const TextStyle(color: Colors.white, fontSize: 13),
+                  style: TMLabsTextStyle.body.copyWith(color: Colors.white),
                   scrollAxis: Axis.horizontal,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   blankSpace: 20.0,

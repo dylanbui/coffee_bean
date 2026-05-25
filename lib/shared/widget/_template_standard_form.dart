@@ -27,7 +27,7 @@ class StandardFormTemplate extends StatelessWidget {
                   children: [
                     // --- SECTION 1: HEADER ---
                     const SizedBox(height: 40),
-                    const Text("Header Title", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                    Text("Header Title", style: TMLabsTextStyle.h1),
                     const Text("Subtext or instructions go here.", style: TextStyle(color: Colors.grey)),
 
                     // --- SECTION 2: FORM CONTROLS ---

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
 
 //ignore: must_be_immutable
 class ShoppingPage extends CubitStateFulWidget<ShoppingInteractor, ShoppingState> {
@@ -176,7 +177,7 @@ class _ShoppingPageState extends CubitState<ShoppingPage, ShoppingInteractor, Sh
                   alignment: Alignment.centerLeft,
                   child: Text(
                     item.name.toUpperCase(),
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: TMLabsColor.grey),
+                    style: TMLabsTextStyle.bodyBold.copyWith(color: TMLabsColor.grey),
                   ),
                 );
               }
@@ -206,7 +207,7 @@ class _ShoppingPageState extends CubitState<ShoppingPage, ShoppingInteractor, Sh
             const SizedBox(height: 16),
             Text(
               "Không tìm thấy sản phẩm nào cho \"${state.searchQuery}\"",
-              style: TextStyle(color: Colors.grey[600], fontSize: 16),
+              style: TMLabsTextStyle.title.copyWith(color: TMLabsColor.grey),
             ),
           ],
         ),

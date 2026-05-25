@@ -61,7 +61,7 @@ class _PrivacyPolicyPageState extends CubitState<PrivacyPolicyPage, PrivacyPolic
             children: [
               Text(
                 "Privacy Policy Content",
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: TMLabsTextStyle.body,
               ),
               const SizedBox(height: 40),
               AppButton(

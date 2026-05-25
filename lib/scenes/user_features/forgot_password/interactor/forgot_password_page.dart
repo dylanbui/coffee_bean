@@ -146,11 +146,11 @@ class _ForgotPasswordPageState extends CubitState<ForgotPasswordPage, ForgotPass
   }
 
   Widget _buildInstructionText() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 30.0),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 30.0),
       child: Text(
         "To ensure account security, please verify your identity first.",
-        style: TextStyle(fontSize: 14, color: Colors.grey),
+        style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
       ),
     );
   }
@@ -180,11 +180,8 @@ class _ForgotPasswordPageState extends CubitState<ForgotPasswordPage, ForgotPass
       onTap: _isCountingDown ? null : _handleSendSms,
       child: Text(
         _isCountingDown ? "Resend (${_start}s)" : "Send Code",
-        style: TextStyle(
-          fontFamily: 'Source Sans Pro',
-          color: _isCountingDown ? Colors.grey : TMLabsColor.primary,
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
+        style: TMLabsTextStyle.bodyBold.copyWith(
+          color: _isCountingDown ? TMLabsColor.lightGrey : TMLabsColor.primary,
         ),
       ),
     );

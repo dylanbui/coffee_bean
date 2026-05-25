@@ -9,6 +9,7 @@
 
 import 'package:coffee_bean/scenes/user_features/user_gift_pack/interactor/user_gift_pack_event_state.dart';
 import 'package:coffee_bean/scenes/user_features/user_gift_pack/interactor/user_gift_pack_interactor.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:db_core/utils/app_button.dart';
@@ -110,20 +111,16 @@ class _UserGiftPackPageState extends CubitState<UserGiftPackPage, UserGiftPackIn
           ),
         ),
         const SizedBox(height: 40),
-        const Text(
+        Text(
           "Congratulations! You've received a Newcomer Gift Pack",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF333333),
-          ),
+          style: TMLabsTextStyle.title,
         ),
         const SizedBox(height: 12),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40.0),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40.0),
           child: Text(
             "(Bonus points or coupons, current popup is a background illustration)",
-            style: TextStyle(fontSize: 14, color: Color(0xFF999999)),
+            style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
             textAlign: TextAlign.center,
           ),
         ),

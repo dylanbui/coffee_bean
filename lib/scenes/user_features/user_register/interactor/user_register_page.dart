@@ -165,12 +165,7 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
       ),
       child: Text(
         "TMLabs Coffee",
-        style: TextStyle(
-          fontFamily: 'Source Sans Pro',
-          color: TMLabsColor.primary,
-          fontSize: _isKeyboardVisible ? 22 : 28, 
-          fontWeight: FontWeight.bold
-        ),
+        style: _isKeyboardVisible ? TMLabsTextStyle.h2 : TMLabsTextStyle.h1,
       ),
     );
   }
@@ -212,11 +207,8 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
       },
       child: Text(
         _isCountingDown ? "Resend (${_start}s)" : "Send Code",
-        style: TextStyle(
-          fontFamily: 'Source Sans Pro',
-          color: _isCountingDown ? Colors.grey : TMLabsColor.primary,
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
+        style: TMLabsTextStyle.bodyBold.copyWith(
+          color: _isCountingDown ? TMLabsColor.lightGrey : TMLabsColor.primary,
         ),
       ),
     );
@@ -226,19 +218,15 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text("Already have an account? ", style: TextStyle(fontSize: 14)),
+        Text("Already have an account? ", style: TMLabsTextStyle.body),
         InkWell(
           onTap: () {
             iLog("Tap: Go to Login - khong cho phep o day, se bi cycle app");
             // interactor.router?.navigate(UserLoginRoute());
           },
-          child: const Text(
+          child: Text(
             "Go to Login",
-            style: TextStyle(
-              color: TMLabsColor.primary,
-              fontWeight: FontWeight.bold, 
-              fontSize: 14
-            ),
+            style: TMLabsTextStyle.bodyBold,
           ),
         ),
       ],
@@ -255,7 +243,7 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
             width: 18, height: 18,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: _registerController.isAgreed ? TMLabsColor.primary : Colors.grey.shade300, width: 1.5),
+              border: Border.all(color: _registerController.isAgreed ? TMLabsColor.primary : TMLabsColor.lightGrey, width: 1.5),
               color: _registerController.isAgreed ? TMLabsColor.primary : Colors.transparent,
             ),
             child: _registerController.isAgreed ? const Icon(Icons.check, size: 12, color: Colors.white) : null,
@@ -265,7 +253,7 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
         Expanded(
           child: Text.rich(
             TextSpan(
-              style: const TextStyle(fontSize: 12, color: Colors.grey, height: 1.5),
+              style: TMLabsTextStyle.caption.copyWith(height: 1.5),
               children: [
                 const TextSpan(text: "I have read and agree to the "),
                 TextSpan(

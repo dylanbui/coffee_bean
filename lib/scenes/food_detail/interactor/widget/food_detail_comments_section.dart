@@ -1,4 +1,5 @@
 import 'package:coffee_bean/shared/ui/app_colors.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/avatar_widget.dart';
 import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -45,13 +46,13 @@ class FoodDetailCommentsSection extends StatelessWidget {
             children: [
               const Text(
                 "Đánh giá",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TMLabsTextStyle.h2,
               ),
               TextButton(
                 onPressed: () {},
                 child: Row(
                   children: [
-                    Text("Tất cả", style: TextStyle(color: Colors.grey[600])),
+                    Text("Tất cả", style: TMLabsTextStyle.body.copyWith(color: Colors.grey[600])),
                     Icon(Icons.chevron_right, size: 20, color: Colors.grey[600]),
                   ],
                 ),
@@ -86,11 +87,11 @@ class FoodDetailCommentsSection extends StatelessWidget {
                   children: [
                     Text(
                       comment['name'],
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                      style: TMLabsTextStyle.bodyBold,
                     ),
                     Text(
                       comment['date'],
-                      style: TextStyle(color: Colors.grey[500], fontSize: 13),
+                      style: TMLabsTextStyle.caption,
                     ),
                   ],
                 ),
@@ -110,7 +111,7 @@ class FoodDetailCommentsSection extends StatelessWidget {
           const SizedBox(height: 15),
           Text(
             comment['content'],
-            style: const TextStyle(fontSize: 14, color: Colors.black87, height: 1.4),
+            style: TMLabsTextStyle.body.copyWith(color: Colors.black87, height: 1.4),
           ),
           if (images.isNotEmpty) ...[
             const SizedBox(height: 15),

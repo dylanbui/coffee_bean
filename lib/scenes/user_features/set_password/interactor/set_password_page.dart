@@ -9,6 +9,7 @@
 
 import 'package:coffee_bean/scenes/user_features/set_password/interactor/set_password_event_state.dart';
 import 'package:coffee_bean/scenes/user_features/set_password/interactor/set_password_interactor.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:coffee_bean/shared/widget/password_field.dart';
@@ -118,20 +119,17 @@ class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInter
   }
 
   Widget _buildHeader() {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Set New Password",
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TMLabsTextStyle.h1,
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           "Please enter your new password to continue.",
-          style: TextStyle(fontSize: 14, color: Colors.grey),
+          style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
         ),
       ],
     );

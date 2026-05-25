@@ -57,7 +57,7 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
           const Text(
             "Không thể xác định vị trí, không tìm thấy cửa hàng gần bạn.\nVui lòng bật định vị hoặc chọn thủ công.",
             textAlign: TextAlign.center,
-            style: TMLabsTextStyle.regular,
+            style: TMLabsTextStyle.body,
           ),
           const SizedBox(height: 48),
           AppButton(
@@ -167,7 +167,7 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
                         children: [
                           Text(
                             store.name,
-                            style: TMLabsTextStyle.semibold.copyWith(color: Colors.white, fontSize: 18),
+                            style: TMLabsTextStyle.h2.copyWith(color: Colors.white),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -180,7 +180,7 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
                               Expanded(
                                 child: AppLabel(
                                   store.address,
-                                  style: TMLabsTextStyle.regular.copyWith(color: Colors.white, fontSize: 16, height: 1.2),
+                                  style: TMLabsTextStyle.title.copyWith(color: Colors.white, height: 1.2),
                                   maxLines: 2,
                                   minFontSize: 11,
                                   padding: EdgeInsets.zero,
@@ -194,7 +194,7 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
                             children: [
                               const Icon(Icons.access_time_filled, color: Colors.white, size: 19),
                               const SizedBox(width: 6),
-                              Text(hoursStr, style: TMLabsTextStyle.regular.copyWith(color: Colors.white, fontSize: 13)),
+                              Text(hoursStr, style: TMLabsTextStyle.caption.copyWith(color: Colors.white)),
                               const SizedBox(width: 12),
                               _buildStatusBadge(model.isOpen),
                             ],
@@ -218,7 +218,7 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
                     padding: const EdgeInsets.only(left: 20, right: 10, top: 5, bottom: 5),
                     child: Text(
                       "Cách bạn ${model.distance}",
-                      style: TMLabsTextStyle.semibold.copyWith(color: Colors.black, fontSize: 12),
+                      style: TMLabsTextStyle.caption.copyWith(color: Colors.black, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ],
@@ -235,7 +235,7 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
       isOpen ? "Đang mở cửa" : "Đóng cửa",
       backgroundColor: isOpen ? Colors.green : Colors.grey,
       borderRadius: 12,
-      style: TMLabsTextStyle.regular.copyWith(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+      style: TMLabsTextStyle.small.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
     );
   }
@@ -247,7 +247,7 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
         children: [
           const Icon(Icons.store_outlined, size: 64, color: AppColor.basicSecondaryText),
           const SizedBox(height: 16),
-          Text("Không tìm thấy cửa hàng", style: TMLabsTextStyle.regular.copyWith(color: AppColor.basicSecondaryText)),
+          Text("Không tìm thấy cửa hàng", style: TMLabsTextStyle.body.copyWith(color: AppColor.basicSecondaryText)),
         ],
       ),
     );

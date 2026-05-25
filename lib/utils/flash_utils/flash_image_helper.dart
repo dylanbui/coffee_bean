@@ -18,6 +18,7 @@
  * tích hợp tính năng zoom, vuốt và hiển thị chỉ số trang.
  */
 
+import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -139,9 +140,8 @@ class _PhotoGalleryPageState extends State<_PhotoGalleryPage> {
                                 ),
                                 child: Text(
                                     "${currentIndex + 1} / ${widget.imageUrls.length}",
-                                    style: const TextStyle(
+                                    style: TMLabsTextStyle.caption.copyWith(
                                         color: Colors.white,
-                                        fontSize: 13,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 1.2,
                                     ),

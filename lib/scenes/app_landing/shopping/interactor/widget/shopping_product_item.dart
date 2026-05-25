@@ -6,6 +6,8 @@ import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
 import 'package:coffee_bean/utils/number_to_vietnamese.dart';
 import 'package:flutter/material.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
+
 
 class ShoppingProductItem extends StatelessWidget {
   final TblFood product;
@@ -58,14 +60,14 @@ class ShoppingProductItem extends StatelessWidget {
                     children: [
                       Text(
                         product.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                        style: TMLabsTextStyle.bodyBold,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
                         NumberToVietnamese.formatNumber(product.price, "đ") ?? "",
-                        style: const TextStyle(color: TMLabsColor.grey, fontSize: 13, fontWeight: FontWeight.w500),
+                        style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
                       ),
                     ],
                   ),

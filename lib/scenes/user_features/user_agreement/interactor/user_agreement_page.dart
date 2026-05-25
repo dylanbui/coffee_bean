@@ -60,9 +60,9 @@ class _UserAgreementPageState extends CubitState<UserAgreementPage, UserAgreemen
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
+              Text(
                 'Please read and accept our terms and conditions to continue using the application.',
-                style: TextStyle(fontSize: 16),
+                style: TMLabsTextStyle.title,
               ),
               const SizedBox(height: 40),
               AppButton(
