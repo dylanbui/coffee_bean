@@ -81,14 +81,14 @@ class FeaturedCoursesPanel extends StatelessWidget {
                                   gradient: LinearGradient(
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter,
-                                    colors: [TMLabsColor.primary.withOpacity(0), TMLabsColor.primary],
+                                    colors: [TMLabsColor.primary.withValues(alpha: 0), TMLabsColor.primary],
                                   ),
                                 ),
                                 padding: const EdgeInsets.all(12),
                                 alignment: Alignment.bottomLeft,
                                 child: Text(
                                   item.title,
-                                  style: TMLabsTextStyle.title.copyWith(color: Colors.white),
+                                  style: TMLabsTextStyle.title.copyWith(color: TMLabsColor.white),
                                   maxLines: 3,
                                   overflow: TextOverflow.ellipsis,
                                 ),

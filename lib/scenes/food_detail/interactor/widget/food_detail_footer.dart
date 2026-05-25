@@ -25,7 +25,7 @@ class FoodDetailFooter extends StatelessWidget {
             height: 110,
             padding: EdgeInsets.fromLTRB(15, 10, 15, 10 + MediaQuery.of(context).padding.bottom),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: TMLabsColor.white,
               boxShadow: [
                 BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -5)),
               ],
@@ -106,7 +106,7 @@ class FoodDetailFooter extends StatelessWidget {
               shape: BoxShape.circle,
               color: TMLabsColor.primary,
             ),
-            child: const Icon(Icons.add, size: 18, color: Colors.white),
+            child: const Icon(Icons.add, size: 18, color: TMLabsColor.white),
           ),
         ),
       ],

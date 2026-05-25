@@ -1,3 +1,5 @@
+import 'package:coffee_bean/shared/ui/app_colors.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/scenes/app_landing/community/interactor/community_interactor.dart';
 import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
@@ -31,15 +33,15 @@ class _CommunityPageState extends CubitState<CommunityPage, CommunityInteractor,
     return AppBar(
       title: const Text(
         "Cộng đồng",
-        style: TextStyle(color: Color(0xFF0D1B3E), fontWeight: FontWeight.bold),
+        style: TextStyle(color: TMLabsColor.primary, fontWeight: FontWeight.bold),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: TMLabsColor.white,
       elevation: 0,
       bottom: TabBar(
         controller: _tabController,
-        labelColor: const Color(0xFF0D1B3E),
-        unselectedLabelColor: Colors.grey,
-        indicatorColor: const Color(0xFF0D1B3E),
+        labelColor: TMLabsColor.primary,
+        unselectedLabelColor: TMLabsColor.grey,
+        indicatorColor: TMLabsColor.primary,
         indicatorWeight: 3,
         indicatorSize: TabBarIndicatorSize.label,
         tabs: const [
@@ -89,25 +91,25 @@ class _CommunityPageState extends CubitState<CommunityPage, CommunityInteractor,
                   children: [
                     const Text(
                       "Khám phá hương vị cà phê mới từ vùng cao nguyên",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF0D1B3E)),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: TMLabsColor.primary),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       "Chúng tôi vừa cập nhật danh sách các loại hạt cà phê đặc sản từ Đà Lạt và Đắk Lắk...",
-                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                      style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
+                        const Icon(Icons.calendar_today, size: 14, color: TMLabsColor.grey),
                         const SizedBox(width: 4),
-                        Text("24/05/2024", style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+                        Text("24/05/2024", style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
                         const Spacer(),
-                        const Icon(Icons.remove_red_eye_outlined, size: 16, color: Colors.grey),
+                        const Icon(Icons.remove_red_eye_outlined, size: 16, color: TMLabsColor.grey),
                         const SizedBox(width: 4),
-                        Text("1.2k", style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+                        Text("1.2k", style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
                       ],
                     ),
                   ],
@@ -149,7 +151,7 @@ class _CommunityPageState extends CubitState<CommunityPage, CommunityInteractor,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text("10 phút trước", style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+                    Text("10 phút trước", style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
                     if (index % 2 == 0) ...[
                       const SizedBox(height: 8),
                       ClipRRect(

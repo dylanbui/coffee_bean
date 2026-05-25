@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:marquee/marquee.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
 
 class AnnouncementBarPanel extends StatelessWidget {
   final HomeInteractor interactor;
@@ -21,15 +22,15 @@ class AnnouncementBarPanel extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           height: 44,
-          decoration: BoxDecoration(color: const Color(0xFF0D1B3E), borderRadius: BorderRadius.circular(22)),
+          decoration: BoxDecoration(color: TMLabsColor.primary, borderRadius: BorderRadius.circular(22)),
           child: Row(
             children: [
-              const Icon(Icons.volume_up, color: Colors.white, size: 18),
+              const Icon(Icons.volume_up, color: TMLabsColor.white, size: 18),
               const SizedBox(width: 10),
               Expanded(
                 child: Marquee(
                   text: message,
-                  style: TMLabsTextStyle.body.copyWith(color: Colors.white),
+                  style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.white),
                   scrollAxis: Axis.horizontal,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   blankSpace: 20.0,
@@ -41,7 +42,7 @@ class AnnouncementBarPanel extends StatelessWidget {
                   decelerationCurve: Curves.easeOut,
                 ),
               ),
-              const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 14),
+              const Icon(Icons.arrow_forward_ios, color: TMLabsColor.white, size: 14),
             ],
           ),
         );

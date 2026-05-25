@@ -46,7 +46,7 @@ class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInter
     return BlocProvider.value(
       value: interactor,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: TMLabsColor.white,
         appBar: appBar as PreferredSizeWidget?,
         resizeToAvoidBottomInset: false,
         body: getBody(context),
@@ -79,7 +79,7 @@ class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInter
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(content: Text(message), backgroundColor: TMLabsColor.error),
     );
   }
 

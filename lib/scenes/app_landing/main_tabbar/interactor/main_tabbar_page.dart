@@ -92,7 +92,7 @@ class _MainTabbarPageState extends CubitState<MainTabbarPage, MainTabbarInteract
     return Container(
       height: 90,
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: TMLabsColor.white,
         border: Border(top: BorderSide(color: TMLabsColor.grey , width: 0.1)),
       ),
       child: Column(

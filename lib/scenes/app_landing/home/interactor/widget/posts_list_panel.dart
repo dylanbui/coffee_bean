@@ -61,7 +61,7 @@ class _PostCard extends StatelessWidget {
       height: 390,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: const Color(0xFFF2F2F2), borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(color: TMLabsColor.bgLight, borderRadius: BorderRadius.circular(20)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -92,7 +92,7 @@ class _PostCard extends StatelessWidget {
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFA6B5C5),
-                  foregroundColor: Colors.white,
+                  foregroundColor: TMLabsColor.white,
                   elevation: 0,
                   minimumSize: const Size(80, 32),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -112,7 +112,7 @@ class _PostCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             item.content,
-            style: TMLabsTextStyle.body.copyWith(color: Colors.grey[700]),
+            style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
             maxLines: 4,
             overflow: TextOverflow.ellipsis,
           ),
@@ -177,9 +177,9 @@ class _PostCard extends StatelessWidget {
   Widget _buildActionIcon(dynamic icon, String count) {
     return Row(
       children: [
-        AppIcon(icon, size: 18, color: Colors.grey[600]),
+        AppIcon(icon, size: 18, color: TMLabsColor.grey),
         const SizedBox(width: 6),
-        Text(count, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+        Text(count, style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey)),
       ],
     );
   }

@@ -209,7 +209,7 @@ class TmLabAppBarStyle {
   );
 
   static const navyStyle = CoffeeAppBarStyleConfig(
-    backgroundColor: Color(0xFF0D1B3E),
+    backgroundColor: TMLabsColor.primary,
     foregroundColor: Colors.white,
     titleTextStyle: TextStyle(
       fontFamily: 'Source Sans Pro',

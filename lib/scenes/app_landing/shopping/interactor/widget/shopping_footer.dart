@@ -42,7 +42,7 @@ class ShoppingFooter extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(4.0),
-                      child: AppIcon(AppAssets.icons.icShopping, color: Colors.white, size: 28),
+                      child: AppIcon(AppAssets.icons.icShopping, color: TMLabsColor.white, size: 28),
                     ),
                     if (totalQuantity > 0)
                       Positioned(
@@ -54,7 +54,7 @@ class ShoppingFooter extends StatelessWidget {
                           constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
                           child: Text(
                             "$totalQuantity",
-                            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                            style: TMLabsTextStyle.small.copyWith(color: TMLabsColor.white, fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -69,7 +69,7 @@ class ShoppingFooter extends StatelessWidget {
                     children: [
                       Text(
                         NumberToVietnamese.formatNumber(totalPrice, "đ") ?? "0 đ",
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                        style: TMLabsTextStyle.title.copyWith(color: TMLabsColor.white, fontWeight: FontWeight.bold),
                       ),
                       const Text(
                         "Ưu đãi đã áp dụng",
@@ -84,9 +84,9 @@ class ShoppingFooter extends StatelessWidget {
                   height: 38,
                   style: TMLabsButtonStyle.primary.copyWith(
                     backgroundColor: TMLabsColor.grey,
-                    textColor: Colors.white,
+                    textColor: TMLabsColor.white,
                     borderRadius: 19,
-                    textStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+                    textStyle: TMLabsTextStyle.small.copyWith(fontWeight: FontWeight.bold, color: TMLabsColor.white),
                   ),
                   onPressed: () {
                     if (totalQuantity > 0) {

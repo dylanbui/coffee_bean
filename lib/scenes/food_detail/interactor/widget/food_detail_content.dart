@@ -24,7 +24,7 @@ class FoodDetailContent extends StatelessWidget {
             children: [
               Text(
                 state.product.name.toUpperCase(),
-                style: TMLabsTextStyle.h1.copyWith(color: Colors.black),
+                style: TMLabsTextStyle.h1.copyWith(color: TMLabsColor.primary),
               ),
               Text(
                 state.product.description ?? "",
@@ -60,7 +60,7 @@ class FoodDetailContent extends StatelessWidget {
           options: GroupButtonOptions(
             selectedColor: TMLabsColor.primary,
             unselectedColor: TMLabsColor.lightGrey.withValues(alpha: 0.5),
-            selectedTextStyle: TMLabsTextStyle.body.copyWith(color: Colors.white),
+            selectedTextStyle: TMLabsTextStyle.body.copyWith(color: TMLabsColor.white),
             unselectedTextStyle: TMLabsTextStyle.body,
             borderRadius: BorderRadius.circular(20),
             spacing: 10,
@@ -86,7 +86,7 @@ class FoodDetailContent extends StatelessWidget {
                   child: Text(
                     option.name,
                     style: TextStyle(
-                      color: selected ? Colors.white : TMLabsColor.primary,
+                      color: selected ? TMLabsColor.white : TMLabsColor.primary,
                       fontWeight: selected ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),

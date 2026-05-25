@@ -1,3 +1,4 @@
+import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.dart';
@@ -40,7 +41,7 @@ class _HomePageState extends CubitState<HomePage, HomeInteractor, HomeState> {
             return const Scaffold(body: Center(child: LoadingView(width: 150, height: 150)));
           }
 
-          return Scaffold(backgroundColor: Colors.white, body: getBody(context));
+          return Scaffold(backgroundColor: TMLabsColor.white, body: getBody(context));
         },
       ),
     );

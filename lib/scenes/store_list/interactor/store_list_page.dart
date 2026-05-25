@@ -80,7 +80,7 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
   Widget _buildSearchBar() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      color: Colors.white,
+      color: TMLabsColor.white,
       child: SizedBox(
         height: 50,
         child: AppSearchBar(
@@ -167,7 +167,7 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
                         children: [
                           Text(
                             store.name,
-                            style: TMLabsTextStyle.h2.copyWith(color: Colors.white),
+                            style: TMLabsTextStyle.h2.copyWith(color: TMLabsColor.white),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -175,12 +175,12 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Icon(Icons.location_on, color: Colors.red, size: 20),
+                              const Icon(Icons.location_on, color: TMLabsColor.error, size: 20),
                               const SizedBox(width: 6),
                               Expanded(
                                 child: AppLabel(
                                   store.address,
-                                  style: TMLabsTextStyle.title.copyWith(color: Colors.white, height: 1.2),
+                                  style: TMLabsTextStyle.title.copyWith(color: TMLabsColor.white, height: 1.2),
                                   maxLines: 2,
                                   minFontSize: 11,
                                   padding: EdgeInsets.zero,
@@ -192,9 +192,9 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Icon(Icons.access_time_filled, color: Colors.white, size: 19),
+                              const Icon(Icons.access_time_filled, color: TMLabsColor.white, size: 19),
                               const SizedBox(width: 6),
-                              Text(hoursStr, style: TMLabsTextStyle.caption.copyWith(color: Colors.white)),
+                              Text(hoursStr, style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.white)),
                               const SizedBox(width: 12),
                               _buildStatusBadge(model.isOpen),
                             ],
@@ -233,9 +233,9 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
   Widget _buildStatusBadge(bool isOpen) {
     return AppLabel(
       isOpen ? "Đang mở cửa" : "Đóng cửa",
-      backgroundColor: isOpen ? Colors.green : Colors.grey,
+      backgroundColor: isOpen ? TMLabsColor.success : TMLabsColor.grey,
       borderRadius: 12,
-      style: TMLabsTextStyle.small.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+      style: TMLabsTextStyle.small.copyWith(color: TMLabsColor.white, fontWeight: FontWeight.bold),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
     );
   }

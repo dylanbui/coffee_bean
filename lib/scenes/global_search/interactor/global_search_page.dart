@@ -181,7 +181,7 @@ class _GlobalSearchPageState extends CubitState<GlobalSearchPage, GlobalSearchIn
         color: AppColor.basicAccent,
         shape: BoxShape.circle,
       ),
-      child: const Icon(Icons.add, color: Colors.white, size: 16),
+      child: const Icon(Icons.add, color: TMLabsColor.white, size: 16),
     );
   }
 

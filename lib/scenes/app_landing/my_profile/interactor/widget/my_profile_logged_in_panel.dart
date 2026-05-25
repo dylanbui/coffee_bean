@@ -1,5 +1,6 @@
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/my_profile_interactor.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -76,7 +77,7 @@ class MyProfileLoggedInPanel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(top: 60, bottom: 30, left: 20, right: 20),
       decoration: const BoxDecoration(
-        color: Color(0xFF0D1B3E),
+        color: TMLabsColor.primary,
         borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
       ),
@@ -143,7 +144,7 @@ class MyProfileLoggedInPanel extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, size: 18, color: const Color(0xFF0D1B3E)),
+            Icon(icon, size: 18, color: TMLabsColor.primary),
             const SizedBox(width: 6),
             Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ],
@@ -159,7 +160,7 @@ class MyProfileLoggedInPanel extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        leading: Icon(icon, color: const Color(0xFF0D1B3E), size: 22),
+        leading: Icon(icon, color: TMLabsColor.primary, size: 22),
         title: Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
         trailing: const Icon(Icons.chevron_right, size: 20, color: Colors.grey),
         onTap: () {},

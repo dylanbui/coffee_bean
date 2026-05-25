@@ -79,8 +79,8 @@ class _FinancialCourseCard extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      TMLabsColor.primary.withOpacity(0),
-                      TMLabsColor.primary.withOpacity(0.9),
+                      TMLabsColor.primary.withValues(alpha: 0),
+                      TMLabsColor.primary.withValues(alpha: 0.9),
                       TMLabsColor.primary,
                     ],
                   ),
@@ -91,7 +91,7 @@ class _FinancialCourseCard extends StatelessWidget {
                   children: [
                     Text(
                       item.title,
-                      style: TMLabsTextStyle.bodyBold.copyWith(color: Colors.white, height: 1.3),
+                      style: TMLabsTextStyle.bodyBold.copyWith(color: TMLabsColor.white, height: 1.3),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -101,7 +101,7 @@ class _FinancialCourseCard extends StatelessWidget {
                       children: [
                         Text(
                           item.price.toVnd(),
-                          style: TMLabsTextStyle.bodyBold.copyWith(color: Colors.white, fontSize: 14),
+                          style: TMLabsTextStyle.bodyBold.copyWith(color: TMLabsColor.white, fontSize: 14),
                         ),
                         TapEffect(
                           onTap: () => interactor.addToCart(item),
@@ -111,7 +111,7 @@ class _FinancialCourseCard extends StatelessWidget {
                               color: Color(0xFFA6B5C5),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.add, color: Colors.white, size: 20),
+                            child: const Icon(Icons.add, color: TMLabsColor.white, size: 20),
                           ),
                         ),
                       ],

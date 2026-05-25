@@ -52,8 +52,8 @@ class FoodDetailCommentsSection extends StatelessWidget {
                 onPressed: () {},
                 child: Row(
                   children: [
-                    Text("Tất cả", style: TMLabsTextStyle.body.copyWith(color: Colors.grey[600])),
-                    Icon(Icons.chevron_right, size: 20, color: Colors.grey[600]),
+                    Text("Tất cả", style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey)),
+                    Icon(Icons.chevron_right, size: 20, color: TMLabsColor.grey),
                   ],
                 ),
               ),
@@ -161,7 +161,7 @@ class FoodDetailCommentsSection extends StatelessWidget {
           backgroundColor: Colors.black,
           appBar: AppBar(
             backgroundColor: Colors.black,
-            iconTheme: const IconThemeData(color: Colors.white),
+            iconTheme: const IconThemeData(color: TMLabsColor.white),
             elevation: 0,
           ),
           body: PhotoViewGallery.builder(
@@ -175,7 +175,7 @@ class FoodDetailCommentsSection extends StatelessWidget {
             },
             itemCount: images.length,
             loadingBuilder: (context, event) => const Center(
-              child: CircularProgressIndicator(color: Colors.white),
+              child: CircularProgressIndicator(color: TMLabsColor.white),
             ),
             pageController: PageController(initialPage: initialIndex),
           ),

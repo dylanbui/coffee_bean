@@ -9,6 +9,7 @@
 
 import 'package:coffee_bean/scenes/user_features/privacy_policy/interactor/privacy_policy_event_state.dart';
 import 'package:coffee_bean/scenes/user_features/privacy_policy/interactor/privacy_policy_interactor.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:db_core/utils/app_button.dart';
@@ -42,7 +43,7 @@ class _PrivacyPolicyPageState extends CubitState<PrivacyPolicyPage, PrivacyPolic
     return BlocProvider.value(
       value: interactor,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: TMLabsColor.white,
         appBar: appBar as PreferredSizeWidget?,
         body: getBody(context),
       ),

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// TODO: 2. Dọn dẹp AppColor (Legacy): 
+// Sẽ dọn dẹp các màu rác, chỉ giữ lại những màu thực sự cần cho logic cũ (nếu có) 
+// và khuyến khích chuyển sang TMLabsColor.
 class AppColor {
   static const grayText = Color(0xFF5F5F5F);
   static const secondaryText = Color(0xFF363636);
@@ -56,14 +59,33 @@ class AppColor {
 }
 
 class TMLabsColor {
-  static const primary = Color(0xFF0E2040);
-  static const white = Color(0xFFFFFFFF);
-  static const grey = Color(0xFF525556);
-  static const lightBlue = Color(0xFF9FB0C6);
-  static const lightGrey = Color(0xFFCECCCD);
-  static const navy = Color(0xFF333951);
-  static const yellow = Color(0xFFFFCC85);
-  static const purple = Color(0xFFC9C0C9);
-  static const red = Color(0xFFEF3A33);
-  static const deepNavy = Color(0xFF091834);
+  // --- 1. BRAND COLORS (Màu thương hiệu) ---
+  static const primary = Color(0xFF0E2040);     // Navy chủ đạo (Logo, Button chính, Header)
+  static const secondary = Color(0xFF333951);   // Navy nhạt hơn (TabBar unselected, icon phụ)
+  static const accent = Color(0xFFA6B5C5);      // Xanh xám (Nút Follow, Badge phụ)
+  static const deepNavy = Color(0xFF091834);    // Navy đậm sâu (Vùng tối, Gradient)
+
+  // --- 2. STATUS COLORS (Màu trạng thái) ---
+  static const success = Color(0xFF2E7D32);     // Xanh lá (Thành công, tăng trưởng)
+  static const error = Color(0xFFEF3A33);       // Đỏ (Lỗi, cảnh báo, giảm giá)
+  static const warning = Color(0xFFFFA000);     // Cam/Vàng (Trạng thái chờ, lưu ý)
+
+  // --- 3. NEUTRAL COLORS (Màu trung tính) ---
+  static const white = Color(0xFFFFFFFF);       // Trắng (Nền chính, chữ trên nền tối)
+  static const grey = Color(0xFF525556);        // Xám đậm (Văn bản phụ, mô tả)
+  static const lightGrey = Color(0xFFCECCCD);   // Xám nhạt (Border, đường kẻ Divider)
+  static const bgLight = Color(0xFFF2F2F2);     // Xám cực nhẹ (Nền item card, nền input)
+
+  // --- 4. SPECIAL BACKGROUNDS (Màu nền đặc biệt) ---
+  static const bgMain = Color(0xFFF8F8F8);      // Nền xám nhạt toàn bộ ứng dụng
+  static const bgBeige = Color(0xFFF2EFED);     // Nền kem (Dành cho quà tặng, promo)
+
+  // --- 5. LEGACY/DECORATIVE (Màu trang trí khác từ thiết kế gốc) ---
+  static const lightBlue = Color(0xFF9FB0C6);   // Xanh nhạt decor
+  static const yellow = Color(0xFFFFCC85);      // Vàng nắng decor
+  static const purple = Color(0xFFC9C0C9);      // Tím nhạt decor
+  
+  // Legacy alias for compatibility during transition
+  static const navy = secondary;
+  static const red = error;
 }

@@ -71,7 +71,7 @@ class _UserRegisterPageState extends CubitState<UserRegisterPage, UserRegisterIn
     return BlocProvider.value(
       value: interactor,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: TMLabsColor.white,
         appBar: appBar as PreferredSizeWidget?,
         resizeToAvoidBottomInset: false,
         body: GestureDetector(

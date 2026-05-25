@@ -97,7 +97,7 @@ class _TopImagePanelState extends State<TopImagePanel> {
           end: Alignment.bottomCenter,
           colors: [
             Colors.black.withValues(alpha: 0.3),
-            Colors.transparent,
+            TMLabsColor.white.withValues(alpha: 0),
             Colors.black.withValues(alpha: 0.7),
           ],
         ),
@@ -121,7 +121,7 @@ class _TopImagePanelState extends State<TopImagePanel> {
             height: 4,
             width: isSelected ? 18 : 8,
             decoration: BoxDecoration(
-              color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.5),
+              color: isSelected ? TMLabsColor.white : TMLabsColor.white.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(2),
             ),
           );
@@ -146,7 +146,7 @@ class _TopImagePanelState extends State<TopImagePanel> {
   }
 
   Widget _buildLocationButton() {
-    const Color navyColor = Color(0xFF0D1B3E);
+    const Color navyColor = TMLabsColor.primary;
 
     return AppButton(
       text: AppStrings.selectStore,
@@ -157,7 +157,7 @@ class _TopImagePanelState extends State<TopImagePanel> {
       leftIcon: const AppIcon(Icons.location_on_outlined, size: 20, color: navyColor),
       rightIcon: const AppIcon(Icons.chevron_right, size: 20, color: navyColor),
       style: AppButtonStyleConfig(
-        backgroundColor: Colors.white,
+        backgroundColor: TMLabsColor.white,
         textColor: navyColor,
         borderRadius: 25,
         height: 38,
@@ -172,7 +172,7 @@ class _TopImagePanelState extends State<TopImagePanel> {
   }
 
   Widget _buildSearchButton() {
-    const Color navyColor = Color(0xFF0D1B3E);
+    const Color navyColor = TMLabsColor.primary;
 
     return AppButton(
       text: AppStrings.searchHint,
@@ -180,14 +180,14 @@ class _TopImagePanelState extends State<TopImagePanel> {
         widget.interactor.openGlobalSearch();
       },
       mainAxisSize: MainAxisSize.min,
-      rightIcon: AppIcon(AppAssets.icons.icSearch, color: Colors.white, size: 22),
+      rightIcon: AppIcon(AppAssets.icons.icSearch, color: TMLabsColor.white, size: 22),
       style: AppButtonStyleConfig(
         backgroundColor: navyColor.withValues(alpha: 0.85),
-        textColor: Colors.white,
+        textColor: TMLabsColor.white,
         borderRadius: 25,
         height: 38,
         textStyle: const TextStyle(
-          color: Colors.white,
+          color: TMLabsColor.white,
           fontSize: 14,
           fontWeight: FontWeight.w400,
         ),
@@ -206,13 +206,13 @@ class _TopImagePanelState extends State<TopImagePanel> {
           children: [
             Text(
               "${AppStrings.morningWelcome} $name", 
-              style: TMLabsTextStyle.title.copyWith(color: Colors.white),
+              style: TMLabsTextStyle.title.copyWith(color: TMLabsColor.white),
             ),
             const SizedBox(height: 10),
             Text(
               AppStrings.welcomeBack,
               style: TMLabsTextStyle.h1.copyWith(
-                color: Colors.white,
+                color: TMLabsColor.white,
                 fontSize: 28,
                 height: 1.2,
               ),

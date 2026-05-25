@@ -1,6 +1,7 @@
+import 'package:coffee_bean/shared/ui/app_colors.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/my_profile_interactor.dart';
-import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:flutter/material.dart';
 
 class MyProfileLoggedOutPanel extends StatelessWidget {
@@ -53,26 +54,26 @@ class MyProfileLoggedOutPanel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(top: 60, bottom: 30, left: 20, right: 20),
       decoration: const BoxDecoration(
-        color: Color(0xFF0D1B3E),
+        color: TMLabsColor.primary,
         borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
       ),
       child: Row(
         children: [
           const CircleAvatar(
             radius: 35,
-            backgroundColor: Colors.white,
-            child: Icon(Icons.person, size: 40, color: Color(0xFF0D1B3E)),
+            backgroundColor: TMLabsColor.white,
+            child: Icon(Icons.person, size: 40, color: TMLabsColor.primary),
           ),
           const SizedBox(width: 16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 "Khách hàng",
-                style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                style: TMLabsTextStyle.h2.copyWith(color: TMLabsColor.white),
               ),
-              SizedBox(height: 4),
-              Text(
+              const SizedBox(height: 4),
+              const Text(
                 "Đăng nhập để nhận ưu đãi",
                 style: TextStyle(color: Colors.amber, fontSize: 14, fontWeight: FontWeight.w500),
               ),
@@ -88,7 +89,7 @@ class MyProfileLoggedOutPanel extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TMLabsColor.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 5))],
       ),
@@ -96,7 +97,7 @@ class MyProfileLoggedOutPanel extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildPointItem("Điểm tích lũy", "0", Icons.stars),
-          Container(width: 1, height: 40, color: Colors.grey[200]),
+          Container(width: 1, height: 40, color: TMLabsColor.lightGrey),
           _buildPointItem("Voucher của tôi", "0", Icons.confirmation_number_outlined),
         ],
       ),
@@ -108,13 +109,13 @@ class MyProfileLoggedOutPanel extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, size: 18, color: const Color(0xFF0D1B3E)),
+            Icon(icon, size: 18, color: TMLabsColor.primary),
             const SizedBox(width: 6),
             Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ],
         ),
         const SizedBox(height: 4),
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+        Text(label, style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
       ],
     );
   }

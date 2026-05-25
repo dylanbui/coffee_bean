@@ -70,7 +70,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
     return BlocProvider.value(
       value: interactor,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: TMLabsColor.white,
         appBar: appBar as PreferredSizeWidget?,
         resizeToAvoidBottomInset: false,
         body: GestureDetector(
@@ -157,7 +157,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: Colors.red));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: TMLabsColor.error));
   }
 
   void _startCountdown() {
@@ -340,7 +340,7 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
               border: Border.all(color: _loginController.isAgreed ? TMLabsColor.primary : TMLabsColor.lightGrey, width: 1.5),
               color: _loginController.isAgreed ? TMLabsColor.primary : Colors.transparent,
             ),
-            child: _loginController.isAgreed ? const Icon(Icons.check, size: 12, color: Colors.white) : null,
+            child: _loginController.isAgreed ? const Icon(Icons.check, size: 12, color: TMLabsColor.white) : null,
           ),
         ),
         const SizedBox(width: 10),

@@ -38,7 +38,7 @@ class ShoppingHeader extends StatelessWidget {
               onSearch: (value) => interactor.onSearchChanged(value),
               hintText: "Tìm kiếm sản phẩm",
               minLength: 1,
-              backgroundColor: Colors.grey[100],
+              backgroundColor: TMLabsColor.bgLight,
               leftIcon: AppAssets.icons.icSearch,
               borderRadius: 20,
             ),
