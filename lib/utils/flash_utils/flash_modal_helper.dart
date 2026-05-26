@@ -16,11 +16,13 @@ typedef FlashModalPosition = DbFlashModalPosition;
 typedef FlashFooterLayout = DbFlashFooterLayout;
 typedef FlashActionsBuilder<T> = DbFlashActionsBuilder<T>;
 
+typedef FlashModalChildBuilder<T> = DbFlashModalChildBuilder<T>;
+
 class FlashModalHelper {
   static Future<T?> showSmartModal<T>({
     required BuildContext context,
     required String title,
-    required Widget child,
+    required FlashModalChildBuilder<T> childBuilder,
     List<Widget>? actions,
     FlashActionsBuilder<T>? actionsBuilder,
     Widget? customFooter,
@@ -28,6 +30,7 @@ class FlashModalHelper {
     FlashModalPosition position = FlashModalPosition.bottom,
     double maxHeightThreshold = 0.7,
     bool isPersistent = true,
+    bool useDeferredBuild = false,
   }) {
     // Định nghĩa Style cho Coffee Bean project
     final coffeeStyle = DbFlashModalStyle(
@@ -40,7 +43,7 @@ class FlashModalHelper {
     return DbFlashModalHelper.showSmartModal<T>(
       context: context,
       title: title,
-      child: child,
+      childBuilder: childBuilder,
       actions: actions,
       actionsBuilder: actionsBuilder,
       customFooter: customFooter,
@@ -49,6 +52,7 @@ class FlashModalHelper {
       maxHeightThreshold: maxHeightThreshold,
       isPersistent: isPersistent,
       style: coffeeStyle,
+      useDeferredBuild: useDeferredBuild,
     );
   }
 }

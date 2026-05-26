@@ -1,17 +1,17 @@
+import 'package:coffee_bean/utils/flash_utils/flash_modal_helper.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:db_core/utils/flash_utils/date_time_ext.dart';
 import 'package:db_core/utils/logger.dart';
-import 'package:coffee_bean/utils/flash_utils/date_time_ext.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_calendar_config.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_calendar_helper.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_date_helper.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flash/flash.dart';
+import 'package:flutter/material.dart';
 import 'package:coffee_bean/scenes/rib_samples/flash_demo/interactor/flash_demo_interactor.dart';
 import 'package:coffee_bean/scenes/rib_samples/flash_demo/interactor/flash_demo_event_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 //ignore: must_be_immutable
 class FlashDemoPage extends CubitStateFulWidget<FlashDemoInteractor, FlashDemoState> {
@@ -73,9 +73,18 @@ class _FlashDemoPageState extends CubitState<FlashDemoPage, FlashDemoInteractor,
 
               // --- PHẦN 2: FLASH MODAL ---
               _buildSectionTitle("Flash Modals"),
-              ElevatedButton(
-                onPressed: () => _demoBottomModal(context),
-                child: const Text("Show Bottom Selection"),
+              Wrap(
+                spacing: 10,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => _demoBottomModal(context),
+                    child: const Text("Show Bottom Selection"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => _demoLoginForm(context),
+                    child: const Text("Show Login Form"),
+                  ),
+                ],
               ),
               const SizedBox(height: 24),
 
@@ -171,6 +180,12 @@ class _FlashDemoPageState extends CubitState<FlashDemoPage, FlashDemoInteractor,
               ),
               const SizedBox(height: 20),
               ElevatedButton(
+                onPressed: () => _demoTopModalWithArrowHelper(context),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
+                child: const Text("Show Top Selection With Arrow"),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
                 onPressed: () => _showBottomModal(context),
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, foregroundColor: Colors.white),
                 child: const Text("Show Bottom Modal (Keyboard Test)"),
@@ -256,6 +271,7 @@ class _FlashDemoPageState extends CubitState<FlashDemoPage, FlashDemoInteractor,
           builder: (context, setState) {
             return Flash(
               controller: controller,
+              
               position: FlashPosition.top,
               child: Align(
                 alignment: Alignment.topCenter,
@@ -469,16 +485,154 @@ class _FlashDemoPageState extends CubitState<FlashDemoPage, FlashDemoInteractor,
   void _demoBottomModal(BuildContext context) {
     context.showFlashModal<String>(
       title: "Chọn loại cà phê",
-      child: Builder(
-        builder: (innerContext) => Column(
-          children: ["Arabica", "Robusta", "Moka"].map((e) => ListTile(
-            title: Text(e),
-            onTap: () => Navigator.pop(innerContext, e),
-          )).toList(),
+      childBuilder: (context, controller) => const SizedBox.shrink(),
+      footerLayout: FlashFooterLayout.column,
+      actionsBuilder: (context, controller) => ["Arabica", "Robusta", "Moka"].map((e) => ListTile(
+        title: Text(e),
+        onTap: () {
+          // Hướng tiếp cận "Pro" chuẩn kỹ thuật dự án: Sử dụng FlashController từ actionsBuilder
+          controller.dismiss(e);
+        },
+      )).toList(),
+    ).then((val) {
+      if (val != null) interactor.updateSelectedValue(val);
+    });
+  }
+
+  void _demoLoginForm(BuildContext context) {
+    context.showFlashModal<String>(
+      title: "Đăng nhập hệ thống",
+      maxHeightThreshold: 0.6,
+      footerLayout: FlashFooterLayout.column,
+      actionsBuilder: (context, controller) => [
+        ElevatedButton(
+          onPressed: () => controller.dismiss("User: coffee_lover"),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.brown,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          child: const Text("ĐĂNG NHẬP"),
+        ),
+      ],
+      // Vì Helper không còn bọc SingleChildScrollView, chúng ta tự bọc ở đây nếu cần cuộn
+      childBuilder: (context, controller) => SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 10),
+            TextField(decoration: InputDecoration(labelText: "Username", filled: true, fillColor: Colors.grey.shade100)),
+            const SizedBox(height: 16),
+            TextField(obscureText: true, decoration: InputDecoration(labelText: "Password", filled: true, fillColor: Colors.grey.shade100)),
+            const SizedBox(height: 10),
+          ],
         ),
       ),
+    );
+  }
+
+  void _demoLoginFormFlashModalHelper(BuildContext context) {
+    FlashModalHelper.showSmartModal<String>(
+      context: context,
+      useDeferredBuild: true,
+      title: "Đăng nhập hệ thống",
+      maxHeightThreshold: 0.6,
+      footerLayout: FlashFooterLayout.column,
+      actionsBuilder: (context, controller) => [
+        ElevatedButton(
+          onPressed: () => controller.dismiss("User: coffee_lover"),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.brown,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          child: const Text("ĐĂNG NHẬP"),
+        ),
+      ],
+      // Vì Helper không còn bọc SingleChildScrollView, chúng ta tự bọc ở đây nếu cần cuộn
+      childBuilder: (context, controller) => SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 10),
+            TextField(decoration: InputDecoration(labelText: "Username", filled: true, fillColor: Colors.grey.shade100)),
+            const SizedBox(height: 16),
+            TextField(obscureText: true, decoration: InputDecoration(labelText: "Password", filled: true, fillColor: Colors.grey.shade100)),
+            const SizedBox(height: 10),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _demoTopModalWithArrowHelper(BuildContext context) {
+    context.showFlashModal<String>(
+      title: "Selection with Scroll Arrow",
+      position: FlashModalPosition.top,
+      maxHeightThreshold: 0.45,
+      childBuilder: (context, controller) {
+        final showArrow = ValueNotifier<bool>(false);
+
+        // Kỹ thuật Deferred Loading: Trì hoãn build nội dung nặng
+        return FutureBuilder(
+          future: Future.delayed(const Duration(milliseconds: 100)),
+          builder: (context, snapshot) {
+            // if (snapshot.connectionState != ConnectionState.done) {
+            //   return const SizedBox(height: 100, child: Center(child: CircularProgressIndicator()));
+            // }
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: NotificationListener<Notification>(
+                    onNotification: (notification) {
+                      if (notification is ScrollMetricsNotification || notification is ScrollNotification) {
+                        final metrics = (notification is ScrollMetricsNotification)
+                            ? notification.metrics
+                            : (notification as ScrollNotification).metrics;
+
+                        final bool canScroll = metrics.maxScrollExtent > 0;
+                        final bool isAtBottom = metrics.pixels >= metrics.maxScrollExtent - 10;
+
+                        final shouldShow = canScroll && !isAtBottom;
+                        if (showArrow.value != shouldShow) {
+                          showArrow.value = shouldShow;
+                        }
+                      }
+                      return false;
+                    },
+                    child: ListView.builder(
+                      // QUAN TRỌNG: Không dùng shrinkWrap khi animation đang chạy
+                      padding: EdgeInsets.zero,
+                      itemCount: 20,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text("Coffee Choice #${index + 1}"),
+                          onTap: () => controller.dismiss("Choice ${index + 1}"),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                ValueListenableBuilder<bool>(
+                  valueListenable: showArrow,
+                  builder: (context, visible, _) {
+                    if (!visible) return const SizedBox(height: 8);
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 4),
+                      child: Icon(Icons.keyboard_arrow_down, color: Colors.brown, size: 24),
+                    );
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
     ).then((val) {
-      // if (val != null) interactor.updateSelectedValue(val);
+      if (val != null) interactor.updateSelectedValue(val);
     });
   }
 

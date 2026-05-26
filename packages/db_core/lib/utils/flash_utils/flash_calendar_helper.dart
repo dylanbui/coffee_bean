@@ -59,117 +59,119 @@ class DbFlashCalendarHelper {
       maxHeightThreshold: 0.9,
       isPersistent: true,
       style: modalStyle,
-      child: StatefulBuilder(
-        builder: (innerContext, setState) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // --- 1. Header Switcher / Label ---
-              if (cfg.mode == DbFlashDateTimePickerMode.dateTime)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Row(
-                    children: [
-                      _buildTabItem(
-                        theme: cfg.theme,
-                        label: cfg.strings.dateTabLabel,
-                        value: selectedDay?.toStr(pattern: cfg.dateDisplayPattern) ?? "...",
-                        isActive: !isPickingTime,
-                        onTap: () => setState(() => isPickingTime = false),
-                      ),
-                      const SizedBox(width: 8),
-                      _buildTabItem(
-                        theme: cfg.theme,
-                        label: cfg.strings.timeTabLabel,
-                        value: selectedTime.format(context),
-                        isActive: isPickingTime,
-                        onTap: () => setState(() => isPickingTime = true),
-                      ),
-                    ],
-                  ),
-                )
-              else if (cfg.mode == DbFlashDateTimePickerMode.timeOnly)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Row(
-                    children: [
-                      _buildTabItem(
-                        theme: cfg.theme,
-                        label: cfg.strings.timeSelectionLabel,
-                        value: selectedTime.format(context),
-                        isActive: true,
-                        onTap: () {},
-                      ),
-                    ],
-                  ),
-                )
-              else if (cfg.mode == DbFlashDateTimePickerMode.dateOnly)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Row(
-                    children: [
-                      _buildTabItem(
-                        theme: cfg.theme,
-                        label: cfg.selectionType == DbCalendarSelectionType.range 
-                          ? cfg.strings.rangeSelectionLabel 
-                          : cfg.strings.dateSelectionLabel,
-                        value: cfg.selectionType == DbCalendarSelectionType.range 
-                          ? "${rangeStart?.toStr(pattern: cfg.dateDisplayPattern) ?? "..." } - ${rangeEnd?.toStr(pattern: cfg.dateDisplayPattern) ?? "..."}"
-                          : (cfg.selectionType == DbCalendarSelectionType.multi 
-                              ? "${multiSelectedDays.length} days selected"
-                              : (selectedDay?.toStr(pattern: cfg.dateDisplayPattern) ?? "...")),
-                        isActive: true,
-                        onTap: () {},
-                      ),
-                    ],
-                  ),
-                ),
-
-              // --- 2. Dynamic Content Area (Calendar or Time Picker) ---
-              ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 300),
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: isPickingTime
-                      ? _buildInlineTimePicker(innerContext, selectedTime, (newTime) {
-                          setState(() => selectedTime = newTime);
-                        })
-                      : _buildCalendarView(
-                          cfg: cfg,
-                          focusedDay: focusedDay,
-                          selectedDay: selectedDay,
-                          multiSelectedDays: multiSelectedDays,
-                          rangeStart: rangeStart,
-                          rangeEnd: rangeEnd,
-                          onDaySelected: (selected, focused) {
-                            setState(() {
-                              focusedDay = focused;
-                              if (cfg.selectionType == DbCalendarSelectionType.multi) {
-                                if (multiSelectedDays.any((d) => d.isSameDay(selected))) {
-                                  multiSelectedDays.removeWhere((d) => d.isSameDay(selected));
-                                } else {
-                                  multiSelectedDays.add(selected);
-                                }
-                              } else {
-                                selectedDay = selected;
-                              }
-                            });
-                          },
-                          onRangeSelected: (start, end, focused) {
-                            setState(() {
-                              rangeStart = start;
-                              rangeEnd = end;
-                              focusedDay = focused;
-                            });
-                          },
+      childBuilder: (context, controller) {
+        return StatefulBuilder(
+          builder: (innerContext, setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // --- 1. Header Switcher / Label ---
+                if (cfg.mode == DbFlashDateTimePickerMode.dateTime)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Row(
+                      children: [
+                        _buildTabItem(
+                          theme: cfg.theme,
+                          label: cfg.strings.dateTabLabel,
+                          value: selectedDay?.toStr(pattern: cfg.dateDisplayPattern) ?? "...",
+                          isActive: !isPickingTime,
+                          onTap: () => setState(() => isPickingTime = false),
                         ),
+                        const SizedBox(width: 8),
+                        _buildTabItem(
+                          theme: cfg.theme,
+                          label: cfg.strings.timeTabLabel,
+                          value: selectedTime.format(context),
+                          isActive: isPickingTime,
+                          onTap: () => setState(() => isPickingTime = true),
+                        ),
+                      ],
+                    ),
+                  )
+                else if (cfg.mode == DbFlashDateTimePickerMode.timeOnly)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Row(
+                      children: [
+                        _buildTabItem(
+                          theme: cfg.theme,
+                          label: cfg.strings.timeSelectionLabel,
+                          value: selectedTime.format(context),
+                          isActive: true,
+                          onTap: () {},
+                        ),
+                      ],
+                    ),
+                  )
+                else if (cfg.mode == DbFlashDateTimePickerMode.dateOnly)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Row(
+                      children: [
+                        _buildTabItem(
+                          theme: cfg.theme,
+                          label: cfg.selectionType == DbCalendarSelectionType.range 
+                            ? cfg.strings.rangeSelectionLabel 
+                            : cfg.strings.dateSelectionLabel,
+                          value: cfg.selectionType == DbCalendarSelectionType.range 
+                            ? "${rangeStart?.toStr(pattern: cfg.dateDisplayPattern) ?? "..." } - ${rangeEnd?.toStr(pattern: cfg.dateDisplayPattern) ?? "..."}"
+                            : (cfg.selectionType == DbCalendarSelectionType.multi 
+                                ? "${multiSelectedDays.length} days selected"
+                                : (selectedDay?.toStr(pattern: cfg.dateDisplayPattern) ?? "...")),
+                          isActive: true,
+                          onTap: () {},
+                        ),
+                      ],
+                    ),
+                  ),
+
+                // --- 2. Dynamic Content Area (Calendar or Time Picker) ---
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 300),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: isPickingTime
+                        ? _buildInlineTimePicker(innerContext, selectedTime, (newTime) {
+                            setState(() => selectedTime = newTime);
+                          })
+                        : _buildCalendarView(
+                            cfg: cfg,
+                            focusedDay: focusedDay,
+                            selectedDay: selectedDay,
+                            multiSelectedDays: multiSelectedDays,
+                            rangeStart: rangeStart,
+                            rangeEnd: rangeEnd,
+                            onDaySelected: (selected, focused) {
+                              setState(() {
+                                focusedDay = focused;
+                                if (cfg.selectionType == DbCalendarSelectionType.multi) {
+                                  if (multiSelectedDays.any((d) => d.isSameDay(selected))) {
+                                    multiSelectedDays.removeWhere((d) => d.isSameDay(selected));
+                                  } else {
+                                    multiSelectedDays.add(selected);
+                                  }
+                                } else {
+                                  selectedDay = selected;
+                                }
+                              });
+                            },
+                            onRangeSelected: (start, end, focused) {
+                              setState(() {
+                                rangeStart = start;
+                                rangeEnd = end;
+                                focusedDay = focused;
+                              });
+                            },
+                          ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-            ],
-          );
-        },
-      ),
+                const SizedBox(height: 10),
+              ],
+            );
+          },
+        );
+      },
       actionsBuilder: (context, controller) => [
         ElevatedButton(
           onPressed: () {

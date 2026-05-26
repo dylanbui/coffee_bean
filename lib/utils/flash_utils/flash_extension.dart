@@ -80,24 +80,26 @@ extension FlashExtension on BuildContext {
     /// Returns a result of type [T]
     Future<T?> showFlashModal<T>({
         required String title,
-        required Widget child,
+        required FlashModalChildBuilder<T> childBuilder,
         List<Widget>? actions,
         FlashActionsBuilder<T>? actionsBuilder,
         FlashModalPosition position = FlashModalPosition.bottom,
         FlashFooterLayout footerLayout = FlashFooterLayout.row,
         double maxHeightThreshold = 0.7,
         bool isPersistent = true,
+        bool useDeferredBuild = false,
     }) {
         return FlashModalHelper.showSmartModal<T>(
             context: this,
             title: title,
-            child: child,
+            childBuilder: childBuilder,
             actions: actions,
             actionsBuilder: actionsBuilder,
             position: position,
             footerLayout: footerLayout,
             maxHeightThreshold: maxHeightThreshold,
             isPersistent: isPersistent,
+            useDeferredBuild: useDeferredBuild,
         );
     }
 

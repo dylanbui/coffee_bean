@@ -36,11 +36,13 @@ class DbFlashModalStyle {
 
 typedef DbFlashActionsBuilder<T> = List<Widget> Function(BuildContext context, FlashController<T> controller);
 
+typedef DbFlashModalChildBuilder<T> = Widget Function(BuildContext context, FlashController<T> controller);
+
 class DbFlashModalHelper {
   static Future<T?> showSmartModal<T>({
     required BuildContext context,
     required String title,
-    required Widget child,
+    required DbFlashModalChildBuilder<T> childBuilder,
     List<Widget>? actions,
     DbFlashActionsBuilder<T>? actionsBuilder,
     Widget? customFooter,
@@ -49,6 +51,7 @@ class DbFlashModalHelper {
     double maxHeightThreshold = 0.7,
     bool isPersistent = true,
     DbFlashModalStyle? style,
+    bool useDeferredBuild = false, // Feature mới để tối ưu jank
   }) {
     final modalStyle = style ?? const DbFlashModalStyle();
 
@@ -60,44 +63,60 @@ class DbFlashModalHelper {
       builder: (context, controller) {
         final mediaQuery = MediaQuery.of(context);
         final bool isTop = position == DbFlashModalPosition.top;
+        final FlashPosition flashPosition = isTop ? FlashPosition.top : FlashPosition.bottom;
 
         return Flash(
           controller: controller,
-          child: Align(
-            alignment: isTop ? Alignment.topCenter : Alignment.bottomCenter,
-            child: Padding(
-              padding: EdgeInsets.only(
-                bottom: !isTop ? mediaQuery.viewInsets.bottom : 0,
-              ),
-              child: Material(
-                color: modalStyle.backgroundColor,
-                elevation: 8,
-                borderRadius: BorderRadius.vertical(
-                  top: isTop ? Radius.zero : Radius.circular(modalStyle.borderRadius),
-                  bottom: isTop ? Radius.circular(modalStyle.borderRadius) : Radius.zero,
+          position: flashPosition,
+          forwardAnimationCurve: Curves.fastOutSlowIn,
+          reverseAnimationCurve: Curves.fastOutSlowIn,
+          dismissDirections: const [FlashDismissDirection.vertical],
+          child: RepaintBoundary(
+            child: Align(
+              alignment: isTop ? Alignment.topCenter : Alignment.bottomCenter,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: !isTop ? mediaQuery.viewInsets.bottom : 0,
                 ),
-                child: SizedBox(
-                  width: mediaQuery.size.width,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: mediaQuery.size.height * maxHeightThreshold,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _buildHeader(title, isTop, modalStyle.titleStyle),
-                        Flexible(
-                          child: SingleChildScrollView(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: child,
+                child: Material( // Khôi phục Material để đảm bảo layout và style chuẩn
+                  color: modalStyle.backgroundColor,
+                  elevation: 4,
+                  borderRadius: BorderRadius.vertical(
+                    top: isTop ? Radius.zero : Radius.circular(modalStyle.borderRadius),
+                    bottom: isTop ? Radius.circular(modalStyle.borderRadius) : Radius.zero,
+                  ),
+                  child: SizedBox(
+                    width: mediaQuery.size.width,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: mediaQuery.size.height * maxHeightThreshold,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildHeader(title, isTop, modalStyle.titleStyle),
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: useDeferredBuild
+                                  ? FutureBuilder(
+                                      future: Future.delayed(const Duration(milliseconds: 150)),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState != ConnectionState.done) {
+                                          return const SizedBox(
+                                            height: 80,
+                                            child: Center(child: CircularProgressIndicator.adaptive(strokeWidth: 2)),
+                                          );
+                                        }
+                                        return childBuilder.call(context, controller);
+                                      },
+                                    )
+                                  : childBuilder.call(context, controller),
+                            ),
                           ),
-                        ),
-                        _buildFooter(footerLayout, actionsBuilder?.call(context, controller) ?? actions, customFooter),
-                        if (!isTop)
-                          SizedBox(
-                            height: mediaQuery.padding.bottom > 0 ? mediaQuery.padding.bottom : 16.0,
-                          ),
-                      ],
+                          _buildFooter(footerLayout, actionsBuilder?.call(context, controller) ?? actions, customFooter),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -116,6 +135,7 @@ class DbFlashModalHelper {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
         child: Row(
+          mainAxisSize: MainAxisSize.max,
           children: [
             Expanded(
               child: Text(
