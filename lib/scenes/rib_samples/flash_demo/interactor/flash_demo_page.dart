@@ -1,4 +1,5 @@
 import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:db_core/utils/flash_utils/date_time_ext.dart';
 import 'package:db_core/utils/logger.dart';
 import 'package:coffee_bean/utils/flash_utils/date_time_ext.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_calendar_config.dart';
@@ -107,6 +108,11 @@ class _FlashDemoPageState extends CubitState<FlashDemoPage, FlashDemoInteractor,
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.teal.shade800, foregroundColor: Colors.white),
                     onPressed: () => _demoDateMultiPicker(context),
                     child: const Text("Multi Date"),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade800, foregroundColor: Colors.white),
+                    onPressed: () => _demoCustomThemePicker(context),
+                    child: const Text("Custom Theme"),
                   ),
                 ],
               ),
@@ -535,6 +541,31 @@ class _FlashDemoPageState extends CubitState<FlashDemoPage, FlashDemoInteractor,
     );
     if (res != null) {
       interactor.updateSelectedValue("Đã chọn: ${res.selectedDates.length} ngày");
+    }
+  }
+
+  void _demoCustomThemePicker(BuildContext context) async {
+    // Demo sử dụng Config để thay đổi giao diện/ngôn ngữ mà không sửa code Helper
+    final customConfig = FlashCalendarConfig(
+      theme: const FlashCalendarTheme(
+        primaryColor: Colors.redAccent,
+        activeTabBackgroundColor: Color(0xFFFFEBEE), // red.shade50
+      ),
+      strings: const FlashCalendarStrings(
+        title: "LỊCH GIAO HÀNG",
+        confirmText: "ĐẶT GIAO HÀNG NGAY",
+        dateTabLabel: "NGÀY NHẬN",
+        timeTabLabel: "GIỜ NHẬN",
+      ),
+    );
+
+    final res = await FlashCalendarHelper.showPicker(
+      context: context,
+      config: customConfig,
+    );
+    
+    if (res != null) {
+      interactor.updateSelectedValue("Đã đặt giao: ${res.selectedDates.first.toStr()}");
     }
   }
 

@@ -4,57 +4,85 @@
  * User: dylanbui
  * Email: buivantienduc@gmail.com
  * Date: 2/5/26 - 13:24
- * To change this template use File | Settings | File Templates.
+ * Description: Project-specific configuration for Flash Calendar.
  */
 
+import 'package:coffee_bean/shared/ui/app_colors.dart';
+import 'package:db_core/utils/flash_utils/flash_calendar_config.dart';
 import 'package:flutter/material.dart';
 
-/// Các chế độ hiển thị của Picker
-enum FlashDateTimePickerMode {
-    dateOnly,   // Chỉ chọn ngày
-    timeOnly,   // Chỉ chọn giờ
-    dateTime    // Chọn cả ngày và giờ (Mặc định)
-}
+/// Re-exporting base types from db_core for convenience
+typedef FlashDateTimePickerMode = DbFlashDateTimePickerMode;
+typedef CalendarSelectionType = DbCalendarSelectionType;
+typedef FlashDateTimePickerResult = DbFlashDateTimePickerResult;
+typedef FlashCalendarStrings = DbFlashCalendarStrings;
+typedef FlashCalendarTheme = DbFlashCalendarTheme;
 
-/// Kiểu chọn ngày của TableCalendar
-enum CalendarSelectionType { single, range, multi }
+/// Project-specific FlashCalendarConfig inheriting from DbFlashCalendarConfig
+class FlashCalendarConfig extends DbFlashCalendarConfig {
+  FlashCalendarConfig({
+    super.mode = DbFlashDateTimePickerMode.dateTime,
+    super.selectionType = DbCalendarSelectionType.single,
+    super.firstDay,
+    super.lastDay,
+    super.initialDate,
+    super.initialTime,
+    super.strings = const FlashCalendarStrings(
+      title: "Chọn thời gian",
+      confirmText: "XÁC NHẬN THỜI GIAN",
+      dateTabLabel: "NGÀY",
+      timeTabLabel: "GIỜ",
+      dateSelectionLabel: "NGÀY ĐANG CHỌN",
+      rangeSelectionLabel: "KHOẢNG NGÀY ĐANG CHỌN",
+      timeSelectionLabel: "GIỜ ĐANG CHỌN",
+    ),
+    FlashCalendarTheme? theme,
+    super.dateDisplayPattern = 'dd/MM/yyyy',
+  }) : super(
+          theme: theme ??
+              const FlashCalendarTheme(
+                primaryColor: TMLabsColor.primary,
+                activeTabBackgroundColor: TMLabsColor.bgLight,
+              ),
+        );
 
-/// Dữ liệu trả về sau khi nhấn "Xác nhận"
-class FlashDateTimePickerResult {
-    final List<DateTime> selectedDates; // Danh sách các ngày được chọn
-    final DateTime? rangeStart;         // Ngày bắt đầu (nếu chọn Range)
-    final DateTime? rangeEnd;           // Ngày kết thúc (nếu chọn Range)
-    final TimeOfDay? selectedTime;      // Giờ được chọn
+  /// Helper factory to create default config for Coffee Bean
+  factory FlashCalendarConfig.coffeeBean({
+    FlashDateTimePickerMode mode = FlashDateTimePickerMode.dateTime,
+    CalendarSelectionType selectionType = CalendarSelectionType.single,
+    DateTime? initialDate,
+    TimeOfDay? initialTime,
+  }) {
+    return FlashCalendarConfig(
+      mode: mode,
+      selectionType: selectionType,
+      initialDate: initialDate,
+      initialTime: initialTime,
+    );
+  }
 
-    FlashDateTimePickerResult({
-        required this.selectedDates,
-        this.rangeStart,
-        this.rangeEnd,
-        this.selectedTime,
-    });
-}
-
-/// Cấu hình giao diện và hành vi cho FlashCalendar
-class FlashCalendarConfig {
-    final FlashDateTimePickerMode pickerMode;
-    final CalendarSelectionType selectionType;
-    final DateTime? firstDay;
-    final DateTime? lastDay;
-    final DateTime? initialDate;
-    final String? title;
-    final String? confirmText;
-    final String? cancelText;
-    final Color? primaryColor;
-
-    FlashCalendarConfig({
-        this.pickerMode = FlashDateTimePickerMode.dateTime,
-        this.selectionType = CalendarSelectionType.single,
-        this.firstDay,
-        this.lastDay,
-        this.initialDate,
-        this.title,
-        this.confirmText = 'Xác nhận',
-        this.cancelText = 'Hủy',
-        this.primaryColor,
-    });
+  /// Implementation of copyWith for project-specific usage
+  FlashCalendarConfig copyWith({
+    FlashDateTimePickerMode? mode,
+    CalendarSelectionType? selectionType,
+    DateTime? firstDay,
+    DateTime? lastDay,
+    DateTime? initialDate,
+    TimeOfDay? initialTime,
+    FlashCalendarStrings? strings,
+    FlashCalendarTheme? theme,
+    String? dateDisplayPattern,
+  }) {
+    return FlashCalendarConfig(
+      mode: mode ?? this.mode,
+      selectionType: selectionType ?? this.selectionType,
+      firstDay: firstDay ?? this.firstDay,
+      lastDay: lastDay ?? this.lastDay,
+      initialDate: initialDate ?? this.initialDate,
+      initialTime: initialTime ?? this.initialTime,
+      strings: strings ?? this.strings,
+      theme: theme ?? this.theme,
+      dateDisplayPattern: dateDisplayPattern ?? this.dateDisplayPattern,
+    );
+  }
 }

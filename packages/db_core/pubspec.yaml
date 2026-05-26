@@ -50,6 +50,9 @@ dependencies:
   quiver: ^3.2.2
   # Find commonly used locations on the filesystem
   path_provider: ^2.1.5
+  # Localization and Internationalization
+  intl: ^0.20.2
+  table_calendar: ^3.2.0
 
 dev_dependencies:
   flutter_test:
