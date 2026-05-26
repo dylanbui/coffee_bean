@@ -95,11 +95,11 @@ extension FlashExtension on BuildContext {
     }
 
     /// Xem ảnh sản phẩm Coffee Bean
-    void showPhotoGallery({required List<String> urls, int index = 0, String? heroPrefix}) {
+    void showPhotoGallery({required List<String> imageUrls, int initialIndex = 0, String? heroPrefix}) {
         FlashImageHelper.showGallery(
             context: this,
-            imageUrls: urls,
-            initialIndex: index,
+            imageUrls: imageUrls,
+            initialIndex: initialIndex,
             heroTagPrefix: heroPrefix,
         );
     }

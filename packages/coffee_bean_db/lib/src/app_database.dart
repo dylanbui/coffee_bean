@@ -78,6 +78,7 @@ class TblFood {
 
   List<TblImage>? images;
 
+  @ignore
   String? get mainImage {
     if (images == null || images!.isEmpty) return null;
     return images!.firstWhere((img) => img.isPrimary, orElse: () => images!.first).url;
@@ -89,6 +90,7 @@ class TblFood {
 
   List<TblProductProperty>? properties;
   
+  @ignore
   List<SelectedOption> get defaultSelectedOptions {
     final list = <SelectedOption>[];
     if (properties == null) return list;
@@ -106,6 +108,7 @@ class TblFood {
     return list;
   }
 
+  @ignore
   Map<int, TblProductOption> get defaultOptionsMap {
     final map = <int, TblProductOption>{};
     if (properties == null) return map;
@@ -149,6 +152,7 @@ class TblCourse {
 
   List<TblImage>? images;
 
+  @ignore
   String? get mainImage {
     if (images == null || images!.isEmpty) return null;
     return images!.firstWhere((img) => img.isPrimary, orElse: () => images!.first).url;
@@ -163,6 +167,7 @@ class TblCourse {
 
   List<TblProductProperty>? properties;
 
+  @ignore
   List<SelectedOption> get defaultSelectedOptions {
     final list = <SelectedOption>[];
     if (properties == null) return list;
@@ -180,6 +185,7 @@ class TblCourse {
     return list;
   }
 
+  @ignore
   Map<int, TblProductOption> get defaultOptionsMap {
     final map = <int, TblProductOption>{};
     if (properties == null) return map;
@@ -221,6 +227,7 @@ class TblCartItem {
 
   DateTime addedAt = DateTime.now();
 
+  @ignore
   double get totalPrice => finalPrice * quantity;
 
   // Chuyển đổi sang định dạng JSON để gửi lên Server khi tạo Order
@@ -271,6 +278,7 @@ class TblStore {
 
   List<TblImage>? images;
 
+  @ignore
   String? get mainImage {
     if (images == null || images!.isEmpty) return null;
     return images!.firstWhere((img) => img.isPrimary, orElse: () => images!.first).url;

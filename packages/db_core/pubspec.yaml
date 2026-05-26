@@ -36,6 +36,8 @@ dependencies:
   # --- UI & Navigation ---
   # Custom route transitions and animations
   page_transition: ^2.2.1
+  # Highly customizable image widget
+  extended_image: ^10.0.1
   # Highly customizable toast and snackbar notifications
   flash: ^3.1.1
   # Highly customizable alert dialogs

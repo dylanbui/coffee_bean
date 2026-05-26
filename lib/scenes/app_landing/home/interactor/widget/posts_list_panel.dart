@@ -6,6 +6,7 @@ import 'package:coffee_bean/shared/ui/app_strings.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/avatar_widget.dart';
 import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:db_core/utils/tap_effect.dart';
 import 'package:coffee_bean/utils/extensions.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_image_helper.dart';
@@ -127,7 +128,8 @@ class _PostCard extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () =>
-                        FlashImageHelper.showGallery(context: context, imageUrls: item.images, initialIndex: index),
+                        context.showPhotoGallery(imageUrls: item.images, initialIndex: index),
+                        //FlashImageHelper.showGallery(context: context, imageUrls: item.images, initialIndex: index),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: SizedBox(

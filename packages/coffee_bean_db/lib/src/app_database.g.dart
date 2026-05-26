@@ -1756,27 +1756,22 @@ const TblFoodSchema = CollectionSchema(
       target: r'TblImage',
     ),
     r'isActive': PropertySchema(id: 3, name: r'isActive', type: IsarType.bool),
-    r'mainImage': PropertySchema(
-      id: 4,
-      name: r'mainImage',
-      type: IsarType.string,
-    ),
-    r'name': PropertySchema(id: 5, name: r'name', type: IsarType.string),
-    r'price': PropertySchema(id: 6, name: r'price', type: IsarType.double),
+    r'name': PropertySchema(id: 4, name: r'name', type: IsarType.string),
+    r'price': PropertySchema(id: 5, name: r'price', type: IsarType.double),
     r'properties': PropertySchema(
-      id: 7,
+      id: 6,
       name: r'properties',
       type: IsarType.objectList,
 
       target: r'TblProductProperty',
     ),
     r'searchName': PropertySchema(
-      id: 8,
+      id: 7,
       name: r'searchName',
       type: IsarType.string,
     ),
-    r'serverId': PropertySchema(id: 9, name: r'serverId', type: IsarType.long),
-    r'sku': PropertySchema(id: 10, name: r'sku', type: IsarType.string),
+    r'serverId': PropertySchema(id: 8, name: r'serverId', type: IsarType.long),
+    r'sku': PropertySchema(id: 9, name: r'sku', type: IsarType.string),
   },
 
   estimateSize: _tblFoodEstimateSize,
@@ -1889,12 +1884,6 @@ int _tblFoodEstimateSize(
       }
     }
   }
-  {
-    final value = object.mainImage;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
   bytesCount += 3 + object.name.length * 3;
   {
     final list = object.properties;
@@ -1938,18 +1927,17 @@ void _tblFoodSerialize(
     object.images,
   );
   writer.writeBool(offsets[3], object.isActive);
-  writer.writeString(offsets[4], object.mainImage);
-  writer.writeString(offsets[5], object.name);
-  writer.writeDouble(offsets[6], object.price);
+  writer.writeString(offsets[4], object.name);
+  writer.writeDouble(offsets[5], object.price);
   writer.writeObjectList<TblProductProperty>(
-    offsets[7],
+    offsets[6],
     allOffsets,
     TblProductPropertySchema.serialize,
     object.properties,
   );
-  writer.writeString(offsets[8], object.searchName);
-  writer.writeLong(offsets[9], object.serverId);
-  writer.writeString(offsets[10], object.sku);
+  writer.writeString(offsets[7], object.searchName);
+  writer.writeLong(offsets[8], object.serverId);
+  writer.writeString(offsets[9], object.sku);
 }
 
 TblFood _tblFoodDeserialize(
@@ -1969,17 +1957,17 @@ TblFood _tblFoodDeserialize(
     TblImage(),
   );
   object.isActive = reader.readBool(offsets[3]);
-  object.name = reader.readString(offsets[5]);
-  object.price = reader.readDouble(offsets[6]);
+  object.name = reader.readString(offsets[4]);
+  object.price = reader.readDouble(offsets[5]);
   object.properties = reader.readObjectList<TblProductProperty>(
-    offsets[7],
+    offsets[6],
     TblProductPropertySchema.deserialize,
     allOffsets,
     TblProductProperty(),
   );
-  object.searchName = reader.readString(offsets[8]);
-  object.serverId = reader.readLong(offsets[9]);
-  object.sku = reader.readStringOrNull(offsets[10]);
+  object.searchName = reader.readString(offsets[7]);
+  object.serverId = reader.readLong(offsets[8]);
+  object.sku = reader.readStringOrNull(offsets[9]);
   return object;
 }
 
@@ -2005,12 +1993,10 @@ P _tblFoodDeserializeProp<P>(
     case 3:
       return (reader.readBool(offset)) as P;
     case 4:
-      return (reader.readStringOrNull(offset)) as P;
-    case 5:
       return (reader.readString(offset)) as P;
-    case 6:
+    case 5:
       return (reader.readDouble(offset)) as P;
-    case 7:
+    case 6:
       return (reader.readObjectList<TblProductProperty>(
             offset,
             TblProductPropertySchema.deserialize,
@@ -2018,11 +2004,11 @@ P _tblFoodDeserializeProp<P>(
             TblProductProperty(),
           ))
           as P;
-    case 8:
+    case 7:
       return (reader.readString(offset)) as P;
-    case 9:
+    case 8:
       return (reader.readLong(offset)) as P;
-    case 10:
+    case 9:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -3149,168 +3135,6 @@ extension TblFoodQueryFilter
     });
   }
 
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNull(property: r'mainImage'),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNotNull(property: r'mainImage'),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageLessThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageBetween(
-    String? lower,
-    String? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'mainImage',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageContains(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageMatches(
-    String pattern, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'mainImage',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'mainImage', value: ''),
-      );
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> mainImageIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'mainImage', value: ''),
-      );
-    });
-  }
-
   QueryBuilder<TblFood, TblFood, QAfterFilterCondition> nameEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -4025,18 +3849,6 @@ extension TblFoodQuerySortBy on QueryBuilder<TblFood, TblFood, QSortBy> {
     });
   }
 
-  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByMainImage() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'mainImage', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByMainImageDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'mainImage', Sort.desc);
-    });
-  }
-
   QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -4148,18 +3960,6 @@ extension TblFoodQuerySortThenBy
     });
   }
 
-  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByMainImage() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'mainImage', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByMainImageDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'mainImage', Sort.desc);
-    });
-  }
-
   QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -4243,14 +4043,6 @@ extension TblFoodQueryWhereDistinct
     });
   }
 
-  QueryBuilder<TblFood, TblFood, QDistinct> distinctByMainImage({
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'mainImage', caseSensitive: caseSensitive);
-    });
-  }
-
   QueryBuilder<TblFood, TblFood, QDistinct> distinctByName({
     bool caseSensitive = true,
   }) {
@@ -4317,12 +4109,6 @@ extension TblFoodQueryProperty
   QueryBuilder<TblFood, bool, QQueryOperations> isActiveProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isActive');
-    });
-  }
-
-  QueryBuilder<TblFood, String?, QQueryOperations> mainImageProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'mainImage');
     });
   }
 
@@ -4394,29 +4180,24 @@ const TblCourseSchema = CollectionSchema(
       type: IsarType.string,
     ),
     r'isActive': PropertySchema(id: 4, name: r'isActive', type: IsarType.bool),
-    r'mainImage': PropertySchema(
-      id: 5,
-      name: r'mainImage',
-      type: IsarType.string,
-    ),
-    r'name': PropertySchema(id: 6, name: r'name', type: IsarType.string),
-    r'price': PropertySchema(id: 7, name: r'price', type: IsarType.double),
+    r'name': PropertySchema(id: 5, name: r'name', type: IsarType.string),
+    r'price': PropertySchema(id: 6, name: r'price', type: IsarType.double),
     r'properties': PropertySchema(
-      id: 8,
+      id: 7,
       name: r'properties',
       type: IsarType.objectList,
 
       target: r'TblProductProperty',
     ),
     r'searchName': PropertySchema(
-      id: 9,
+      id: 8,
       name: r'searchName',
       type: IsarType.string,
     ),
-    r'serverId': PropertySchema(id: 10, name: r'serverId', type: IsarType.long),
-    r'sku': PropertySchema(id: 11, name: r'sku', type: IsarType.string),
+    r'serverId': PropertySchema(id: 9, name: r'serverId', type: IsarType.long),
+    r'sku': PropertySchema(id: 10, name: r'sku', type: IsarType.string),
     r'videoUrl': PropertySchema(
-      id: 12,
+      id: 11,
       name: r'videoUrl',
       type: IsarType.string,
     ),
@@ -4538,12 +4319,6 @@ int _tblCourseEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
-  {
-    final value = object.mainImage;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
   bytesCount += 3 + object.name.length * 3;
   {
     final list = object.properties;
@@ -4594,19 +4369,18 @@ void _tblCourseSerialize(
   );
   writer.writeString(offsets[3], object.instructor);
   writer.writeBool(offsets[4], object.isActive);
-  writer.writeString(offsets[5], object.mainImage);
-  writer.writeString(offsets[6], object.name);
-  writer.writeDouble(offsets[7], object.price);
+  writer.writeString(offsets[5], object.name);
+  writer.writeDouble(offsets[6], object.price);
   writer.writeObjectList<TblProductProperty>(
-    offsets[8],
+    offsets[7],
     allOffsets,
     TblProductPropertySchema.serialize,
     object.properties,
   );
-  writer.writeString(offsets[9], object.searchName);
-  writer.writeLong(offsets[10], object.serverId);
-  writer.writeString(offsets[11], object.sku);
-  writer.writeString(offsets[12], object.videoUrl);
+  writer.writeString(offsets[8], object.searchName);
+  writer.writeLong(offsets[9], object.serverId);
+  writer.writeString(offsets[10], object.sku);
+  writer.writeString(offsets[11], object.videoUrl);
 }
 
 TblCourse _tblCourseDeserialize(
@@ -4627,18 +4401,18 @@ TblCourse _tblCourseDeserialize(
   );
   object.instructor = reader.readStringOrNull(offsets[3]);
   object.isActive = reader.readBool(offsets[4]);
-  object.name = reader.readString(offsets[6]);
-  object.price = reader.readDouble(offsets[7]);
+  object.name = reader.readString(offsets[5]);
+  object.price = reader.readDouble(offsets[6]);
   object.properties = reader.readObjectList<TblProductProperty>(
-    offsets[8],
+    offsets[7],
     TblProductPropertySchema.deserialize,
     allOffsets,
     TblProductProperty(),
   );
-  object.searchName = reader.readString(offsets[9]);
-  object.serverId = reader.readLong(offsets[10]);
-  object.sku = reader.readStringOrNull(offsets[11]);
-  object.videoUrl = reader.readStringOrNull(offsets[12]);
+  object.searchName = reader.readString(offsets[8]);
+  object.serverId = reader.readLong(offsets[9]);
+  object.sku = reader.readStringOrNull(offsets[10]);
+  object.videoUrl = reader.readStringOrNull(offsets[11]);
   return object;
 }
 
@@ -4666,12 +4440,10 @@ P _tblCourseDeserializeProp<P>(
     case 4:
       return (reader.readBool(offset)) as P;
     case 5:
-      return (reader.readStringOrNull(offset)) as P;
-    case 6:
       return (reader.readString(offset)) as P;
-    case 7:
+    case 6:
       return (reader.readDouble(offset)) as P;
-    case 8:
+    case 7:
       return (reader.readObjectList<TblProductProperty>(
             offset,
             TblProductPropertySchema.deserialize,
@@ -4679,13 +4451,13 @@ P _tblCourseDeserializeProp<P>(
             TblProductProperty(),
           ))
           as P;
-    case 9:
+    case 8:
       return (reader.readString(offset)) as P;
-    case 10:
+    case 9:
       return (reader.readLong(offset)) as P;
-    case 11:
+    case 10:
       return (reader.readStringOrNull(offset)) as P;
-    case 12:
+    case 11:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -5988,171 +5760,6 @@ extension TblCourseQueryFilter
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNull(property: r'mainImage'),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition>
-  mainImageIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNotNull(property: r'mainImage'),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition>
-  mainImageGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageLessThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageBetween(
-    String? lower,
-    String? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'mainImage',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageContains(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageMatches(
-    String pattern, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'mainImage',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> mainImageIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'mainImage', value: ''),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition>
-  mainImageIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'mainImage', value: ''),
-      );
-    });
-  }
-
   QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> nameEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -7047,18 +6654,6 @@ extension TblCourseQuerySortBy on QueryBuilder<TblCourse, TblCourse, QSortBy> {
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> sortByMainImage() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'mainImage', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> sortByMainImageDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'mainImage', Sort.desc);
-    });
-  }
-
   QueryBuilder<TblCourse, TblCourse, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -7194,18 +6789,6 @@ extension TblCourseQuerySortThenBy
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> thenByMainImage() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'mainImage', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> thenByMainImageDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'mainImage', Sort.desc);
-    });
-  }
-
   QueryBuilder<TblCourse, TblCourse, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -7309,14 +6892,6 @@ extension TblCourseQueryWhereDistinct
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QDistinct> distinctByMainImage({
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'mainImage', caseSensitive: caseSensitive);
-    });
-  }
-
   QueryBuilder<TblCourse, TblCourse, QDistinct> distinctByName({
     bool caseSensitive = true,
   }) {
@@ -7400,12 +6975,6 @@ extension TblCourseQueryProperty
     });
   }
 
-  QueryBuilder<TblCourse, String?, QQueryOperations> mainImageProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'mainImage');
-    });
-  }
-
   QueryBuilder<TblCourse, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
@@ -7483,12 +7052,7 @@ const TblCartItemSchema = CollectionSchema(
     ),
     r'serverId': PropertySchema(id: 6, name: r'serverId', type: IsarType.long),
     r'sku': PropertySchema(id: 7, name: r'sku', type: IsarType.string),
-    r'totalPrice': PropertySchema(
-      id: 8,
-      name: r'totalPrice',
-      type: IsarType.double,
-    ),
-    r'type': PropertySchema(id: 9, name: r'type', type: IsarType.string),
+    r'type': PropertySchema(id: 8, name: r'type', type: IsarType.string),
   },
 
   estimateSize: _tblCartItemEstimateSize,
@@ -7592,8 +7156,7 @@ void _tblCartItemSerialize(
   );
   writer.writeLong(offsets[6], object.serverId);
   writer.writeString(offsets[7], object.sku);
-  writer.writeDouble(offsets[8], object.totalPrice);
-  writer.writeString(offsets[9], object.type);
+  writer.writeString(offsets[8], object.type);
 }
 
 TblCartItem _tblCartItemDeserialize(
@@ -7617,7 +7180,7 @@ TblCartItem _tblCartItemDeserialize(
   );
   object.serverId = reader.readLong(offsets[6]);
   object.sku = reader.readStringOrNull(offsets[7]);
-  object.type = reader.readString(offsets[9]);
+  object.type = reader.readString(offsets[8]);
   return object;
 }
 
@@ -7651,8 +7214,6 @@ P _tblCartItemDeserializeProp<P>(
     case 7:
       return (reader.readStringOrNull(offset)) as P;
     case 8:
-      return (reader.readDouble(offset)) as P;
-    case 9:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -8779,81 +8340,6 @@ extension TblCartItemQueryFilter
     });
   }
 
-  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition>
-  totalPriceEqualTo(double value, {double epsilon = Query.epsilon}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'totalPrice',
-          value: value,
-
-          epsilon: epsilon,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition>
-  totalPriceGreaterThan(
-    double value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'totalPrice',
-          value: value,
-
-          epsilon: epsilon,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition>
-  totalPriceLessThan(
-    double value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'totalPrice',
-          value: value,
-
-          epsilon: epsilon,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition>
-  totalPriceBetween(
-    double lower,
-    double upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'totalPrice',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-
-          epsilon: epsilon,
-        ),
-      );
-    });
-  }
-
   QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition> typeEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -9101,18 +8587,6 @@ extension TblCartItemQuerySortBy
     });
   }
 
-  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> sortByTotalPrice() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'totalPrice', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> sortByTotalPriceDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'totalPrice', Sort.desc);
-    });
-  }
-
   QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> sortByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.asc);
@@ -9224,18 +8698,6 @@ extension TblCartItemQuerySortThenBy
     });
   }
 
-  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> thenByTotalPrice() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'totalPrice', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> thenByTotalPriceDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'totalPrice', Sort.desc);
-    });
-  }
-
   QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> thenByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.asc);
@@ -9296,12 +8758,6 @@ extension TblCartItemQueryWhereDistinct
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'sku', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<TblCartItem, TblCartItem, QDistinct> distinctByTotalPrice() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'totalPrice');
     });
   }
 
@@ -9371,12 +8827,6 @@ extension TblCartItemQueryProperty
     });
   }
 
-  QueryBuilder<TblCartItem, double, QQueryOperations> totalPriceProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'totalPrice');
-    });
-  }
-
   QueryBuilder<TblCartItem, String, QQueryOperations> typeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'type');
@@ -9419,24 +8869,19 @@ const TblStoreSchema = CollectionSchema(
       name: r'longitude',
       type: IsarType.double,
     ),
-    r'mainImage': PropertySchema(
-      id: 6,
-      name: r'mainImage',
-      type: IsarType.string,
-    ),
-    r'name': PropertySchema(id: 7, name: r'name', type: IsarType.string),
+    r'name': PropertySchema(id: 6, name: r'name', type: IsarType.string),
     r'openingTime': PropertySchema(
-      id: 8,
+      id: 7,
       name: r'openingTime',
       type: IsarType.string,
     ),
-    r'phone': PropertySchema(id: 9, name: r'phone', type: IsarType.string),
+    r'phone': PropertySchema(id: 8, name: r'phone', type: IsarType.string),
     r'searchName': PropertySchema(
-      id: 10,
+      id: 9,
       name: r'searchName',
       type: IsarType.string,
     ),
-    r'serverId': PropertySchema(id: 11, name: r'serverId', type: IsarType.long),
+    r'serverId': PropertySchema(id: 10, name: r'serverId', type: IsarType.long),
   },
 
   estimateSize: _tblStoreEstimateSize,
@@ -9533,12 +8978,6 @@ int _tblStoreEstimateSize(
       }
     }
   }
-  {
-    final value = object.mainImage;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
   bytesCount += 3 + object.name.length * 3;
   {
     final value = object.openingTime;
@@ -9573,12 +9012,11 @@ void _tblStoreSerialize(
   writer.writeBool(offsets[3], object.isActive);
   writer.writeDouble(offsets[4], object.latitude);
   writer.writeDouble(offsets[5], object.longitude);
-  writer.writeString(offsets[6], object.mainImage);
-  writer.writeString(offsets[7], object.name);
-  writer.writeString(offsets[8], object.openingTime);
-  writer.writeString(offsets[9], object.phone);
-  writer.writeString(offsets[10], object.searchName);
-  writer.writeLong(offsets[11], object.serverId);
+  writer.writeString(offsets[6], object.name);
+  writer.writeString(offsets[7], object.openingTime);
+  writer.writeString(offsets[8], object.phone);
+  writer.writeString(offsets[9], object.searchName);
+  writer.writeLong(offsets[10], object.serverId);
 }
 
 TblStore _tblStoreDeserialize(
@@ -9600,11 +9038,11 @@ TblStore _tblStoreDeserialize(
   object.isActive = reader.readBool(offsets[3]);
   object.latitude = reader.readDouble(offsets[4]);
   object.longitude = reader.readDouble(offsets[5]);
-  object.name = reader.readString(offsets[7]);
-  object.openingTime = reader.readStringOrNull(offsets[8]);
-  object.phone = reader.readStringOrNull(offsets[9]);
-  object.searchName = reader.readString(offsets[10]);
-  object.serverId = reader.readLong(offsets[11]);
+  object.name = reader.readString(offsets[6]);
+  object.openingTime = reader.readStringOrNull(offsets[7]);
+  object.phone = reader.readStringOrNull(offsets[8]);
+  object.searchName = reader.readString(offsets[9]);
+  object.serverId = reader.readLong(offsets[10]);
   return object;
 }
 
@@ -9634,16 +9072,14 @@ P _tblStoreDeserializeProp<P>(
     case 5:
       return (reader.readDouble(offset)) as P;
     case 6:
-      return (reader.readStringOrNull(offset)) as P;
-    case 7:
       return (reader.readString(offset)) as P;
+    case 7:
+      return (reader.readStringOrNull(offset)) as P;
     case 8:
       return (reader.readStringOrNull(offset)) as P;
     case 9:
-      return (reader.readStringOrNull(offset)) as P;
-    case 10:
       return (reader.readString(offset)) as P;
-    case 11:
+    case 10:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -10982,169 +10418,6 @@ extension TblStoreQueryFilter
     });
   }
 
-  QueryBuilder<TblStore, TblStore, QAfterFilterCondition> mainImageIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNull(property: r'mainImage'),
-      );
-    });
-  }
-
-  QueryBuilder<TblStore, TblStore, QAfterFilterCondition> mainImageIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNotNull(property: r'mainImage'),
-      );
-    });
-  }
-
-  QueryBuilder<TblStore, TblStore, QAfterFilterCondition> mainImageEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblStore, TblStore, QAfterFilterCondition> mainImageGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblStore, TblStore, QAfterFilterCondition> mainImageLessThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblStore, TblStore, QAfterFilterCondition> mainImageBetween(
-    String? lower,
-    String? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'mainImage',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblStore, TblStore, QAfterFilterCondition> mainImageStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblStore, TblStore, QAfterFilterCondition> mainImageEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblStore, TblStore, QAfterFilterCondition> mainImageContains(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'mainImage',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblStore, TblStore, QAfterFilterCondition> mainImageMatches(
-    String pattern, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'mainImage',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblStore, TblStore, QAfterFilterCondition> mainImageIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'mainImage', value: ''),
-      );
-    });
-  }
-
-  QueryBuilder<TblStore, TblStore, QAfterFilterCondition>
-  mainImageIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'mainImage', value: ''),
-      );
-    });
-  }
-
   QueryBuilder<TblStore, TblStore, QAfterFilterCondition> nameEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -11900,18 +11173,6 @@ extension TblStoreQuerySortBy on QueryBuilder<TblStore, TblStore, QSortBy> {
     });
   }
 
-  QueryBuilder<TblStore, TblStore, QAfterSortBy> sortByMainImage() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'mainImage', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TblStore, TblStore, QAfterSortBy> sortByMainImageDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'mainImage', Sort.desc);
-    });
-  }
-
   QueryBuilder<TblStore, TblStore, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -12047,18 +11308,6 @@ extension TblStoreQuerySortThenBy
     });
   }
 
-  QueryBuilder<TblStore, TblStore, QAfterSortBy> thenByMainImage() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'mainImage', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TblStore, TblStore, QAfterSortBy> thenByMainImageDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'mainImage', Sort.desc);
-    });
-  }
-
   QueryBuilder<TblStore, TblStore, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -12156,14 +11405,6 @@ extension TblStoreQueryWhereDistinct
     });
   }
 
-  QueryBuilder<TblStore, TblStore, QDistinct> distinctByMainImage({
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'mainImage', caseSensitive: caseSensitive);
-    });
-  }
-
   QueryBuilder<TblStore, TblStore, QDistinct> distinctByName({
     bool caseSensitive = true,
   }) {
@@ -12244,12 +11485,6 @@ extension TblStoreQueryProperty
   QueryBuilder<TblStore, double, QQueryOperations> longitudeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'longitude');
-    });
-  }
-
-  QueryBuilder<TblStore, String?, QQueryOperations> mainImageProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'mainImage');
     });
   }
 
