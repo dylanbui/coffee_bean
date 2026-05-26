@@ -71,7 +71,8 @@ class DbFlashDialogHelper {
     TextStyle? contentStyle,
     Widget? body,
     Widget? icon,
-    bool persistent = false,
+    bool persistent = true, // Chuyển mặc định sang true để tránh lỗi rootOverlay
+    bool barrierDismissible = true,
   }) {
     final style = _styleProvider?.getStyle() ?? const DbFlashDialogStyle();
     
@@ -83,7 +84,7 @@ class DbFlashDialogHelper {
       context: context,
       persistent: persistent,
       barrierColor: style.barrierColor,
-      barrierDismissible: true,
+      barrierDismissible: barrierDismissible,
       builder: (context, controller) {
         return Flash(
           controller: controller,
@@ -143,24 +144,24 @@ class DbFlashDialogHelper {
 
   // --- Shorthands ---
 
-  static void info(BuildContext context, String msg, {String? title}) {
+  static void info(BuildContext context, String msg, {String? title, bool persistent = true}) {
     final t = title ?? _styleProvider?.getDefaultTitle(DbFlashDialogType.info) ?? "Thông báo";
-    show(context: context, title: t, content: msg, icon: _styleProvider?.getIcon(DbFlashDialogType.info));
+    show(context: context, title: t, content: msg, icon: _styleProvider?.getIcon(DbFlashDialogType.info), persistent: persistent);
   }
 
-  static void success(BuildContext context, String msg, {String? title}) {
+  static void success(BuildContext context, String msg, {String? title, bool persistent = true}) {
     final t = title ?? _styleProvider?.getDefaultTitle(DbFlashDialogType.success) ?? "Thành công";
-    show(context: context, title: t, content: msg, icon: _styleProvider?.getIcon(DbFlashDialogType.success));
+    show(context: context, title: t, content: msg, icon: _styleProvider?.getIcon(DbFlashDialogType.success), persistent: persistent);
   }
 
-  static void error(BuildContext context, String msg, {String? title}) {
+  static void error(BuildContext context, String msg, {String? title, bool persistent = true}) {
     final t = title ?? _styleProvider?.getDefaultTitle(DbFlashDialogType.error) ?? "Lỗi";
-    show(context: context, title: t, content: msg, icon: _styleProvider?.getIcon(DbFlashDialogType.error));
+    show(context: context, title: t, content: msg, icon: _styleProvider?.getIcon(DbFlashDialogType.error), persistent: persistent);
   }
 
-  static void warning(BuildContext context, String msg, {String? title}) {
+  static void warning(BuildContext context, String msg, {String? title, bool persistent = true}) {
     final t = title ?? _styleProvider?.getDefaultTitle(DbFlashDialogType.warning) ?? "Cảnh báo";
-    show(context: context, title: t, content: msg, icon: _styleProvider?.getIcon(DbFlashDialogType.warning));
+    show(context: context, title: t, content: msg, icon: _styleProvider?.getIcon(DbFlashDialogType.warning), persistent: persistent);
   }
 
   // --- Button Builders ---
