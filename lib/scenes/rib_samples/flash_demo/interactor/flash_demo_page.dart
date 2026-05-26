@@ -29,10 +29,12 @@ class _FlashDemoPageState extends CubitState<FlashDemoPage, FlashDemoInteractor,
   Widget getBody(BuildContext context) {
     return BlocBuilder<FlashDemoInteractor, FlashDemoState>(
       builder: (context, state) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
               // 1. Hiển thị giá trị đang chọn
               Card(
                 color: Colors.brown.shade50,
@@ -78,10 +80,35 @@ class _FlashDemoPageState extends CubitState<FlashDemoPage, FlashDemoInteractor,
 
               // --- PHẦN 3: FLASH CALENDAR & DATE ---
               _buildSectionTitle("Calendar & Date Time"),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.orange.shade800, foregroundColor: Colors.white),
-                onPressed: () => _demoDateTimePicker(context),
-                child: const Text("Pick Date & Time (Hybrid)"),
+              Wrap(
+                spacing: 10,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.orange.shade800, foregroundColor: Colors.white),
+                    onPressed: () => _demoDateTimePicker(context),
+                    child: const Text("Date & Time"),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.blue.shade800, foregroundColor: Colors.white),
+                    onPressed: () => _demoDatePickerOnly(context),
+                    child: const Text("Date Only"),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade800, foregroundColor: Colors.white),
+                    onPressed: () => _demoTimePickerOnly(context),
+                    child: const Text("Time Only"),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.purple.shade800, foregroundColor: Colors.white),
+                    onPressed: () => _demoDateRangePicker(context),
+                    child: const Text("Range Date"),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.teal.shade800, foregroundColor: Colors.white),
+                    onPressed: () => _demoDateMultiPicker(context),
+                    child: const Text("Multi Date"),
+                  ),
+                ],
               ),
               const SizedBox(height: 12),
               const Text("Timeline Preview (EasyDate):"),
@@ -97,7 +124,7 @@ class _FlashDemoPageState extends CubitState<FlashDemoPage, FlashDemoInteractor,
               _buildSectionTitle("Image Gallery"),
               GestureDetector(
                 onTap: () => context.showPhotoGallery(
-                  urls: [
+                  imageUrls: [
                     "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085",
                     "https://images.unsplash.com/photo-1509042239860-f550ce710b93",
                   ],
@@ -144,8 +171,9 @@ class _FlashDemoPageState extends CubitState<FlashDemoPage, FlashDemoInteractor,
               ),
             ],
           ),
-        );
-      },
+        ),
+      );
+    },
     );
   }
 
@@ -413,6 +441,7 @@ class _FlashDemoPageState extends CubitState<FlashDemoPage, FlashDemoInteractor,
     context.showFlashConfirm<String>(
       title: "Thông tin góp ý",
       content: "Vui lòng nhập phản hồi cho Coffee Bean",
+      persistent: true,
       body: Column(
         children: [
           TextField(controller: nameController, decoration: const InputDecoration(hintText: "Tên của bạn")),
@@ -434,11 +463,13 @@ class _FlashDemoPageState extends CubitState<FlashDemoPage, FlashDemoInteractor,
   void _demoBottomModal(BuildContext context) {
     context.showFlashModal<String>(
       title: "Chọn loại cà phê",
-      child: Column(
-        children: ["Arabica", "Robusta", "Moka"].map((e) => ListTile(
-          title: Text(e),
-          onTap: () => Navigator.pop(context, e),
-        )).toList(),
+      child: Builder(
+        builder: (innerContext) => Column(
+          children: ["Arabica", "Robusta", "Moka"].map((e) => ListTile(
+            title: Text(e),
+            onTap: () => Navigator.pop(innerContext, e),
+          )).toList(),
+        ),
       ),
     ).then((val) {
       // if (val != null) interactor.updateSelectedValue(val);
@@ -454,7 +485,56 @@ class _FlashDemoPageState extends CubitState<FlashDemoPage, FlashDemoInteractor,
     if (res != null) {
       String dateStr = res.selectedDates.first.toStr();
       String timeStr = res.selectedTime?.format(context) ?? "";
-      // interactor.updateSelectedValue("Lịch: $dateStr - $timeStr");
+      interactor.updateSelectedValue("Lịch: $dateStr - $timeStr");
+    }
+  }
+
+  void _demoDatePickerOnly(BuildContext context) async {
+    final res = await FlashCalendarHelper.showPicker(
+      context: context,
+      title: "Chọn ngày",
+      mode: FlashDateTimePickerMode.dateOnly,
+    );
+    if (res != null) {
+      String dateStr = res.selectedDates.first.toStr();
+      interactor.updateSelectedValue("Ngày: $dateStr");
+    }
+  }
+
+  void _demoTimePickerOnly(BuildContext context) async {
+    final res = await FlashCalendarHelper.showPicker(
+      context: context,
+      title: "Chọn giờ",
+      mode: FlashDateTimePickerMode.timeOnly,
+    );
+    if (res != null) {
+      String timeStr = res.selectedTime?.format(context) ?? "";
+      interactor.updateSelectedValue("Giờ: $timeStr");
+    }
+  }
+
+  void _demoDateRangePicker(BuildContext context) async {
+    final res = await FlashCalendarHelper.showPicker(
+      context: context,
+      title: "Chọn khoảng ngày",
+      mode: FlashDateTimePickerMode.dateOnly,
+      selectionType: CalendarSelectionType.range,
+    );
+    if (res != null) {
+      String rangeStr = "${res.rangeStart?.toStr() ?? "..."} - ${res.rangeEnd?.toStr() ?? "..."}";
+      interactor.updateSelectedValue("Khoảng: $rangeStr");
+    }
+  }
+
+  void _demoDateMultiPicker(BuildContext context) async {
+    final res = await FlashCalendarHelper.showPicker(
+      context: context,
+      title: "Chọn nhiều ngày",
+      mode: FlashDateTimePickerMode.dateOnly,
+      selectionType: CalendarSelectionType.multi,
+    );
+    if (res != null) {
+      interactor.updateSelectedValue("Đã chọn: ${res.selectedDates.length} ngày");
     }
   }
 

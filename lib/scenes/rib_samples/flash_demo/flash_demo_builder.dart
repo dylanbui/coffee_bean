@@ -13,7 +13,7 @@ class FlashDemoBuilder extends DbNoteBuilder<FlashDemoRouter> implements FlashDe
     final interactor = FlashDemoInteractor(router);
     final page = FlashDemoPage(interactor: interactor);
 
-    router.attach(interactor, BlocProvider.value(value: interactor, child: page));
+    router.attach(interactor, page);
 
     return router;
   }

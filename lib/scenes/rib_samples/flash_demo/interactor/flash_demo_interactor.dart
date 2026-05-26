@@ -8,4 +8,8 @@ class FlashDemoInteractor extends CubitInteractor<FlashDemoRoutable, FlashDemoSt
   void onValueSelected(String value) {
     emit(FlashDemoUpdate(selectedValue: value));
   }
+
+  void updateSelectedValue(String value) {
+    emit(FlashDemoUpdate(selectedValue: value));
+  }
 }

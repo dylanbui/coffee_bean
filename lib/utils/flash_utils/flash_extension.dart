@@ -18,45 +18,48 @@ import 'package:coffee_bean/utils/flash_utils/flash_modal_helper.dart';
 /// **************************************************************************
 /// FLASH EXTENSION
 /// Author: Gemini / Coffee Bean Project
-/// Description: Cung cấp cú pháp ngắn gọn (Syntactic Sugar) để gọi Modal và Dialog
-/// từ bất kỳ đâu có BuildContext.
+/// Description: Provides syntactic sugar to easily show Modals, Dialogs, 
+/// and Toasts from any BuildContext.
 /// **************************************************************************
 
 extension FlashExtension on BuildContext {
 
     // ===========================================================================
-    // 1. QUICK TOASTS / SNACKBARS (Sử dụng FlashToastHelper)
+    // 1. QUICK TOASTS / SNACKBARS (Uses FlashToastHelper)
     // ===========================================================================
 
-    /// Hiển thị Top SnackBar Success
+    /// Displays a success SnackBar at the top
     void showFlashSuccess(String message, {String? title, FlashPosition position = FlashPosition.top, Duration duration = const Duration(seconds: 2)})
         => DbFlashToastHelper.success(this, message, title: title, position: position, duration: duration);
 
-    /// Hiển thị Top SnackBar Error
+    /// Displays an error SnackBar at the top
     void showFlashError(String message, {String? title, FlashPosition position = FlashPosition.top, Duration duration = const Duration(seconds: 3)}) 
         => DbFlashToastHelper.error(this, message, title: title, position: position, duration: duration);
 
-    /// Hiển thị Top SnackBar Info
+    /// Displays an info SnackBar at the top
     void showFlashInfo(String message, {String? title, FlashPosition position = FlashPosition.top, Duration duration = const Duration(seconds: 2)}) 
         => DbFlashToastHelper.info(this, message, title: title, position: position, duration: duration);
 
-    /// Hiển thị Top SnackBar Warning
+    /// Displays a warning SnackBar at the top
     void showFlashWarning(String message, {String? title, FlashPosition position = FlashPosition.top, Duration duration = const Duration(seconds: 2)})
         => DbFlashToastHelper.warning(this, message, title: title, position: position, duration: duration);
 
     // ===========================================================================
-    // 2. QUICK DIALOGS (Sử dụng FlashDialogHelper)
+    // 2. QUICK DIALOGS (Uses FlashDialogHelper)
     // ===========================================================================
 
-    /// Hiển thị Dialog xác nhận hoặc Form tùy biến
-    /// Trả về kết quả kiểu [T]
+    /// Displays a confirmation dialog or a custom form
+    /// Returns a result of type [T]
+    /// 
+    /// NOTE: [persistent] must be TRUE when showing from root context (e.g. within MaterialApp),
+    /// otherwise it throws: 'overlay can't be the root overlay when persistent is false'.
     Future<T?> showFlashConfirm<T>({
         required String title,
         required String content,
         List<DbFlashDialogAction<T>>? actions,
         Widget? icon,
         Widget? body,
-        bool persistent = false,
+        bool persistent = true,
     }) {
         return DbFlashDialogHelper.show<T>(
             context: this,
@@ -70,31 +73,35 @@ extension FlashExtension on BuildContext {
     }
 
     // ===========================================================================
-    // 3. QUICK MODALS (Sử dụng FlashModalHelper)
+    // 3. QUICK MODALS (Uses FlashModalHelper)
     // ===========================================================================
 
-    /// Hiển thị Bottom hoặc Top Modal lửng (Custom Size)
-    /// Trả về kết quả kiểu [T]
+    /// Displays a Bottom or Top Modal (Custom Size)
+    /// Returns a result of type [T]
     Future<T?> showFlashModal<T>({
         required String title,
         required Widget child,
         List<Widget>? actions,
+        FlashActionsBuilder<T>? actionsBuilder,
         FlashModalPosition position = FlashModalPosition.bottom,
         FlashFooterLayout footerLayout = FlashFooterLayout.row,
         double maxHeightThreshold = 0.7,
+        bool isPersistent = true,
     }) {
         return FlashModalHelper.showSmartModal<T>(
             context: this,
             title: title,
             child: child,
             actions: actions,
+            actionsBuilder: actionsBuilder,
             position: position,
             footerLayout: footerLayout,
             maxHeightThreshold: maxHeightThreshold,
+            isPersistent: isPersistent,
         );
     }
 
-    /// Xem ảnh sản phẩm Coffee Bean
+    /// Views product images in a gallery
     void showPhotoGallery({required List<String> imageUrls, int initialIndex = 0, String? heroPrefix}) {
         FlashImageHelper.showGallery(
             context: this,
@@ -107,58 +114,66 @@ extension FlashExtension on BuildContext {
 }
 
 /// **************************************************************************
-/// CÁCH SỬ DỤNG (EXAMPLES)
+/// USAGE EXAMPLES
 /// **************************************************************************
 
 /*
-  // --- Với Toast / SnackBar ---
+  // --- Toast / SnackBar Examples ---
 
   void _testToast(BuildContext context) {
-    // 1. Hiện thông báo nhanh ở Top
-    context.showFlashSuccess("Đã cập nhật đơn hàng thành công!");
-    context.showFlashError("Máy chủ đang bận, vui lòng thử lại.", title: "Lỗi kết nối");
+    // 1. Show quick success notification at Top
+    context.showFlashSuccess("Order updated successfully!");
+    
+    // 2. Show error notification with title
+    context.showFlashError("Server is busy, please try again.", title: "Connection Error");
   }
 
-  // --- Với Dialog ---
+  // --- Dialog Examples ---
 
-    // 2. Hiện xác nhận xóa và đợi kết quả
+  void _testConfirm(BuildContext context) {
+    // 3. Show confirmation dialog and wait for result
     context.showFlashConfirm<bool>(
-      title: "Xác nhận",
-      content: "Bạn có muốn xóa không?",
+      title: "Confirmation",
+      content: "Are you sure you want to delete this item?",
       actions: [
-        FlashDialogAction(label: "Hủy", value: false, color: Colors.grey),
-        FlashDialogAction(label: "Xóa", value: true, color: Colors.red),
+        DbFlashDialogAction(label: "Cancel", value: false, color: Colors.grey),
+        DbFlashDialogAction(label: "Delete", value: true, color: Colors.red),
       ],
     ).then((isDelete) {
-      if (isDelete == true) { // Xử lý xóa }
+      if (isDelete == true) { 
+        // Handle deletion logic
+      }
     });
   }
 
-  // --- Với Modal ---
+  // --- Modal Examples ---
 
   void _testModal(BuildContext context) {
+    // 4. Show a bottom selection modal
     context.showFlashModal<String>(
-      title: "Chọn chi nhánh Coffee Bean",
+      title: "Select Coffee Bean Branch",
       position: FlashModalPosition.bottom,
-      child: MyStoreListWidget(), // Một ListView danh sách chi nhánh
+      child: MyStoreListWidget(), // A ListView or any Widget
       actions: [
         ElevatedButton(
-          onPressed: () => Navigator.pop(context, "Hồ Chí Minh"),
-          child: Text("Chọn HCM mặc định"),
+          onPressed: () => Navigator.pop(context, "Ho Chi Minh City"),
+          child: Text("Select Default HCM"),
         ),
       ],
     ).then((city) {
-      if (city != null) print("Bạn chọn: $city");
+      if (city != null) print("Selected: $city");
     });
   }
 
-  // --- Show photos ---
-  void _onViewFeedbackImages(List<String> images, int clickedIndex) {
-  context.showPhotoGallery(
-    urls: images,
-    index: clickedIndex,
-    heroPrefix: "feedback_item", // Tạo hiệu ứng mượt khi mở
-  );
-}
+  // --- Photo Gallery Examples ---
+  
+  void _onViewFeedbackImages(BuildContext context, List<String> images, int clickedIndex) {
+    // 5. Show image gallery with Hero animation support
+    context.showPhotoGallery(
+      imageUrls: images,
+      initialIndex: clickedIndex,
+      heroPrefix: "feedback_item", 
+    );
+  }
 
 */
