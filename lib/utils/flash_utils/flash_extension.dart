@@ -7,13 +7,12 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/shared/ui/flash_toast_provider.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_image_helper.dart';
+import 'package:db_core/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:db_core/utils/flash_utils/flash_toast_helper.dart';
 
 import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
-import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_modal_helper.dart';
 
 /// **************************************************************************
@@ -54,12 +53,12 @@ extension FlashExtension on BuildContext {
     Future<T?> showFlashConfirm<T>({
         required String title,
         required String content,
-        List<FlashDialogAction<T>>? actions,
+        List<DbFlashDialogAction<T>>? actions,
         Widget? icon,
         Widget? body,
         bool persistent = false,
     }) {
-        return FlashDialogHelper.show<T>(
+        return DbFlashDialogHelper.show<T>(
             context: this,
             title: title,
             content: content,

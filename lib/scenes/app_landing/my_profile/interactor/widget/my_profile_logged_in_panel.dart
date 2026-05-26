@@ -2,6 +2,8 @@ import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/my_profile_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
+import 'package:db_core/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:flutter/material.dart';
 
 class MyProfileLoggedInPanel extends StatelessWidget {
@@ -46,15 +48,15 @@ class MyProfileLoggedInPanel extends StatelessWidget {
               children: [
                 TextButton(
                   onPressed: () async {
-                    final res = await FlashDialogHelper.show<int>(
+                    final res = await DbFlashDialogHelper.show<int>(
                       context: context,
                       persistent: true,
                       title: "Xác nhận đăng xuất",
                       content: "Bạn có chắc chắn muốn đăng xuất khỏi tài khoản này?",
                       icon: const Icon(Icons.logout, color: Colors.red, size: 40),
                       actions: [
-                        FlashDialogAction(label: "Hủy", value: 1, color: Colors.grey),
-                        FlashDialogAction(label: "Đăng xuất", value: 2, color: Colors.red),
+                        DbFlashDialogAction(label: "Hủy", value: 1, color: Colors.grey),
+                        DbFlashDialogAction(label: "Đăng xuất", value: 2, color: Colors.red),
                       ],
                     );
                     if (res == 2) {
