@@ -1,6 +1,6 @@
 import 'package:coffee_bean/scenes/comment_list/interactor/comment_list_event_state.dart';
 import 'package:coffee_bean/scenes/comment_list/interactor/comment_list_interactor.dart';
-import 'package:coffee_bean/scenes/comment_list/interactor/widget/comment_item_widget.dart';
+import 'package:coffee_bean/scenes/comment_list/shared/comment_item_widget.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:flutter/material.dart';

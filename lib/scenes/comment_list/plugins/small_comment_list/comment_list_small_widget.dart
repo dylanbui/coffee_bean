@@ -1,20 +1,20 @@
-import 'package:coffee_bean/scenes/comment_list/interactor/comment_list_event_state.dart';
-import 'package:coffee_bean/scenes/comment_list/interactor/comment_list_interactor.dart';
-import 'package:coffee_bean/scenes/comment_list/interactor/widget/comment_item_widget.dart';
+import 'package:coffee_bean/scenes/comment_list/shared/comment_item_widget.dart';
+import 'package:coffee_bean/scenes/comment_list/plugins/small_comment_list/comment_list_small_event_state.dart';
+import 'package:coffee_bean/scenes/comment_list/plugins/small_comment_list/comment_list_small_interactor.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CommentListPlugin extends AppCubitStateFulWidget<CommentListInteractor, CommentListState> {
-  CommentListPlugin({super.key, required super.interactor});
+class CommentListSmallWidget extends AppCubitStateFulWidget<CommentListSmallInteractor, CommentListSmallState> {
+  CommentListSmallWidget({super.key, required super.interactor});
 
   @override
-  State<CommentListPlugin> createState() => _CommentListPluginState();
+  State<CommentListSmallWidget> createState() => _CommentListSmallWidgetState();
 }
 
-class _CommentListPluginState extends AppCubitState<CommentListPlugin, CommentListInteractor, CommentListState> {
+class _CommentListSmallWidgetState extends AppCubitState<CommentListSmallWidget, CommentListSmallInteractor, CommentListSmallState> {
   
   @override
   String? getTitle() => null; // Plugin không có AppBar riêng
@@ -22,13 +22,12 @@ class _CommentListPluginState extends AppCubitState<CommentListPlugin, CommentLi
   @override
   Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
     // Quan trọng: Plugin không được dùng Scaffold vì nó sẽ được nhúng vào ScrollView của trang cha.
-    // Trả về trực tiếp body để tránh lỗi "Infinite height"
     return body;
   }
 
   @override
   Widget getBody(BuildContext context) {
-    return BlocBuilder<CommentListInteractor, CommentListState>(
+    return BlocBuilder<CommentListSmallInteractor, CommentListSmallState>(
       builder: (context, state) {
         final comments = state.comments;
 

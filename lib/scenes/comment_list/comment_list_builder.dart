@@ -1,13 +1,14 @@
 import 'package:coffee_bean/scenes/comment_list/comment_list_router.dart';
 import 'package:coffee_bean/scenes/comment_list/interactor/comment_list_interactor.dart';
 import 'package:coffee_bean/scenes/comment_list/interactor/comment_list_page.dart';
-import 'package:coffee_bean/scenes/comment_list/interactor/widget/comment_list_plugin.dart';
+import 'package:coffee_bean/scenes/comment_list/plugins/small_comment_list/comment_list_small_interactor.dart';
+import 'package:coffee_bean/scenes/comment_list/plugins/small_comment_list/comment_list_small_widget.dart';
 import 'package:db_core/architecture_ribs/note_builder.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:flutter/material.dart';
 
 abstract interface class CommentListBuildable implements DbNoteBuildable {
-  Widget buildPlugin(DbNoteRoutable? parentRouter);
+  Widget buildPlugin(int limitComments, DbNoteRoutable? parentRouter);
 }
 
 class CommentListBuilder extends DbNoteBuilder<CommentListRouter> implements CommentListBuildable {
@@ -27,14 +28,13 @@ class CommentListBuilder extends DbNoteBuilder<CommentListRouter> implements Com
   }
 
   @override
-  Widget buildPlugin(DbNoteRoutable? parentRouter) {
+  Widget buildPlugin(int limitComments, DbNoteRoutable? parentRouter) {
     final router = CommentListRouter();
-    // Khi dùng làm plugin, cấu hình limit = 2
-    final interactor = CommentListInteractor(router, productId, type, limit: 2);
-    final page = CommentListPlugin(interactor: interactor);
+    // Sử dụng Interactor và Widget chuyên biệt cho Plugin Small
+    final interactor = CommentListSmallInteractor(router, productId: productId, type: type, limitComments: limitComments);
+    final page = CommentListSmallWidget(interactor: interactor);
     router.attach(interactor, page);
-    // Gán router cha (hỗ trợ chuyển kiểu tự động nhờ Covariant Override trong note_router.dart)
-    router.parentRouter = parentRouter as DbNoteRouter;
+    router.parentRouter = parentRouter;
     return router.viewController;
   }
 }

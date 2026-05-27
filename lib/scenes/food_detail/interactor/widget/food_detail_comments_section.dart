@@ -1,6 +1,5 @@
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
 import 'package:coffee_bean/scenes/food_detail/interactor/food_detail_interactor.dart';
-import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:flutter/material.dart';
 
 class FoodDetailCommentsSection extends StatefulWidget {
@@ -24,7 +23,7 @@ class _FoodDetailCommentsSectionState extends State<FoodDetailCommentsSection> {
       productId: widget.interactor.state.product.serverId,
       type: "FOOD",
     );
-    _commentPlugin = commentBuilder.buildPlugin(widget.interactor.router);
+    _commentPlugin = commentBuilder.buildPlugin(5, widget.interactor.router);
   }
 
   @override
