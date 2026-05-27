@@ -12,17 +12,17 @@ dependencies:
     sdk: flutter
   
   # --- Network & API ---
-  # HTTP client for making requests
+  # HTTP client for making API requests
   dio: 5.9.2
-  # Logging interceptor for Dio to format request/response logs
+  # Logging interceptor for Dio to format and print request/response logs
   pretty_dio_logger: ^1.4.0
-  # General purpose logging library
+  # General purpose logging library for debugging and error tracking
   logger: ^2.7.0
-  # Check internet connection status
+  # Check and monitor internet connection status
   connectivity_plus: ^7.1.1
 
   # --- State Management ---
-  # Bloc/Cubit implementation for predictable state management
+  # BLoC/Cubit implementation for predictable state management
   flutter_bloc: 9.1.1
   # Dependency injection and simple state management
   provider: ^6.1.5+1
@@ -30,31 +30,41 @@ dependencies:
   # --- Local Storage ---
   # Store simple key-value pairs locally
   shared_preferences: ^2.5.5
-  # Securely store sensitive data (tokens, keys)
+  # Securely store sensitive data like tokens and keys
   flutter_secure_storage: ^10.0.0
 
   # --- UI & Navigation ---
-  # Custom route transitions and animations
+  # Custom route transitions and animations between screens
   page_transition: ^2.2.1
-  # Highly customizable image widget
+  # Highly customizable image widget with cache and zoom support
   extended_image: ^10.0.1
-  # Highly customizable toast and snackbar notifications
+  # Flexible toast and snackbar notification system
   flash: ^3.1.1
-  # Highly customizable alert dialogs
+  # Easy to use and customizable alert dialogs
   rflutter_alert: ^2.0.7
-  # Being able to compare objects
-  equatable: ^2.0.8
+  # Network image with caching and placeholder support
+  cached_network_image: ^3.4.1
+  # Cache manager used by cached_network_image (required for custom cache config)
+  flutter_cache_manager: ^3.4.1
+  # Shimmer effect for skeleton loading (UX improvement)
+  shimmer: ^3.0.0
   
   # --- Utilities ---
-  # A set of utility libraries for Dart
+  # Base class for value-based equality comparison
+  equatable: ^2.0.8
+  # Automatically resizes text to fit perfectly within its bounds
+  flutter_auto_size_text: ^5.0.0
+  # A set of utility libraries for Dart (inspired by Google Guava)
   quiver: ^3.2.2
-  # Find commonly used locations on the filesystem
+  # Find commonly used locations on the device filesystem
   path_provider: ^2.1.5
-  # Localization and Internationalization
+  # Internationalization and localization support (date, number formatting)
   intl: ^0.20.2
+  # Highly customizable calendar widget
   table_calendar: ^3.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  # Default lint rules for Flutter to ensure code quality
   flutter_lints: ^3.0.0

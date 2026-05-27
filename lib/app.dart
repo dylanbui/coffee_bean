@@ -8,8 +8,10 @@
  */
 
 import 'package:chuck_interceptor/chuck_interceptor.dart';
+import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/flash_dialog_provider.dart';
 import 'package:coffee_bean/shared/ui/flash_toast_provider.dart';
+import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:db_core/architecture_ribs/navigator.dart';
 import 'package:db_core/network/network_client.dart';
 import 'package:db_core/network/network_common.dart';
@@ -27,6 +29,7 @@ import 'package:db_core/utils/locator.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/live_service/likes_service.dart';
 import 'package:coffee_bean/scenes/app/interactor/deep_link_service.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 Chuck chuck = Chuck(
@@ -46,14 +49,14 @@ Future<Widget> initializeApp() async {
   //   DeviceOrientation.portraitDown,
   // ]);
 
+  // Initialize locator and services, Always load AFTER Load share preferences
+  await _setupLocator();
+
   // UserManager + SecureStorage
   await _setupStoreManager();
 
   // Initialize Network Service
   await _setupNetwork();
-
-  // Initialize locator and services, Always load AFTER Load share preferences
-  await _setupLocator();
 
   // Check if we're running on Android
   if (defaultTargetPlatform == TargetPlatform.android) {
@@ -63,9 +66,8 @@ Future<Widget> initializeApp() async {
   // Remove the native splash screen when app is ready
   FlutterNativeSplash.remove();
 
-  // Khởi tạo Toast & Dialog Helper với Style của dự án Coffee Bean
-  TMLabsToastStyleProvider.init();
-  TMLabsDialogStyleProvider.init();
+  // Initialize Network Service
+  await _setupUiUtils();
 
   return App();
 }
@@ -122,6 +124,24 @@ Future<void> _setupLocator() async {
   locator.registerLazySingleton<LikesService>(() => LikesService());
 }
 
+Future<void> _setupUiUtils() async {
+  // Cache system
+  DbCachedImageConfig.init(
+    fallbackAsset: AppAssets.images.imgNoImage,
+    // Nếu muốn cấu hình cache chuyên sâu hơn:
+    cacheManager: CacheManager(
+      Config(
+        'coffee_bean_cache_key',
+        stalePeriod: const Duration(days: 30), // Lưu 30 ngày
+        maxNrOfCacheObjects: 200,             // Tối đa 200 ảnh
+      ),
+    ),
+  );
+
+  // Khởi tạo Toast & Dialog Helper với Style của dự án Coffee Bean
+  TMLabsToastStyleProvider.init();
+  TMLabsDialogStyleProvider.init();
+}
 
 class App extends StatefulWidget {
   const App({super.key});

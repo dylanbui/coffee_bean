@@ -3,7 +3,7 @@ import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
-import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
+import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:coffee_bean/utils/number_to_vietnamese.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
@@ -39,17 +39,11 @@ class ShoppingProductItem extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: CachedImageWidget(
+                  child: DbCachedImageWidget(
                     imageUrl: product.mainImage ?? "",
                     width: 90,
                     height: 90,
                     fit: BoxFit.cover,
-                    errorWidget: Image.asset(
-                      AppAssets.images.imgNoImage,
-                      width: 90,
-                      height: 90,
-                      fit: BoxFit.cover,
-                    ),
                   ),
                 ),
                 const SizedBox(width: 12),

@@ -1,4 +1,4 @@
-import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
+import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 
 class AvatarWidget extends StatelessWidget {
@@ -26,7 +26,7 @@ class AvatarWidget extends StatelessWidget {
       ),
       child: ClipOval(
         child: (imageUrl != null && imageUrl!.isNotEmpty)
-            ? CachedImageWidget(
+            ? DbCachedImageWidget(
                 imageUrl: imageUrl!,
                 fit: BoxFit.cover,
               )

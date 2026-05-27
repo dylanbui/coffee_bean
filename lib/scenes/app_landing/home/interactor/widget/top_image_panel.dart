@@ -7,7 +7,7 @@ import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_strings.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
+import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -75,7 +75,7 @@ class _TopImagePanelState extends State<TopImagePanel> {
         itemBuilder: (context, index) => Stack(
           fit: StackFit.expand,
           children: [
-            CachedImageWidget(
+            DbCachedImageWidget(
               imageUrl: images[index],
               width: screenWidth, // Concrete size (FHD/HD standard)
               height: sliderHeight,

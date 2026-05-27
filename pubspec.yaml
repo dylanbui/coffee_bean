@@ -1,8 +1,6 @@
 name: coffee_bean
-description: "A new Flutter project about Coffee."
-# The following line prevents the package from being accidentally published to
-# pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+description: "Coffee Bean Flutter Project - RIBs Architecture."
+publish_to: 'none'
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -18,13 +16,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # of the product and file versions while build-number is used as the build suffix.
 version: 1.0.0+3
 
-#environment:
-#  sdk: ^3.11.4
 environment:
   # xem xet hard fix ^3.11.4
   sdk: ">=3.10.0 <4.0.0"
   flutter: ">=3.22.0"
-  #flutter: ">=3.27.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -42,112 +37,84 @@ dependencies:
   # Android : Icons.shopping_cart
   cupertino_icons: ^1.0.8
 
-  # Local Packages (Isolated Modules)
+  # --- Local Modules ---
+  # Core module for network, storage, and shared utilities
   db_core:
     path: ./packages/db_core
-#  coffee_bean_core:
-#    path: ./packages/coffee_bean_core
+  # Local database module (Isar)
   coffee_bean_db:
     path: ./packages/coffee_bean_db
 
-  # hard fix: package ảnh hưởng trực tiếp tới compile / generated code / architecture
+  # --- Logic & Architecture ---
+  # State management framework
   flutter_bloc: 9.1.1
+  # Dependency Injection and simple state management
   provider: ^6.1.5+1
-  dio: 5.9.2
+  # Type-safe HTTP client generator
   retrofit: 4.9.2
-  # Save data secure
-  flutter_secure_storage: ^10.0.0
-  #retrofit_generator: 10.2.5
-  #build_runner: 2.13.1
-  #json_serializable: 6.13.1
-  shared_preferences: ^2.5.5
-  equatable: 2.0.8
-  # dung cho navigator page => tot
-  page_transition: ^2.2.1
-  # custom ghi log
-  logger: ^2.7.0
-  pretty_dio_logger: ^1.4.0
-  quiver: ^3.2.2
-  #fluttertoast: ^9.0.0
-  # dua tam vao, sau nay se bo ra sau
-  # dialog_loader: ^0.0.3+3
-  # event_bus: ^2.0.1
-  # Draw SVG files
+
+  # --- UI Components ---
+  # SVG image rendering support
   flutter_svg: ^2.2.4
-  # Animated list for load more
+  # Animated list with reordering capabilities
   implicitly_animated_reorderable_list_2: ^0.6.0
-  # Show Dialog library
-  #flutter_smart_dialog: ^5.1.0
-  easy_debounce: ^2.0.3
-  # UI Notifications / Flash messages
-  flash: ^3.1.1
-  # Network connection check
-  connectivity_plus: ^7.1.1
+  # Lottie animation rendering (JSON based)
+  lottie: ^3.3.3
+  # Scrolling text effect
+  marquee: ^2.3.0
+  # Group button selector widget
+  group_button: ^5.3.4
+  # Scrollable list with jump-to-index support
+  scrollable_positioned_list: ^0.3.8
+  # Rating bar widget
+  flutter_rating_bar: ^4.0.1
+  # Timeline-based date picker
+  easy_date_timeline: ^2.0.9
 
-  # Get location
-  geolocator: ^14.0.2
-  package_info_plus: ^9.0.1
-  chuck_interceptor: ^2.3.1
-  json_annotation: ^4.12.0
-
-  retrofit_generator: ^10.2.6
-  json_serializable: ^6.13.1
-
-  #hive: ^2.2.3
-  url_launcher: ^6.3.2
-  permission_handler: ^12.0.1
-  device_info_plus: ^11.1.1
-  rflutter_alert: ^2.0.7
-  cached_network_image: ^3.4.1
+  # --- System & Media Features ---
+  # Pick images and videos from gallery or camera
   image_picker: ^1.1.2
+  # Advanced asset picker (WeChat style)
   wechat_assets_picker: ^9.4.0
   wechat_camera_picker: ^4.3.1
+  # QR and Barcode scanner
   mobile_scanner: ^6.0.0
-  # Simple zoomable image/content widget
-  #extended_image: ^10.0.1
-  # Localization and Internationalization
-  intl: ^0.20.2
-  # parses Adobe After Effects animations exported as json
-  lottie: ^3.3.3
-  # finding commonly used locations on the filesystem
-  path_provider: ^2.1.5
-  # remove white screen when app start
-  flutter_native_splash: ^2.4.7
-  # make icon app for Android + iOS
-  flutter_launcher_icons: ^0.14.4
-  table_calendar: ^3.2.0
-  easy_date_timeline: ^2.0.9
-  marquee: ^2.3.0
-  # Flutter widget to create a group of buttons fast
-  group_button: ^5.3.4
-  # automatically resizes text to fit perfectly within its bounds
-  flutter_auto_size_text: ^5.0.0
-  # that allows scrolling to a specific item in the list.
-  scrollable_positioned_list: ^0.3.8
-  # a rating bar indicator, supporting any fraction of rating
-  flutter_rating_bar: ^4.0.1
+  # Open URLs, send emails, make calls
+  url_launcher: ^6.3.2
+  # Permission management for camera, location, etc.
+  permission_handler: ^12.0.1
+  # Detailed device hardware information
+  device_info_plus: ^11.1.1
+  # User GPS location services
+  geolocator: ^14.0.2
+  # Application package information (version, build number)
+  package_info_plus: ^9.0.1
+  # In-app network log interceptor for debugging
+  chuck_interceptor: ^2.3.1
 
+  # --- Utils & Optimization ---
+  # Debounce and throttle utility
+  easy_debounce: ^2.0.3
+  # Annotations for JSON code generation
+  json_annotation: ^4.12.0
+  # Splash screen management
+  flutter_native_splash: ^2.4.7
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # hard fix: package ảnh hưởng trực tiếp tới compile / generated code / architecture
-  # package generate code lúc build, không phải runtime package
-  
-  #retrofit_generator: ^10.2.6
+  # --- Code Generation Tools ---
+  # Core tool for code generation (Retrofit, JSON, etc.)
   build_runner: ^2.4.13
-  #json_serializable: ^6.13.1
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
+  # Generator for Retrofit clients
+  retrofit_generator: ^10.2.6
+  # Generator for JSON serialization
+  json_serializable: ^6.13.1
+  # Generate app icons for multiple platforms
+  flutter_launcher_icons: ^0.14.4
+  # Standard lint rules for clean code
   flutter_lints: ^6.0.0
-
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
 flutter:

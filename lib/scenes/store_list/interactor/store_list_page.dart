@@ -10,8 +10,8 @@ import 'package:db_core/utils/tap_effect.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:coffee_bean/shared/widget/search_bar.dart';
-import 'package:coffee_bean/shared/widget/app_label.dart';
-import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
+import 'package:db_core/utils/app_label.dart';
+import 'package:db_core/utils/widget/cached_image_widget.dart';
 
 //ignore: must_be_immutable
 class StoreListPage extends CubitStateFulWidget<StoreListInteractor, StoreListState> {
@@ -139,7 +139,7 @@ class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor,
                 child: Stack(
                   children: [
                     Positioned.fill(
-                      child: CachedImageWidget(
+                      child: DbCachedImageWidget(
                         imageUrl: store.mainImage ?? "",
                         width: double.infinity,
                         height: double.infinity,

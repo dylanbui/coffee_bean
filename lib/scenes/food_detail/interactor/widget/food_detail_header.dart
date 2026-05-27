@@ -1,7 +1,7 @@
 import 'package:coffee_bean/scenes/food_detail/interactor/food_detail_event_state.dart';
 import 'package:coffee_bean/scenes/food_detail/interactor/food_detail_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
-import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
+import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:coffee_bean/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,7 +50,7 @@ class _FoodDetailHeaderState extends State<FoodDetailHeader> {
                     return Stack(
                       fit: StackFit.expand,
                       children: [
-                        CachedImageWidget(
+                        DbCachedImageWidget(
                           imageUrl: imageUrl,
                           fit: BoxFit.cover,
                           borderRadius: 0,

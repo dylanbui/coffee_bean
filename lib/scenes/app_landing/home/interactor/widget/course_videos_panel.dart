@@ -5,7 +5,7 @@ import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_strings.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/avatar_widget.dart';
-import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
+import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:db_core/utils/tap_effect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,7 +67,7 @@ class _CourseVideoCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            CachedImageWidget(imageUrl: item.imageUrl, fit: BoxFit.cover),
+            DbCachedImageWidget(imageUrl: item.imageUrl, fit: BoxFit.cover),
             Positioned(
               top: 15,
               right: 15,

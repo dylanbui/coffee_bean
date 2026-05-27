@@ -12,16 +12,24 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # --- Database ---
+  # Using isar-community (an updated version of Isar with better bug fixes)
+  # Documentation: https://isar-community.dev/v3/tutorials/quickstart.html
   isar_community: ^3.3.2
+  # Native libraries for Isar database engine
   isar_community_flutter_libs: ^3.3.2
 
+  # --- Utilities ---
+  # Find commonly used locations on the filesystem for database storage
   path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  # Code generator for Isar schemas
   isar_community_generator: ^3.3.2
+  # Tool for running code generation scripts
   build_runner: ^2.15.0
 
 # Su dung isar-community, mot phien ban update cua isar, ho tro fix bugs tot hon

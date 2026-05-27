@@ -2,7 +2,7 @@ import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/scenes/app_landing/community/interactor/community_interactor.dart';
-import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
+import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 
 //ignore: must_be_immutable
@@ -77,7 +77,7 @@ class _CommunityPageState extends CubitState<CommunityPage, CommunityInteractor,
             children: [
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                child: CachedImageWidget(
+                child: DbCachedImageWidget(
                   imageUrl: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=800&auto=format&fit=crop',
                   width: double.infinity,
                   height: 180,
@@ -156,7 +156,7 @@ class _CommunityPageState extends CubitState<CommunityPage, CommunityInteractor,
                       const SizedBox(height: 8),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: CachedImageWidget(
+                        child: DbCachedImageWidget(
                           imageUrl: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=400&auto=format&fit=crop',
                           width: double.infinity,
                           height: 150,

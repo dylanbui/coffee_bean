@@ -1,5 +1,6 @@
 import 'package:coffee_bean/scenes/rib_samples/dialog_demo/interactor/dialog_demo_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/dialog_demo/interactor/dialog_demo_interactor.dart';
+import 'package:db_core/utils/app_label.dart';
 import 'package:db_core/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -106,6 +107,111 @@ class _DialogDemoPageState extends CubitState<DialogDemoPage, DialogDemoInteract
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.orange.shade900, foregroundColor: Colors.white),
                 child: const Text("Đăng ký tài khoản mới"),
               ),
+              const SizedBox(height: 24),
+
+              _buildSectionTitle("7. AppLabel Showcase (AutoSizeText)"),
+              const Text("Dưới đây là các ví dụ về AppLabel với khả năng tự co giãn font:", 
+                style: TextStyle(fontSize: 12, color: Colors.grey, fontStyle: FontStyle.italic)),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  // 1. Basic Badge
+                  const AppLabel(
+                    "HOT",
+                    backgroundColor: Colors.red,
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+
+                  // 2. Rounded with Border
+                  const AppLabel(
+                    "Premium Member",
+                    backgroundColor: Colors.amberAccent,
+                    borderColor: Colors.orange,
+                    borderRadius: 20,
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    style: TextStyle(color: Colors.black87, fontSize: 12),
+                  ),
+
+                  // 3. AUTO-RESIZE: Cố định rộng 120px, text rất dài
+                  // Bạn sẽ thấy chữ tự thu nhỏ lại để vừa khít 120px
+                  const AppLabel(
+                    "Văn bản này quá dài cho một nhãn nhỏ",
+                    width: 120,
+                    height: 32,
+                    backgroundColor: Colors.blue,
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    minFontSize: 8,
+                  ),
+
+                  // 4. Fixed size with alignment
+                  const AppLabel(
+                    "Align Left",
+                    width: 100,
+                    height: 40,
+                    alignment: Alignment.centerLeft,
+                    backgroundColor: Colors.teal,
+                    style: TextStyle(color: Colors.white),
+                  ),
+
+                  // 5. MaxLines = 2 với AutoSize
+                  const AppLabel(
+                    "Dòng 1 dài và dòng 2 cũng rất dài nên phải thu nhỏ",
+                    width: 150,
+                    height: 50,
+                    maxLines: 2,
+                    backgroundColor: Colors.purple,
+                    style: TextStyle(color: Colors.white, fontSize: 14),
+                    minFontSize: 9,
+                  ),
+
+                  // 6. Sử dụng Config để tạo Style đồng bộ
+                  const AppLabel(
+                    "DÙNG CONFIG",
+                    config: AppLabelStyleConfig(
+                      backgroundColor: Colors.black87,
+                      borderRadius: 0,
+                      padding: EdgeInsets.all(8),
+                      minFontSize: 10,
+                    ),
+                    style: TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold),
+                  ),
+
+                  // 7. NEW: Leading Icon & Theme Integration
+                  // Sẽ tự lấy màu Primary của App nếu không set background
+                  const AppLabel(
+                    "Verified",
+                    leadingIcon: Icon(Icons.verified, color: Colors.white, size: 14),
+                    borderRadius: 8,
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  ),
+
+                  // 8. NEW: Gradient & Shadow (Premium Look)
+                  const AppLabel(
+                    "PREMIUM PLAN",
+                    gradient: LinearGradient(colors: [Colors.purple, Colors.blue]),
+                    shadows: [
+                      BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2)),
+                    ],
+                    borderRadius: 12,
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.1),
+                  ),
+
+                  // 9. NEW: MainAxisSize.max (Dãn hết chiều ngang)
+                  const AppLabel(
+                    "STATUS: ĐANG CHỜ XỬ LÝ (FULL WIDTH)",
+                    mainAxisSize: MainAxisSize.max,
+                    backgroundColor: Colors.orangeAccent,
+                    padding: EdgeInsets.all(10),
+                    borderRadius: 0,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 40),
             ],
           ),
         );

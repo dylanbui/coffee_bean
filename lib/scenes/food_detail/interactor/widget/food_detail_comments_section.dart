@@ -1,7 +1,7 @@
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/avatar_widget.dart';
-import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
+import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
@@ -116,7 +116,7 @@ class FoodDetailCommentsSection extends StatelessWidget {
             if (images.length == 1)
               GestureDetector(
                 // onTap: () => _showFullScreenImage(context, images, 0),
-                child: CachedImageWidget(
+                child: DbCachedImageWidget(
                   imageUrl: images[0],
                   width: double.infinity,
                   height: 220,
@@ -134,7 +134,7 @@ class FoodDetailCommentsSection extends StatelessWidget {
                       padding: const EdgeInsets.only(right: 10),
                       child: GestureDetector(
                         // onTap: () => _showFullScreenImage(context, images, index),
-                        child: CachedImageWidget(
+                        child: DbCachedImageWidget(
                           imageUrl: images[index],
                           width: 120,
                           height: 120,
