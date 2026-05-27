@@ -7,10 +7,9 @@ import 'package:db_core/utils/locator.dart';
 
 class CommentListInteractor extends CubitInteractor<CommentListRoutable, CommentListState> {
   final CommentRepository _commentRepository = locator<CommentRepository>();
-  final int _limit = 10;
 
-  CommentListInteractor(CommentListRoutable router, int productId, String type)
-      : super(CommentListState(productId: productId, type: type), router: router);
+  CommentListInteractor(CommentListRoutable router, int productId, String type, {int limit = 10})
+      : super(CommentListState(productId: productId, type: type, limit: limit), router: router);
 
   @override
   void onDidBecomeActive() {
@@ -27,12 +26,12 @@ class CommentListInteractor extends CubitInteractor<CommentListRoutable, Comment
         productId: state.productId,
         type: state.type,
         offset: 0,
-        limit: _limit,
+        limit: state.limit,
       );
       emit(state.copyWith(
         comments: comments,
         isLoading: false,
-        hasMore: comments.length >= _limit,
+        hasMore: comments.length >= state.limit,
       ));
     } catch (e) {
       emit(state.copyWith(isLoading: false));
@@ -48,7 +47,7 @@ class CommentListInteractor extends CubitInteractor<CommentListRoutable, Comment
         productId: state.productId,
         type: state.type,
         offset: state.comments.length,
-        limit: _limit,
+        limit: state.limit,
       );
       
       final updatedComments = List<TblComment>.from(state.comments)..addAll(moreComments);
@@ -56,11 +55,17 @@ class CommentListInteractor extends CubitInteractor<CommentListRoutable, Comment
       emit(state.copyWith(
         comments: updatedComments,
         isLoadMore: false,
-        hasMore: moreComments.length >= _limit,
+        hasMore: moreComments.length >= state.limit,
       ));
     } catch (e) {
       emit(state.copyWith(isLoadMore: false));
     }
+  }
+
+  void onViewAll() {
+    // Gửi tín hiệu điều hướng về parent thông qua router
+    // Bạn có thể định nghĩa 1 Route cụ thể hoặc dùng navigate
+    router?.onViewAllComments(state.productId, state.type);
   }
 
   void goBack() {

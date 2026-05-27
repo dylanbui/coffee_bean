@@ -8,6 +8,7 @@ class CommentListState extends BaseBlocState {
   final bool isLoading;
   final bool isLoadMore;
   final bool hasMore;
+  final int limit;
 
   CommentListState({
     required this.productId,
@@ -16,6 +17,7 @@ class CommentListState extends BaseBlocState {
     this.isLoading = false,
     this.isLoadMore = false,
     this.hasMore = true,
+    this.limit = 10,
   });
 
   CommentListState copyWith({
@@ -23,6 +25,7 @@ class CommentListState extends BaseBlocState {
     bool? isLoading,
     bool? isLoadMore,
     bool? hasMore,
+    int? limit,
   }) {
     return CommentListState(
       productId: productId,
@@ -31,9 +34,10 @@ class CommentListState extends BaseBlocState {
       isLoading: isLoading ?? this.isLoading,
       isLoadMore: isLoadMore ?? this.isLoadMore,
       hasMore: hasMore ?? this.hasMore,
+      limit: limit ?? this.limit,
     );
   }
 
   @override
-  List<Object?> get props => [productId, type, comments, isLoading, isLoadMore, hasMore];
+  List<Object?> get props => [productId, type, comments, isLoading, isLoadMore, hasMore, limit];
 }

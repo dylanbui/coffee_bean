@@ -16,6 +16,10 @@ abstract interface class DbNoteRoute {}
 
 /// DbNoteRoutable: Interface defining the standard routing operations for a RIB.
 abstract interface class DbNoteRoutable {
+  /// Access to the parent router in the RIB tree hierarchy.
+  DbNoteRoutable? get parentRouter;
+  set parentRouter(DbNoteRoutable? value);
+
   /// Called when the router becomes active.
   void didBecomeActiveRouter();
 
@@ -50,7 +54,8 @@ abstract interface class DbNoteRoutable {
 /// ```
 abstract class DbNoteRouter implements DbNoteRoutable {
   /// Parent router in the RIB tree hierarchy.
-  DbNoteRouter? parentRouter;
+  @override
+  covariant DbNoteRouter? parentRouter;
 
   /// Helper for performing navigation transitions.
   late DbNavigator navigator;

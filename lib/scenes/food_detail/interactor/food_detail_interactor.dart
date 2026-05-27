@@ -20,18 +20,18 @@ class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetai
   void onDidBecomeActive() {
     super.onDidBecomeActive();
     _loadSuggestedProducts();
-    _loadRecentComments();
+    // _loadRecentComments();
     _initDefaultOptions();
   }
 
-  Future<void> _loadRecentComments() async {
-    final comments = await _commentRepository.getComments(
-      productId: state.product.serverId,
-      type: "FOOD",
-      limit: 2,
-    );
-    emit(state.copyWith(recentComments: comments));
-  }
+  // Future<void> _loadRecentComments() async {
+  //   final comments = await _commentRepository.getComments(
+  //     productId: state.product.serverId,
+  //     type: "FOOD",
+  //     limit: 2,
+  //   );
+  //   emit(state.copyWith(recentComments: comments));
+  // }
 
   void _initDefaultOptions() {
     final defaultOptions = state.product.defaultOptionsMap;
@@ -134,7 +134,7 @@ class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetai
     router?.pop();
   }
 
-  void viewAllComments() {
-    router?.routeToCommentList(state.product.serverId, "FOOD");
-  }
+  // void viewAllComments() {
+  //   router?.routeToCommentList(state.product.serverId, "FOOD");
+  // }
 }
