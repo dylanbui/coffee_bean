@@ -32,7 +32,7 @@ class _FoodDetailPageState extends AppCubitState<FoodDetailPage, FoodDetailInter
               FoodDetailHeader(interactor: interactor),
               FoodDetailContent(interactor: interactor),
               FoodDetailSuggestedSection(interactor: interactor),
-              const FoodDetailCommentsSection(),
+              FoodDetailCommentsSection(interactor: interactor),
             ],
           ),
         ),

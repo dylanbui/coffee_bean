@@ -1,3 +1,4 @@
+import 'package:coffee_bean/data/repository/comment_repository.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
@@ -10,6 +11,7 @@ import 'dart:math';
 class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetailState> {
   final CartService _cartService = locator<CartService>();
   final DatabaseService _dbService = locator<DatabaseService>();
+  final CommentRepository _commentRepository = locator<CommentRepository>();
 
   FoodDetailInteractor(FoodDetailRoutable router, TblFood product) 
       : super(FoodDetailState(product: product), router: router);
@@ -18,7 +20,17 @@ class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetai
   void onDidBecomeActive() {
     super.onDidBecomeActive();
     _loadSuggestedProducts();
+    _loadRecentComments();
     _initDefaultOptions();
+  }
+
+  Future<void> _loadRecentComments() async {
+    final comments = await _commentRepository.getComments(
+      productId: state.product.serverId,
+      type: "FOOD",
+      limit: 2,
+    );
+    emit(state.copyWith(recentComments: comments));
   }
 
   void _initDefaultOptions() {
@@ -120,5 +132,9 @@ class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetai
 
   void goBack() {
     router?.pop();
+  }
+
+  void viewAllComments() {
+    router?.routeToCommentList(state.product.serverId, "FOOD");
   }
 }

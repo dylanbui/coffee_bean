@@ -91,6 +91,10 @@ dependencies:
   package_info_plus: ^9.0.1
   # In-app network log interceptor for debugging
   chuck_interceptor: ^2.3.1
+  # Network image with caching and placeholder support
+  cached_network_image: ^3.4.1
+  # Cache manager used by cached_network_image (required for custom cache config)
+  flutter_cache_manager: ^3.4.1
 
   # --- Utils & Optimization ---
   # Debounce and throttle utility
@@ -99,6 +103,8 @@ dependencies:
   json_annotation: ^4.12.0
   # Splash screen management
   flutter_native_splash: ^2.4.7
+  # Internationalization and localization support (date, number formatting)
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:

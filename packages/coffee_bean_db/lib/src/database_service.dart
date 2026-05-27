@@ -22,6 +22,8 @@ class DatabaseService {
       TblCourseSchema,
       TblCartItemSchema,
       TblStoreSchema,
+      TblCommentSchema,
+      TblCommentSyncMetadataSchema,
     ], directory: dir.path);
   }
 
@@ -35,6 +37,8 @@ class DatabaseService {
       await isar.tblCourses.clear();
       await isar.tblCartItems.clear();
       await isar.tblStores.clear();
+      await isar.tblComments.clear();
+      await isar.tblCommentSyncMetadatas.clear();
     });
   }
 
@@ -170,6 +174,62 @@ class DatabaseService {
     });
   }
 
+  // --- COMMENT OPERATIONS ---
+
+  /// Lấy comment với cơ chế Cache.
+  /// [remoteFetcher] là hàm giả lập gọi API/đọc file JSON trả về List dynamic
+  Future<List<TblComment>> getCommentsWithProduct({
+    required int productId,
+    required String type,
+    required Future<List<dynamic>> Function() remoteFetcher,
+    int offset = 0,
+    int limit = 10,
+    Duration cacheDuration = const Duration(minutes: 5),
+  }) async {
+    // 1. Kiểm tra Metadata xem đã sync chưa hoặc cache hết hạn chưa
+    final metadata = await isar.tblCommentSyncMetadatas.filter().productIdEqualTo(productId).and().typeEqualTo(type).findFirst();
+
+    final bool isExpired = metadata == null || DateTime.now().difference(metadata.lastSync) > cacheDuration;
+
+    if (isExpired) {
+      // 2. Giả lập gọi API (remoteFetcher)
+      // Thêm delay để giả lập mạng chậm
+      await Future.delayed(const Duration(milliseconds: 800));
+      final remoteData = await remoteFetcher();
+
+      // Lọc dữ liệu theo productId từ remote (vì file JSON chứa nhiều sản phẩm)
+      final filteredData = remoteData.where((json) => json['product_id'] == productId && (json['type'] ?? 'FOOD') == type).toList();
+
+      // 3. Lưu vào Database (Xóa cũ ghi mới cho sản phẩm này)
+      await isar.writeTxn(() async {
+        // Xóa comment cũ của sp này
+        await isar.tblComments.filter().productIdEqualTo(productId).and().typeEqualTo(type).deleteAll();
+
+        // Thêm mới
+        final newComments = filteredData.map((json) => _mapToComment(json)).toList();
+        await isar.tblComments.putAll(newComments);
+
+        // Cập nhật Metadata
+        final newMetadata = (metadata ?? TblCommentSyncMetadata())
+          ..productId = productId
+          ..type = type
+          ..lastSync = DateTime.now();
+        await isar.tblCommentSyncMetadatas.put(newMetadata);
+      });
+    }
+
+    // 4. Trả về dữ liệu từ Database (Hỗ trợ phân trang)
+    return isar.tblComments
+        .filter()
+        .productIdEqualTo(productId)
+        .and()
+        .typeEqualTo(type)
+        .sortByCreatedAtDesc()
+        .offset(offset)
+        .limit(limit)
+        .findAll();
+  }
+
   // --- CART OPERATIONS ---
 
   Future<List<TblCartItem>> getCartItems() => isar.tblCartItems.where().sortByAddedAtDesc().findAll();
@@ -260,6 +320,20 @@ class DatabaseService {
       ..closingTime = json['closing_time']
       ..images = _mapImages(json)
       ..isActive = json['is_active'] ?? true;
+  }
+
+  TblComment _mapToComment(dynamic json) {
+    return TblComment()
+      ..serverId = json['id']
+      ..productId = json['product_id']
+      ..type = json['type'] ?? 'FOOD'
+      ..userId = json['user_id']
+      ..userName = json['user_name'] ?? ''
+      ..avatar = json['avatar']
+      ..content = json['content'] ?? ''
+      ..images = (json['images'] as List?)?.map((e) => e.toString()).toList()
+      ..rating = (json['rating'] ?? 5.0).toDouble()
+      ..createdAt = DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now();
   }
   List<TblImage>? _mapImages(dynamic json) {
     if (json['images'] != null && json['images'] is List) {

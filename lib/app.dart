@@ -23,6 +23,7 @@ import 'package:coffee_bean/data/network/token_interceptor.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/scenes/app/app_builder.dart';
 import 'package:coffee_bean/scenes/app/app_router.dart';
+import 'package:coffee_bean/data/repository/comment_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:db_core/utils/locator.dart';
@@ -122,6 +123,9 @@ Future<void> _setupLocator() async {
   // Register Live Services
   locator.registerLazySingleton<CartService>(() => CartService());
   locator.registerLazySingleton<LikesService>(() => LikesService());
+
+  // Register Repositories
+  locator.registerLazySingleton<CommentRepository>(() => CommentRepository());
 }
 
 Future<void> _setupUiUtils() async {

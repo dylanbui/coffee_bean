@@ -5,6 +5,7 @@ class FoodDetailState extends BaseBlocState {
   final TblFood product;
   final int quantity;
   final List<TblFood> suggestedProducts;
+  final List<TblComment> recentComments;
   final Map<int, TblProductOption> selectedOptions; // groupId -> selectedOption
   final bool isLoading;
   final bool isAddingToCart;
@@ -13,6 +14,7 @@ class FoodDetailState extends BaseBlocState {
     required this.product,
     this.quantity = 1,
     this.suggestedProducts = const [],
+    this.recentComments = const [],
     this.selectedOptions = const {},
     this.isLoading = false,
     this.isAddingToCart = false,
@@ -22,6 +24,7 @@ class FoodDetailState extends BaseBlocState {
     TblFood? product,
     int? quantity,
     List<TblFood>? suggestedProducts,
+    List<TblComment>? recentComments,
     Map<int, TblProductOption>? selectedOptions,
     bool? isLoading,
     bool? isAddingToCart,
@@ -30,6 +33,7 @@ class FoodDetailState extends BaseBlocState {
       product: product ?? this.product,
       quantity: quantity ?? this.quantity,
       suggestedProducts: suggestedProducts ?? this.suggestedProducts,
+      recentComments: recentComments ?? this.recentComments,
       selectedOptions: selectedOptions ?? this.selectedOptions,
       isLoading: isLoading ?? this.isLoading,
       isAddingToCart: isAddingToCart ?? this.isAddingToCart,
@@ -45,5 +49,5 @@ class FoodDetailState extends BaseBlocState {
   }
 
   @override
-  List<Object?> get props => [product, quantity, suggestedProducts, selectedOptions, isLoading, isAddingToCart];
+  List<Object?> get props => [product, quantity, suggestedProducts, recentComments, selectedOptions, isLoading, isAddingToCart];
 }

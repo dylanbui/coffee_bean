@@ -1,0 +1,1617 @@
+[
+  {
+    "id": 1,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 81,
+    "user_name": "Trần Thị Bình",
+    "avatar": "https://i.pravatar.cc/150?u=81",
+    "content": "Hương vị khó quên. (Đánh giá số 1)",
+    "images": [
+      "https://picsum.photos/id/17/400/400",
+      "https://picsum.photos/id/18/400/400",
+      "https://picsum.photos/id/19/400/400",
+      "https://picsum.photos/id/20/400/400",
+      "https://picsum.photos/id/21/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-10T00:00:00Z"
+  },
+  {
+    "id": 2,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 10,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=10",
+    "content": "Sẽ giới thiệu cho bạn bè. (Đánh giá số 2)",
+    "images": [
+      "https://picsum.photos/id/24/400/400",
+      "https://picsum.photos/id/25/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-09T00:00:00Z"
+  },
+  {
+    "id": 3,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 18,
+    "user_name": "Đỗ Văn Giang",
+    "avatar": "https://i.pravatar.cc/150?u=18",
+    "content": "Sẽ giới thiệu cho bạn bè. (Đánh giá số 3)",
+    "images": [
+      "https://picsum.photos/id/31/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-08T00:00:00Z"
+  },
+  {
+    "id": 4,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 25,
+    "user_name": "Phạm Thị Dung",
+    "avatar": "https://i.pravatar.cc/150?u=25",
+    "content": "Sẽ giới thiệu cho bạn bè. (Đánh giá số 4)",
+    "images": [
+      "https://picsum.photos/id/38/400/400",
+      "https://picsum.photos/id/39/400/400",
+      "https://picsum.photos/id/40/400/400",
+      "https://picsum.photos/id/41/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-07T00:00:00Z"
+  },
+  {
+    "id": 5,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 16,
+    "user_name": "Lý Thị Hương",
+    "avatar": "https://i.pravatar.cc/150?u=16",
+    "content": "Rất ngon, sẽ quay lại! (Đánh giá số 5)",
+    "images": [
+      "https://picsum.photos/id/45/400/400",
+      "https://picsum.photos/id/46/400/400",
+      "https://picsum.photos/id/47/400/400",
+      "https://picsum.photos/id/48/400/400",
+      "https://picsum.photos/id/49/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-06T00:00:00Z"
+  },
+  {
+    "id": 6,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 18,
+    "user_name": "Phạm Thị Dung",
+    "avatar": "https://i.pravatar.cc/150?u=18",
+    "content": "Chất lượng tuyệt vời. (Đánh giá số 6)",
+    "images": [
+      "https://picsum.photos/id/52/400/400",
+      "https://picsum.photos/id/53/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-05T00:00:00Z"
+  },
+  {
+    "id": 7,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 91,
+    "user_name": "Đỗ Văn Giang",
+    "avatar": "https://i.pravatar.cc/150?u=91",
+    "content": "Hương vị khó quên. (Đánh giá số 7)",
+    "images": [
+      "https://picsum.photos/id/59/400/400",
+      "https://picsum.photos/id/60/400/400",
+      "https://picsum.photos/id/61/400/400",
+      "https://picsum.photos/id/62/400/400",
+      "https://picsum.photos/id/63/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-04T00:00:00Z"
+  },
+  {
+    "id": 8,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 13,
+    "user_name": "Lý Thị Hương",
+    "avatar": "https://i.pravatar.cc/150?u=13",
+    "content": "Vị hơi đậm so với mình. (Đánh giá số 8)",
+    "images": [
+      "https://picsum.photos/id/66/400/400",
+      "https://picsum.photos/id/67/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-03T00:00:00Z"
+  },
+  {
+    "id": 9,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 36,
+    "user_name": "Trần Thị Bình",
+    "avatar": "https://i.pravatar.cc/150?u=36",
+    "content": "Chất lượng tuyệt vời. (Đánh giá số 9)",
+    "images": [
+      "https://picsum.photos/id/73/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-02T00:00:00Z"
+  },
+  {
+    "id": 10,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 24,
+    "user_name": "Lê Văn Cường",
+    "avatar": "https://i.pravatar.cc/150?u=24",
+    "content": "Tạm ổn, không có gì đặc sắc. (Đánh giá số 10)",
+    "images": [
+      "https://picsum.photos/id/80/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 11,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 85,
+    "user_name": "Ngô Thị Hoa",
+    "avatar": "https://i.pravatar.cc/150?u=85",
+    "content": "Giá cả hợp lý. (Đánh giá số 11)",
+    "images": [
+      "https://picsum.photos/id/87/400/400",
+      "https://picsum.photos/id/88/400/400",
+      "https://picsum.photos/id/89/400/400",
+      "https://picsum.photos/id/90/400/400",
+      "https://picsum.photos/id/91/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2024-12-31T00:00:00Z"
+  },
+  {
+    "id": 12,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 32,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=32",
+    "content": "Tạm ổn, không có gì đặc sắc. (Đánh giá số 12)",
+    "images": [
+      "https://picsum.photos/id/94/400/400",
+      "https://picsum.photos/id/95/400/400",
+      "https://picsum.photos/id/96/400/400",
+      "https://picsum.photos/id/97/400/400",
+      "https://picsum.photos/id/98/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2024-12-30T00:00:00Z"
+  },
+  {
+    "id": 13,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 68,
+    "user_name": "Đỗ Văn Giang",
+    "avatar": "https://i.pravatar.cc/150?u=68",
+    "content": "Vị hơi đậm so với mình. (Đánh giá số 13)",
+    "images": [
+      "https://picsum.photos/id/101/400/400",
+      "https://picsum.photos/id/102/400/400",
+      "https://picsum.photos/id/103/400/400",
+      "https://picsum.photos/id/104/400/400",
+      "https://picsum.photos/id/105/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-12-29T00:00:00Z"
+  },
+  {
+    "id": 14,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 65,
+    "user_name": "Lý Thị Hương",
+    "avatar": "https://i.pravatar.cc/150?u=65",
+    "content": "Rất ngon, sẽ quay lại! (Đánh giá số 14)",
+    "images": [
+      "https://picsum.photos/id/108/400/400",
+      "https://picsum.photos/id/109/400/400",
+      "https://picsum.photos/id/110/400/400",
+      "https://picsum.photos/id/111/400/400",
+      "https://picsum.photos/id/112/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2024-12-28T00:00:00Z"
+  },
+  {
+    "id": 15,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 41,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=41",
+    "content": "Chất lượng tuyệt vời. (Đánh giá số 15)",
+    "images": [
+      "https://picsum.photos/id/115/400/400",
+      "https://picsum.photos/id/116/400/400",
+      "https://picsum.photos/id/117/400/400",
+      "https://picsum.photos/id/118/400/400",
+      "https://picsum.photos/id/119/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-12-27T00:00:00Z"
+  },
+  {
+    "id": 16,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 86,
+    "user_name": "Hoàng Văn Em",
+    "avatar": "https://i.pravatar.cc/150?u=86",
+    "content": "Giao hàng nhanh, đóng gói cẩn thận. (Đánh giá số 16)",
+    "images": [
+      "https://picsum.photos/id/122/400/400",
+      "https://picsum.photos/id/123/400/400",
+      "https://picsum.photos/id/124/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2024-12-26T00:00:00Z"
+  },
+  {
+    "id": 17,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 47,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=47",
+    "content": "Vị hơi đậm so với mình. (Đánh giá số 17)",
+    "images": [
+      "https://picsum.photos/id/129/400/400",
+      "https://picsum.photos/id/130/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-12-25T00:00:00Z"
+  },
+  {
+    "id": 18,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 95,
+    "user_name": "Hoàng Văn Em",
+    "avatar": "https://i.pravatar.cc/150?u=95",
+    "content": "Tạm ổn, không có gì đặc sắc. (Đánh giá số 18)",
+    "images": [
+      "https://picsum.photos/id/136/400/400",
+      "https://picsum.photos/id/137/400/400",
+      "https://picsum.photos/id/138/400/400",
+      "https://picsum.photos/id/139/400/400",
+      "https://picsum.photos/id/140/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2024-12-24T00:00:00Z"
+  },
+  {
+    "id": 19,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 91,
+    "user_name": "Lê Văn Cường",
+    "avatar": "https://i.pravatar.cc/150?u=91",
+    "content": "Rất ngon, sẽ quay lại! (Đánh giá số 19)",
+    "images": [
+      "https://picsum.photos/id/143/400/400",
+      "https://picsum.photos/id/144/400/400",
+      "https://picsum.photos/id/145/400/400",
+      "https://picsum.photos/id/146/400/400",
+      "https://picsum.photos/id/147/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2024-12-23T00:00:00Z"
+  },
+  {
+    "id": 20,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 80,
+    "user_name": "Lý Thị Hương",
+    "avatar": "https://i.pravatar.cc/150?u=80",
+    "content": "Tạm ổn, không có gì đặc sắc. (Đánh giá số 20)",
+    "images": [
+      "https://picsum.photos/id/150/400/400",
+      "https://picsum.photos/id/151/400/400",
+      "https://picsum.photos/id/152/400/400",
+      "https://picsum.photos/id/153/400/400",
+      "https://picsum.photos/id/154/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-12-22T00:00:00Z"
+  },
+  {
+    "id": 21,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 29,
+    "user_name": "Bùi Văn Hùng",
+    "avatar": "https://i.pravatar.cc/150?u=29",
+    "content": "Sẽ giới thiệu cho bạn bè. (Đánh giá số 21)",
+    "images": [
+      "https://picsum.photos/id/157/400/400",
+      "https://picsum.photos/id/158/400/400",
+      "https://picsum.photos/id/159/400/400",
+      "https://picsum.photos/id/160/400/400",
+      "https://picsum.photos/id/161/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2024-12-21T00:00:00Z"
+  },
+  {
+    "id": 22,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 41,
+    "user_name": "Hoàng Văn Em",
+    "avatar": "https://i.pravatar.cc/150?u=41",
+    "content": "Rất đáng tiền. (Đánh giá số 22)",
+    "images": [
+      "https://picsum.photos/id/164/400/400",
+      "https://picsum.photos/id/165/400/400",
+      "https://picsum.photos/id/166/400/400",
+      "https://picsum.photos/id/167/400/400",
+      "https://picsum.photos/id/168/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2024-12-20T00:00:00Z"
+  },
+  {
+    "id": 23,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 83,
+    "user_name": "Đỗ Văn Giang",
+    "avatar": "https://i.pravatar.cc/150?u=83",
+    "content": "Rất ngon, sẽ quay lại! (Đánh giá số 23)",
+    "images": [
+      "https://picsum.photos/id/171/400/400",
+      "https://picsum.photos/id/172/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2024-12-19T00:00:00Z"
+  },
+  {
+    "id": 24,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 36,
+    "user_name": "Phạm Thị Dung",
+    "avatar": "https://i.pravatar.cc/150?u=36",
+    "content": "Giao hàng nhanh, đóng gói cẩn thận. (Đánh giá số 24)",
+    "images": [
+      "https://picsum.photos/id/178/400/400",
+      "https://picsum.photos/id/179/400/400",
+      "https://picsum.photos/id/180/400/400",
+      "https://picsum.photos/id/181/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-12-18T00:00:00Z"
+  },
+  {
+    "id": 25,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 83,
+    "user_name": "Lê Văn Cường",
+    "avatar": "https://i.pravatar.cc/150?u=83",
+    "content": "Giá cả hợp lý. (Đánh giá số 25)",
+    "images": [
+      "https://picsum.photos/id/185/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-12-17T00:00:00Z"
+  },
+  {
+    "id": 26,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 22,
+    "user_name": "Lý Thị Hương",
+    "avatar": "https://i.pravatar.cc/150?u=22",
+    "content": "Sẽ giới thiệu cho bạn bè. (Đánh giá số 26)",
+    "images": [
+      "https://picsum.photos/id/192/400/400",
+      "https://picsum.photos/id/193/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2024-12-16T00:00:00Z"
+  },
+  {
+    "id": 27,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 32,
+    "user_name": "Phạm Thị Dung",
+    "avatar": "https://i.pravatar.cc/150?u=32",
+    "content": "Không gian quán đẹp (mình đoán vậy). (Đánh giá số 27)",
+    "images": [
+      "https://picsum.photos/id/199/400/400",
+      "https://picsum.photos/id/200/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2024-12-15T00:00:00Z"
+  },
+  {
+    "id": 28,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 90,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=90",
+    "content": "Không gian quán đẹp (mình đoán vậy). (Đánh giá số 28)",
+    "images": [
+      "https://picsum.photos/id/206/400/400",
+      "https://picsum.photos/id/207/400/400",
+      "https://picsum.photos/id/208/400/400",
+      "https://picsum.photos/id/209/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2024-12-14T00:00:00Z"
+  },
+  {
+    "id": 29,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 39,
+    "user_name": "Lý Thị Hương",
+    "avatar": "https://i.pravatar.cc/150?u=39",
+    "content": "Hương vị khó quên. (Đánh giá số 29)",
+    "images": [
+      "https://picsum.photos/id/213/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2024-12-13T00:00:00Z"
+  },
+  {
+    "id": 30,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 75,
+    "user_name": "Lê Văn Cường",
+    "avatar": "https://i.pravatar.cc/150?u=75",
+    "content": "Chất lượng tuyệt vời. (Đánh giá số 30)",
+    "images": [
+      "https://picsum.photos/id/220/400/400",
+      "https://picsum.photos/id/221/400/400",
+      "https://picsum.photos/id/222/400/400",
+      "https://picsum.photos/id/223/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-12-12T00:00:00Z"
+  },
+  {
+    "id": 31,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 50,
+    "user_name": "Lý Thị Hương",
+    "avatar": "https://i.pravatar.cc/150?u=50",
+    "content": "Tạm ổn, không có gì đặc sắc. (Đánh giá số 31)",
+    "images": [
+      "https://picsum.photos/id/227/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2024-12-11T00:00:00Z"
+  },
+  {
+    "id": 32,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 55,
+    "user_name": "Bùi Văn Hùng",
+    "avatar": "https://i.pravatar.cc/150?u=55",
+    "content": "Không gian quán đẹp (mình đoán vậy). (Đánh giá số 32)",
+    "images": [
+      "https://picsum.photos/id/234/400/400",
+      "https://picsum.photos/id/235/400/400",
+      "https://picsum.photos/id/236/400/400",
+      "https://picsum.photos/id/237/400/400",
+      "https://picsum.photos/id/238/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2024-12-10T00:00:00Z"
+  },
+  {
+    "id": 33,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 70,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=70",
+    "content": "Giá cả hợp lý. (Đánh giá số 33)",
+    "images": [
+      "https://picsum.photos/id/241/400/400",
+      "https://picsum.photos/id/242/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2024-12-09T00:00:00Z"
+  },
+  {
+    "id": 34,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 49,
+    "user_name": "Bùi Văn Hùng",
+    "avatar": "https://i.pravatar.cc/150?u=49",
+    "content": "Hương vị khó quên. (Đánh giá số 34)",
+    "images": [
+      "https://picsum.photos/id/248/400/400",
+      "https://picsum.photos/id/249/400/400",
+      "https://picsum.photos/id/250/400/400",
+      "https://picsum.photos/id/251/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-12-08T00:00:00Z"
+  },
+  {
+    "id": 35,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 89,
+    "user_name": "Lý Thị Hương",
+    "avatar": "https://i.pravatar.cc/150?u=89",
+    "content": "Sẽ giới thiệu cho bạn bè. (Đánh giá số 35)",
+    "images": [
+      "https://picsum.photos/id/255/400/400",
+      "https://picsum.photos/id/256/400/400",
+      "https://picsum.photos/id/257/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2024-12-07T00:00:00Z"
+  },
+  {
+    "id": 36,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 25,
+    "user_name": "Phạm Thị Dung",
+    "avatar": "https://i.pravatar.cc/150?u=25",
+    "content": "Rất đáng tiền. (Đánh giá số 36)",
+    "images": [
+      "https://picsum.photos/id/262/400/400",
+      "https://picsum.photos/id/263/400/400",
+      "https://picsum.photos/id/264/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2024-12-06T00:00:00Z"
+  },
+  {
+    "id": 37,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 24,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=24",
+    "content": "Chất lượng tuyệt vời. (Đánh giá số 37)",
+    "images": [
+      "https://picsum.photos/id/269/400/400",
+      "https://picsum.photos/id/270/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-12-05T00:00:00Z"
+  },
+  {
+    "id": 38,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 73,
+    "user_name": "Lê Văn Cường",
+    "avatar": "https://i.pravatar.cc/150?u=73",
+    "content": "Tạm ổn, không có gì đặc sắc. (Đánh giá số 38)",
+    "images": [
+      "https://picsum.photos/id/276/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-12-04T00:00:00Z"
+  },
+  {
+    "id": 39,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 23,
+    "user_name": "Lê Văn Cường",
+    "avatar": "https://i.pravatar.cc/150?u=23",
+    "content": "Giá cả hợp lý. (Đánh giá số 39)",
+    "images": [
+      "https://picsum.photos/id/283/400/400",
+      "https://picsum.photos/id/284/400/400",
+      "https://picsum.photos/id/285/400/400",
+      "https://picsum.photos/id/286/400/400",
+      "https://picsum.photos/id/287/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2024-12-03T00:00:00Z"
+  },
+  {
+    "id": 40,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 17,
+    "user_name": "Nguyễn Văn An",
+    "avatar": "https://i.pravatar.cc/150?u=17",
+    "content": "Rất đáng tiền. (Đánh giá số 40)",
+    "images": [
+      "https://picsum.photos/id/290/400/400",
+      "https://picsum.photos/id/291/400/400",
+      "https://picsum.photos/id/292/400/400",
+      "https://picsum.photos/id/293/400/400",
+      "https://picsum.photos/id/294/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2024-12-02T00:00:00Z"
+  },
+  {
+    "id": 41,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 86,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=86",
+    "content": "Giá cả hợp lý. (Đánh giá số 41)",
+    "images": [
+      "https://picsum.photos/id/297/400/400",
+      "https://picsum.photos/id/298/400/400",
+      "https://picsum.photos/id/299/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2024-12-01T00:00:00Z"
+  },
+  {
+    "id": 42,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 87,
+    "user_name": "Hoàng Văn Em",
+    "avatar": "https://i.pravatar.cc/150?u=87",
+    "content": "Chất lượng tuyệt vời. (Đánh giá số 42)",
+    "images": [
+      "https://picsum.photos/id/304/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-11-30T00:00:00Z"
+  },
+  {
+    "id": 43,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 93,
+    "user_name": "Đỗ Văn Giang",
+    "avatar": "https://i.pravatar.cc/150?u=93",
+    "content": "Tạm ổn, không có gì đặc sắc. (Đánh giá số 43)",
+    "images": [
+      "https://picsum.photos/id/311/400/400",
+      "https://picsum.photos/id/312/400/400",
+      "https://picsum.photos/id/313/400/400",
+      "https://picsum.photos/id/314/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-11-29T00:00:00Z"
+  },
+  {
+    "id": 44,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 46,
+    "user_name": "Bùi Văn Hùng",
+    "avatar": "https://i.pravatar.cc/150?u=46",
+    "content": "Giá cả hợp lý. (Đánh giá số 44)",
+    "images": [
+      "https://picsum.photos/id/318/400/400",
+      "https://picsum.photos/id/319/400/400",
+      "https://picsum.photos/id/320/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-11-28T00:00:00Z"
+  },
+  {
+    "id": 45,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 35,
+    "user_name": "Hoàng Văn Em",
+    "avatar": "https://i.pravatar.cc/150?u=35",
+    "content": "Hương vị khó quên. (Đánh giá số 45)",
+    "images": [
+      "https://picsum.photos/id/325/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-11-27T00:00:00Z"
+  },
+  {
+    "id": 46,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 55,
+    "user_name": "Nguyễn Văn An",
+    "avatar": "https://i.pravatar.cc/150?u=55",
+    "content": "Tạm ổn, không có gì đặc sắc. (Đánh giá số 46)",
+    "images": [
+      "https://picsum.photos/id/332/400/400",
+      "https://picsum.photos/id/333/400/400",
+      "https://picsum.photos/id/334/400/400",
+      "https://picsum.photos/id/335/400/400",
+      "https://picsum.photos/id/336/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-11-26T00:00:00Z"
+  },
+  {
+    "id": 47,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 69,
+    "user_name": "Bùi Văn Hùng",
+    "avatar": "https://i.pravatar.cc/150?u=69",
+    "content": "Giao hàng nhanh, đóng gói cẩn thận. (Đánh giá số 47)",
+    "images": [
+      "https://picsum.photos/id/339/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-11-25T00:00:00Z"
+  },
+  {
+    "id": 48,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 94,
+    "user_name": "Đỗ Văn Giang",
+    "avatar": "https://i.pravatar.cc/150?u=94",
+    "content": "Sẽ giới thiệu cho bạn bè. (Đánh giá số 48)",
+    "images": [
+      "https://picsum.photos/id/346/400/400",
+      "https://picsum.photos/id/347/400/400",
+      "https://picsum.photos/id/348/400/400",
+      "https://picsum.photos/id/349/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2024-11-24T00:00:00Z"
+  },
+  {
+    "id": 49,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 16,
+    "user_name": "Trần Thị Bình",
+    "avatar": "https://i.pravatar.cc/150?u=16",
+    "content": "Giá cả hợp lý. (Đánh giá số 49)",
+    "images": [
+      "https://picsum.photos/id/353/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2024-11-23T00:00:00Z"
+  },
+  {
+    "id": 50,
+    "product_id": 1,
+    "type": "FOOD",
+    "user_id": 77,
+    "user_name": "Đỗ Văn Giang",
+    "avatar": "https://i.pravatar.cc/150?u=77",
+    "content": "Hương vị khó quên. (Đánh giá số 50)",
+    "images": [
+      "https://picsum.photos/id/360/400/400",
+      "https://picsum.photos/id/361/400/400",
+      "https://picsum.photos/id/362/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2024-11-22T00:00:00Z"
+  },
+  {
+    "id": 51,
+    "product_id": 2,
+    "type": "FOOD",
+    "user_id": 25,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=25",
+    "content": "Tạm ổn, không có gì đặc sắc. (Đánh giá số 1)",
+    "images": [
+      "https://picsum.photos/id/367/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-10T00:00:00Z"
+  },
+  {
+    "id": 52,
+    "product_id": 2,
+    "type": "FOOD",
+    "user_id": 38,
+    "user_name": "Lý Thị Hương",
+    "avatar": "https://i.pravatar.cc/150?u=38",
+    "content": "Rất đáng tiền. (Đánh giá số 2)",
+    "images": [
+      "https://picsum.photos/id/374/400/400",
+      "https://picsum.photos/id/375/400/400",
+      "https://picsum.photos/id/376/400/400",
+      "https://picsum.photos/id/377/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-09T00:00:00Z"
+  },
+  {
+    "id": 53,
+    "product_id": 2,
+    "type": "FOOD",
+    "user_id": 83,
+    "user_name": "Bùi Văn Hùng",
+    "avatar": "https://i.pravatar.cc/150?u=83",
+    "content": "Hương vị khó quên. (Đánh giá số 3)",
+    "images": [
+      "https://picsum.photos/id/381/400/400",
+      "https://picsum.photos/id/382/400/400",
+      "https://picsum.photos/id/383/400/400",
+      "https://picsum.photos/id/384/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-08T00:00:00Z"
+  },
+  {
+    "id": 54,
+    "product_id": 2,
+    "type": "FOOD",
+    "user_id": 40,
+    "user_name": "Nguyễn Văn An",
+    "avatar": "https://i.pravatar.cc/150?u=40",
+    "content": "Rất đáng tiền. (Đánh giá số 4)",
+    "images": [
+      "https://picsum.photos/id/388/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-07T00:00:00Z"
+  },
+  {
+    "id": 55,
+    "product_id": 2,
+    "type": "FOOD",
+    "user_id": 46,
+    "user_name": "Trần Thị Bình",
+    "avatar": "https://i.pravatar.cc/150?u=46",
+    "content": "Hương vị khó quên. (Đánh giá số 5)",
+    "images": [
+      "https://picsum.photos/id/395/400/400",
+      "https://picsum.photos/id/396/400/400",
+      "https://picsum.photos/id/397/400/400",
+      "https://picsum.photos/id/398/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-06T00:00:00Z"
+  },
+  {
+    "id": 56,
+    "product_id": 2,
+    "type": "FOOD",
+    "user_id": 96,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=96",
+    "content": "Chất lượng tuyệt vời. (Đánh giá số 6)",
+    "images": [
+      "https://picsum.photos/id/402/400/400",
+      "https://picsum.photos/id/403/400/400",
+      "https://picsum.photos/id/404/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-05T00:00:00Z"
+  },
+  {
+    "id": 57,
+    "product_id": 2,
+    "type": "FOOD",
+    "user_id": 54,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=54",
+    "content": "Sẽ giới thiệu cho bạn bè. (Đánh giá số 7)",
+    "images": [
+      "https://picsum.photos/id/409/400/400",
+      "https://picsum.photos/id/410/400/400",
+      "https://picsum.photos/id/411/400/400",
+      "https://picsum.photos/id/412/400/400",
+      "https://picsum.photos/id/413/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-04T00:00:00Z"
+  },
+  {
+    "id": 58,
+    "product_id": 2,
+    "type": "FOOD",
+    "user_id": 91,
+    "user_name": "Trần Thị Bình",
+    "avatar": "https://i.pravatar.cc/150?u=91",
+    "content": "Không gian quán đẹp (mình đoán vậy). (Đánh giá số 8)",
+    "images": [
+      "https://picsum.photos/id/416/400/400",
+      "https://picsum.photos/id/417/400/400",
+      "https://picsum.photos/id/418/400/400",
+      "https://picsum.photos/id/419/400/400",
+      "https://picsum.photos/id/420/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-03T00:00:00Z"
+  },
+  {
+    "id": 59,
+    "product_id": 2,
+    "type": "FOOD",
+    "user_id": 78,
+    "user_name": "Hoàng Văn Em",
+    "avatar": "https://i.pravatar.cc/150?u=78",
+    "content": "Giá cả hợp lý. (Đánh giá số 9)",
+    "images": [
+      "https://picsum.photos/id/423/400/400",
+      "https://picsum.photos/id/424/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-02T00:00:00Z"
+  },
+  {
+    "id": 60,
+    "product_id": 2,
+    "type": "FOOD",
+    "user_id": 92,
+    "user_name": "Lý Thị Hương",
+    "avatar": "https://i.pravatar.cc/150?u=92",
+    "content": "Giá cả hợp lý. (Đánh giá số 10)",
+    "images": [
+      "https://picsum.photos/id/430/400/400",
+      "https://picsum.photos/id/431/400/400",
+      "https://picsum.photos/id/432/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 61,
+    "product_id": 3,
+    "type": "FOOD",
+    "user_id": 23,
+    "user_name": "Ngô Thị Hoa",
+    "avatar": "https://i.pravatar.cc/150?u=23",
+    "content": "Vị hơi đậm so với mình. (Đánh giá số 1)",
+    "images": [
+      "https://picsum.photos/id/437/400/400",
+      "https://picsum.photos/id/438/400/400",
+      "https://picsum.photos/id/439/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-10T00:00:00Z"
+  },
+  {
+    "id": 62,
+    "product_id": 3,
+    "type": "FOOD",
+    "user_id": 61,
+    "user_name": "Lê Văn Cường",
+    "avatar": "https://i.pravatar.cc/150?u=61",
+    "content": "Sẽ giới thiệu cho bạn bè. (Đánh giá số 2)",
+    "images": [
+      "https://picsum.photos/id/444/400/400",
+      "https://picsum.photos/id/445/400/400",
+      "https://picsum.photos/id/446/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-09T00:00:00Z"
+  },
+  {
+    "id": 63,
+    "product_id": 3,
+    "type": "FOOD",
+    "user_id": 86,
+    "user_name": "Lê Văn Cường",
+    "avatar": "https://i.pravatar.cc/150?u=86",
+    "content": "Giá cả hợp lý. (Đánh giá số 3)",
+    "images": [
+      "https://picsum.photos/id/451/400/400",
+      "https://picsum.photos/id/452/400/400",
+      "https://picsum.photos/id/453/400/400",
+      "https://picsum.photos/id/454/400/400",
+      "https://picsum.photos/id/455/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-08T00:00:00Z"
+  },
+  {
+    "id": 64,
+    "product_id": 3,
+    "type": "FOOD",
+    "user_id": 19,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=19",
+    "content": "Giá cả hợp lý. (Đánh giá số 4)",
+    "images": [
+      "https://picsum.photos/id/458/400/400",
+      "https://picsum.photos/id/459/400/400",
+      "https://picsum.photos/id/460/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-07T00:00:00Z"
+  },
+  {
+    "id": 65,
+    "product_id": 3,
+    "type": "FOOD",
+    "user_id": 93,
+    "user_name": "Hoàng Văn Em",
+    "avatar": "https://i.pravatar.cc/150?u=93",
+    "content": "Sẽ giới thiệu cho bạn bè. (Đánh giá số 5)",
+    "images": [
+      "https://picsum.photos/id/465/400/400",
+      "https://picsum.photos/id/466/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-06T00:00:00Z"
+  },
+  {
+    "id": 66,
+    "product_id": 3,
+    "type": "FOOD",
+    "user_id": 30,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=30",
+    "content": "Không gian quán đẹp (mình đoán vậy). (Đánh giá số 6)",
+    "images": [
+      "https://picsum.photos/id/472/400/400",
+      "https://picsum.photos/id/473/400/400",
+      "https://picsum.photos/id/474/400/400",
+      "https://picsum.photos/id/475/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-05T00:00:00Z"
+  },
+  {
+    "id": 67,
+    "product_id": 3,
+    "type": "FOOD",
+    "user_id": 68,
+    "user_name": "Đỗ Văn Giang",
+    "avatar": "https://i.pravatar.cc/150?u=68",
+    "content": "Giao hàng nhanh, đóng gói cẩn thận. (Đánh giá số 7)",
+    "images": [
+      "https://picsum.photos/id/479/400/400",
+      "https://picsum.photos/id/480/400/400",
+      "https://picsum.photos/id/481/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-04T00:00:00Z"
+  },
+  {
+    "id": 68,
+    "product_id": 3,
+    "type": "FOOD",
+    "user_id": 50,
+    "user_name": "Lý Thị Hương",
+    "avatar": "https://i.pravatar.cc/150?u=50",
+    "content": "Vị hơi đậm so với mình. (Đánh giá số 8)",
+    "images": [
+      "https://picsum.photos/id/486/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-03T00:00:00Z"
+  },
+  {
+    "id": 69,
+    "product_id": 3,
+    "type": "FOOD",
+    "user_id": 51,
+    "user_name": "Ngô Thị Hoa",
+    "avatar": "https://i.pravatar.cc/150?u=51",
+    "content": "Giá cả hợp lý. (Đánh giá số 9)",
+    "images": [
+      "https://picsum.photos/id/493/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-02T00:00:00Z"
+  },
+  {
+    "id": 70,
+    "product_id": 3,
+    "type": "FOOD",
+    "user_id": 45,
+    "user_name": "Đỗ Văn Giang",
+    "avatar": "https://i.pravatar.cc/150?u=45",
+    "content": "Sẽ giới thiệu cho bạn bè. (Đánh giá số 10)",
+    "images": [
+      "https://picsum.photos/id/500/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 71,
+    "product_id": 11,
+    "type": "FOOD",
+    "user_id": 48,
+    "user_name": "Lê Văn Cường",
+    "avatar": "https://i.pravatar.cc/150?u=48",
+    "content": "Vị hơi đậm so với mình. (Đánh giá số 1)",
+    "images": [
+      "https://picsum.photos/id/507/400/400",
+      "https://picsum.photos/id/508/400/400",
+      "https://picsum.photos/id/509/400/400",
+      "https://picsum.photos/id/510/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-10T00:00:00Z"
+  },
+  {
+    "id": 72,
+    "product_id": 11,
+    "type": "FOOD",
+    "user_id": 99,
+    "user_name": "Hoàng Văn Em",
+    "avatar": "https://i.pravatar.cc/150?u=99",
+    "content": "Rất đáng tiền. (Đánh giá số 2)",
+    "images": [
+      "https://picsum.photos/id/514/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-09T00:00:00Z"
+  },
+  {
+    "id": 73,
+    "product_id": 11,
+    "type": "FOOD",
+    "user_id": 57,
+    "user_name": "Trần Thị Bình",
+    "avatar": "https://i.pravatar.cc/150?u=57",
+    "content": "Rất đáng tiền. (Đánh giá số 3)",
+    "images": [
+      "https://picsum.photos/id/521/400/400",
+      "https://picsum.photos/id/522/400/400",
+      "https://picsum.photos/id/523/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-08T00:00:00Z"
+  },
+  {
+    "id": 74,
+    "product_id": 11,
+    "type": "FOOD",
+    "user_id": 76,
+    "user_name": "Ngô Thị Hoa",
+    "avatar": "https://i.pravatar.cc/150?u=76",
+    "content": "Vị hơi đậm so với mình. (Đánh giá số 4)",
+    "images": [
+      "https://picsum.photos/id/528/400/400",
+      "https://picsum.photos/id/529/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-07T00:00:00Z"
+  },
+  {
+    "id": 75,
+    "product_id": 11,
+    "type": "FOOD",
+    "user_id": 43,
+    "user_name": "Phạm Thị Dung",
+    "avatar": "https://i.pravatar.cc/150?u=43",
+    "content": "Vị hơi đậm so với mình. (Đánh giá số 5)",
+    "images": [
+      "https://picsum.photos/id/535/400/400",
+      "https://picsum.photos/id/536/400/400",
+      "https://picsum.photos/id/537/400/400",
+      "https://picsum.photos/id/538/400/400",
+      "https://picsum.photos/id/539/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-06T00:00:00Z"
+  },
+  {
+    "id": 76,
+    "product_id": 11,
+    "type": "FOOD",
+    "user_id": 75,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=75",
+    "content": "Vị hơi đậm so với mình. (Đánh giá số 6)",
+    "images": [
+      "https://picsum.photos/id/542/400/400",
+      "https://picsum.photos/id/543/400/400",
+      "https://picsum.photos/id/544/400/400",
+      "https://picsum.photos/id/545/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-05T00:00:00Z"
+  },
+  {
+    "id": 77,
+    "product_id": 11,
+    "type": "FOOD",
+    "user_id": 15,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=15",
+    "content": "Chất lượng tuyệt vời. (Đánh giá số 7)",
+    "images": [
+      "https://picsum.photos/id/549/400/400",
+      "https://picsum.photos/id/550/400/400",
+      "https://picsum.photos/id/551/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-04T00:00:00Z"
+  },
+  {
+    "id": 78,
+    "product_id": 11,
+    "type": "FOOD",
+    "user_id": 56,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=56",
+    "content": "Tạm ổn, không có gì đặc sắc. (Đánh giá số 8)",
+    "images": [
+      "https://picsum.photos/id/556/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-03T00:00:00Z"
+  },
+  {
+    "id": 79,
+    "product_id": 11,
+    "type": "FOOD",
+    "user_id": 87,
+    "user_name": "Nguyễn Văn An",
+    "avatar": "https://i.pravatar.cc/150?u=87",
+    "content": "Giao hàng nhanh, đóng gói cẩn thận. (Đánh giá số 9)",
+    "images": [
+      "https://picsum.photos/id/563/400/400",
+      "https://picsum.photos/id/564/400/400",
+      "https://picsum.photos/id/565/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-02T00:00:00Z"
+  },
+  {
+    "id": 80,
+    "product_id": 11,
+    "type": "FOOD",
+    "user_id": 72,
+    "user_name": "Bùi Văn Hùng",
+    "avatar": "https://i.pravatar.cc/150?u=72",
+    "content": "Giao hàng nhanh, đóng gói cẩn thận. (Đánh giá số 10)",
+    "images": [
+      "https://picsum.photos/id/570/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 81,
+    "product_id": 101,
+    "type": "COURSE",
+    "user_id": 50,
+    "user_name": "Lý Thị Hương",
+    "avatar": "https://i.pravatar.cc/150?u=50",
+    "content": "Cảm ơn trung tâm. (Đánh giá số 1)",
+    "images": [
+      "https://picsum.photos/id/577/400/400",
+      "https://picsum.photos/id/578/400/400",
+      "https://picsum.photos/id/579/400/400",
+      "https://picsum.photos/id/580/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-10T00:00:00Z"
+  },
+  {
+    "id": 82,
+    "product_id": 101,
+    "type": "COURSE",
+    "user_id": 39,
+    "user_name": "Phạm Thị Dung",
+    "avatar": "https://i.pravatar.cc/150?u=39",
+    "content": "Cảm ơn trung tâm. (Đánh giá số 2)",
+    "images": [
+      "https://picsum.photos/id/584/400/400",
+      "https://picsum.photos/id/585/400/400",
+      "https://picsum.photos/id/586/400/400",
+      "https://picsum.photos/id/587/400/400",
+      "https://picsum.photos/id/588/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-09T00:00:00Z"
+  },
+  {
+    "id": 83,
+    "product_id": 101,
+    "type": "COURSE",
+    "user_id": 16,
+    "user_name": "Lê Văn Cường",
+    "avatar": "https://i.pravatar.cc/150?u=16",
+    "content": "Nội dung video chất lượng. (Đánh giá số 3)",
+    "images": [
+      "https://picsum.photos/id/591/400/400",
+      "https://picsum.photos/id/592/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-08T00:00:00Z"
+  },
+  {
+    "id": 84,
+    "product_id": 101,
+    "type": "COURSE",
+    "user_id": 50,
+    "user_name": "Trần Thị Bình",
+    "avatar": "https://i.pravatar.cc/150?u=50",
+    "content": "Tài liệu đi kèm đầy đủ. (Đánh giá số 4)",
+    "images": [
+      "https://picsum.photos/id/598/400/400",
+      "https://picsum.photos/id/599/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-07T00:00:00Z"
+  },
+  {
+    "id": 85,
+    "product_id": 101,
+    "type": "COURSE",
+    "user_id": 81,
+    "user_name": "Lý Thị Hương",
+    "avatar": "https://i.pravatar.cc/150?u=81",
+    "content": "Kiến thức thực tế. (Đánh giá số 5)",
+    "images": [
+      "https://picsum.photos/id/605/400/400",
+      "https://picsum.photos/id/606/400/400",
+      "https://picsum.photos/id/607/400/400",
+      "https://picsum.photos/id/608/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-06T00:00:00Z"
+  },
+  {
+    "id": 86,
+    "product_id": 101,
+    "type": "COURSE",
+    "user_id": 67,
+    "user_name": "Bùi Văn Hùng",
+    "avatar": "https://i.pravatar.cc/150?u=67",
+    "content": "Nội dung video chất lượng. (Đánh giá số 6)",
+    "images": [
+      "https://picsum.photos/id/612/400/400",
+      "https://picsum.photos/id/613/400/400",
+      "https://picsum.photos/id/614/400/400",
+      "https://picsum.photos/id/615/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-05T00:00:00Z"
+  },
+  {
+    "id": 87,
+    "product_id": 101,
+    "type": "COURSE",
+    "user_id": 69,
+    "user_name": "Hoàng Văn Em",
+    "avatar": "https://i.pravatar.cc/150?u=69",
+    "content": "Nội dung video chất lượng. (Đánh giá số 7)",
+    "images": [
+      "https://picsum.photos/id/619/400/400",
+      "https://picsum.photos/id/620/400/400",
+      "https://picsum.photos/id/621/400/400",
+      "https://picsum.photos/id/622/400/400",
+      "https://picsum.photos/id/623/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-04T00:00:00Z"
+  },
+  {
+    "id": 88,
+    "product_id": 101,
+    "type": "COURSE",
+    "user_id": 45,
+    "user_name": "Nguyễn Văn An",
+    "avatar": "https://i.pravatar.cc/150?u=45",
+    "content": "Nên mua nhé mọi người. (Đánh giá số 8)",
+    "images": [
+      "https://picsum.photos/id/626/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-03T00:00:00Z"
+  },
+  {
+    "id": 89,
+    "product_id": 101,
+    "type": "COURSE",
+    "user_id": 87,
+    "user_name": "Vũ Thị Phượng",
+    "avatar": "https://i.pravatar.cc/150?u=87",
+    "content": "Kiến thức thực tế. (Đánh giá số 9)",
+    "images": [
+      "https://picsum.photos/id/633/400/400",
+      "https://picsum.photos/id/634/400/400",
+      "https://picsum.photos/id/635/400/400",
+      "https://picsum.photos/id/636/400/400",
+      "https://picsum.photos/id/637/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-02T00:00:00Z"
+  },
+  {
+    "id": 90,
+    "product_id": 101,
+    "type": "COURSE",
+    "user_id": 49,
+    "user_name": "Đỗ Văn Giang",
+    "avatar": "https://i.pravatar.cc/150?u=49",
+    "content": "Dễ hiểu cho người mới. (Đánh giá số 10)",
+    "images": [
+      "https://picsum.photos/id/640/400/400",
+      "https://picsum.photos/id/641/400/400",
+      "https://picsum.photos/id/642/400/400",
+      "https://picsum.photos/id/643/400/400",
+      "https://picsum.photos/id/644/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": 91,
+    "product_id": 102,
+    "type": "COURSE",
+    "user_id": 41,
+    "user_name": "Trần Thị Bình",
+    "avatar": "https://i.pravatar.cc/150?u=41",
+    "content": "Học xong làm được luôn. (Đánh giá số 1)",
+    "images": [
+      "https://picsum.photos/id/647/400/400",
+      "https://picsum.photos/id/648/400/400",
+      "https://picsum.photos/id/649/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-10T00:00:00Z"
+  },
+  {
+    "id": 92,
+    "product_id": 102,
+    "type": "COURSE",
+    "user_id": 58,
+    "user_name": "Bùi Văn Hùng",
+    "avatar": "https://i.pravatar.cc/150?u=58",
+    "content": "Cảm ơn trung tâm. (Đánh giá số 2)",
+    "images": [
+      "https://picsum.photos/id/654/400/400",
+      "https://picsum.photos/id/655/400/400",
+      "https://picsum.photos/id/656/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-09T00:00:00Z"
+  },
+  {
+    "id": 93,
+    "product_id": 102,
+    "type": "COURSE",
+    "user_id": 71,
+    "user_name": "Lê Văn Cường",
+    "avatar": "https://i.pravatar.cc/150?u=71",
+    "content": "Cảm ơn trung tâm. (Đánh giá số 3)",
+    "images": [
+      "https://picsum.photos/id/661/400/400",
+      "https://picsum.photos/id/662/400/400",
+      "https://picsum.photos/id/663/400/400",
+      "https://picsum.photos/id/664/400/400",
+      "https://picsum.photos/id/665/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-08T00:00:00Z"
+  },
+  {
+    "id": 94,
+    "product_id": 102,
+    "type": "COURSE",
+    "user_id": 23,
+    "user_name": "Đỗ Văn Giang",
+    "avatar": "https://i.pravatar.cc/150?u=23",
+    "content": "Học xong làm được luôn. (Đánh giá số 4)",
+    "images": [
+      "https://picsum.photos/id/668/400/400",
+      "https://picsum.photos/id/669/400/400",
+      "https://picsum.photos/id/670/400/400",
+      "https://picsum.photos/id/671/400/400",
+      "https://picsum.photos/id/672/400/400"
+    ],
+    "rating": 4.0,
+    "created_at": "2025-01-07T00:00:00Z"
+  },
+  {
+    "id": 95,
+    "product_id": 102,
+    "type": "COURSE",
+    "user_id": 35,
+    "user_name": "Lý Thị Hương",
+    "avatar": "https://i.pravatar.cc/150?u=35",
+    "content": "Dễ hiểu cho người mới. (Đánh giá số 5)",
+    "images": [
+      "https://picsum.photos/id/675/400/400",
+      "https://picsum.photos/id/676/400/400",
+      "https://picsum.photos/id/677/400/400",
+      "https://picsum.photos/id/678/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-06T00:00:00Z"
+  },
+  {
+    "id": 96,
+    "product_id": 102,
+    "type": "COURSE",
+    "user_id": 30,
+    "user_name": "Lê Văn Cường",
+    "avatar": "https://i.pravatar.cc/150?u=30",
+    "content": "Dễ hiểu cho người mới. (Đánh giá số 6)",
+    "images": [
+      "https://picsum.photos/id/682/400/400",
+      "https://picsum.photos/id/683/400/400",
+      "https://picsum.photos/id/684/400/400",
+      "https://picsum.photos/id/685/400/400",
+      "https://picsum.photos/id/686/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-05T00:00:00Z"
+  },
+  {
+    "id": 97,
+    "product_id": 102,
+    "type": "COURSE",
+    "user_id": 70,
+    "user_name": "Ngô Thị Hoa",
+    "avatar": "https://i.pravatar.cc/150?u=70",
+    "content": "Hỗ trợ sau khóa học rất tốt. (Đánh giá số 7)",
+    "images": [
+      "https://picsum.photos/id/689/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-04T00:00:00Z"
+  },
+  {
+    "id": 98,
+    "product_id": 102,
+    "type": "COURSE",
+    "user_id": 16,
+    "user_name": "Đỗ Văn Giang",
+    "avatar": "https://i.pravatar.cc/150?u=16",
+    "content": "Nội dung video chất lượng. (Đánh giá số 8)",
+    "images": [
+      "https://picsum.photos/id/696/400/400",
+      "https://picsum.photos/id/697/400/400",
+      "https://picsum.photos/id/698/400/400",
+      "https://picsum.photos/id/699/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-03T00:00:00Z"
+  },
+  {
+    "id": 99,
+    "product_id": 102,
+    "type": "COURSE",
+    "user_id": 32,
+    "user_name": "Lê Văn Cường",
+    "avatar": "https://i.pravatar.cc/150?u=32",
+    "content": "Tài liệu đi kèm đầy đủ. (Đánh giá số 9)",
+    "images": [
+      "https://picsum.photos/id/703/400/400"
+    ],
+    "rating": 5.0,
+    "created_at": "2025-01-02T00:00:00Z"
+  },
+  {
+    "id": 100,
+    "product_id": 102,
+    "type": "COURSE",
+    "user_id": 16,
+    "user_name": "Hoàng Văn Em",
+    "avatar": "https://i.pravatar.cc/150?u=16",
+    "content": "Kiến thức thực tế. (Đánh giá số 10)",
+    "images": [
+      "https://picsum.photos/id/710/400/400",
+      "https://picsum.photos/id/711/400/400"
+    ],
+    "rating": 4.5,
+    "created_at": "2025-01-01T00:00:00Z"
+  }
+]
