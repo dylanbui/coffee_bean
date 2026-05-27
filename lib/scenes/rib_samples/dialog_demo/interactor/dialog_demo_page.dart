@@ -4,17 +4,17 @@ import 'package:db_core/utils/app_label.dart';
 import 'package:db_core/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 
 // ignore: must_be_immutable
-class DialogDemoPage extends CubitStateFulWidget<DialogDemoInteractor, DialogDemoState> {
+class DialogDemoPage extends AppCubitStateFulWidget<DialogDemoInteractor, DialogDemoState> {
   DialogDemoPage({super.key, required super.interactor});
 
   @override
   State<DialogDemoPage> createState() => _DialogDemoPageState();
 }
 
-class _DialogDemoPageState extends CubitState<DialogDemoPage, DialogDemoInteractor, DialogDemoState> {
+class _DialogDemoPageState extends AppCubitState<DialogDemoPage, DialogDemoInteractor, DialogDemoState> {
   @override
   void initState() {
     super.initState();
@@ -23,7 +23,7 @@ class _DialogDemoPageState extends CubitState<DialogDemoPage, DialogDemoInteract
   }
 
   @override
-  dynamic getAppBar(BuildContext context) => "Flash Dialog Demo";
+  String? getTitle() => "Flash Dialog Demo";
 
   @override
   Widget getBody(BuildContext context) {

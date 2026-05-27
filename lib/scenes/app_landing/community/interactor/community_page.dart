@@ -1,19 +1,19 @@
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/scenes/app_landing/community/interactor/community_interactor.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 
 //ignore: must_be_immutable
-class CommunityPage extends CubitStateFulWidget<CommunityInteractor, CommunityState> {
+class CommunityPage extends AppCubitStateFulWidget<CommunityInteractor, CommunityState> {
   CommunityPage({super.key, required super.interactor});
 
   @override
   State<CommunityPage> createState() => _CommunityPageState();
 }
 
-class _CommunityPageState extends CubitState<CommunityPage, CommunityInteractor, CommunityState> with SingleTickerProviderStateMixin {
+class _CommunityPageState extends AppCubitState<CommunityPage, CommunityInteractor, CommunityState> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -29,7 +29,7 @@ class _CommunityPageState extends CubitState<CommunityPage, CommunityInteractor,
   }
 
   @override
-  dynamic getAppBar(BuildContext context) {
+  PreferredSizeWidget? getAppBar(BuildContext context) {
     return AppBar(
       title: const Text(
         "Cộng đồng",
@@ -49,6 +49,14 @@ class _CommunityPageState extends CubitState<CommunityPage, CommunityInteractor,
           Tab(text: "Hoạt động"),
         ],
       ),
+    );
+  }
+
+  @override
+  Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
+    return Scaffold(
+      appBar: appBar,
+      body: body,
     );
   }
 

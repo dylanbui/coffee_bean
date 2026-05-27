@@ -9,38 +9,38 @@
 
 import 'package:coffee_bean/scenes/user_features/user_gift_pack/interactor/user_gift_pack_event_state.dart';
 import 'package:coffee_bean/scenes/user_features/user_gift_pack/interactor/user_gift_pack_interactor.dart';
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 
 //ignore: must_be_immutable
-class UserGiftPackPage extends CubitStateFulWidget<UserGiftPackInteractor, UserGiftPackState> {
+class UserGiftPackPage extends AppCubitStateFulWidget<UserGiftPackInteractor, UserGiftPackState> {
   UserGiftPackPage({super.key, required super.interactor});
 
   @override
   State<UserGiftPackPage> createState() => _UserGiftPackPageState();
 }
 
-class _UserGiftPackPageState extends CubitState<UserGiftPackPage, UserGiftPackInteractor, UserGiftPackState> {
+class _UserGiftPackPageState extends AppCubitState<UserGiftPackPage, UserGiftPackInteractor, UserGiftPackState> {
 
   @override
-  Widget build(BuildContext context) {
-    buildContext = context;
-    // Tùy chỉnh Scaffold với extendBodyBehindAppBar
-    return BlocProvider.value(
-      value: interactor,
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: coffeeAppBar("Newcomer Gift Pack", leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.black),
-          onPressed: () => interactor.router?.pop(), //  Navigator.of(context).pop()
-        ),),
-        body: getBody(context),
-      ),
+  String? getTitle() => "Newcomer Gift Pack";
+
+  @override
+  Widget? getLeading() => IconButton(
+    icon: const Icon(Icons.close, color: Colors.black),
+    onPressed: () => interactor.router?.pop(),
+  );
+
+  @override
+  Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: appBar,
+      body: body,
     );
   }
 

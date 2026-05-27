@@ -11,22 +11,21 @@ import 'package:coffee_bean/scenes/user_features/set_password/interactor/set_pas
 import 'package:coffee_bean/scenes/user_features/set_password/interactor/set_password_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/widget/password_field.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 
 //ignore: must_be_immutable
-class SetPasswordPage extends CubitStateFulWidget<SetPasswordInteractor, SetPasswordState> {
+class SetPasswordPage extends AppCubitStateFulWidget<SetPasswordInteractor, SetPasswordState> {
   SetPasswordPage({super.key, required super.interactor});
 
   @override
   State<SetPasswordPage> createState() => _SetPasswordPageState();
 }
 
-class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInteractor, SetPasswordState> {
+class _SetPasswordPageState extends AppCubitState<SetPasswordPage, SetPasswordInteractor, SetPasswordState> {
   final _setPasswordController = SetPasswordController();
 
   @override
@@ -36,20 +35,18 @@ class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInter
   }
 
   @override
-  dynamic getAppBar(BuildContext context) => coffeeAppBar("Set Password");
+  String? getTitle() => "Set Password";
 
   @override
-  Widget build(BuildContext context) {
-    buildContext = context;
-
-    var appBar = getAppBar(context);
-    return BlocProvider.value(
-      value: interactor,
-      child: Scaffold(
-        backgroundColor: TMLabsColor.white,
-        appBar: appBar as PreferredSizeWidget?,
-        resizeToAvoidBottomInset: false,
-        body: getBody(context),
+  Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
+    return Scaffold(
+      backgroundColor: TMLabsColor.white,
+      appBar: appBar,
+      resizeToAvoidBottomInset: false,
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: body,
       ),
     );
   }
@@ -78,43 +75,33 @@ class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInter
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: TMLabsColor.error),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: TMLabsColor.error));
   }
 
   Widget _buildMainContent(BuildContext context, SetPasswordState state) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 30),
-                  _buildHeader(),
-                  const SizedBox(height: 40),
-                  _buildInputs(),
-                  const SizedBox(height: 40),
-                  AppButton(
-                    text: "Set Password",
-                    isLoading: state is SetPasswordInProgress,
-                    onPressed: _handleSubmit,
-                  ),
-                  const Spacer(),
-                  const SizedBox(height: 20),
-                ],
-              ),
+    return CustomScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      slivers: [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 30),
+                _buildHeader(),
+                const SizedBox(height: 40),
+                _buildInputs(),
+                const SizedBox(height: 40),
+                AppButton(text: "Set Password", isLoading: state is SetPasswordInProgress, onPressed: _handleSubmit),
+                const Spacer(),
+                const SizedBox(height: 20),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -122,10 +109,7 @@ class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInter
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Set New Password",
-          style: TMLabsTextStyle.h1,
-        ),
+        Text("Set New Password", style: TMLabsTextStyle.h1),
         const SizedBox(height: 8),
         Text(
           "Please enter your new password to continue.",
@@ -136,10 +120,7 @@ class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInter
   }
 
   Widget _buildInputs() {
-    return PasswordField(
-      controller: _setPasswordController.passwordController,
-      hint: "Enter Password",
-    );
+    return PasswordField(controller: _setPasswordController.passwordController, hint: "Enter Password");
   }
 
   // endregion
@@ -147,7 +128,7 @@ class _SetPasswordPageState extends CubitState<SetPasswordPage, SetPasswordInter
   // region Logic Handlers
 
   void _handleSubmit() {
-    _setPasswordController.validateSetPassword(interactor, _showError,);
+    _setPasswordController.validateSetPassword(interactor, _showError);
   }
 
   // endregion

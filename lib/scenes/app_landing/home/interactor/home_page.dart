@@ -1,5 +1,5 @@
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
@@ -18,32 +18,32 @@ import 'package:coffee_bean/scenes/app_landing/home/interactor/widget/course_vid
 import 'package:coffee_bean/scenes/app_landing/home/interactor/widget/financial_courses_panel.dart';
 
 //ignore: must_be_immutable
-class HomePage extends CubitStateFulWidget<HomeInteractor, HomeState> {
+class HomePage extends AppCubitStateFulWidget<HomeInteractor, HomeState> {
   HomePage({super.key, required super.interactor});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends CubitState<HomePage, HomeInteractor, HomeState> {
+class _HomePageState extends AppCubitState<HomePage, HomeInteractor, HomeState> {
   @override
-  dynamic getAppBar(BuildContext context) => null;
+  String? getTitle() => null;
 
   @override
-  Widget build(BuildContext context) {
-    buildContext = context;
-    return BlocProvider.value(
-      value: interactor,
-      child: BlocBuilder<HomeInteractor, HomeState>(
-        buildWhen: (previous, current) => previous.isInitialLoading != current.isInitialLoading,
-        builder: (context, state) {
-          if (state.isInitialLoading) {
-            return const Scaffold(body: Center(child: LoadingView(width: 150, height: 150)));
-          }
+  Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
+    return BlocBuilder<HomeInteractor, HomeState>(
+      buildWhen: (previous, current) => previous.isInitialLoading != current.isInitialLoading,
+      builder: (context, state) {
+        if (state.isInitialLoading) {
+          return const Scaffold(body: Center(child: LoadingView(width: 150, height: 150)));
+        }
 
-          return Scaffold(backgroundColor: TMLabsColor.white, body: getBody(context));
-        },
-      ),
+        return Scaffold(
+          backgroundColor: TMLabsColor.white,
+          appBar: appBar,
+          body: body,
+        );
+      },
     );
   }
 

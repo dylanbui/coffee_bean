@@ -1,5 +1,5 @@
 import 'package:coffee_bean/utils/flash_utils/flash_modal_helper.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:db_core/utils/flash_utils/date_time_ext.dart';
 import 'package:db_core/utils/logger.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_calendar_config.dart';
@@ -14,17 +14,17 @@ import 'package:coffee_bean/scenes/rib_samples/flash_demo/interactor/flash_demo_
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 //ignore: must_be_immutable
-class FlashDemoPage extends CubitStateFulWidget<FlashDemoInteractor, FlashDemoState> {
+class FlashDemoPage extends AppCubitStateFulWidget<FlashDemoInteractor, FlashDemoState> {
   FlashDemoPage({super.key, required super.interactor});
 
   @override
   State<FlashDemoPage> createState() => _FlashDemoPageState();
 }
 
-class _FlashDemoPageState extends CubitState<FlashDemoPage, FlashDemoInteractor, FlashDemoState> {
+class _FlashDemoPageState extends AppCubitState<FlashDemoPage, FlashDemoInteractor, FlashDemoState> {
   
   @override
-  dynamic getAppBar(BuildContext context) => "Flash Library Demo";
+  String? getTitle() => "Flash Library Demo";
 
   @override
   Widget getBody(BuildContext context) {

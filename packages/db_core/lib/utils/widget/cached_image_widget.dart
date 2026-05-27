@@ -52,26 +52,25 @@ class DbCachedImageWidget extends StatelessWidget {
       return _buildErrorState();
     }
 
-    // Optimization: Get pixel ratio without subscribing to full MediaQuery updates
+    // Optimization: Get pixel ratio and screen size
     final double ratio = View.of(context).devicePixelRatio;
+    final Size screenSize = MediaQuery.sizeOf(context);
 
     // Logic xử lý MemCache để chống méo và tối ưu RAM:
-    // Chúng ta chỉ cung cấp MỘT trong hai giá trị (Width hoặc Height) cho memCache.
-    // Thư viện sẽ tự động resize chiều còn lại theo đúng tỷ lệ ảnh gốc (Aspect Ratio).
+    // Nếu width/height không xác định (null hoặc infinity), dùng x2 kích thước màn hình làm mốc tối đa.
+    // Chúng ta chỉ cung cấp MỘT trong hai giá trị (Width hoặc Height) cho memCache để thư viện
+    // tự động resize chiều còn lại theo đúng tỷ lệ ảnh gốc (Aspect Ratio), tránh méo hình.
+    double effectiveWidth = (width == null || !width!.isFinite) ? screenSize.width * 2 : width! * 2;
+    double effectiveHeight = (height == null || !height!.isFinite) ? screenSize.height * 2 : height! * 2;
+
     int? cacheWidth;
     int? cacheHeight;
 
-    if (width != null && height != null) {
-      // Nếu có cả 2, chọn chiều lớn hơn để đảm bảo độ nét
-      if (width! >= height!) {
-        cacheWidth = (width! * ratio).toInt();
-      } else {
-        cacheHeight = (height! * ratio).toInt();
-      }
-    } else if (width != null) {
-      cacheWidth = (width! * ratio).toInt();
-    } else if (height != null) {
-      cacheHeight = (height! * ratio).toInt();
+    // Chọn chiều lớn hơn để ép cache, đảm bảo độ nét và không méo hình
+    if (effectiveWidth >= effectiveHeight) {
+      cacheWidth = (effectiveWidth * ratio).toInt();
+    } else {
+      cacheHeight = (effectiveHeight * ratio).toInt();
     }
 
     return ClipRRect(
@@ -83,10 +82,10 @@ class DbCachedImageWidget extends StatelessWidget {
         fit: fit,
         cacheManager: cacheManager ?? DbCachedImageConfig.customCacheManager,
         
-        // Cấu hình đã được tối ưu chống méo hình
+        // Cấu hình tối ưu: chỉ set 1 trong 2 để giữ Aspect Ratio
         memCacheWidth: cacheWidth,
         memCacheHeight: cacheHeight,
-        
+
         useOldImageOnUrlChange: useOldImageOnUrlChange,
         placeholder: (context, url) => placeholder ?? _buildDefaultPlaceholder(),
         errorWidget: (context, url, error) => errorWidget ?? _buildErrorState(),

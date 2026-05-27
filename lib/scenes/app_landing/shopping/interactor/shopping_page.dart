@@ -1,4 +1,4 @@
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_interactor.dart';
@@ -13,14 +13,14 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 
 //ignore: must_be_immutable
-class ShoppingPage extends CubitStateFulWidget<ShoppingInteractor, ShoppingState> {
+class ShoppingPage extends AppCubitStateFulWidget<ShoppingInteractor, ShoppingState> {
   ShoppingPage({super.key, required super.interactor});
 
   @override
   State<ShoppingPage> createState() => _ShoppingPageState();
 }
 
-class _ShoppingPageState extends CubitState<ShoppingPage, ShoppingInteractor, ShoppingState> {
+class _ShoppingPageState extends AppCubitState<ShoppingPage, ShoppingInteractor, ShoppingState> {
   final ItemScrollController _productScrollController = ItemScrollController();
   final ItemPositionsListener _productPositionsListener = ItemPositionsListener.create();
 
@@ -109,8 +109,15 @@ class _ShoppingPageState extends CubitState<ShoppingPage, ShoppingInteractor, Sh
   }
 
   @override
-  dynamic getAppBar(BuildContext context) {
-    return null; // Custom header in body
+  String? getTitle() => null;
+
+  @override
+  Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: appBar,
+      body: body,
+    );
   }
 
   @override

@@ -15,12 +15,11 @@ import 'package:coffee_bean/scenes/user_features/user_login/interactor/user_logi
 import 'package:coffee_bean/scenes/user_features/user_login/user_login_builder.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/widget/password_field.dart';
 import 'package:coffee_bean/shared/widget/phone_input_field.dart';
 import 'package:coffee_bean/shared/widget/underline_input_field.dart';
@@ -28,14 +27,14 @@ import 'package:db_core/utils/app_button.dart';
 import 'package:db_core/utils/fade_switcher.dart';
 
 //ignore: must_be_immutable
-class UserLoginPage extends CubitStateFulWidget<UserLoginInteractor, UserLoginState> {
+class UserLoginPage extends AppCubitStateFulWidget<UserLoginInteractor, UserLoginState> {
   UserLoginPage({super.key, required super.interactor});
 
   @override
   State<UserLoginPage> createState() => _UserLoginPageState();
 }
 
-class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor, UserLoginState>
+class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteractor, UserLoginState>
     with SingleTickerProviderStateMixin {
   late LoginController _loginController;
   late TabController _tabController;
@@ -62,28 +61,24 @@ class _UserLoginPageState extends CubitState<UserLoginPage, UserLoginInteractor,
   }
 
   @override
-  Widget build(BuildContext context) {
-    buildContext = context;
-    final appBar = coffeeAppBar("Login");
-    // GestureDetector,  DbKeyboardVisibility first
-    // BlocProvider inject Interactor
-    return BlocProvider.value(
-      value: interactor,
-      child: Scaffold(
-        backgroundColor: TMLabsColor.white,
-        appBar: appBar as PreferredSizeWidget?,
-        resizeToAvoidBottomInset: false,
-        body: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: DbKeyboardVisibility(
-            onChanged: (info) {
-              if (mounted && _isKeyboardVisible != info.isVisible) {
-                setState(() => _isKeyboardVisible = info.isVisible);
-              }
-            },
-            child: getBody(context),
-          ),
+  String? getTitle() => "Login";
+
+  @override
+  Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
+    return Scaffold(
+      backgroundColor: TMLabsColor.white,
+      appBar: appBar,
+      resizeToAvoidBottomInset: false,
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: DbKeyboardVisibility(
+          onChanged: (info) {
+            if (mounted && _isKeyboardVisible != info.isVisible) {
+              setState(() => _isKeyboardVisible = info.isVisible);
+            }
+          },
+          child: body,
         ),
       ),
     );

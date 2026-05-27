@@ -9,26 +9,28 @@
 
 import 'package:coffee_bean/scenes/global_search/interactor/global_search_event_state.dart';
 import 'package:coffee_bean/scenes/global_search/interactor/global_search_interactor.dart';
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/custom_search_app_bar.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:db_core/architecture_ribs/note_viewer.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 
 //ignore: must_be_immutable
-class GlobalSearchPage extends CubitStateFulWidget<GlobalSearchInteractor, GlobalSearchState> {
+class GlobalSearchPage extends AppCubitStateFulWidget<GlobalSearchInteractor, GlobalSearchState> {
   GlobalSearchPage({super.key, required super.interactor});
 
   @override
   State<GlobalSearchPage> createState() => _GlobalSearchPageState();
 }
 
-class _GlobalSearchPageState extends CubitState<GlobalSearchPage, GlobalSearchInteractor, GlobalSearchState> with SingleTickerProviderStateMixin {
+class _GlobalSearchPageState extends AppCubitState<GlobalSearchPage, GlobalSearchInteractor, GlobalSearchState> with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   TabController? _tabController;
+
+  @override
+  bool get tapToUnfocus => true;
 
   @override
   void dispose() {
@@ -38,7 +40,7 @@ class _GlobalSearchPageState extends CubitState<GlobalSearchPage, GlobalSearchIn
   }
 
   @override
-  dynamic getAppBar(BuildContext context) {
+  PreferredSizeWidget? getAppBar(BuildContext context) {
     return CustomSearchAppBar(
       controller: _searchController,
       onChanged: (value) {
@@ -56,26 +58,23 @@ class _GlobalSearchPageState extends CubitState<GlobalSearchPage, GlobalSearchIn
 
   @override
   Widget getBody(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: BlocBuilder<GlobalSearchInteractor, GlobalSearchState>(
-        builder: (context, state) {
-          // Initialize or update TabController when categories are available
-          if (_tabController == null || _tabController!.length != state.categories.length) {
-            _tabController?.dispose();
-            _tabController = TabController(length: state.categories.length, vsync: this);
-          }
+    return BlocBuilder<GlobalSearchInteractor, GlobalSearchState>(
+      builder: (context, state) {
+        // Initialize or update TabController when categories are available
+        if (_tabController == null || _tabController!.length != state.categories.length) {
+          _tabController?.dispose();
+          _tabController = TabController(length: state.categories.length, vsync: this);
+        }
 
-          return Column(
-            children: [
-              _buildTabBar(state.categories),
-              Expanded(
-                child: _buildContent(state),
-              ),
-            ],
-          );
-        },
-      ),
+        return Column(
+          children: [
+            _buildTabBar(state.categories),
+            Expanded(
+              child: _buildContent(state),
+            ),
+          ],
+        );
+      },
     );
   }
 

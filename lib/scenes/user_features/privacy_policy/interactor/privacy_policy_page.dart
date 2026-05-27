@@ -9,44 +9,32 @@
 
 import 'package:coffee_bean/scenes/user_features/privacy_policy/interactor/privacy_policy_event_state.dart';
 import 'package:coffee_bean/scenes/user_features/privacy_policy/interactor/privacy_policy_interactor.dart';
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 
 //ignore: must_be_immutable
-class PrivacyPolicyPage extends CubitStateFulWidget<PrivacyPolicyInteractor, PrivacyPolicyState> {
+class PrivacyPolicyPage extends AppCubitStateFulWidget<PrivacyPolicyInteractor, PrivacyPolicyState> {
   PrivacyPolicyPage({super.key, required super.interactor});
 
   @override
   State<PrivacyPolicyPage> createState() => _PrivacyPolicyPageState();
 }
 
-class _PrivacyPolicyPageState extends CubitState<PrivacyPolicyPage, PrivacyPolicyInteractor, PrivacyPolicyState> {
+class _PrivacyPolicyPageState extends AppCubitState<PrivacyPolicyPage, PrivacyPolicyInteractor, PrivacyPolicyState> {
 
   @override
-  dynamic getAppBar(BuildContext context) => coffeeAppBar("Privacy Policy");
+  String? getTitle() => "Privacy Policy";
 
   @override
-  Widget build(BuildContext context) {
-    buildContext = context;
-
-    var appBar = getAppBar(context);
-
-    if (widget.showAppBar == false) {
-      appBar = null;
-    }
-
-    return BlocProvider.value(
-      value: interactor,
-      child: Scaffold(
-        backgroundColor: TMLabsColor.white,
-        appBar: appBar as PreferredSizeWidget?,
-        body: getBody(context),
-      ),
+  Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
+    return Scaffold(
+      backgroundColor: TMLabsColor.white,
+      appBar: appBar,
+      body: body,
     );
   }
 

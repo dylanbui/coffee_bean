@@ -1,23 +1,23 @@
-import 'dart:io';
-import 'package:db_core/architecture_ribs/note_viewer.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; // This import might be wrong if it's flutter_bloc.dart
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/shared/widget/image_wechat_picker_list_view.dart';
-import 'problem_report_interactor.dart';
-import 'problem_report_event_state.dart';
+import 'package:coffee_bean/scenes/problem_report/interactor/problem_report_interactor.dart';
+import 'package:coffee_bean/scenes/problem_report/interactor/problem_report_event_state.dart';
 
 //ignore: must_be_immutable
-class ProblemReportPage extends CubitStateFulWidget<ProblemReportInteractor, ProblemReportState> {
+class ProblemReportPage extends AppCubitStateFulWidget<ProblemReportInteractor, ProblemReportState> {
   ProblemReportPage({super.key, required super.interactor});
 
   @override
   State<ProblemReportPage> createState() => _ProblemReportPageState();
 }
 
-class _ProblemReportPageState extends CubitState<ProblemReportPage, ProblemReportInteractor, ProblemReportState> {
+class _ProblemReportPageState extends AppCubitState<ProblemReportPage, ProblemReportInteractor, ProblemReportState> {
   final TextEditingController _textController = TextEditingController();
+
+  @override
+  bool get tapToUnfocus => true;
 
   @override
   void dispose() {
@@ -26,7 +26,7 @@ class _ProblemReportPageState extends CubitState<ProblemReportPage, ProblemRepor
   }
 
   @override
-  dynamic getAppBar(BuildContext context) => "Problems Report";
+  String? getTitle() => "Problems Report";
 
   @override
   Widget getBody(BuildContext context) {

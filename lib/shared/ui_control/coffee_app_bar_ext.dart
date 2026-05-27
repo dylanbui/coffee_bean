@@ -1,10 +1,10 @@
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:flutter/material.dart';
 
-/// Extension for [CubitState] to provide easy access to Coffee Bean styled AppBars.
-extension CoffeeAppBarX on CubitState {
+/// Extension for [AppCubitState] to provide easy access to Coffee Bean styled AppBars.
+extension CoffeeAppBarX on AppCubitState {
   
   /// Build a standard Coffee Bean AppBar with the given [title].
   /// Default style is [TmLabAppBarStyle.transparentStyle].
@@ -17,7 +17,7 @@ extension CoffeeAppBarX on CubitState {
     return CoffeeAppBar(
       title: title,
       style: style ?? TmLabAppBarStyle.transparentStyle,
-      actions: actions ?? getAppBarAction(),
+      actions: actions ?? getActions(),
       leading: leading,
       onBackTap: onBackTap,
     );

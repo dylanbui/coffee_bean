@@ -1,4 +1,4 @@
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
@@ -14,16 +14,24 @@ import 'package:db_core/utils/app_label.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
 
 //ignore: must_be_immutable
-class StoreListPage extends CubitStateFulWidget<StoreListInteractor, StoreListState> {
+class StoreListPage extends AppCubitStateFulWidget<StoreListInteractor, StoreListState> {
   StoreListPage({super.key, required super.interactor});
 
   @override
   State<StoreListPage> createState() => _StoreListPageState();
 }
 
-class _StoreListPageState extends CubitState<StoreListPage, StoreListInteractor, StoreListState> {
+class _StoreListPageState extends AppCubitState<StoreListPage, StoreListInteractor, StoreListState> {
   @override
-  dynamic getAppBar(BuildContext context) => whiteCoffeeAppBar("Chọn cửa hàng");
+  String? getTitle() => "Chọn cửa hàng";
+
+  @override
+  Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
+    return Scaffold(
+      appBar: appBar,
+      body: body,
+    );
+  }
 
   @override
   Widget getBody(BuildContext context) {

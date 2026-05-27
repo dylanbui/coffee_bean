@@ -9,44 +9,32 @@
 
 import 'package:coffee_bean/scenes/user_features/user_agreement/interactor/user_agreement_event_state.dart';
 import 'package:coffee_bean/scenes/user_features/user_agreement/interactor/user_agreement_interactor.dart';
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 
 //ignore: must_be_immutable
-class UserAgreementPage extends CubitStateFulWidget<UserAgreementInteractor, UserAgreementState> {
+class UserAgreementPage extends AppCubitStateFulWidget<UserAgreementInteractor, UserAgreementState> {
   UserAgreementPage({super.key, required super.interactor});
 
   @override
   State<UserAgreementPage> createState() => _UserAgreementPageState();
 }
 
-class _UserAgreementPageState extends CubitState<UserAgreementPage, UserAgreementInteractor, UserAgreementState> {
+class _UserAgreementPageState extends AppCubitState<UserAgreementPage, UserAgreementInteractor, UserAgreementState> {
 
   @override
-  dynamic getAppBar(BuildContext context) => coffeeAppBar("User Agreement");
+  String? getTitle() => "User Agreement";
 
   @override
-  Widget build(BuildContext context) {
-    buildContext = context;
-
-    var appBar = getAppBar(context);
-
-    if (widget.showAppBar == false) {
-      appBar = null;
-    }
-
-    return BlocProvider.value(
-      value: interactor,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: appBar as PreferredSizeWidget?,
-        resizeToAvoidBottomInset: false,
-        body: getBody(context),
-      ),
+  Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: appBar,
+      resizeToAvoidBottomInset: false,
+      body: body,
     );
   }
 

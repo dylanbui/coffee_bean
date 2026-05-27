@@ -1,5 +1,5 @@
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:coffee_bean/scenes/app_landing/home/home_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/community/community_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/main_tabbar/interactor/main_tabbar_event_state.dart';
@@ -14,14 +14,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // ignore: must_be_immutable
-class MainTabbarPage extends CubitStateFulWidget<MainTabbarInteractor, MainTabbarState> {
+class MainTabbarPage extends AppCubitStateFulWidget<MainTabbarInteractor, MainTabbarState> {
   MainTabbarPage({super.key, required super.interactor});
 
   @override
   State<StatefulWidget> createState() => _MainTabbarPageState();
 }
 
-class _MainTabbarPageState extends CubitState<MainTabbarPage, MainTabbarInteractor, MainTabbarState> {
+class _MainTabbarPageState extends AppCubitState<MainTabbarPage, MainTabbarInteractor, MainTabbarState> {
   final List<_TabItem> _pages = [];
 
   @override
@@ -68,22 +68,31 @@ class _MainTabbarPageState extends CubitState<MainTabbarPage, MainTabbarInteract
   int _indexInStack(int selectedIndex) => _pages.indexWhere((element) => element.index == selectedIndex);
 
   @override
-  Widget build(BuildContext context) {
-    buildContext = context;
-    return BlocProvider.value(
-      value: interactor,
-      child: BlocBuilder<MainTabbarInteractor, MainTabbarState>(
-        builder: (context, state) {
-          _ensurePageLoaded(state.selectedIndex);
-          return Scaffold(
-            body: FadeIndexedStack(
-              index: _indexInStack(state.selectedIndex),
-              children: _pages.map((e) => e.widget).toList(),
-            ),
-            bottomNavigationBar: _buildBottomNavigationBar(state.selectedIndex),
-          );
-        },
-      ),
+  String? getTitle() => null;
+
+  @override
+  Widget getBody(BuildContext context) {
+    return BlocBuilder<MainTabbarInteractor, MainTabbarState>(
+      builder: (context, state) {
+        _ensurePageLoaded(state.selectedIndex);
+        return FadeIndexedStack(
+          index: _indexInStack(state.selectedIndex),
+          children: _pages.map((e) => e.widget).toList(),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
+    return BlocBuilder<MainTabbarInteractor, MainTabbarState>(
+      buildWhen: (p, c) => p.selectedIndex != c.selectedIndex,
+      builder: (context, state) {
+        return Scaffold(
+          body: body, // 'body' lúc này chính là kết quả của hàm getBody trên kia
+          bottomNavigationBar: _buildBottomNavigationBar(state.selectedIndex),
+        );
+      },
     );
   }
 

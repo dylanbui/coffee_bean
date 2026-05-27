@@ -1,4 +1,4 @@
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/scenes/food_detail/interactor/food_detail_event_state.dart';
 import 'package:coffee_bean/scenes/food_detail/interactor/food_detail_interactor.dart';
 import 'package:coffee_bean/scenes/food_detail/interactor/widget/food_detail_comments_section.dart';
@@ -9,16 +9,17 @@ import 'package:coffee_bean/scenes/food_detail/interactor/widget/food_detail_sug
 import 'package:flutter/material.dart';
 
 //ignore: must_be_immutable
-class FoodDetailPage extends CubitStateFulWidget<FoodDetailInteractor, FoodDetailState> {
-  FoodDetailPage({super.key, required super.interactor}) {
-    showAppBar = false;
-  }
+class FoodDetailPage extends AppCubitStateFulWidget<FoodDetailInteractor, FoodDetailState> {
+  FoodDetailPage({super.key, required super.interactor});
 
   @override
   State<FoodDetailPage> createState() => _FoodDetailPageState();
 }
 
-class _FoodDetailPageState extends CubitState<FoodDetailPage, FoodDetailInteractor, FoodDetailState> {
+class _FoodDetailPageState extends AppCubitState<FoodDetailPage, FoodDetailInteractor, FoodDetailState> {
+  @override
+  String? getTitle() => null; // Hide AppBar
+
   @override
   Widget getBody(BuildContext context) {
     return Stack(

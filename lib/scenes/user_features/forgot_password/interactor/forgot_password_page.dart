@@ -16,20 +16,20 @@ import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/widget/phone_input_field.dart';
 import 'package:coffee_bean/shared/widget/underline_input_field.dart';
 import 'package:db_core/utils/app_button.dart';
 
 //ignore: must_be_immutable
-class ForgotPasswordPage extends CubitStateFulWidget<ForgotPasswordInteractor, ForgotPasswordState> {
+class ForgotPasswordPage extends AppCubitStateFulWidget<ForgotPasswordInteractor, ForgotPasswordState> {
   ForgotPasswordPage({super.key, required super.interactor});
 
   @override
   State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
 }
 
-class _ForgotPasswordPageState extends CubitState<ForgotPasswordPage, ForgotPasswordInteractor, ForgotPasswordState> {
+class _ForgotPasswordPageState extends AppCubitState<ForgotPasswordPage, ForgotPasswordInteractor, ForgotPasswordState> {
   late ForgotPasswordController _forgotPwController;
 
   // Logic Countdown for SMS
@@ -54,29 +54,18 @@ class _ForgotPasswordPageState extends CubitState<ForgotPasswordPage, ForgotPass
   }
 
   @override
-  dynamic getAppBar(BuildContext context) => coffeeAppBar("Forgot Password");
+  String? getTitle() => "Forgot Password";
 
   @override
-  Widget build(BuildContext context) {
-    buildContext = context;
-
-    var appBar = getAppBar(context);
-
-    if (widget.showAppBar == false) {
-      appBar = null;
-    }
-
-    return BlocProvider.value(
-      value: interactor,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: appBar as PreferredSizeWidget?,
-        resizeToAvoidBottomInset: false,
-        body: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: getBody(context),
-        ),
+  Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: appBar,
+      resizeToAvoidBottomInset: false,
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: body,
       ),
     );
   }
