@@ -1,4 +1,3 @@
-import 'package:coffee_bean/data/repository/comment_repository.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
@@ -11,34 +10,44 @@ import 'dart:math';
 class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetailState> {
   final CartService _cartService = locator<CartService>();
   final DatabaseService _dbService = locator<DatabaseService>();
-  final CommentRepository _commentRepository = locator<CommentRepository>();
+  final int foodId;
 
-  FoodDetailInteractor(FoodDetailRoutable router, TblFood product) 
-      : super(FoodDetailState(product: product), router: router);
+  FoodDetailInteractor(FoodDetailRoutable router, this.foodId) 
+      : super(FoodDetailState(), router: router);
 
   @override
   void onDidBecomeActive() {
     super.onDidBecomeActive();
+    _loadProductDetail();
+  }
+
+  Future<void> _loadProductDetail() async {
+    // Giả lập delay mạng
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    final product = await _dbService.isar.tblFoods.where().serverIdEqualTo(foodId).findFirst();
+    
+    if (product == null) {
+      emit(state.copyWith(isLoading: false));
+      return;
+    }
+
+    emit(state.copyWith(product: product, isLoading: false));
+    
+    // Sau khi có product mới load các thành phần liên quan
     _loadSuggestedProducts();
-    // _loadRecentComments();
     _initDefaultOptions();
   }
 
-  // Future<void> _loadRecentComments() async {
-  //   final comments = await _commentRepository.getComments(
-  //     productId: state.product.serverId,
-  //     type: "FOOD",
-  //     limit: 2,
-  //   );
-  //   emit(state.copyWith(recentComments: comments));
-  // }
-
   void _initDefaultOptions() {
-    final defaultOptions = state.product.defaultOptionsMap;
+    final product = state.product;
+    if (product == null) return;
+
+    final defaultOptions = product.defaultOptionsMap;
 
     // Đồng bộ số lượng từ giỏ hàng cho tổ hợp mặc định
     final optionsList = _getSelectedOptionsList(optionsMap: defaultOptions);
-    final cartQty = _cartService.getQuantity(state.product, optionsList);
+    final cartQty = _cartService.getQuantity(product, optionsList);
 
     emit(state.copyWith(
       selectedOptions: defaultOptions,
@@ -47,8 +56,10 @@ class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetai
   }
 
   Future<void> _loadSuggestedProducts() async {
+    if (state.product == null) return;
+
     final allFoods = await _dbService.isar.tblFoods.where()
-        .serverIdNotEqualTo(state.product.serverId)
+        .serverIdNotEqualTo(foodId)
         .findAll();
     
     if (allFoods.isEmpty) return;
@@ -77,14 +88,14 @@ class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetai
   }
 
   void selectOption(int propertyId, TblProductOption option) {
-    if (!option.isAvailable) return;
+    if (!option.isAvailable || state.product == null) return;
     
     final newOptions = Map<int, TblProductOption>.from(state.selectedOptions);
     newOptions[propertyId] = option;
 
     // Khi đổi option, kiểm tra xem tổ hợp mới này đã có trong giỏ hàng chưa
     final optionsList = _getSelectedOptionsList(optionsMap: newOptions);
-    final cartQty = _cartService.getQuantity(state.product, optionsList);
+    final cartQty = _cartService.getQuantity(state.product!, optionsList);
 
     emit(state.copyWith(
       selectedOptions: newOptions,
@@ -93,11 +104,11 @@ class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetai
   }
 
   void addToCart() {
-    if (state.isAddingToCart) return;
+    if (state.isAddingToCart || state.product == null) return;
     
     emit(state.copyWith(isAddingToCart: true));
     
-    _cartService.upsertCartItem(state.product, state.quantity, _getSelectedOptionsList());
+    _cartService.upsertCartItem(state.product!, state.quantity, _getSelectedOptionsList());
     
     DbToast.show(
       "Đã thêm vào giỏ hàng thành công",
@@ -105,7 +116,6 @@ class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetai
       duration: const Duration(milliseconds: 900),
     );
 
-    // Sau khi hiện toast xong (milliseconds 600) thì mở khóa cho bấm lại
     Future.delayed(const Duration(milliseconds: 1000), () {
       emit(state.copyWith(isAddingToCart: false));
     });
@@ -114,9 +124,11 @@ class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetai
   List<SelectedOption> _getSelectedOptionsList({Map<int, TblProductOption>? optionsMap}) {
     final list = <SelectedOption>[];
     final targetMap = optionsMap ?? state.selectedOptions;
+    final product = state.product;
+    if (product == null) return list;
     
     targetMap.forEach((propId, option) {
-      final prop = state.product.properties?.firstWhere((p) => p.serverId == propId);
+      final prop = product.properties?.firstWhere((p) => p.serverId == propId);
       list.add(SelectedOption()
         ..optionServerId = option.serverId
         ..groupName = prop?.groupName ?? ""
@@ -133,8 +145,4 @@ class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetai
   void goBack() {
     router?.pop();
   }
-
-  // void viewAllComments() {
-  //   router?.routeToCommentList(state.product.serverId, "FOOD");
-  // }
 }

@@ -15,7 +15,7 @@ class ShoppingRouter extends DbNoteRouter implements ShoppingRoutable {
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
     if (toRoute is FoodDetailRoute) {
-      final nextBuilder = FoodDetailBuilder(toRoute.product);
+      final nextBuilder = FoodDetailBuilder(toRoute.product.serverId);
       final nextRouter = nextBuilder.build();
       navigator.push(nextRouter.viewController);
     }

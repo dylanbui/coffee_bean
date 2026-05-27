@@ -6,14 +6,14 @@ import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FoodDetailBuilder extends DbNoteBuilder<FoodDetailRouter> {
-  final TblFood product;
+  final int foodId;
 
-  FoodDetailBuilder(this.product);
+  FoodDetailBuilder(this.foodId);
 
   @override
   FoodDetailRouter build() {
     final router = FoodDetailRouter();
-    final interactor = FoodDetailInteractor(router, product);
+    final interactor = FoodDetailInteractor(router, foodId);
     final page = FoodDetailPage(interactor: interactor);
     router.attach(interactor, page);
 

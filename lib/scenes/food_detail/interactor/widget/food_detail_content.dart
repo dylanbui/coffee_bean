@@ -17,22 +17,25 @@ class FoodDetailContent extends StatelessWidget {
     return BlocBuilder<FoodDetailInteractor, FoodDetailState>(
       buildWhen: (p, c) => p.product != c.product || p.selectedOptions != c.selectedOptions,
       builder: (context, state) {
+        final product = state.product;
+        if (product == null) return const SizedBox.shrink();
+
         return Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                state.product.name.toUpperCase(),
+                product.name.toUpperCase(),
                 style: TMLabsTextStyle.h1.copyWith(color: TMLabsColor.primary),
               ),
               Text(
-                state.product.description ?? "",
+                product.description ?? "",
                 style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
               ),
               const SizedBox(height: 10),
-              if (state.product.properties != null)
-                ...state.product.properties!.map((prop) => _buildPropertySelector(prop, state, context)),
+              if (product.properties != null)
+                ...product.properties!.map((prop) => _buildPropertySelector(prop, state, context)),
             ],
           ),
         );

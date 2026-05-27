@@ -2,21 +2,19 @@ import 'package:db_core/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 
 class FoodDetailState extends BaseBlocState {
-  final TblFood product;
+  final TblFood? product;
   final int quantity;
   final List<TblFood> suggestedProducts;
-  final List<TblComment> recentComments;
   final Map<int, TblProductOption> selectedOptions; // groupId -> selectedOption
   final bool isLoading;
   final bool isAddingToCart;
 
   FoodDetailState({
-    required this.product,
+    this.product,
     this.quantity = 1,
     this.suggestedProducts = const [],
-    this.recentComments = const [],
     this.selectedOptions = const {},
-    this.isLoading = false,
+    this.isLoading = true,
     this.isAddingToCart = false,
   });
 
@@ -24,7 +22,6 @@ class FoodDetailState extends BaseBlocState {
     TblFood? product,
     int? quantity,
     List<TblFood>? suggestedProducts,
-    List<TblComment>? recentComments,
     Map<int, TblProductOption>? selectedOptions,
     bool? isLoading,
     bool? isAddingToCart,
@@ -33,7 +30,6 @@ class FoodDetailState extends BaseBlocState {
       product: product ?? this.product,
       quantity: quantity ?? this.quantity,
       suggestedProducts: suggestedProducts ?? this.suggestedProducts,
-      recentComments: recentComments ?? this.recentComments,
       selectedOptions: selectedOptions ?? this.selectedOptions,
       isLoading: isLoading ?? this.isLoading,
       isAddingToCart: isAddingToCart ?? this.isAddingToCart,
@@ -41,13 +37,14 @@ class FoodDetailState extends BaseBlocState {
   }
 
   double get totalPrice {
+    if (product == null) return 0;
     double extra = 0;
     selectedOptions.forEach((key, value) {
       extra += value.extraPrice;
     });
-    return (product.price + extra) * quantity;
+    return (product!.price + extra) * quantity;
   }
 
   @override
-  List<Object?> get props => [product, quantity, suggestedProducts, recentComments, selectedOptions, isLoading, isAddingToCart];
+  List<Object?> get props => [product, quantity, suggestedProducts, selectedOptions, isLoading, isAddingToCart];
 }

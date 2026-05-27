@@ -29,9 +29,9 @@ class _FoodDetailHeaderState extends State<FoodDetailHeader> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<FoodDetailInteractor, FoodDetailState>(
-      buildWhen: (p, c) => p.product.images != c.product.images,
+      buildWhen: (p, c) => p.product?.images != c.product?.images,
       builder: (context, state) {
-        final images = state.product.images ?? [];
+        final images = state.product?.images ?? [];
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: const SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
