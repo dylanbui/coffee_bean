@@ -18,7 +18,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class UserAgreementCompleteRoute implements DbNoteRoute {}
 
 // --- BUILDER & ROUTER ---
-class UserAgreementBuilder extends DbNoteRouter implements DbNoteBuilder<UserAgreementBuilder> {
+class UserAgreementBuilder extends DbNoteSimpleRouterBuilder {
 
   UserAgreementBuilder();
 

@@ -18,7 +18,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class PrivacyPolicyCompleteRoute implements DbNoteRoute {}
 
 // --- BUILDER & ROUTER ---
-class PrivacyPolicyBuilder extends DbNoteRouter implements DbNoteBuilder<PrivacyPolicyBuilder> {
+class PrivacyPolicyBuilder extends DbNoteSimpleRouterBuilder {
 
   PrivacyPolicyBuilder();
 

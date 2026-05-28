@@ -7,6 +7,8 @@ export 'architecture_ribs/note_flow.dart';
 export 'architecture_ribs/note_interactor.dart';
 export 'architecture_ribs/note_router.dart';
 export 'architecture_ribs/note_viewer.dart';
+export 'architecture_ribs/note_dependency.dart';
+export 'architecture_ribs/note_plugin.dart';
 export 'architecture_ribs/window_controller.dart';
 export 'architecture_ribs/lifecycle.dart';
 

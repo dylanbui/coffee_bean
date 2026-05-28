@@ -1,3 +1,4 @@
+import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
@@ -7,13 +8,19 @@ import 'package:db_core/utils/toast.dart';
 import 'package:db_core/utils/locator.dart';
 import 'dart:math';
 
-class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetailState> {
+class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetailState> implements CommentListSmallListener {
   final CartService _cartService = locator<CartService>();
   final DatabaseService _dbService = locator<DatabaseService>();
   final int foodId;
+  
+  // Khởi tạo Controller tại đây để giữ vòng đời bền vững
+  final commentController = CommentListSmallController();
 
   FoodDetailInteractor(FoodDetailRoutable router, this.foodId) 
-      : super(FoodDetailState(), router: router);
+      : super(FoodDetailState(), router: router) {
+    // Đăng ký listener ngay khi khởi tạo
+    commentController.listener = this;
+  }
 
   @override
   void onDidBecomeActive() {
@@ -144,5 +151,12 @@ class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetai
 
   void goBack() {
     router?.pop();
+  }
+
+  @override
+  void onNavigateToAllComments(int productId, String type) {
+    // Thêm log để kiểm tra xem event đã lên tới Cha chưa
+    print("DEBUG: FoodDetailInteractor.onNavigateToAllComments called for product: $productId");
+    router?.gotoCommentList(productId, type);
   }
 }

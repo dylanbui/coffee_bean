@@ -8,6 +8,7 @@
  */
 
 import 'package:db_core/architecture_ribs/note_builder.dart';
+import 'package:db_core/architecture_ribs/note_dependency.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/user_features/forgot_password/forgot_password_builder.dart';
 import 'package:coffee_bean/scenes/user_features/privacy_policy/privacy_policy_builder.dart';
@@ -46,9 +47,12 @@ class UserLoginRouter extends DbNoteRouter {
   }
 }
 
+abstract class UserLoginBuildable implements DbNoteBuildable  {
+  UserLoginRouter build();
+}
 
 // --- BUILDER ---
-class UserLoginBuilder implements DbNoteBuilder<UserLoginRouter> {
+class UserLoginBuilder extends DbNoteBuilder implements UserLoginBuildable {
   UserLoginBuilder();
 
   @override
@@ -61,5 +65,7 @@ class UserLoginBuilder implements DbNoteBuilder<UserLoginRouter> {
 
     return router;
   }
+
+
 
 }

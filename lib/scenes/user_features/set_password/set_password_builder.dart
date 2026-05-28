@@ -18,7 +18,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class SetPasswordCompleteRoute implements DbNoteRoute {}
 
 // --- BUILDER & ROUTER ---
-class SetPasswordBuilder extends DbNoteRouter implements DbNoteBuilder<SetPasswordBuilder> {
+class SetPasswordBuilder extends DbNoteSimpleRouterBuilder {
 
   SetPasswordBuilder();
 

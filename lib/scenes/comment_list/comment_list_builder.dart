@@ -4,11 +4,25 @@ import 'package:coffee_bean/scenes/comment_list/interactor/comment_list_page.dar
 import 'package:coffee_bean/scenes/comment_list/plugins/small_comment_list/comment_list_small_interactor.dart';
 import 'package:coffee_bean/scenes/comment_list/plugins/small_comment_list/comment_list_small_widget.dart';
 import 'package:db_core/architecture_ribs/note_builder.dart';
+import 'package:db_core/architecture_ribs/note_plugin.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:flutter/material.dart';
 
+// Use for plugin CommentListSmall
+abstract interface class CommentListSmallListener {
+  // Bao cho parent class
+  void onNavigateToAllComments(int productId, String type);
+}
+
+class CommentListSmallController extends DbPluginController<CommentListSmallInteractor, CommentListSmallListener> {
+  void refresh() {
+    // Gia lap goi Plugin refresh
+    // interactor?.refreshData();
+  }
+}
+
 abstract interface class CommentListBuildable implements DbNoteBuildable {
-  Widget buildPlugin(int limitComments, DbNoteRoutable? parentRouter);
+  Widget buildPlugin(int limitComments, CommentListSmallController controller);
 }
 
 class CommentListBuilder extends DbNoteBuilder<CommentListRouter> implements CommentListBuildable {
@@ -28,13 +42,12 @@ class CommentListBuilder extends DbNoteBuilder<CommentListRouter> implements Com
   }
 
   @override
-  Widget buildPlugin(int limitComments, DbNoteRoutable? parentRouter) {
+  Widget buildPlugin(int limitComments, CommentListSmallController controller) {
     final router = CommentListRouter();
     // Sử dụng Interactor và Widget chuyên biệt cho Plugin Small
-    final interactor = CommentListSmallInteractor(router, productId: productId, type: type, limitComments: limitComments);
+    final interactor = CommentListSmallInteractor(router, productId: productId, type: type, limitComments: limitComments, controller: controller);
     final page = CommentListSmallWidget(interactor: interactor);
     router.attach(interactor, page);
-    router.parentRouter = parentRouter;
     return router.viewController;
   }
 }

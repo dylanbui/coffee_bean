@@ -60,7 +60,7 @@ class UserRegisterRouter extends DbNoteRouter {
 }
 
 // --- BUILDER ---
-class UserRegisterBuilder implements DbNoteBuilder<UserRegisterRouter> {
+class UserRegisterBuilder extends DbNoteBuilder<UserRegisterRouter> {
   UserRegisterBuilder();
 
   @override

@@ -12,13 +12,44 @@ import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/user_features/user_gift_pack/interactor/user_gift_pack_interactor.dart';
 import 'package:coffee_bean/scenes/user_features/user_gift_pack/interactor/user_gift_pack_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 
 // --- ROUTE ---
 class UserGiftPackCompleteRoute implements DbNoteRoute {}
 
+// class UserGiftPackRouter extends DbNoteRouter {
+//   UserGiftPackRouter();
+//
+//   @override
+//   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
+//     if (toRoute is UserGiftPackCompleteRoute) {
+//       navigator.pop(fromContext: fromContext);
+//     }
+//   }
+//
+// }
+//
+// class UserGiftPackBuilder extends DbNoteBuilder {
+//
+//   UserGiftPackBuilder();
+//
+//   @override
+//   UserGiftPackRouter build() {
+//     final router = UserGiftPackRouter();
+//     final interactor = UserGiftPackInteractor(router: router);
+//     final page = UserGiftPackPage(interactor: interactor);
+//
+//     router.attach(interactor, page);
+//
+//     return router;
+//   }
+//
+//
+// }
+
+
 // --- BUILDER & ROUTER ---
-class UserGiftPackBuilder extends DbNoteRouter implements DbNoteBuilder<UserGiftPackBuilder> {
+class UserGiftPackBuilder extends DbNoteSimpleRouterBuilder {
 
   UserGiftPackBuilder();
 

@@ -26,7 +26,7 @@ class SplashPageRouter extends DbNoteRouter {
 
 // --- BUILDER ---
 // Responsible for initializing the Interactor, Page, and connecting them.
-class SplashPageBuilder implements DbNoteBuilder<SplashPageRouter> {
+class SplashPageBuilder extends DbNoteBuilder<SplashPageRouter> {
   SplashPageListener? listener;
 
   SplashPageBuilder({required this.listener});
