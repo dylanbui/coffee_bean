@@ -17,14 +17,14 @@ import 'package:db_core/utils/locator.dart';
 class AppRouter extends DbNoteRouter {
   Future<void> successSyncDataFormServer() async {
     // Load trang dau tien
-    // MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
-    // final router = mainTabbarBuilder.build();
-    // navigator.pushSameRootPage(router.viewController);
+    MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
+    final router = mainTabbarBuilder.build();
+    navigator.pushSameRootPage(router.viewController);
 
     // final dbService = locator<DatabaseService>();
     // final product = await dbService.isar.tblFoods.where().serverIdEqualTo(1).findFirst();
-    FoodDetailBuilder builder = FoodDetailBuilder(1);
-    navigator.pushSameRootPage(builder.build().viewController);
+    // FoodDetailBuilder builder = FoodDetailBuilder(1);
+    // navigator.pushSameRootPage(builder.build().viewController);
 
 
     // final builder = DialogDemoBuilder();

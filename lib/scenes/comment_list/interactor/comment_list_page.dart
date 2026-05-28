@@ -3,6 +3,7 @@ import 'package:coffee_bean/scenes/comment_list/interactor/comment_list_interact
 import 'package:coffee_bean/scenes/comment_list/shared/comment_item_widget.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
+import 'package:db_core/utils/fade_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -41,34 +42,39 @@ class _CommentListPageState extends AppCubitState<CommentListPage, CommentListIn
   Widget getBody(BuildContext context) {
     return BlocBuilder<CommentListInteractor, CommentListState>(
       builder: (context, state) {
-        if (state.isLoading && state.comments.isEmpty) {
-          return const Center(child: CircularProgressIndicator(color: TMLabsColor.primary));
-        }
-
-        if (state.comments.isEmpty) {
-          return const Center(child: Text("Chưa có đánh giá nào"));
-        }
-
-        return RefreshIndicator(
-          onRefresh: interactor.loadComments,
-          color: TMLabsColor.primary,
-          child: ListView.builder(
-            controller: _scrollController,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            itemCount: state.comments.length + (state.hasMore ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (index < state.comments.length) {
-                return CommentItemWidget(comment: state.comments[index]);
-              } else {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: Center(child: CircularProgressIndicator(color: TMLabsColor.primary, strokeWidth: 2)),
-                );
-              }
-            },
-          ),
+        return FadeSwitcher(
+          duration: const Duration(milliseconds: 300),
+          showFirst: state.isLoading && state.comments.isEmpty,
+          first: const Center(child: CircularProgressIndicator(color: TMLabsColor.primary)),
+          second: _buildMainContent(state),
         );
       },
+    );
+  }
+
+  Widget _buildMainContent(CommentListState state) {
+    if (state.comments.isEmpty) {
+      return const Center(child: Text("Chưa có đánh giá nào"));
+    }
+
+    return RefreshIndicator(
+      onRefresh: interactor.loadComments,
+      color: TMLabsColor.primary,
+      child: ListView.builder(
+        controller: _scrollController,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        itemCount: state.comments.length + (state.hasMore ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index < state.comments.length) {
+            return CommentItemWidget(comment: state.comments[index]);
+          } else {
+            return const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Center(child: CircularProgressIndicator(color: TMLabsColor.primary, strokeWidth: 2)),
+            );
+          }
+        },
+      ),
     );
   }
 }
