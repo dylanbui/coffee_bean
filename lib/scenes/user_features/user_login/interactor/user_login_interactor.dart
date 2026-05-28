@@ -17,6 +17,7 @@ import 'package:coffee_bean/scenes/user_features/user_login/interactor/user_logi
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/user_login_builder.dart';
 import 'package:coffee_bean/utils/utils.dart';
+import 'package:coffee_bean/scenes/user_features/user_login/shared/social_auth_service.dart';
 
 // Interactor
 class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginState> {
@@ -25,17 +26,62 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
 
   @override
   void onDidBecomeActive() {
-    // emit(UserLoginInitial());
     loadData();
   }
+
+  Future<void> _handleSocialLogin(SocialLoginType type) async {
+    try {
+      final String providerName = type == SocialLoginType.google ? "Google" : "Apple";
+      emit(UserLoginInProgress(message: "Connecting to $providerName..."));
+      
+      final SocialAuthResult? result = await SocialAuthService.login(type);
+      
+      if (result == null) {
+        emit(UserLoginFailure(error: "Sign-In failed: User cancelled")); // User cancelled
+        return;
+      }
+
+      // Gooi len BE de auth, sau do
+      iLog("$providerName ID Token: ${result.idToken}");
+      emit(UserLoginInProgress(message: "Verifying with server..."));
+      
+      // GIẢ LẬP: Gửi idToken lên Backend của bạn
+      await Utils.delay(second: 2);
+
+      // Giả lập Backend trả về User Session
+      final userSession = UserSession(
+        id: type == SocialLoginType.google ? 100 : 101,
+        userName: result.displayName ?? "$providerName User",
+        email: result.email ?? "",
+        fullName: result.displayName ?? "",
+        avatarUrl: result.photoUrl ?? "https://i.pravatar.cc/150?img=${type == SocialLoginType.google ? 24 : 68}",
+        accessToken: "mock_${providerName.toLowerCase()}_access_token_${DateTime.now().millisecondsSinceEpoch}",
+        refreshToken: "mock_${providerName.toLowerCase()}_refresh_token",
+      );
+
+      await UserManager().saveSession(userSession);
+      locator<DbEventBus>().fire(UserLoginSuccessEvent());
+      
+      emit(UserLoginSuccess());
+      router?.navigate(LoginSuccessRoute());
+      
+    } catch (error) {
+      eLog("Social Sign-In Error: $error");
+      // Thêm delay nhỏ để đảm bảo UI kịp render loading trước khi bị đóng (tránh race condition)
+      await Utils.delay(second: 1);
+      emit(UserLoginFailure(error: "Sign-In failed: $error"));
+    }
+  }
+
+  void doLoginWithGoogle() => _handleSocialLogin(SocialLoginType.google);
+
+  void doLoginWithApple() => _handleSocialLogin(SocialLoginType.apple);
 
   void doLoginWithPw(String phoneNumber, String password) async {
     emit(UserLoginInProgress());
     iLog("Login with Password: $phoneNumber / $password");
     await Utils.delay();
 
-    // Giả lập logic kiểm tra thông tin đăng nhập
-    // Chấp nhận số điện thoại có chứa 0988818597 (để bỏ qua mã quốc gia nếu có)
     if (phoneNumber.contains("0988818597") && password == "1234567890") {
       final userSession = UserSession(
         id: 1,
@@ -47,18 +93,9 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
         refreshToken: "mock_refresh_token_abcdef",
       );
 
-      // Lưu vào hệ thống
       await UserManager().saveSession(userSession);
-
-      // Bao ve UI da thuc hien task xong
       emit(UserLoginSuccess());
-
-      // Bắn event thông báo login thành công cho toàn hệ thống
-      // locator<DbEventBus>().fire(UserLoginSuccessEvent());
-
-      // Thuc hien chuyen thong bao di, khong can push voi EventBus
       router?.navigate(LoginSuccessRoute());
-
     } else {
       emit(UserLoginFailure(error: "Account does not exist. Please check your phone number and password."));
     }
@@ -69,7 +106,6 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
     iLog("Login with SMS: $phoneNumber / $sms");
     await Utils.delay();
 
-    // Giả lập logic kiểm tra mã SMS
     if (phoneNumber.contains("0988818597") && sms == "999999") {
       final userSession = UserSession(
         id: 1,
@@ -81,12 +117,8 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
         refreshToken: "mock_refresh_token_sms_abcdef",
       );
 
-      // Lưu vào hệ thống
       await UserManager().saveSession(userSession);
-
-      // Bắn event thông báo login thành công cho toàn hệ thống
       locator<DbEventBus>().fire(UserLoginSuccessEvent());
-
       emit(UserLoginSuccess());
     } else {
       emit(UserLoginFailure(error: "Invalid SMS code. Please check and try again."));
@@ -94,8 +126,9 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
   }
 
   Future loadData() async {
-    // emit(UserLoginInProgress());
-    await Future.delayed(const Duration(seconds: 1));
+    // Init social login
+    await SocialAuthService.initialize();
+    await Utils.delay(second: 1);
     emit(UserLoginStarted());
   }
 }

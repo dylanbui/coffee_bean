@@ -34,9 +34,3 @@ class UserLoginFailure extends UserLoginState {
   final String error;
   UserLoginFailure({this.error = ""});
 }
-
-class UserLoginError extends UserLoginState {
-  final String message;
-
-  UserLoginError({this.message = ""});
-}

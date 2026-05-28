@@ -8,6 +8,7 @@
  */
 
 import 'dart:async';
+import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:db_core/utils/logger.dart';
 import 'package:db_core/utils/keyboard_visibility.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/interactor/user_login_event_state.dart';
@@ -25,6 +26,8 @@ import 'package:coffee_bean/shared/widget/phone_input_field.dart';
 import 'package:coffee_bean/shared/widget/underline_input_field.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:db_core/utils/fade_switcher.dart';
+import 'package:db_core/utils/toast.dart';
+import 'package:db_core/utils/tap_effect.dart';
 
 //ignore: must_be_immutable
 class UserLoginPage extends AppCubitStateFulWidget<UserLoginInteractor, UserLoginState> {
@@ -141,7 +144,7 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
     } else if (state is UserLoginInProgress) {
       iLog(state.message);
       showLoading(text: "Loading ...", style: TMLabsLoadingStyle.defaultLoadingStyle);
-    } else {
+    } else if (state is UserLoginFailure || state is UserLoginSuccess) {
       hideLoading();
       if (state is UserLoginSuccess) {
         // interactor.router?.navigate(LoginSuccessRoute());
@@ -152,7 +155,8 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: TMLabsColor.error));
+    // DbToast.show(message, context: context);
+    context.showFlashError(message, title: "Login error");
   }
 
   void _startCountdown() {
@@ -176,10 +180,7 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
   Widget _buildLogo() {
     return Padding(
       padding: EdgeInsets.only(top: _isKeyboardVisible ? 20.0 : 50.0, bottom: _isKeyboardVisible ? 15.0 : 40.0),
-      child: Text(
-        "TMLabs Coffee",
-        style: _isKeyboardVisible ? TMLabsTextStyle.h2 : TMLabsTextStyle.h1,
-      ),
+      child: Text("TMLabs Coffee", style: _isKeyboardVisible ? TMLabsTextStyle.h2 : TMLabsTextStyle.h1),
     );
   }
 
@@ -238,6 +239,8 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
         ),
         const SizedBox(height: 20),
         _buildFooterLinks(),
+        const SizedBox(height: 30),
+        _buildSocialLogin(),
       ],
     );
   }
@@ -271,6 +274,8 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
         ),
         const SizedBox(height: 20),
         _buildFooterLinks(hideForgotPw: true),
+        const SizedBox(height: 30),
+        _buildSocialLogin(),
       ],
     );
   }
@@ -288,9 +293,52 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
             },
       child: Text(
         _isCountingDown ? "Resend (${_start}s)" : "Send Code",
-        style: TMLabsTextStyle.bodyBold.copyWith(
-          color: _isCountingDown ? TMLabsColor.lightGrey : TMLabsColor.primary,
+        style: TMLabsTextStyle.bodyBold.copyWith(color: _isCountingDown ? TMLabsColor.lightGrey : TMLabsColor.primary),
+      ),
+    );
+  }
+
+  Widget _buildSocialLogin() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            const Expanded(child: Divider(color: TMLabsColor.lightGrey)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text("Or login with", style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
+            ),
+            const Expanded(child: Divider(color: TMLabsColor.lightGrey)),
+          ],
         ),
+        const SizedBox(height: 25),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _socialIcon(
+              icon: Icons.g_mobiledata, // Replace with your Google asset image if needed
+              color: Colors.red,
+              onTap: () => interactor.doLoginWithGoogle(),
+            ),
+            const SizedBox(width: 40),
+            _socialIcon(icon: Icons.apple, color: Colors.black, onTap: () => interactor.doLoginWithApple()),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _socialIcon({required IconData icon, required Color color, required VoidCallback onTap}) {
+    return TapEffect(
+      onTap: onTap,
+      child: Container(
+        width: 54,
+        height: 54,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: TMLabsColor.lightGrey.withValues(alpha: 0.5)),
+        ),
+        child: Icon(icon, size: 36, color: color),
       ),
     );
   }
@@ -305,10 +353,7 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
             Text("No account? ", style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey)),
             InkWell(
               onTap: () => interactor.router?.navigate(UserRegisterRoute()),
-              child: Text(
-                "Register Now", 
-                style: TMLabsTextStyle.bodyBold,
-              ),
+              child: Text("Register Now", style: TMLabsTextStyle.bodyBold),
             ),
           ],
         ),
@@ -332,7 +377,10 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
             height: 18,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: _loginController.isAgreed ? TMLabsColor.primary : TMLabsColor.lightGrey, width: 1.5),
+              border: Border.all(
+                color: _loginController.isAgreed ? TMLabsColor.primary : TMLabsColor.lightGrey,
+                width: 1.5,
+              ),
               color: _loginController.isAgreed ? TMLabsColor.primary : Colors.transparent,
             ),
             child: _loginController.isAgreed ? const Icon(Icons.check, size: 12, color: TMLabsColor.white) : null,

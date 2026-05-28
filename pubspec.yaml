@@ -72,6 +72,10 @@ dependencies:
   easy_date_timeline: ^2.0.9
 
   # --- System & Media Features ---
+  # Google Sign-In
+  google_sign_in: ^7.2.0
+  # Sign in with Apple
+  sign_in_with_apple: ^8.0.0
   # Pick images and videos from gallery or camera
   image_picker: ^1.1.2
   # Advanced asset picker (WeChat style)
