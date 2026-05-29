@@ -14,7 +14,7 @@ class MyProfileLoggedInPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = UserManager().currentUser;
-    
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -23,7 +23,7 @@ class MyProfileLoggedInPanel extends StatelessWidget {
             fullName: user?.fullName ?? "Dylan Bui",
             avatarUrl: user?.avatarUrl ?? 'https://i.pravatar.cc/150?u=gigi',
           ),
-          
+
           // 2. Points & Rewards Card
           _buildPointsCard(),
 
@@ -37,9 +37,9 @@ class MyProfileLoggedInPanel extends StatelessWidget {
           _buildMenuItem(Icons.notifications_none, "Thông báo"),
           _buildMenuItem(Icons.help_outline, "Hỗ trợ & Góp ý"),
           _buildMenuItem(Icons.info_outline, "Về Coffee Bean"),
-          
+
           const SizedBox(height: 20),
-          
+
           // 4. Auth Buttons
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -63,7 +63,10 @@ class MyProfileLoggedInPanel extends StatelessWidget {
                       interactor.doLogout();
                     }
                   },
-                  child: const Text("Đăng xuất", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 20)),
+                  child: const Text(
+                    "Đăng xuất",
+                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
                 ),
               ],
             ),
@@ -74,40 +77,28 @@ class MyProfileLoggedInPanel extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(
-      {required String fullName, required String avatarUrl}) {
+  Widget _buildHeader({required String fullName, required String avatarUrl}) {
     return Container(
       padding: const EdgeInsets.only(top: 60, bottom: 30, left: 20, right: 20),
       decoration: const BoxDecoration(
         color: TMLabsColor.primary,
-        borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 35,
-            backgroundImage: NetworkImage(avatarUrl),
-            backgroundColor: Colors.white,
-          ),
+          CircleAvatar(radius: 35, backgroundImage: NetworkImage(avatarUrl), backgroundColor: Colors.white),
           const SizedBox(width: 16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 fullName,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
               const Text(
                 "Thành viên Vàng",
-                style: TextStyle(
-                    color: Colors.amber,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500),
+                style: TextStyle(color: Colors.amber, fontSize: 14, fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -115,7 +106,7 @@ class MyProfileLoggedInPanel extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.edit_outlined, color: Colors.white70),
             onPressed: () {},
-          )
+          ),
         ],
       ),
     );

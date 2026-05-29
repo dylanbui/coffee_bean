@@ -36,6 +36,19 @@ class _Icons {
   final String icCatSnack = 'assets/icons/ic_cat_snack.svg';
   final String icCatTea = 'assets/icons/ic_cat_tea.svg';
   final String icBgKhoangCach = 'assets/icons/ic_bg_khoang_cach.svg';
+  final String icFeedback = 'assets/icons/ic_feedback.svg';
+  final String icCustomerSupport = 'assets/icons/ic_customer_support.svg';
+  final String icStoreService = 'assets/icons/ic_store_service.svg';
+  final String icArrowRightNone = 'assets/icons/ic_arrow_right_none.svg';
+  final String icArrowRight = 'assets/icons/ic_arrow_right.svg';
+  final String icKhoaHocNone = 'assets/icons/ic_khoa_hoc_none.svg';
+  final String icSaved = 'assets/icons/ic_saved.svg';
+  final String icSystem = 'assets/icons/ic_system.svg';
+  final String icInviteFriend = 'assets/icons/ic_invite_friend.svg';
+  final String icMyEvent = 'assets/icons/ic_my_event.svg';
+  final String icDonKhoaHoc = 'assets/icons/ic_don_khoa_hoc.svg';
+  final String icDonHang = 'assets/icons/ic_don_hang.svg';
+  final String icLichDatHen = 'assets/icons/ic_lich_dat_hen.svg';
 
 }
 
@@ -59,6 +72,11 @@ class _Images {
   final String imgNoImage = 'assets/images/app_coffee.png';
   final String imgLoginApple = 'assets/images/img_login_apple.svg';
   final String imgLoginGoogle = 'assets/images/img_login_google.svg';
+  final String imgBgGold = 'assets/images/img_bg_gold.svg';
+  final String imgBgGoldRank = 'assets/images/img_bg_gold_rank.svg';
+  final String imgBgGoldClass = 'assets/images/img_bg_gold_class.svg';
+  final String imgAppCoffeeMedium = 'assets/images/app_coffee_medium.png';
+  final String imgAppCoffeeSmall = 'assets/images/app_coffee_small.png';
 
 
 
@@ -75,6 +93,9 @@ class _Json {
   final String propzyHomeManBuildHouse = 'assets/json/propzy_home_man_build_house.json';
   final String logoSplashScreen = 'assets/json/logo_splash_screen.json';
   final String lottieAnimationGrowingHouse = 'assets/json/lottie_view_animation_growing_house_propzy_home.json';
+  final String sampleData = 'assets/json/sample_data.json';
+  final String sampleStore = 'assets/json/sample_store.json';
+  final String sampleComment = 'assets/json/sample_comment.json';
 }
 
 class AppIcon extends StatelessWidget {
