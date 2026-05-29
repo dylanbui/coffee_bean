@@ -1,5 +1,5 @@
 import 'package:db_core/architecture_ribs/note_router.dart';
-import 'package:coffee_bean/scenes/user_features/user_auth_flow.dart';
+import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
 import 'package:flutter/cupertino.dart';
 
 abstract class MyProfileRoutable implements DbNoteRoutable {

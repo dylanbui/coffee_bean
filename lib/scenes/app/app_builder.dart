@@ -8,7 +8,7 @@ import 'package:coffee_bean/scenes/app/interactor/app_interactor.dart';
 import 'package:coffee_bean/scenes/app/interactor/splash_page.dart';
 import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_builder.dart';
 import 'package:coffee_bean/scenes/splash_page/splash_page_builder.dart';
-import 'package:coffee_bean/scenes/user_features/user_login/user_login_builder.dart';
+import 'package:coffee_bean/scenes/user_auth_features/user_login/user_login_builder.dart';
 import 'package:flutter/material.dart';
 
 // Buildable

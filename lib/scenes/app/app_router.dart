@@ -8,7 +8,7 @@ import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/shopping_builder.dart';
 import 'package:coffee_bean/scenes/store_list/store_list_builder.dart';
-import 'package:coffee_bean/scenes/user_features/user_login/user_login_builder.dart';
+import 'package:coffee_bean/scenes/user_auth_features/user_login/user_login_builder.dart';
 import 'package:db_core/utils/logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
