@@ -14,12 +14,14 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top;
     return Container(
       color: TMLabsColor.bgMain,
       child: SingleChildScrollView(
         child: Column(
           children: [
-            _buildMemberCard(context),
+            SizedBox(height: topPadding),
+            _buildMemberCard(),
             const SizedBox(height: 16),
             _buildActionBarButtons(),
             const SizedBox(height: 16),
@@ -33,13 +35,11 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
     );
   }
 
-  Widget _buildMemberCard(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
+  Widget _buildMemberCard() {
     return Center(
       child: Container(
-        width: 373,
-        height: 162 + topPadding,
-        padding: EdgeInsets.only(top: topPadding + 24),
+        height: 162,
+        padding: const EdgeInsets.only(top: 24, left: 20, right: 20),
         child: Stack(
           children: [
             // Background Gold
