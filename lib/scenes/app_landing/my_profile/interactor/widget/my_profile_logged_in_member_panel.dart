@@ -103,7 +103,7 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       _buildInfoItem('Voucher', '5', 'Sử dụng ngay'),
-                      SizedBox(width: 60),
+                      SizedBox(width: 50),
                       _buildInfoItem('Điểm tích lũy', '1998', null),
                     ],
                   ),
@@ -113,13 +113,13 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
             // My Page button
             Positioned(
               right: 20,
-              bottom: 12,
+              bottom: 15,
               child: AppLabel(
                 'Trang của tôi',
-                style: TMLabsTextStyle.small.copyWith(fontSize: 8),
-                backgroundColor: TMLabsColor.primary.withValues(alpha: 0.1),
+                style: TMLabsTextStyle.small,
+                backgroundColor: TMLabsColor.primary.withValues(alpha: 0.2),
                 borderRadius: 10,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 borderColor: TMLabsColor.primary.withValues(alpha: 0.2),
               ),
             ),
@@ -133,9 +133,9 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
-        SvgPicture.asset(bgAsset, height: 16),
+        Positioned.fill(child: SvgPicture.asset(bgAsset, fit: BoxFit.fill)),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           child: Text(
             text,
             style: TMLabsTextStyle.small.copyWith(fontSize: 8, fontStyle: FontStyle.italic, color: TMLabsColor.primary),
@@ -151,7 +151,7 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
       children: [
         Text(label, style: TMLabsTextStyle.title.copyWith(height: 1.1)),
         Padding(
-          padding: const EdgeInsets.only(left: 20),
+          padding: const EdgeInsets.only(left: 10),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
@@ -218,70 +218,85 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))],
       ),
-      child: Column(
-        children: [
-          _buildActionRow(AppAssets.icons.icKhoaHocNone, 'Khóa học'),
-          _buildActionRow(AppAssets.icons.icSaved, 'Đã lưu'),
-          _buildActionRow(AppAssets.icons.icInviteFriend, 'Mời bạn bè'),
-          _buildActionRow(AppAssets.icons.icCustomerSupport, 'CSKH'),
-          _buildActionRow(AppAssets.icons.icFeedback, 'Đóng góp ý kiến'),
-          _buildActionRow(AppAssets.icons.icSystem, 'Cài đặt'),
-        ],
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          children: [
+            _buildActionRow(AppAssets.icons.icKhoaHocNone, 'Khóa học'),
+            _buildActionRow(AppAssets.icons.icSaved, 'Đã lưu'),
+            _buildActionRow(AppAssets.icons.icInviteFriend, 'Mời bạn bè'),
+            _buildActionRow(AppAssets.icons.icCustomerSupport, 'CSKH'),
+            _buildActionRow(AppAssets.icons.icFeedback, 'Đóng góp ý kiến'),
+            _buildActionRow(AppAssets.icons.icSystem, 'Cài đặt'),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildDivider() {
-    return const Padding(
-      padding: EdgeInsets.only(left: 48),
-      child: Divider(height: 1, thickness: 0.5, color: TMLabsColor.bgLight),
-    );
-  }
+  // Widget _buildDivider() {
+  //   return const Padding(
+  //     padding: EdgeInsets.only(left: 48),
+  //     child: Divider(height: 1, thickness: 0.5, color: TMLabsColor.bgLight),
+  //   );
+  // }
 
   Widget _buildStoreServiceRow() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
-      height: 55,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))],
       ),
-      child: _buildActionRow(AppAssets.icons.icStoreService, 'Dịch vụ tại cửa hàng'),
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        clipBehavior: Clip.antiAlias,
+        child: _buildActionRow(
+          AppAssets.icons.icStoreService,
+          'Dịch vụ tại cửa hàng',
+          height: 56,
+          borderRadius: BorderRadius.circular(28),
+        ),
+      ),
     );
   }
 
-  Widget _buildActionRow(String icon, String title) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {}, // Thêm hiệu ứng loang khi tap
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          height: 48,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            children: [
-              SvgPicture.asset(
-                icon,
-                width: 20,
-                height: 20,
-                colorFilter: const ColorFilter.mode(TMLabsColor.secondary, BlendMode.srcIn),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  title,
-                  style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.primary, fontWeight: FontWeight.w500),
+  Widget _buildActionRow(String icon, String title, {double height = 48, BorderRadius? borderRadius}) {
+    return InkWell(
+      onTap: () {}, // Thêm hiệu ứng loang khi tap
+      borderRadius: borderRadius,
+      child: Container(
+        height: height,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 24,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: SvgPicture.asset(
+                  icon,
+                  width: 20,
+                  height: 20,
+                  colorFilter: const ColorFilter.mode(TMLabsColor.secondary, BlendMode.srcIn),
                 ),
               ),
-              AppIcon(AppAssets.icons.icArrowRightNone, size: 20, color: TMLabsColor.deepNavy.withValues(alpha: 0.8)),
-            ],
-          ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.primary, fontWeight: FontWeight.w500),
+              ),
+            ),
+            AppIcon(AppAssets.icons.icArrowRightNone, size: 20, color: TMLabsColor.deepNavy.withValues(alpha: 0.8)),
+          ],
         ),
       ),
     );
