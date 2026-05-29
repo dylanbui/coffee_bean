@@ -96,8 +96,12 @@ class Utils {
         url.toString().startsWith("https");
   }
 
-  static Future<void> delay({int second = 3}) async {
-    await Future.delayed(Duration(seconds: second));
+  static Future<void> delay({int? second, int? milliseconds}) async {
+    if (second == null && milliseconds == null) {
+      await Future.delayed(const Duration(seconds: 3));
+      return;
+    }
+    await Future.delayed(Duration(seconds: second ?? 0, milliseconds: milliseconds ?? 0));
   }
 
   static double getSafeAreaTop(BuildContext context) {

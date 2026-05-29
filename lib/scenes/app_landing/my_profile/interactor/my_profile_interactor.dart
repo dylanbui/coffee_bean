@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:coffee_bean/config/constants.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
+import 'package:coffee_bean/scenes/user_features/user_auth_helper.dart';
 import 'package:db_core/commons_constants.dart';
 import 'package:db_core/services/event_bus.dart';
 import 'package:db_core/state_management/lib_bloc/constants.dart';
@@ -39,7 +39,7 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
     await checkLoginStatus();
 
     // Lắng nghe sự kiện login thành công từ toàn hệ thống thông qua collect
-    collect(locator<DbEventBus>().on<AuthEvent>().listen((event) {
+    collect(locator<DbEventBus>().on<UserAuthEvent>().listen((event) {
       checkLoginStatus();
     }));
   }
@@ -50,7 +50,7 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
 
   void doLogout() async {
     await UserManager().doLogoutAndClearAll();
-    // Bắn event logout cho toàn hệ thống. 
+    // Bắn event logout cho toàn hệ thống.
     // Listener AuthEvent sẽ tự động gọi checkLoginStatus() để cập nhật UI.
     locator<DbEventBus>().fire(UserLogoutEvent());
 

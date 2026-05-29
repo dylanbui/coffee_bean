@@ -147,66 +147,65 @@ Future<void> _setupUiUtils() async {
   TMLabsDialogStyleProvider.init();
 }
 
-class App extends StatefulWidget {
-  const App({super.key});
-
-  @override
-  State<App> createState() => _AppState();
-}
-
-class _AppState extends State<App> {
-  // Khởi tạo instance duy nhất ở đây
-  // late final AppBuildable _appBuilder;
-
-  late final AppBuilder _appBuilder;
-  late final AppRouter _appRouter;
-
-
-  @override
-  void initState() {
-    super.initState();
-    _appBuilder = AppBuilder();
-    _appRouter = _appBuilder.build();
-
-    _appBuilder.startApp();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: DbNavigator.globalNavigatorState,
-      title: 'Coffee Bean',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: _appRouter.viewController,
-    );
-  }
-}
-
+// Run GOOD
+// class App extends StatefulWidget {
+//   const App({super.key});
+//
+//   @override
+//   State<App> createState() => _AppState();
+// }
+//
+// class _AppState extends State<App> {
+//   // Khởi tạo instance duy nhất ở đây
+//   // late final AppBuildable _appBuilder;
+//
+//   late final AppBuilder _appBuilder;
+//   late final AppRouter _appRouter;
 //
 //
-// class App extends StatelessWidget {
+//   @override
+//   void initState() {
+//     super.initState();
+//     _appBuilder = AppBuilder();
+//     _appRouter = _appBuilder.build();
 //
-//   final AppBuilder _appBuilder = AppBuilder();
-//   late final _appRouter = _appBuilder.build();
+//     _appBuilder.startApp();
+//   }
 //
-//   App({super.key});
-//
-//   // This widget is the root of your application.
 //   @override
 //   Widget build(BuildContext context) {
-//
-//     // Run sync data
-//     _appBuilder.startApp();
-//
 //     return MaterialApp(
-//       // Connect GlobalKey from Router to Flutter Navigator
 //       navigatorKey: DbNavigator.globalNavigatorState,
 //       title: 'Coffee Bean',
-//       theme: ThemeData(primarySwatch: Colors.blue,),
+//       theme: ThemeData(primarySwatch: Colors.blue),
 //       home: _appRouter.viewController,
 //     );
 //   }
 // }
+
+
+class App extends StatelessWidget {
+
+  final AppBuilder _appBuilder = AppBuilder();
+  late final _appRouter = _appBuilder.build();
+
+  App({super.key}) {
+    // Run sync data
+    _appBuilder.startApp();
+  }
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      // Connect GlobalKey from Router to Flutter Navigator
+      navigatorKey: DbNavigator.globalNavigatorState,
+      title: 'Coffee Bean',
+      theme: ThemeData(primarySwatch: Colors.blue,),
+      home: _appRouter.viewController,
+    );
+  }
+}
 
 
 //

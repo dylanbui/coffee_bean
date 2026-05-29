@@ -1,5 +1,4 @@
 import 'package:coffee_bean/shared/ui/app_assets.dart';
-export 'package:coffee_bean/scenes/user_features/auth_events.dart';
 
 /// --- CATEGORY ICONS MAPPING ---
 /// Sử dụng serverId để map icon vì đây là dữ liệu master không đổi.

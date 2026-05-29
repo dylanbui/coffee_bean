@@ -24,12 +24,12 @@ class DbLogger {
     logger = Logger(
       filter: null, // Use the default LogFilter (-> only log in debug mode)
       printer: PrettyPrinter(
-          methodCount: 2, // number of method calls to be displayed
-          errorMethodCount: 8, // number of method calls if stacktrace is provided
-          lineLength: 200, // width of the output
+          methodCount: 0, // No method calls in the header for cleaner logs
+          errorMethodCount: 5, // Shorter stacktrace for errors
+          lineLength: 100, // Width of the output
           colors: true, // Colorful log messages
-          printEmojis: false, // Print an emoji for each log message
-          dateTimeFormat: DateTimeFormat.dateAndTime // Should each log print contain a timestamp
+          printEmojis: true, // Print an emoji for each log message
+          dateTimeFormat: DateTimeFormat.onlyTime // Only time is usually enough
       ),
       output: null, // Use the default LogOutput (-> send everything to console)
     );
@@ -38,22 +38,24 @@ class DbLogger {
 
 }
 
-void dLog(String message) {
+void dLog(dynamic message) {
   DbLogger().logger.d(message);
 }
 
-void iLog(String message) {
+void iLog(dynamic message) {
   DbLogger().logger.i(message);
 }
 
-void eLog(String message) {
-  DbLogger().logger.e(message);
+void eLog(dynamic message, [dynamic error, StackTrace? stackTrace]) {
+  DbLogger().logger.e(message, error: error, stackTrace: stackTrace);
 }
 
-void wLog(String message) {
+void wLog(dynamic message) {
   DbLogger().logger.w(message);
 }
 
-void wtfLog(String message) {
+void wtfLog(dynamic message) {
+  // Use f (fatal) if using logger 2.x, or keep wtf for older versions
+  // The current package seems to support wtf
   DbLogger().logger.wtf(message);
 }

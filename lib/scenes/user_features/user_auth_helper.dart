@@ -1,9 +1,33 @@
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:db_core/commons_constants.dart';
+import 'package:db_core/services/event_bus.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/scenes/user_features/user_auth_flow.dart';
+
+
+/// Lớp cha cho tất cả các Event về Auth
+abstract class UserAuthEvent extends DbBaseEvent {}
+
+/// Event khi người dùng đăng nhập thành công
+class UserLoginSuccessEvent extends UserAuthEvent {
+  final UserSession userSessionData;
+  UserLoginSuccessEvent(this.userSessionData);
+}
+
+/// Event khi người dùng đăng xuất
+class UserLogoutEvent extends UserAuthEvent {}
+
+/// Event khi người dùng hủy bỏ quá trình đăng nhập (đóng modal)
+class UserLoginCancelledEvent extends UserAuthEvent {}
+
+/// Event khi đăng nhập thất bại
+class UserLoginFailureEvent extends UserAuthEvent {
+  final String message;
+  UserLoginFailureEvent(this.message);
+}
+
 
 /// AuthHelperListener: Interface to handle authentication events.
 /// Interactors or Routers should implement this to receive results from AuthHelper.

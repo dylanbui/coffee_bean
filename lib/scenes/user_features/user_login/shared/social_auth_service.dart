@@ -28,6 +28,22 @@ class SocialAuthService {
     await _googleSignIn.initialize();
   }
 
+  static Future<void> disconnectSocialAccount(SocialLoginType type) async {
+    try {
+      if (type == SocialLoginType.google) {
+        // Clear Google Sign-In session
+        await _googleSignIn.signOut();
+        await _googleSignIn.disconnect();
+      }
+
+      // Note: sign_in_with_apple does not provide a programmatic signOut method
+      // as it's managed by the iOS system. The user remains "signed in" to the app
+      // from the system's perspective until they revoke access in iOS Settings.
+    } catch (e) {
+      // Ignore errors during sign out
+    }
+  }
+
   static Future<SocialAuthResult?> login(SocialLoginType type) async {
     try {
       if (type == SocialLoginType.google) {
@@ -44,10 +60,7 @@ class SocialAuthService {
         );
       } else if (type == SocialLoginType.apple) {
         final credential = await SignInWithApple.getAppleIDCredential(
-          scopes: [
-            AppleIDAuthorizationScopes.email,
-            AppleIDAuthorizationScopes.fullName,
-          ],
+          scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName],
         );
 
         if (credential.identityToken == null) return null;

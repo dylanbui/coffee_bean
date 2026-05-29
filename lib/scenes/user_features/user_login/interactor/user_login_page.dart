@@ -14,8 +14,8 @@ import 'package:db_core/utils/keyboard_visibility.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/interactor/user_login_event_state.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/interactor/user_login_interactor.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/user_login_builder.dart';
-import 'package:coffee_bean/shared/ui/app_assets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:coffee_bean/scenes/user_features/user_auth_flow.dart';
+import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
@@ -28,8 +28,6 @@ import 'package:coffee_bean/shared/widget/phone_input_field.dart';
 import 'package:coffee_bean/shared/widget/underline_input_field.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:db_core/utils/fade_switcher.dart';
-import 'package:db_core/utils/toast.dart';
-import 'package:db_core/utils/tap_effect.dart';
 
 //ignore: must_be_immutable
 class UserLoginPage extends AppCubitStateFulWidget<UserLoginInteractor, UserLoginState> {
@@ -67,6 +65,20 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
 
   @override
   String? getTitle() => "Login";
+
+  @override
+  PreferredSizeWidget? getAppBar(BuildContext context) {
+    final title = getTitle();
+    final isAuthFlow = interactor.router?.parentRouter is UserAuthFlow;
+
+    return CoffeeAppBar(
+      title: title,
+      style: CoffeeAppBarStyleConfig(
+        backIcon: isAuthFlow ? Icons.close : Icons.arrow_back_ios_new,
+      ),
+      onBackTap: () => interactor.onBack(),
+    );
+  }
 
   @override
   Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
@@ -148,9 +160,7 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
       showLoading(text: "Loading ...", style: TMLabsLoadingStyle.defaultLoadingStyle);
     } else if (state is UserLoginFailure || state is UserLoginSuccess) {
       hideLoading();
-      if (state is UserLoginSuccess) {
-        // interactor.router?.navigate(LoginSuccessRoute());
-      } else if (state is UserLoginFailure) {
+      if (state is UserLoginFailure) {
         _showError(state.error);
       }
     }

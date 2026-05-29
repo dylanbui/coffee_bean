@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:coffee_bean/app.dart';
+import 'package:coffee_bean/scenes/app/app.dart';
 import 'package:coffee_bean/config/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
