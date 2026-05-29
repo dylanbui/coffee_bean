@@ -139,7 +139,7 @@ class NetworkClient {
   Future<T?> simpleCall<T>(String url, {NetworkType type = NetworkType.get, Dictionary? requestData}) async {
     // Check kieu nya bi sai, tam thoi dong lai
     // if (T is! List || T is! Map<String, dynamic>) {
-    //   // return const Tuple(null, BaseError("Cast error: T only is : List, Map<String, dynamic>"));
+    //   // return const Tuple(null, DbError(500, "Cast error: T only is : List, Map<String, dynamic>")));
     //   throw Exception("Cast error: T only is : List, Map<String, dynamic>");
     // }
     try {

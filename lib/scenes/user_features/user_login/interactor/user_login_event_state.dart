@@ -7,6 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:db_core/state_management/lib_bloc/constants.dart';
 
 // ----------- EVENT ---------------
@@ -23,7 +24,10 @@ class UserLoginInitial extends UserLoginState {}
 
 class UserLoginStarted extends UserLoginState {}
 
-class UserLoginSuccess extends UserLoginState {}
+class UserLoginSuccess extends UserLoginState {
+  final UserSession userData;
+  UserLoginSuccess(this.userData);
+}
 
 class UserLoginInProgress extends UserLoginState {
   final String message;

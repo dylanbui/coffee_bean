@@ -12,7 +12,7 @@ class UploadFilesRepository {
   /// [filePath] The path to the file to upload.
   /// [onSendProgress] A callback for tracking upload progress.
   /// Returns a tuple of (success message, error).
-  Future<(String?, BaseError?)> uploadFile(String filePath, {ProgressCallback? onSendProgress}) async {
+  Future<(String?, DbError?)> uploadFile(String filePath, {ProgressCallback? onSendProgress}) async {
     try {
       // Simulate network delay
       await Future.delayed(const Duration(seconds: 2));
@@ -25,7 +25,7 @@ class UploadFilesRepository {
 
       return ("File uploaded successfully: ${filePath.split('/').last}", null);
     } catch (e) {
-      return (null, BaseError(500, "Failed to upload file: $e"));
+      return (null, DbError(500, "Failed to upload file: $e"));
     }
   }
 }

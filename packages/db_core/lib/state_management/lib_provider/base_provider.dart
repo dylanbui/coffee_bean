@@ -31,7 +31,7 @@ import 'package:flutter/foundation.dart';
 ///     if (success) {
 ///       router?.goToHomePage();
 ///     } else {
-///       error = BaseError(message: "Invalid credentials");
+///       error = DbError(500, "Invalid credentials");
 ///     }
 ///     isProcessing = false; // Hide loading indicator
 ///   }
@@ -42,9 +42,9 @@ abstract class BaseProvider<R extends DbNoteRoutable> extends ChangeNotifier {
   R? router;
   bool _isDisposed = false;
 
-  BaseError? _error;
-  BaseError? get error => _error;
-  set error(BaseError? value) {
+  DbError? _error;
+  DbError? get error => _error;
+  set error(DbError? value) {
     _error = value;
     notifyListeners();
   }

@@ -37,7 +37,6 @@ class _Icons {
   final String icCatTea = 'assets/icons/ic_cat_tea.svg';
   final String icBgKhoangCach = 'assets/icons/ic_bg_khoang_cach.svg';
 
-
 }
 
 class _Images {
@@ -58,6 +57,11 @@ class _Images {
   final String logoTmLabs = 'assets/images/logo_tmlabs.png';
   final String imgBgKhoangCach = 'assets/images/img_bg_khoang_cach.png';
   final String imgNoImage = 'assets/images/app_coffee.png';
+  final String imgLoginApple = 'assets/images/img_login_apple.svg';
+  final String imgLoginGoogle = 'assets/images/img_login_google.svg';
+
+
+
 }
 
 class _Json {

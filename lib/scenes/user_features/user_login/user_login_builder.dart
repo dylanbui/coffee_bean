@@ -33,13 +33,15 @@ class UserLoginRouter extends DbNoteRouter {
 
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
-    // Day la nhung luong phu, xu ly o day cho nhe, luong chinh se day len parent
+    // Day la nhung luong phu, goi parent xu ly nhung code de o day cho nhe,  main flow se day len parent
     if (toRoute is UserAgreementRoute) {
       UserAgreementBuilder userAgreementBuilder = UserAgreementBuilder();
       parentRouter?.navigator.push(userAgreementBuilder.build().viewController, fromContext: fromContext);
+
     } else if (toRoute is PrivacyPolicyRoute) {
       PrivacyPolicyBuilder privacyPolicyBuilder = PrivacyPolicyBuilder();
       parentRouter?.navigator.push(privacyPolicyBuilder.build().viewController, fromContext: fromContext);
+      
     } else {
       // Đẩy các route khác (LoginSuccess, UserRegister, ForgotPassword) lên cho Flow xử lý
       parentRouter?.navigate(toRoute, fromContext: fromContext, routeName: routeName, parameters: parameters);

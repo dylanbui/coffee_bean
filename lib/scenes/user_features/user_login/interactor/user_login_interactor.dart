@@ -7,11 +7,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/config/constants.dart';
-import 'package:db_core/services/event_bus.dart';
-import 'package:db_core/utils/locator.dart';
+import 'package:coffee_bean/scenes/user_features/user_auth_flow.dart';
 import 'package:db_core/utils/logger.dart';
-import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/interactor/user_login_event_state.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
@@ -59,11 +56,11 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
         refreshToken: "mock_${providerName.toLowerCase()}_refresh_token",
       );
 
-      await UserManager().saveSession(userSession);
-      locator<DbEventBus>().fire(UserLoginSuccessEvent());
+      // await UserManager().saveSession(userSession);
+      // locator<DbEventBus>().fire(UserLoginSuccessEvent(userSession));
       
-      emit(UserLoginSuccess());
-      router?.navigate(LoginSuccessRoute());
+      emit(UserLoginSuccess(userSession));
+      router?.navigate(LoginSuccessRoute(), parameters: {'userData': userSession});
       
     } catch (error) {
       eLog("Social Sign-In Error: $error");
@@ -93,9 +90,11 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
         refreshToken: "mock_refresh_token_abcdef",
       );
 
-      await UserManager().saveSession(userSession);
-      emit(UserLoginSuccess());
-      router?.navigate(LoginSuccessRoute());
+      // Chuyen thong tin logic ve flow
+      // await UserManager().saveSession(userSession);
+      // locator<DbEventBus>().fire(UserLoginSuccessEvent(userSession));
+      emit(UserLoginSuccess(userSession));
+      router?.navigate(LoginSuccessRoute(), parameters: {'userData': userSession});
     } else {
       emit(UserLoginFailure(error: "Account does not exist. Please check your phone number and password."));
     }
@@ -117,9 +116,10 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
         refreshToken: "mock_refresh_token_sms_abcdef",
       );
 
-      await UserManager().saveSession(userSession);
-      locator<DbEventBus>().fire(UserLoginSuccessEvent());
-      emit(UserLoginSuccess());
+      // await UserManager().saveSession(userSession);
+      // locator<DbEventBus>().fire(UserLoginSuccessEvent(userSession));
+      emit(UserLoginSuccess(userSession));
+      router?.navigate(LoginSuccessRoute(), parameters: {'userData': userSession});
     } else {
       emit(UserLoginFailure(error: "Invalid SMS code. Please check and try again."));
     }
@@ -130,5 +130,13 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
     await SocialAuthService.initialize();
     await Utils.delay(second: 1);
     emit(UserLoginStarted());
+  }
+
+  void onBack() {
+    if (router?.parentRouter is UserAuthFlow) {
+      (router!.parentRouter as UserAuthFlow).onCancel();
+    } else {
+      router?.pop();
+    }
   }
 }

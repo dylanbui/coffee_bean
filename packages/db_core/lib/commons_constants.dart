@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 
 typedef Dictionary = Map<String, Object?>;
 
-class BaseError {
+class DbError {
 
   final int code;
   final String message;
 
   // Constructor
-  const BaseError(this.code, this.message);
+  const DbError(this.code, this.message);
 }
 
 class AppTheme {
@@ -59,13 +59,13 @@ class AppTheme {
 
 // typedef Dictionary = Map<String, dynamic>;
 
-// class BaseError {
+// class DbError {
 //
 //   final int code;
 //   final String messenger;
 //
 //   // Constructor
-//   const BaseError(this.code, this.messenger);
+//   const DbError(this.code, this.messenger);
 // }
 
 // abstract class BaseBlocState extends Equatable {

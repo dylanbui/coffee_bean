@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:coffee_bean/config/constants.dart';
+import 'package:coffee_bean/data/local/user_manager/user_session.dart';
+import 'package:db_core/commons_constants.dart';
 import 'package:db_core/services/event_bus.dart';
 import 'package:db_core/state_management/lib_bloc/constants.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
@@ -48,27 +50,27 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
 
   void doLogout() async {
     await UserManager().doLogoutAndClearAll();
-    // Bắn event logout cho toàn hệ thống
+    // Bắn event logout cho toàn hệ thống. 
+    // Listener AuthEvent sẽ tự động gọi checkLoginStatus() để cập nhật UI.
     locator<DbEventBus>().fire(UserLogoutEvent());
-    await checkLoginStatus();
+
     router?.doLogout();
   }
 
 // --- UserAuthFlowListener ---
 
-  @override
-  void onAuthSuccess() {
-    debugPrint("Auth Flow Success - Reload Profile Data");
-    // Interactor có thể lắng nghe UserLoginSuccessEvent qua EventBus để cập nhật UI
-    checkLoginStatus();
 
-    // co the them thong ba de nhung thang khac update vi da login roi
-    // locator<DbEventBus>().fire(UserLoginSuccessEvent());
+  @override
+  void onAuthFlowSuccess(UserSession userData) {
+    debugPrint("Auth Flow Success - Reload Profile Data");
+    // Chỉ cần bắn event. Listener trong onDidBecomeActive sẽ tự động gọi checkLoginStatus()
+    // Điều này tránh việc checkLoginStatus() bị chạy 2 lần.
+    locator<DbEventBus>().fire(UserLoginSuccessEvent(userData));
   }
 
   @override
-  void onAuthCancelled() {
-    debugPrint("Auth Flow Cancelled");
+  void onAuthFlowCancelled(DbError error) {
+    debugPrint("Auth Flow Cancelled: ${error.message}");
   }
 
 }

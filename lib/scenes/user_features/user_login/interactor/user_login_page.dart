@@ -14,6 +14,8 @@ import 'package:db_core/utils/keyboard_visibility.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/interactor/user_login_event_state.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/interactor/user_login_interactor.dart';
 import 'package:coffee_bean/scenes/user_features/user_login/user_login_builder.dart';
+import 'package:coffee_bean/shared/ui/app_assets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
@@ -215,68 +217,76 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
   }
 
   Widget _buildPasswordTab() {
-    return Column(
-      children: [
-        PhoneInputField(
-          controller: _loginController.phonePwLogin,
-          countryCodes: const ["+86", "+84", "+1"],
-          initialCountryCode: _loginController.countryCode1,
-          errorText: _loginController.phonePwError,
-          hintText: "0988818597",
-          onChanged: (val) => _loginController.countryCode1 = val.countryCode,
-        ),
-        const SizedBox(height: 20),
-        PasswordField(controller: _loginController.passwordController, hint: "Enter Password"),
-        const SizedBox(height: 30),
-        AppButton(
-          text: "Login",
-          style: TMLabsButtonStyle.primary,
-          onPressed: () {
-            setState(() {
-              _loginController.validatePwLogin(interactor, _showError);
-            });
-          },
-        ),
-        const SizedBox(height: 20),
-        _buildFooterLinks(),
-        const SizedBox(height: 30),
-        _buildSocialLogin(),
-      ],
+    return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          PhoneInputField(
+            controller: _loginController.phonePwLogin,
+            countryCodes: const ["+86", "+84", "+1"],
+            initialCountryCode: _loginController.countryCode1,
+            errorText: _loginController.phonePwError,
+            hintText: "0988818597",
+            onChanged: (val) => _loginController.countryCode1 = val.countryCode,
+          ),
+          const SizedBox(height: 20),
+          PasswordField(controller: _loginController.passwordController, hint: "Enter Password"),
+          const SizedBox(height: 30),
+          AppButton(
+            text: "Login",
+            style: TMLabsButtonStyle.primary,
+            onPressed: () {
+              setState(() {
+                _loginController.validatePwLogin(interactor, _showError);
+              });
+            },
+          ),
+          const SizedBox(height: 20),
+          _buildFooterLinks(),
+          const SizedBox(height: 30),
+          _buildSocialLogin(),
+        ],
+      ),
     );
   }
 
   Widget _buildSMSTab() {
-    return Column(
-      children: [
-        PhoneInputField(
-          controller: _loginController.phoneSmsLogin,
-          countryCodes: const ["+86", "+84", "+1"],
-          initialCountryCode: _loginController.countryCode2,
-          errorText: _loginController.phoneSmsError,
-          onChanged: (val) => _loginController.countryCode2 = val.countryCode,
-        ),
-        const SizedBox(height: 20),
-        UnderlineInputField(
-          controller: _loginController.smsController,
-          hint: "SMS Code",
-          suffix: _buildCountdownButton(),
-          keyboardType: TextInputType.number,
-        ),
-        const SizedBox(height: 30),
-        AppButton(
-          text: "Login",
-          style: TMLabsButtonStyle.primary,
-          onPressed: () {
-            setState(() {
-              _loginController.validateSmsLogin(interactor, _showError);
-            });
-          },
-        ),
-        const SizedBox(height: 20),
-        _buildFooterLinks(hideForgotPw: true),
-        const SizedBox(height: 30),
-        _buildSocialLogin(),
-      ],
+    return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          PhoneInputField(
+            controller: _loginController.phoneSmsLogin,
+            countryCodes: const ["+86", "+84", "+1"],
+            initialCountryCode: _loginController.countryCode2,
+            errorText: _loginController.phoneSmsError,
+            onChanged: (val) => _loginController.countryCode2 = val.countryCode,
+          ),
+          const SizedBox(height: 20),
+          UnderlineInputField(
+            controller: _loginController.smsController,
+            hint: "SMS Code",
+            suffix: _buildCountdownButton(),
+            keyboardType: TextInputType.number,
+          ),
+          const SizedBox(height: 30),
+          AppButton(
+            text: "Login",
+            style: TMLabsButtonStyle.primary,
+            onPressed: () {
+              setState(() {
+                _loginController.validateSmsLogin(interactor, _showError);
+              });
+            },
+          ),
+          const SizedBox(height: 20),
+          _buildFooterLinks(hideForgotPw: true),
+          const SizedBox(height: 30),
+          _buildSocialLogin(),
+        ],
+      ),
     );
   }
 
@@ -312,34 +322,28 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
           ],
         ),
         const SizedBox(height: 25),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _socialIcon(
-              icon: Icons.g_mobiledata, // Replace with your Google asset image if needed
-              color: Colors.red,
-              onTap: () => interactor.doLoginWithGoogle(),
-            ),
-            const SizedBox(width: 40),
-            _socialIcon(icon: Icons.apple, color: Colors.black, onTap: () => interactor.doLoginWithApple()),
-          ],
+        AppButton(
+          text: "Google",
+          leftIcon: const Icon(Icons.g_mobiledata, color: Colors.red, size: 32),
+          style: TMLabsButtonStyle.outline.copyWith(
+            textColor: Colors.black87,
+            borderColor: TMLabsColor.lightGrey.withValues(alpha: 0.5),
+            borderRadius: 8,
+          ),
+          onPressed: () => interactor.doLoginWithGoogle(),
+        ),
+        const SizedBox(height: 12),
+        AppButton(
+          text: "Apple",
+          leftIcon: const Icon(Icons.apple, color: Colors.black, size: 24),
+          style: TMLabsButtonStyle.outline.copyWith(
+            textColor: Colors.black87,
+            borderColor: TMLabsColor.lightGrey.withValues(alpha: 0.5),
+            borderRadius: 8,
+          ),
+          onPressed: () => interactor.doLoginWithApple(),
         ),
       ],
-    );
-  }
-
-  Widget _socialIcon({required IconData icon, required Color color, required VoidCallback onTap}) {
-    return TapEffect(
-      onTap: onTap,
-      child: Container(
-        width: 54,
-        height: 54,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: TMLabsColor.lightGrey.withValues(alpha: 0.5)),
-        ),
-        child: Icon(icon, size: 36, color: color),
-      ),
     );
   }
 

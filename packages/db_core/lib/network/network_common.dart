@@ -72,7 +72,7 @@ enum NetworkType {
     String get method => name.toUpperCase();
 }
 
-class NetworkError extends BaseError {
+class NetworkError extends DbError {
     NetworkError(super.code, super.message);
 
     static const errorNetworkCodeUnknown = '-1000';

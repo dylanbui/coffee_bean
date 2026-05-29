@@ -1,16 +1,5 @@
-import 'package:db_core/services/event_bus.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
-
-/// --- AUTH EVENTS ---
-abstract class AuthEvent extends DbBaseEvent {}
-
-class UserLoginSuccessEvent extends AuthEvent {
-  UserLoginSuccessEvent();
-}
-
-class UserLogoutEvent extends AuthEvent {
-  UserLogoutEvent();
-}
+export 'package:coffee_bean/scenes/user_features/auth_events.dart';
 
 /// --- CATEGORY ICONS MAPPING ---
 /// Sử dụng serverId để map icon vì đây là dữ liệu master không đổi.
