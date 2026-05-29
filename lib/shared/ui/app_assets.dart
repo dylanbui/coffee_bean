@@ -72,9 +72,42 @@ class _Images {
   final String imgNoImage = 'assets/images/app_coffee.png';
   final String imgLoginApple = 'assets/images/img_login_apple.svg';
   final String imgLoginGoogle = 'assets/images/img_login_google.svg';
-  final String imgBgGold = 'assets/images/img_bg_gold.svg';
-  final String imgBgGoldRank = 'assets/images/img_bg_gold_rank.svg';
-  final String imgBgGoldClass = 'assets/images/img_bg_gold_class.svg';
+
+  // Member Cards - Gold
+  final String imgBgGold = 'assets/images/member_card/img_bg_gold.svg';
+  final String imgBgGoldRank = 'assets/images/member_card/img_bg_gold_rank.svg';
+  final String imgBgGoldClass = 'assets/images/member_card/img_bg_gold_class.svg';
+
+  // Member Cards - Bronze
+  final String imgBgBronze = 'assets/images/member_card/img_bg_bronze.svg';
+  final String imgBgBronzeRank = 'assets/images/member_card/img_bg_bronze_rank.svg';
+  final String imgBgBronzeClass = 'assets/images/member_card/img_bg_bronze_class.svg';
+
+  // Member Cards - Silver
+  final String imgBgSilver = 'assets/images/member_card/img_bg_silver.svg';
+  final String imgBgSilverRank = 'assets/images/member_card/img_bg_silver_rank.svg';
+  final String imgBgSilverClass = 'assets/images/member_card/img_bg_silver_class.svg';
+
+  // Member Cards - Platinum
+  final String imgBgPlatinum = 'assets/images/member_card/img_bg_platinum.svg';
+  final String imgBgPlatinumRank = 'assets/images/member_card/img_bg_platinum_rank.svg';
+  final String imgBgPlatinumClass = 'assets/images/member_card/img_bg_platinum_class.svg';
+
+  // Member Cards - Emerald
+  final String imgBgEmerald = 'assets/images/member_card/img_bg_emerald.svg';
+  final String imgBgEmeraldRank = 'assets/images/member_card/img_bg_emerald_rank.svg';
+  final String imgBgEmeraldClass = 'assets/images/member_card/img_bg_emerald_class.svg';
+
+  // Member Cards - Diamond
+  final String imgBgDiamond = 'assets/images/member_card/img_bg_diamond.svg';
+  final String imgBgDiamondRank = 'assets/images/member_card/img_bg_diamond_rank.svg';
+  final String imgBgDiamondClass = 'assets/images/member_card/img_bg_diamond_class.svg';
+
+  // Member Cards - VIP
+  final String imgBgVip = 'assets/images/member_card/img_bg_vip.svg';
+  final String imgBgVipRank = 'assets/images/member_card/img_bg_vip_rank.svg';
+  final String imgBgVipClass = 'assets/images/member_card/img_bg_vip_class.svg';
+
   final String imgAppCoffeeMedium = 'assets/images/app_coffee_medium.png';
   final String imgAppCoffeeSmall = 'assets/images/app_coffee_small.png';
 

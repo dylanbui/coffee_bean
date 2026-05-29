@@ -1,8 +1,8 @@
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/my_profile_interactor.dart';
+import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/widget/member_card_widget.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:db_core/utils/app_label.dart';
 import 'package:db_core/utils/tap_effect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -21,7 +21,16 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(height: topPadding),
-            _buildMemberCard(),
+            MemberCardWidget(
+              style: MemberCardStyle.diamond,
+              name: 'GIGI',
+              id: '123456789',
+              voucherCount: '5',
+              points: '1998',
+              rankName: 'Hạng Lục Bảo',
+              className: 'Class A',
+              padding: const EdgeInsets.only(top: 24, left: 20, right: 20),
+            ),
             const SizedBox(height: 16),
             _buildActionBarButtons(),
             const SizedBox(height: 16),
@@ -32,142 +41,6 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildMemberCard() {
-    return Center(
-      child: Container(
-        height: 162,
-        padding: const EdgeInsets.only(top: 24, left: 20, right: 20),
-        child: Stack(
-          children: [
-            // Background Gold
-            Positioned.fill(child: SvgPicture.asset(AppAssets.images.imgBgGold, fit: BoxFit.fill)),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              child: Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Avatar
-                      Container(
-                        width: 63,
-                        height: 63,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
-                          image: const DecorationImage(
-                            image: NetworkImage('https://i.pravatar.cc/150?u=gigi'), // Placeholder
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 5),
-                      // User Info
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 6),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text('GIGI', style: TMLabsTextStyle.title),
-                                  const SizedBox(width: 4),
-                                  _buildCardLabel('Class A', AppAssets.images.imgBgGoldClass),
-                                  const SizedBox(width: 4),
-                                  AppIcon(AppAssets.icons.icArrowRight, size: 14, color: TMLabsColor.primary),
-                                ],
-                              ),
-                              Text('ID: 123456789', style: TMLabsTextStyle.caption.copyWith(fontSize: 10)),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // Member Level Info
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text('Trung tâm hội viên', style: TMLabsTextStyle.small),
-                          const SizedBox(height: 2),
-                          _buildCardLabel('Hạng Vàng', AppAssets.images.imgBgGoldRank),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 5),
-                  // Voucher & Points
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      _buildInfoItem('Voucher', '5', 'Sử dụng ngay'),
-                      SizedBox(width: 50),
-                      _buildInfoItem('Điểm tích lũy', '1998', null),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            // My Page button
-            Positioned(
-              right: 20,
-              bottom: 15,
-              child: AppLabel(
-                'Trang của tôi',
-                style: TMLabsTextStyle.small,
-                backgroundColor: TMLabsColor.primary.withValues(alpha: 0.2),
-                borderRadius: 10,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                borderColor: TMLabsColor.primary.withValues(alpha: 0.2),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCardLabel(String text, String bgAsset) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Positioned.fill(child: SvgPicture.asset(bgAsset, fit: BoxFit.fill)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          child: Text(
-            text,
-            style: TMLabsTextStyle.small.copyWith(fontSize: 8, fontStyle: FontStyle.italic, color: TMLabsColor.primary),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInfoItem(String label, String value, String? subText) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: TMLabsTextStyle.title.copyWith(height: 1.1)),
-        Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Text(value, style: TMLabsTextStyle.h1.copyWith(color: TMLabsColor.primary, height: 1.1)),
-              if (subText != null) ...[
-                const SizedBox(width: 4),
-                Text(
-                  subText,
-                  style: TMLabsTextStyle.small.copyWith(fontSize: 8, fontWeight: FontWeight.normal, height: 1.1),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ],
     );
   }
 
@@ -239,12 +112,6 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
     );
   }
 
-  // Widget _buildDivider() {
-  //   return const Padding(
-  //     padding: EdgeInsets.only(left: 48),
-  //     child: Divider(height: 1, thickness: 0.5, color: TMLabsColor.bgLight),
-  //   );
-  // }
 
   Widget _buildStoreServiceRow() {
     return Container(

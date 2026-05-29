@@ -130,6 +130,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/images/
+    - assets/images/member_card/
     - assets/json/
     - assets/icons/
 
