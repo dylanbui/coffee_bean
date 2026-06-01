@@ -27,24 +27,88 @@ class CouponCardWidget extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
-          // Content structure: 30% Left, 70% Right
-          Row(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Left Section (30%)
-              _buildLeftSection(),
-              // Right Section (70%)
-              Expanded(
+              // VÙNG TRÊN: Vùng chọn (Selection Area) - Bao gồm 30% trái và phần trên bên phải
+              TapEffect(
+                onTap: onTap,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center, // Căn giữa checkbox theo chiều dọc của vùng trên
+                  children: [
+                    // Left Section (30% approx)
+                    _buildLeftSection(),
+                    
+                    // Middle Content (Title + Expiry)
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 12, 8, 6), // Giảm top 20->12, bottom 12->6
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              coupon.title,
+                              style: TMLabsTextStyle.bodyBold.copyWith(
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              coupon.expiryDate,
+                              style: TMLabsTextStyle.caption.copyWith(
+                                color: TMLabsColor.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    
+                    // Checkbox (Selection Indicator)
+                    _buildSelectionIndicator(),
+                    const SizedBox(width: 16),
+                  ],
+                ),
+              ),
+
+              // VÙNG DƯỚI: Nút mở rộng và Nội dung chi tiết
+              Padding(
+                padding: const EdgeInsets.fromLTRB(112, 0, 16, 16), // Padding trái khớp với lề nội dung (100 + 12)
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildRightSectionHeader(),
-                    if (coupon.isExpanded) _buildExpandedContent(),
+                    TapEffect(
+                      onTap: onToggleExpand,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Quy định chi tiết',
+                            style: TMLabsTextStyle.caption.copyWith(
+                              color: TMLabsColor.grey,
+                            ),
+                          ),
+                          Icon(
+                            coupon.isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                            size: 16,
+                            color: TMLabsColor.grey,
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (coupon.isExpanded) ...[
+                      const SizedBox(height: 12),
+                      _buildExpandedContent(),
+                    ],
                   ],
                 ),
               ),
             ],
           ),
+          
           // Tag Badge at top right
           Positioned(
             top: 0,
@@ -72,8 +136,8 @@ class CouponCardWidget extends StatelessWidget {
 
   Widget _buildLeftSection() {
     return Container(
-      width: 100, // Fixed width representing approx 30%
-      padding: const EdgeInsets.only(top: 24, bottom: 20),
+      width: 100,
+      padding: const EdgeInsets.symmetric(vertical: 18), // Giảm vertical 24 -> 14
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -113,98 +177,35 @@ class CouponCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildRightSectionHeader() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 20, 16, 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  coupon.title,
-                  style: TMLabsTextStyle.bodyBold.copyWith(
-                    color: Colors.black,
-                    fontSize: 15,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  coupon.expiryDate,
-                  style: TMLabsTextStyle.caption.copyWith(
-                    color: TMLabsColor.grey,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TapEffect(
-                  onTap: onToggleExpand,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Quy định chi tiết',
-                        style: TMLabsTextStyle.caption.copyWith(
-                          color: TMLabsColor.grey,
-                        ),
-                      ),
-                      Icon(
-                        coupon.isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                        size: 16,
-                        color: TMLabsColor.grey,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          _buildSelectionIndicator(),
-        ],
-      ),
-    );
-  }
-
   Widget _buildSelectionIndicator() {
-    return TapEffect(
-      onTap: onTap,
-      child: coupon.isSelected
-          ? const Icon(Icons.check_circle, color: Colors.black, size: 24)
-          : Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                border: Border.all(color: Colors.grey.withValues(alpha: 0.2), width: 1),
-              ),
+    // Không bọc TapEffect ở đây nữa vì cả vùng trên đã có TapEffect
+    return coupon.isSelected
+        ? const Icon(Icons.check_circle, color: Colors.black, size: 24)
+        : Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              border: Border.all(color: Colors.grey.withValues(alpha: 0.2), width: 1),
             ),
-    );
+          );
   }
 
   Widget _buildExpandedContent() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(12, 0, 16, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // const Divider(height: 1, color: TMLabsColor.lightGrey),
-          // const SizedBox(height: 12),
-          Text(
-            coupon.description,
-            style: TMLabsTextStyle.caption.copyWith(
-              color: TMLabsColor.grey,
-              fontSize: 12,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          coupon.description,
+          style: TMLabsTextStyle.caption.copyWith(
+            color: TMLabsColor.grey,
+            fontSize: 12,
           ),
-          const SizedBox(height: 12),
-          _buildDashedContainer(),
-        ],
-      ),
+        ),
+        const SizedBox(height: 12),
+        _buildDashedContainer(),
+      ],
     );
   }
 
