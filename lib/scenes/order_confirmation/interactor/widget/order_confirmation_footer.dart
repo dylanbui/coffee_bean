@@ -1,8 +1,8 @@
 import 'package:coffee_bean/scenes/order_confirmation/interactor/order_confirmation_event_state.dart';
 import 'package:coffee_bean/scenes/order_confirmation/interactor/order_confirmation_interactor.dart';
-import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/utils/number_to_vietnamese.dart';
+import 'package:db_core/utils/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -33,23 +33,18 @@ class OrderConfirmationFooter extends StatelessWidget {
                     NumberToVietnamese.formatNumber(state.totalAmount, "đ") ?? "0 đ",
                     style: TMLabsTextStyle.h2.copyWith(fontWeight: FontWeight.w900),
                   ),
-                  // if (state.selectedCoupon != null)
-                  Text("Đã áp dụng mã giảm giá", style: TMLabsTextStyle.small),
+                  if (state.couponDiscount > 0)
+                    const Text("Đã áp dụng mã giảm giá", style: TMLabsTextStyle.small),
                 ],
               ),
               SizedBox(
                 width: 164,
-                height: 44, // Adjustment to make it look like the design while staying within constraints
-                child: ElevatedButton(
+                height: 44,
+                child: AppButton(
+                  text: "THANH TOÁN",
+                  style: TMLabsButtonStyle.primary,
+                  isLoading: state.status == OrderConfirmationStatus.processing,
                   onPressed: () => interactor.processPayment(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: TMLabsColor.primary,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-                  ),
-                  child: Text(
-                    "THANH TOÁN",
-                    style: TMLabsTextStyle.body.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
                 ),
               ),
             ],

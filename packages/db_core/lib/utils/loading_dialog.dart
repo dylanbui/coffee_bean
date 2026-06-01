@@ -17,12 +17,16 @@ class DbLoadingStyle {
   final Color progressColor;
   final Color backgroundColor;
   final double borderRadius;
+  final Color? borderColor;
+  final Color barrierColor;
 
   const DbLoadingStyle({
     required this.textStyle,
     required this.progressColor,
     this.backgroundColor = Colors.white,
     this.borderRadius = 16.0,
+    this.borderColor,
+    this.barrierColor = Colors.black54,
   });
 }
 
@@ -51,6 +55,8 @@ class DbLoading {
     showFlash<void>(
       context: context,
       persistent: true,
+      barrierColor: effectiveStyle.barrierColor,
+      barrierDismissible: false,
       builder: (context, controller) {
         _currentController = controller;
 
@@ -68,6 +74,9 @@ class DbLoading {
                     decoration: BoxDecoration(
                       color: effectiveStyle.backgroundColor,
                       borderRadius: BorderRadius.circular(effectiveStyle.borderRadius),
+                      border: effectiveStyle.borderColor != null
+                          ? Border.all(color: effectiveStyle.borderColor!, width: 1)
+                          : null,
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,

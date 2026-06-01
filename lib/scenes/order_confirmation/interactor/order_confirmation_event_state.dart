@@ -6,7 +6,17 @@ enum DeliveryMethod {
   takeAway
 }
 
+enum OrderConfirmationStatus {
+  confirming,
+  processing,
+  success,
+  failure
+}
+
 class OrderConfirmationState extends BaseBlocState {
+  final OrderConfirmationStatus status;
+  final String processingMessage;
+  final String? orderNumber;
   final bool isLoading;
   final TblStore? selectedStore;
   final List<TblCartItem> cartItems;
@@ -19,6 +29,9 @@ class OrderConfirmationState extends BaseBlocState {
   final String note;
 
   OrderConfirmationState({
+    this.status = OrderConfirmationStatus.confirming,
+    this.processingMessage = '',
+    this.orderNumber,
     this.isLoading = true,
     this.selectedStore,
     this.cartItems = const [],
@@ -32,6 +45,9 @@ class OrderConfirmationState extends BaseBlocState {
   });
 
   OrderConfirmationState copyWith({
+    OrderConfirmationStatus? status,
+    String? processingMessage,
+    String? orderNumber,
     bool? isLoading,
     TblStore? selectedStore,
     List<TblCartItem>? cartItems,
@@ -44,6 +60,9 @@ class OrderConfirmationState extends BaseBlocState {
     String? note,
   }) {
     return OrderConfirmationState(
+      status: status ?? this.status,
+      processingMessage: processingMessage ?? this.processingMessage,
+      orderNumber: orderNumber ?? this.orderNumber,
       isLoading: isLoading ?? this.isLoading,
       selectedStore: selectedStore ?? this.selectedStore,
       cartItems: cartItems ?? this.cartItems,
@@ -63,6 +82,9 @@ class OrderConfirmationState extends BaseBlocState {
 
   @override
   List<Object?> get props => [
+        status,
+        processingMessage,
+        orderNumber,
         isLoading,
         selectedStore,
         cartItems,

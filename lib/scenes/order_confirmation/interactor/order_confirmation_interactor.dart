@@ -7,7 +7,7 @@ import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:db_core/utils/locator.dart';
 
 class OrderConfirmationInteractor extends CubitInteractor<OrderConfirmationRoutable, OrderConfirmationState>
-    with _CouponListListenerMixin
+    with _OrderConfirmationPaymentMixin, _CouponListListenerMixin
     implements CouponListListener {
   final CartService _cartService = locator<CartService>();
   final DatabaseService _dbService = locator<DatabaseService>();
@@ -49,16 +49,45 @@ class OrderConfirmationInteractor extends CubitInteractor<OrderConfirmationRouta
     emit(state.copyWith(note: note));
   }
 
-  void processPayment() {
-    // TODO: Process payment
-  }
-
   void goBack() {
     router?.pop();
   }
 }
 
 /// Private Mixin xử lý riêng các callback từ CouponList
+///
+
+// region Payment method
+mixin _OrderConfirmationPaymentMixin on CubitInteractor<OrderConfirmationRoutable, OrderConfirmationState> {
+
+  Future<void> processPayment() async {
+    if (state.status == OrderConfirmationStatus.processing) return;
+
+    emit(state.copyWith(
+      status: OrderConfirmationStatus.processing,
+      processingMessage: 'Đang xử lý thanh toán ...',
+    ));
+
+    // Giả lập delay 3s
+    await Future.delayed(const Duration(seconds: 3));
+
+    // Mock thành công (hoặc thất bại tùy logic)
+    emit(state.copyWith(
+      status: OrderConfirmationStatus.success,
+      orderNumber: '#CB${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}',
+    ));
+  }
+
+  void retryPayment() {
+    emit(state.copyWith(status: OrderConfirmationStatus.confirming));
+  }
+
+
+
+}
+// endregion
+
+// region Listener method
 mixin _CouponListListenerMixin on CubitInteractor<OrderConfirmationRoutable, OrderConfirmationState>
     implements CouponListListener {
   @override
@@ -83,3 +112,5 @@ mixin _CouponListListenerMixin on CubitInteractor<OrderConfirmationRoutable, Ord
     // ));
   }
 }
+
+// endregion

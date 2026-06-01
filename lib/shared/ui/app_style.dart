@@ -232,6 +232,8 @@ class TMLabsLoadingStyle {
     progressColor: TMLabsColor.primary,
     backgroundColor: Colors.white,
     borderRadius: 16.0,
+    borderColor: Color(0xFFEEEEEE), // Light grey border
+    barrierColor: Colors.black54,   // Transparent grey overlay
   );
 }
 
