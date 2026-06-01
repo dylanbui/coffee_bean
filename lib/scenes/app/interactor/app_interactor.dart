@@ -54,12 +54,16 @@ class AppInteractor extends DbNoteInteractor<AppRouter> {
       final String response = await rootBundle.loadString('assets/json/sample_data.json');
       final data = json.decode(response);
 
-      // GIẢ LẬP: Chạy 3 API đồng thời (Category, Product, Property)
-      dLog("AppInteractor: Fetching 3 APIs concurrently...");
+      final String storeResponse = await rootBundle.loadString('assets/json/sample_store.json');
+      final storeData = json.decode(storeResponse);
+
+      // GIẢ LẬP: Chạy 4 API đồng thời (Category, Product, Property, Store)
+      dLog("AppInteractor: Fetching 4 APIs concurrently...");
       final results = await Future.wait([
         Future.delayed(const Duration(milliseconds: 500), () => data['categories']),
         Future.delayed(const Duration(milliseconds: 800), () => data['products']),
         Future.delayed(const Duration(milliseconds: 300), () => data['properties']),
+        Future.delayed(const Duration(milliseconds: 400), () => storeData['stores']),
       ]);
 
       // 3. Sync toàn bộ dữ liệu (Không truyền targetType để nạp sạch mọi thứ)
@@ -67,13 +71,15 @@ class AppInteractor extends DbNoteInteractor<AppRouter> {
         categoriesJson: results[0] as List<dynamic>,
         productsJson: results[1] as List<dynamic>,
         propertiesJson: results[2] as List<dynamic>,
+        storesJson: results[3] as List<dynamic>,
       );
 
       // --- Kiểm tra dữ liệu sau khi sync ---
       final foodCount = await dbService.isar.tblFoods.count();
       final courseCount = await dbService.isar.tblCourses.count();
       final catCount = await dbService.isar.tblCategorys.count();
-      dLog("AppInteractor: DB Sync Success -> Foods: $foodCount, Courses: $courseCount, Categories: $catCount");
+      final storeCount = await dbService.isar.tblStores.count();
+      dLog("AppInteractor: DB Sync Success -> Foods: $foodCount, Courses: $courseCount, Categories: $catCount, Stores: $storeCount");
       
       dLog("AppInteractor: Database bootstrapped successfully from simulated APIs.");
     } catch (e) {

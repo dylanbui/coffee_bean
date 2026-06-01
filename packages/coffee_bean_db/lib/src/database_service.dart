@@ -50,6 +50,7 @@ class DatabaseService {
     List<dynamic>? categoriesJson,
     List<dynamic>? productsJson,
     List<dynamic>? propertiesJson,
+    List<dynamic>? storesJson,
     ProductType? targetType,
   }) async {
     await isar.writeTxn(() async {
@@ -58,7 +59,14 @@ class DatabaseService {
         await _syncCategories(categoriesJson, targetType);
       }
 
-      // 2. Xử lý Products & Properties (nếu có Products)
+      // 2. Xử lý Stores (nếu có)
+      if (storesJson != null) {
+        final stores = storesJson.map((json) => _mapToStore(json)).toList();
+        await isar.tblStores.clear();
+        await isar.tblStores.putAll(stores);
+      }
+
+      // 3. Xử lý Products & Properties (nếu có Products)
       if (productsJson != null) {
         final propertyMap = _assembleProperties(propertiesJson ?? []);
 

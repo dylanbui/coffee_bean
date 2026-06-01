@@ -10,6 +10,7 @@ import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/note_picker_modal.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_toast_helper.dart';
 import 'package:db_core/utils/fade_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,6 +40,9 @@ class _OrderConfirmationPageState extends AppCubitState<OrderConfirmationPage, O
           showLoading(text: "Đang xử lý thanh toán ...", style: TMLabsLoadingStyle.defaultLoadingStyle);
         } else {
           hideLoading();
+        }
+        if (state is OrderConfirmationLoginNotifyState) {
+          FlashToastHelper.success(context, "Đăng nhập thành công! Bạn có thể tiếp tục thanh toán.");
         }
       },
       builder: (context, state) {

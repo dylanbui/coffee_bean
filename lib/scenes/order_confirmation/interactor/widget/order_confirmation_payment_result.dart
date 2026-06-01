@@ -56,7 +56,7 @@ class OrderConfirmationPaymentResult extends StatelessWidget {
                   child: AppButton(
                     text: "Quay lại",
                     style: TMLabsButtonStyle.primary,
-                    onPressed: () => interactor.goBack(),
+                    onPressed: () => interactor.router?.pop(),
                   ),
                 ),
               ],

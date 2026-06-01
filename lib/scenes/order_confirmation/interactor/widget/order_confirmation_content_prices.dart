@@ -1,3 +1,4 @@
+import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/scenes/order_confirmation/interactor/order_confirmation_event_state.dart';
 import 'package:coffee_bean/scenes/order_confirmation/interactor/order_confirmation_interactor.dart';
 import 'package:coffee_bean/scenes/order_confirmation/interactor/widget/order_confirmation_content_items.dart';
@@ -22,33 +23,39 @@ class OrderConfirmationContentPrices extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<OrderConfirmationInteractor, OrderConfirmationState>(
       builder: (context, state) {
+        final isLoggedIn = UserManager().isLogin;
+
         return Column(
           children: [
-            _buildSelectionRow(
-              title: "Phiếu giảm giá",
-              value: state.selectedCoupon != null ? "Voucher đã chọn" : "Chọn voucher",
-              trailing: state.selectedCoupon != null ? "-${_formatPrice(state.couponDiscount)}" : null,
-              onTap: () => interactor.selectCoupon(),
-            ),
+            if (isLoggedIn) ...[
+              _buildSelectionRow(
+                title: "Phiếu giảm giá",
+                value: state.selectedCoupon != null ? "Voucher đã chọn" : "Chọn voucher",
+                trailing: state.selectedCoupon != null ? "-${_formatPrice(state.couponDiscount)}" : null,
+                onTap: () => interactor.selectCoupon(),
+              ),
+              const SizedBox(height: 12),
+              _buildSelectionRow(
+                title: "Dùng điểm",
+                value: "Đã dùng",
+                trailing: _formatPrice(state.pointsDiscount),
+                showCheck: true,
+                onTap: () {}, // TODO
+              ),
+              const SizedBox(height: 12),
+            ],
+            _buildSummaryTable(state, isLoggedIn),
             const SizedBox(height: 12),
-            _buildSelectionRow(
-              title: "Dùng điểm",
-              value: "Đã dùng",
-              trailing: _formatPrice(state.pointsDiscount),
-              showCheck: true,
-              onTap: () {}, // TODO
-            ),
-            const SizedBox(height: 12),
-            _buildSummaryTable(state),
-            const SizedBox(height: 12),
-            _buildSelectionRow(
-              title: "Phương thức thanh toán",
-              value: state.paymentMethod,
-              onTap: () => _showPaymentMethodPicker(context, interactor),
-            ),
-            const SizedBox(height: 12),
-            _buildDeliveryAndNote(context, state),
-            const SizedBox(height: 24),
+            if (isLoggedIn) ...[
+              _buildSelectionRow(
+                title: "Phương thức thanh toán",
+                value: state.paymentMethod,
+                onTap: () => _showPaymentMethodPicker(context, interactor),
+              ),
+              const SizedBox(height: 12),
+              _buildDeliveryAndNote(context, state),
+              const SizedBox(height: 24),
+            ],
           ],
         );
       },
@@ -99,7 +106,7 @@ class OrderConfirmationContentPrices extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryTable(OrderConfirmationState state) {
+  Widget _buildSummaryTable(OrderConfirmationState state, bool isLoggedIn) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
@@ -110,12 +117,14 @@ class OrderConfirmationContentPrices extends StatelessWidget {
       child: Column(
         children: [
           _buildSummaryRow("Tổng tiền sản phẩm", _formatPrice(state.subtotal), TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 20),
-          _buildSummaryRow("Giảm giá", "-${_formatPrice(state.couponDiscount)}", TMLabsTextStyle.body.copyWith(color: Colors.red)),
-          const SizedBox(height: 20),
-          _buildSummaryRow("Dùng điểm", "-${_formatPrice(state.pointsDiscount)}", TMLabsTextStyle.body.copyWith(color: Colors.red)),
-          const SizedBox(height: 24),
-          _buildSummaryRow("Cần thanh toán", _formatPrice(state.totalAmount), TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.w900)),
+          if (isLoggedIn) ...[
+            const SizedBox(height: 20),
+            _buildSummaryRow("Giảm giá", "-${_formatPrice(state.couponDiscount)}", TMLabsTextStyle.body.copyWith(color: Colors.red)),
+            const SizedBox(height: 20),
+            _buildSummaryRow("Dùng điểm", "-${_formatPrice(state.pointsDiscount)}", TMLabsTextStyle.body.copyWith(color: Colors.red)),
+            const SizedBox(height: 24),
+            _buildSummaryRow("Cần thanh toán", _formatPrice(state.totalAmount), TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.w900)),
+          ],
         ],
       ),
     );
