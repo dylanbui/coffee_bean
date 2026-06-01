@@ -1,3 +1,4 @@
+import 'package:coffee_bean/config/app_pref.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/scenes/coupon_list/interactor/coupon_list_interactor.dart';
 import 'package:coffee_bean/scenes/order_confirmation/interactor/order_confirmation_event_state.dart';
@@ -5,6 +6,7 @@ import 'package:coffee_bean/scenes/order_confirmation/order_confirmation_router.
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:db_core/utils/locator.dart';
+import 'package:db_core/utils/logger.dart';
 
 class OrderConfirmationInteractor extends CubitInteractor<OrderConfirmationRoutable, OrderConfirmationState>
     with _OrderConfirmationPaymentMixin, _CouponListListenerMixin
@@ -22,12 +24,31 @@ class OrderConfirmationInteractor extends CubitInteractor<OrderConfirmationRouta
   }
 
   Future<void> _loadInitialData() async {
-    final stores = await _dbService.isar.tblStores.where().findAll();
+    final selectedStoreId = AppPrefs().getSelectedStoreId();
+    print("DEBUG: OrderConfirmationInteractor - Loading data for StoreID: $selectedStoreId");
+    TblStore? store;
+    
+    if (selectedStoreId != null) {
+      store = await _dbService.isar.tblStores.filter().serverIdEqualTo(selectedStoreId).findFirst();
+    }
+    
+    // Fallback to first store if no store is saved or found
+    if (store == null) {
+      iLog("DEBUG: OrderConfirmationInteractor - Store not found for ID $selectedStoreId, falling back to first store");
+      store = await _dbService.isar.tblStores.where().findFirst();
+    }
+
+    if (store == null) {
+      iLog("DEBUG: OrderConfirmationInteractor - CRITICAL - No store found in database at all!");
+    } else {
+      iLog("DEBUG: OrderConfirmationInteractor - Found store: ${store.name}");
+    }
+
     final cartItems = _cartService.currentItems;
 
     emit(state.copyWith(
       isLoading: false,
-      selectedStore: stores.firstOrNull,
+      selectedStore: store,
       cartItems: cartItems,
     ));
   }
@@ -71,6 +92,10 @@ mixin _OrderConfirmationPaymentMixin on CubitInteractor<OrderConfirmationRoutabl
     // Giả lập delay 3s
     await Future.delayed(const Duration(seconds: 3));
 
+    // Empty cart upon success
+    final cartService = locator<CartService>();
+    await cartService.clearCart();
+
     // Mock thành công (hoặc thất bại tùy logic)
     emit(state.copyWith(
       status: OrderConfirmationStatus.success,
@@ -81,9 +106,6 @@ mixin _OrderConfirmationPaymentMixin on CubitInteractor<OrderConfirmationRoutabl
   void retryPayment() {
     emit(state.copyWith(status: OrderConfirmationStatus.confirming));
   }
-
-
-
 }
 // endregion
 

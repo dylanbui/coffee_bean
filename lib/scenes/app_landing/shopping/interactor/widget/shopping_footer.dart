@@ -90,7 +90,7 @@ class ShoppingFooter extends StatelessWidget {
                   ),
                   onPressed: () {
                     if (totalQuantity > 0) {
-                      // Xử lý thanh toán
+                      interactor.checkout();
                     }
                   },
                 ),

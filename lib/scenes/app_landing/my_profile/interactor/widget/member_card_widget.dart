@@ -143,7 +143,14 @@ class MemberCardWidget extends StatelessWidget {
                             children: [
                               Row(
                                 children: [
-                                  Text(name, style: TMLabsTextStyle.title.copyWith(color: style.primaryColor)),
+                                  Flexible(
+                                    child: Text(
+                                      name,
+                                      style: TMLabsTextStyle.title.copyWith(color: style.primaryColor),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
                                   const SizedBox(width: 4),
                                   _buildCardLabel(className, style.classAsset),
                                   const SizedBox(width: 4),

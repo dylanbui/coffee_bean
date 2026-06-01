@@ -15,6 +15,8 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
+    final user = interactor.state.user;
+    
     return Container(
       color: TMLabsColor.bgMain,
       child: SingleChildScrollView(
@@ -23,12 +25,13 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
             SizedBox(height: topPadding),
             MemberCardWidget(
               style: MemberCardStyle.diamond,
-              name: 'GIGI',
-              id: '123456789',
-              voucherCount: '5',
-              points: '1998',
-              rankName: 'Hạng Lục Bảo',
-              className: 'Class A',
+              name: user?.fullName ?? user?.userName ?? 'MEMBER',
+              id: user?.id.toString() ?? '---',
+              voucherCount: '5', // Mock data, should be from user or separate service
+              points: '1998',    // Mock data
+              rankName: 'Hạng Lục Bảo', // Mock data
+              className: 'Class A',    // Mock data
+              avatarUrl: user?.avatarUrl,
               padding: const EdgeInsets.only(top: 24, left: 20, right: 20),
             ),
             const SizedBox(height: 16),

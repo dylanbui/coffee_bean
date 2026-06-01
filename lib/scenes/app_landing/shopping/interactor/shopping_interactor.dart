@@ -77,5 +77,11 @@ class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState
     router?.navigate(FoodDetailRoute(product));
   }
 
+  void checkout() {
+    if (_cartService.currentItems.isNotEmpty) {
+      router?.navigate(OrderConfirmationRoute());
+    }
+  }
+
   CartService get cartService => _cartService;
 }

@@ -1,6 +1,7 @@
 import 'package:coffee_bean/scenes/order_confirmation/interactor/order_confirmation_event_state.dart';
 import 'package:coffee_bean/scenes/order_confirmation/interactor/order_confirmation_interactor.dart';
-import 'package:coffee_bean/scenes/order_confirmation/interactor/widget/order_confirmation_content.dart';
+import 'package:coffee_bean/scenes/order_confirmation/interactor/widget/order_confirmation_content_items.dart';
+import 'package:coffee_bean/scenes/order_confirmation/interactor/widget/order_confirmation_content_prices.dart';
 import 'package:coffee_bean/scenes/order_confirmation/interactor/widget/order_confirmation_footer.dart';
 import 'package:coffee_bean/scenes/order_confirmation/interactor/widget/order_confirmation_header.dart';
 import 'package:coffee_bean/scenes/order_confirmation/interactor/widget/order_confirmation_payment_result.dart';
@@ -77,7 +78,10 @@ class _OrderConfirmationPageState extends AppCubitState<OrderConfirmationPage, O
             child: Column(
               children: [
                 OrderConfirmationHeader(interactor: interactor),
-                OrderConfirmationContent(interactor: interactor),
+                const SizedBox(height: 12),
+                OrderConfirmationContentItems(items: state.cartItems),
+                const SizedBox(height: 12),
+                OrderConfirmationContentPrices(interactor: interactor),
               ],
             ),
           ),

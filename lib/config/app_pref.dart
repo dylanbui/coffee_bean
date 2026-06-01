@@ -23,4 +23,12 @@ class AppPrefs {
     DbSharedPreferences().set(_firstRun, isFirstRun);
   }
 
+  int? getSelectedStoreId() {
+    return DbSharedPreferences().get('selected_store_id') as int?;
+  }
+
+  void setSelectedStoreId(int id) {
+    DbSharedPreferences().set('selected_store_id', id);
+  }
+
 }
