@@ -22,6 +22,9 @@ class CoffeeAppBarStyleConfig {
   /// Custom height for the toolbar part of the AppBar.
   final double? toolbarHeight;
 
+  /// Custom width for the leading widget.
+  final double? leadingWidth;
+
   /// Custom icon for the back button.
   final IconData? backIcon;
 
@@ -32,8 +35,31 @@ class CoffeeAppBarStyleConfig {
     this.centerTitle = true,
     this.titleTextStyle,
     this.toolbarHeight,
+    this.leadingWidth,
     this.backIcon = Icons.arrow_back_ios_new,
   });
+
+  CoffeeAppBarStyleConfig copyWith({
+    Color? backgroundColor,
+    Color? foregroundColor,
+    double? elevation,
+    bool? centerTitle,
+    TextStyle? titleTextStyle,
+    double? toolbarHeight,
+    double? leadingWidth,
+    IconData? backIcon,
+  }) {
+    return CoffeeAppBarStyleConfig(
+      backgroundColor: backgroundColor ?? this.backgroundColor,
+      foregroundColor: foregroundColor ?? this.foregroundColor,
+      elevation: elevation ?? this.elevation,
+      centerTitle: centerTitle ?? this.centerTitle,
+      titleTextStyle: titleTextStyle ?? this.titleTextStyle,
+      toolbarHeight: toolbarHeight ?? this.toolbarHeight,
+      leadingWidth: leadingWidth ?? this.leadingWidth,
+      backIcon: backIcon ?? this.backIcon,
+    );
+  }
 }
 
 /// A custom AppBar widget designed for the Coffee Bean app.
@@ -102,8 +128,9 @@ class CoffeeAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: style.centerTitle,
       backgroundColor: style.backgroundColor,
       elevation: style.elevation,
+      leadingWidth: style.leadingWidth,
       leading: hideBackButton
-          ? null
+          ? (leading != null ? leading : null)
           : (leading ??
                 IconButton(
                   icon: Icon(style.backIcon, size: 20),

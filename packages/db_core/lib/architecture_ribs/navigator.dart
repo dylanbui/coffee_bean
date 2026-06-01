@@ -54,6 +54,16 @@ class DbNavigator {
     }
   }
 
+  bool canPop({BuildContext? fromContext}) {
+    final state = _navigatorState.currentState;
+    if (state != null) {
+      return state.canPop();
+    } else if (fromContext != null && fromContext.mounted) {
+      return Navigator.canPop(fromContext);
+    }
+    return false;
+  }
+
   /// Pops the top route from the navigator.
   /// 
   /// [untilRouteName]: If provided, pops until the route with this name is found.

@@ -15,18 +15,19 @@ import 'package:flutter/cupertino.dart';
 // States
 abstract class MyProfileState extends BaseBlocState {
   final bool isLoggedIn;
-  MyProfileState({this.isLoggedIn = false});
+  final bool isCheckedIn;
+  MyProfileState({this.isLoggedIn = false, this.isCheckedIn = false});
 
   @override
-  List<Object?> get props => [isLoggedIn];
+  List<Object?> get props => [isLoggedIn, isCheckedIn];
 }
 
 class MyProfileInitial extends MyProfileState {
-  MyProfileInitial() : super(isLoggedIn: false);
+  MyProfileInitial() : super(isLoggedIn: false, isCheckedIn: false);
 }
 
 class MyProfileLoaded extends MyProfileState {
-  MyProfileLoaded({required super.isLoggedIn});
+  MyProfileLoaded({required super.isLoggedIn, super.isCheckedIn});
 }
 
 class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileState> implements UserAuthFlowListener {
@@ -45,7 +46,12 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
   }
 
   Future<void> checkLoginStatus() async {
-    emit(MyProfileLoaded(isLoggedIn: UserManager().isLogin));
+    emit(MyProfileLoaded(isLoggedIn: UserManager().isLogin, isCheckedIn: state.isCheckedIn));
+  }
+
+  void checkIn() {
+    // Toggle trạng thái: nếu đã check thì uncheck, nếu chưa thì check.
+    emit(MyProfileLoaded(isLoggedIn: state.isLoggedIn, isCheckedIn: !state.isCheckedIn));
   }
 
   void doLogout() async {

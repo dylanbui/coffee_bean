@@ -31,7 +31,7 @@ abstract interface class DbNoteRoutable {
   void pop();
 
   /// Standard push operation.
-  void push();
+  void push(ViewController viewController);
 
   /// Performs complex navigation logic based on a specific [toRoute].
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters});
@@ -110,11 +110,23 @@ abstract class DbNoteRouter implements DbNoteRoutable {
 
   @override
   void pop() {
-    navigator.pop();
+    if (parentRouter case var parentRouter?) {
+      parentRouter.pop();
+    } else {
+      if (navigator.canPop()) {
+        navigator.pop();
+      }
+    }
   }
 
   @override
-  void push() {}
+  void push(ViewController viewController) {
+    if (parentRouter case var parentRouter?) {
+      parentRouter.push(viewController);
+    } else {
+      navigator.push(viewController);
+    }
+  }
 
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {

@@ -105,15 +105,17 @@ class MemberCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        height: 162,
-        padding: padding ?? const EdgeInsets.only(top: 0, left: 0, right: 0),
+        // Thay thế height cố định bằng constraints hoặc để tự giãn
+        constraints: const BoxConstraints(minHeight: 162), 
+        padding: padding ?? EdgeInsets.zero,
         child: Stack(
           children: [
-            // Background
+            // Background - dùng Positioned.fill để tự khớp theo size của nội dung
             Positioned.fill(child: SvgPicture.asset(style.bgAsset, fit: BoxFit.fill)),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Column(
+                mainAxisSize: MainAxisSize.min, // Để column co theo nội dung
                 children: [
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,

@@ -11,6 +11,7 @@ class _Icons {
   const _Icons();
 
   final String icMy = 'assets/icons/ic_my.svg';
+  final String icMyFill = 'assets/icons/ic_my_fill.svg';
   final String icHome = 'assets/icons/ic_home.svg';
   final String icShopping = 'assets/icons/ic_shopping.svg';
   final String icMyActive = 'assets/icons/ic_my_active.svg';
@@ -49,6 +50,11 @@ class _Icons {
   final String icDonKhoaHoc = 'assets/icons/ic_don_khoa_hoc.svg';
   final String icDonHang = 'assets/icons/ic_don_hang.svg';
   final String icLichDatHen = 'assets/icons/ic_lich_dat_hen.svg';
+  final String icCheckboxCircle = 'assets/icons/ic_checkbox_circle.svg';
+  final String icCheckboxBg = 'assets/icons/ic_checkbox_bg.svg';
+
+
+
 
 }
 

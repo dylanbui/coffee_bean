@@ -65,7 +65,7 @@ class DbFlashDialogHelper {
   static Future<T?> show<T>({
     required BuildContext context,
     required String title,
-    required String content,
+    String? content,
     List<DbFlashDialogAction<T>>? actions,
     TextStyle? titleStyle,
     TextStyle? contentStyle,
@@ -114,12 +114,14 @@ class DbFlashDialogHelper {
                               style: titleStyle ?? style.titleStyle,
                               textAlign: TextAlign.center,
                             ),
-                            const SizedBox(height: 12),
-                            Text(
-                              content,
-                              style: contentStyle ?? style.contentStyle,
-                              textAlign: TextAlign.center,
-                            ),
+                            if (content != null && content.isNotEmpty) ...[
+                              const SizedBox(height: 12),
+                              Text(
+                                content,
+                                style: contentStyle ?? style.contentStyle,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                             if (body != null) ...[
                               const SizedBox(height: 20),
                               body,
