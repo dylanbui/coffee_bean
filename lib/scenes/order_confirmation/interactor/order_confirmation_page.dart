@@ -8,7 +8,6 @@ import 'package:coffee_bean/scenes/order_confirmation/interactor/widget/order_co
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/shared/ui_control/note_picker_modal.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_toast_helper.dart';
 import 'package:db_core/utils/fade_switcher.dart';
@@ -36,12 +35,18 @@ class _OrderConfirmationPageState extends AppCubitState<OrderConfirmationPage, O
   Widget getBody(BuildContext context) {
     return BlocConsumer<OrderConfirmationInteractor, OrderConfirmationState>(
       listener: (context, state) {
+        // Xử lý hiển thị Loading dựa trên Key hoặc status
         if (state.status == OrderConfirmationStatus.processing) {
-          showLoading(text: "Đang xử lý thanh toán ...", style: TMLabsLoadingStyle.defaultLoadingStyle);
+          final msg = state.processingMessage == 'PAYMENT_PROCESSING' 
+              ? "Đang xử lý thanh toán ..." 
+              : "Đang xử lý ...";
+          showLoading(text: msg, style: TMLabsLoadingStyle.defaultLoadingStyle);
         } else {
           hideLoading();
         }
-        if (state is OrderConfirmationLoginNotifyState) {
+
+        // Xử lý hiển thị thông báo thành công từ Key
+        if (state.successMessageKey == "LOGIN_SUCCESS") {
           FlashToastHelper.success(context, "Đăng nhập thành công! Bạn có thể tiếp tục thanh toán.");
         }
       },
@@ -78,7 +83,7 @@ class _OrderConfirmationPageState extends AppCubitState<OrderConfirmationPage, O
       children: [
         Positioned.fill(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 100), // Height for footer
+            padding: const EdgeInsets.only(bottom: 100),
             child: Column(
               children: [
                 OrderConfirmationHeader(interactor: interactor),

@@ -1,124 +1,159 @@
 import 'package:db_core/state_management/lib_bloc/constants.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
+import 'package:equatable/equatable.dart';
 
-enum DeliveryMethod {
-  dineIn,
-  takeAway
-}
+enum DeliveryMethod { dineIn, takeAway }
 
-enum OrderConfirmationStatus {
-  confirming,
-  processing,
-  success,
-  failure
-}
+enum OrderConfirmationStatus { confirming, processing, success, failure }
 
+// --- SUB-MODELS ---
 
-class OrderConfirmationState extends BaseBlocState {
-  final OrderConfirmationStatus status;
-  final String processingMessage;
-  final String? orderNumber;
+class UIStatus extends Equatable {
   final bool isLoading;
-  final TblStore? selectedStore;
-  final List<TblCartItem> cartItems;
+  final String processingMessage;
+  final String? successMessageKey; // Sử dụng Key để hỗ trợ đa ngôn ngữ sau này
+
+  const UIStatus({
+    this.isLoading = true,
+    this.processingMessage = '',
+    this.successMessageKey,
+  });
+
+  UIStatus copyWith({
+    bool? isLoading,
+    String? processingMessage,
+    String? successMessageKey,
+  }) {
+    return UIStatus(
+      isLoading: isLoading ?? this.isLoading,
+      processingMessage: processingMessage ?? this.processingMessage,
+      successMessageKey: successMessageKey ?? this.successMessageKey,
+    );
+  }
+
+  @override
+  List<Object?> get props => [isLoading, processingMessage, successMessageKey];
+}
+
+class OrderPromotion extends Equatable {
   final String? selectedCoupon;
   final double couponDiscount;
   final int usedPoints;
   final double pointsDiscount;
-  final String paymentMethod;
-  final DeliveryMethod deliveryMethod;
-  final String note;
 
-  OrderConfirmationState({
-    this.status = OrderConfirmationStatus.confirming,
-    this.processingMessage = '',
-    this.orderNumber,
-    this.isLoading = true,
-    this.selectedStore,
-    this.cartItems = const [],
+  const OrderPromotion({
     this.selectedCoupon,
     this.couponDiscount = 0,
     this.usedPoints = 4500,
     this.pointsDiscount = 4000,
-    this.paymentMethod = 'Tiền mặt',
-    this.deliveryMethod = DeliveryMethod.dineIn,
-    this.note = '',
   });
 
-  OrderConfirmationState copyWith({
-    OrderConfirmationStatus? status,
-    String? processingMessage,
-    String? orderNumber,
-    bool? isLoading,
-    TblStore? selectedStore,
-    List<TblCartItem>? cartItems,
+  double get totalDiscount => couponDiscount + pointsDiscount;
+
+  OrderPromotion copyWith({
     String? selectedCoupon,
     double? couponDiscount,
     int? usedPoints,
     double? pointsDiscount,
-    String? paymentMethod,
-    DeliveryMethod? deliveryMethod,
-    String? note,
   }) {
-    return OrderConfirmationState(
-      status: status ?? this.status,
-      processingMessage: processingMessage ?? this.processingMessage,
-      orderNumber: orderNumber ?? this.orderNumber,
-      isLoading: isLoading ?? this.isLoading,
-      selectedStore: selectedStore ?? this.selectedStore,
-      cartItems: cartItems ?? this.cartItems,
+    return OrderPromotion(
       selectedCoupon: selectedCoupon ?? this.selectedCoupon,
       couponDiscount: couponDiscount ?? this.couponDiscount,
       usedPoints: usedPoints ?? this.usedPoints,
       pointsDiscount: pointsDiscount ?? this.pointsDiscount,
-      paymentMethod: paymentMethod ?? this.paymentMethod,
+    );
+  }
+
+  @override
+  List<Object?> get props => [selectedCoupon, couponDiscount, usedPoints, pointsDiscount];
+}
+
+class CheckoutPreferences extends Equatable {
+  final String paymentMethodKey;
+  final DeliveryMethod deliveryMethod;
+  final String note;
+
+  const CheckoutPreferences({
+    this.paymentMethodKey = 'cash',
+    this.deliveryMethod = DeliveryMethod.dineIn,
+    this.note = '',
+  });
+
+  CheckoutPreferences copyWith({
+    String? paymentMethodKey,
+    DeliveryMethod? deliveryMethod,
+    String? note,
+  }) {
+    return CheckoutPreferences(
+      paymentMethodKey: paymentMethodKey ?? this.paymentMethodKey,
       deliveryMethod: deliveryMethod ?? this.deliveryMethod,
       note: note ?? this.note,
     );
   }
 
+  @override
+  List<Object?> get props => [paymentMethodKey, deliveryMethod, note];
+}
+
+// --- MAIN STATE ---
+
+class OrderConfirmationState extends BaseBlocState {
+  final OrderConfirmationStatus status;
+  final String? orderNumber;
+  final TblStore? selectedStore;
+  final List<TblCartItem> cartItems;
+
+  final UIStatus uiStatus;
+  final OrderPromotion promotion;
+  final CheckoutPreferences preferences;
+
+  OrderConfirmationState({
+    this.status = OrderConfirmationStatus.confirming,
+    this.orderNumber,
+    this.selectedStore,
+    this.cartItems = const [],
+    this.uiStatus = const UIStatus(),
+    this.promotion = const OrderPromotion(),
+    this.preferences = const CheckoutPreferences(),
+  });
+
+  // Getters & Logic
   double get subtotal => cartItems.fold(0, (sum, item) => sum + item.totalPrice);
-  double get totalDiscount => couponDiscount + pointsDiscount;
-  double get totalAmount => subtotal - totalDiscount;
+  double get totalAmount => subtotal - promotion.totalDiscount;
+
+  // Shortcuts cho UI
+  bool get isLoading => uiStatus.isLoading;
+  String get processingMessage => uiStatus.processingMessage;
+  String? get successMessageKey => uiStatus.successMessageKey;
+
+  OrderConfirmationState copyWith({
+    OrderConfirmationStatus? status,
+    String? orderNumber,
+    TblStore? selectedStore,
+    List<TblCartItem>? cartItems,
+    UIStatus? uiStatus,
+    OrderPromotion? promotion,
+    CheckoutPreferences? preferences,
+  }) {
+    return OrderConfirmationState(
+      status: status ?? this.status,
+      orderNumber: orderNumber ?? this.orderNumber,
+      selectedStore: selectedStore ?? this.selectedStore,
+      cartItems: cartItems ?? this.cartItems,
+      uiStatus: uiStatus ?? this.uiStatus,
+      promotion: promotion ?? this.promotion,
+      preferences: preferences ?? this.preferences,
+    );
+  }
 
   @override
   List<Object?> get props => [
         status,
-        processingMessage,
         orderNumber,
-        isLoading,
         selectedStore,
         cartItems,
-        selectedCoupon,
-        couponDiscount,
-        usedPoints,
-        pointsDiscount,
-        paymentMethod,
-        deliveryMethod,
-        note,
+        uiStatus,
+        promotion,
+        preferences,
       ];
-}
-
-class OrderConfirmationLoginNotifyState extends OrderConfirmationState {
-  final DateTime _timestamp = DateTime.now(); // Đảm bảo state luôn duy nhất để trigger listener
-
-  OrderConfirmationLoginNotifyState(OrderConfirmationState state)
-      : super(
-          status: state.status,
-          processingMessage: state.processingMessage,
-          orderNumber: state.orderNumber,
-          isLoading: state.isLoading,
-          selectedStore: state.selectedStore,
-          cartItems: state.cartItems,
-          selectedCoupon: state.selectedCoupon,
-          couponDiscount: state.couponDiscount,
-          usedPoints: state.usedPoints,
-          pointsDiscount: state.pointsDiscount,
-          paymentMethod: state.paymentMethod,
-          deliveryMethod: state.deliveryMethod,
-          note: state.note,
-        );
-
-  @override
-  List<Object?> get props => super.props..add(_timestamp);
 }

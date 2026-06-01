@@ -1,18 +1,17 @@
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
+import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
 import 'package:coffee_bean/scenes/order_confirmation/interactor/order_confirmation_event_state.dart';
 import 'package:coffee_bean/scenes/order_confirmation/interactor/order_confirmation_interactor.dart';
-import 'package:coffee_bean/scenes/order_confirmation/interactor/widget/order_confirmation_content_items.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui_control/app_selection_row.dart';
 import 'package:coffee_bean/shared/ui_control/note_picker_modal.dart';
 import 'package:coffee_bean/shared/ui_control/option_picker_modal.dart';
 import 'package:coffee_bean/utils/number_to_vietnamese.dart';
-import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:group_button/group_button.dart';
-import 'package:intl/intl.dart';
 
 class OrderConfirmationContentPrices extends StatelessWidget {
   final OrderConfirmationInteractor interactor;
@@ -26,87 +25,57 @@ class OrderConfirmationContentPrices extends StatelessWidget {
         final isLoggedIn = UserManager().isLogin;
 
         return Column(
-          children: [
-            if (isLoggedIn) ...[
-              _buildSelectionRow(
-                title: "Phiếu giảm giá",
-                value: state.selectedCoupon != null ? "Voucher đã chọn" : "Chọn voucher",
-                trailing: state.selectedCoupon != null ? "-${_formatPrice(state.couponDiscount)}" : null,
-                onTap: () => interactor.selectCoupon(),
-              ),
-              const SizedBox(height: 12),
-              _buildSelectionRow(
-                title: "Dùng điểm",
-                value: "Đã dùng",
-                trailing: _formatPrice(state.pointsDiscount),
-                showCheck: true,
-                onTap: () {}, // TODO
-              ),
-              const SizedBox(height: 12),
-            ],
-            _buildSummaryTable(state, isLoggedIn),
-            const SizedBox(height: 12),
-            if (isLoggedIn) ...[
-              _buildSelectionRow(
-                title: "Phương thức thanh toán",
-                value: state.paymentMethod,
-                onTap: () => _showPaymentMethodPicker(context, interactor),
-              ),
-              const SizedBox(height: 12),
-              _buildDeliveryAndNote(context, state),
-              const SizedBox(height: 24),
-            ],
-          ],
+          children: isLoggedIn 
+            ? _buildMemberLayout(context, state) 
+            : _buildGuestLayout(state),
         );
       },
     );
   }
 
-  Widget _buildSelectionRow({
-    required String title,
-    required String value,
-    String? trailing,
-    bool showCheck = false,
-    VoidCallback? onTap,
-  }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))],
-      ),
-      child: Material(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Container(
-            height: 56,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Text(title, style: TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.bold)),
-                const Spacer(),
-                Text(value, style: TMLabsTextStyle.body),
-                if (trailing != null) ...[
-                  const SizedBox(width: 8),
-                  Text(trailing, style: TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.bold, color: trailing.startsWith('-') ? Colors.red : Colors.black)),
-                ],
-                const SizedBox(width: 8),
-                if (showCheck)
-                  const Icon(Icons.check_circle, color: TMLabsColor.primary, size: 20)
-                else
-                  const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+  /// Layout dành cho khách chưa đăng nhập (Chỉ hiện tổng tiền sản phẩm)
+  List<Widget> _buildGuestLayout(OrderConfirmationState state) {
+    return [
+      _buildSummaryTable(state, isLoggedIn: false),
+      const SizedBox(height: 24),
+    ];
   }
 
-  Widget _buildSummaryTable(OrderConfirmationState state, bool isLoggedIn) {
+  /// Layout dành cho thành viên (Hiện đầy đủ voucher, điểm, thanh toán, ghi chú)
+  List<Widget> _buildMemberLayout(BuildContext context, OrderConfirmationState state) {
+    final paymentRepo = PaymentMethodRepository();
+    final paymentMethod = paymentRepo.findByKey(state.preferences.paymentMethodKey);
+
+    return [
+      AppSelectionRow(
+        title: "Phiếu giảm giá",
+        value: state.promotion.selectedCoupon != null ? "Voucher đã chọn" : "Chọn voucher",
+        trailingText: state.promotion.selectedCoupon != null ? "-${_formatPrice(state.promotion.couponDiscount)}" : null,
+        onTap: () => interactor.selectCoupon(),
+      ),
+      const SizedBox(height: 12),
+      AppSelectionRow(
+        title: "Dùng điểm",
+        value: "Đã dùng",
+        trailingText: _formatPrice(state.promotion.pointsDiscount),
+        showCheck: true,
+        onTap: () {}, // TODO: Implement points logic
+      ),
+      const SizedBox(height: 12),
+      _buildSummaryTable(state, isLoggedIn: true),
+      const SizedBox(height: 12),
+      AppSelectionRow(
+        title: "Phương thức thanh toán",
+        value: paymentMethod?.title ?? "Chọn phương thức",
+        onTap: () => _showPaymentMethodPicker(context, interactor),
+      ),
+      const SizedBox(height: 12),
+      _buildDeliveryAndNote(context, state),
+      const SizedBox(height: 24),
+    ];
+  }
+
+  Widget _buildSummaryTable(OrderConfirmationState state, {required bool isLoggedIn}) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
@@ -119,9 +88,9 @@ class OrderConfirmationContentPrices extends StatelessWidget {
           _buildSummaryRow("Tổng tiền sản phẩm", _formatPrice(state.subtotal), TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.bold)),
           if (isLoggedIn) ...[
             const SizedBox(height: 20),
-            _buildSummaryRow("Giảm giá", "-${_formatPrice(state.couponDiscount)}", TMLabsTextStyle.body.copyWith(color: Colors.red)),
+            _buildSummaryRow("Giảm giá", "-${_formatPrice(state.promotion.couponDiscount)}", TMLabsTextStyle.body.copyWith(color: Colors.red)),
             const SizedBox(height: 20),
-            _buildSummaryRow("Dùng điểm", "-${_formatPrice(state.pointsDiscount)}", TMLabsTextStyle.body.copyWith(color: Colors.red)),
+            _buildSummaryRow("Dùng điểm", "-${_formatPrice(state.promotion.pointsDiscount)}", TMLabsTextStyle.body.copyWith(color: Colors.red)),
             const SizedBox(height: 24),
             _buildSummaryRow("Cần thanh toán", _formatPrice(state.totalAmount), TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.w900)),
           ],
@@ -160,7 +129,7 @@ class OrderConfirmationContentPrices extends StatelessWidget {
                   interactor.updateDeliveryMethod(val);
                 },
                 buttons: const [DeliveryMethod.dineIn, DeliveryMethod.takeAway],
-                controller: GroupButtonController(selectedIndex: state.deliveryMethod == DeliveryMethod.dineIn ? 0 : 1),
+                controller: GroupButtonController(selectedIndex: state.preferences.deliveryMethod == DeliveryMethod.dineIn ? 0 : 1),
                 buttonBuilder: (selected, value, context) {
                   return Row(
                     mainAxisSize: MainAxisSize.min,
@@ -182,17 +151,17 @@ class OrderConfirmationContentPrices extends StatelessWidget {
           InkWell(
             onTap: () => _showNoteDialog(context),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start, // Giữ nhãn "Ghi chú" ở trên cùng
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text("Ghi chú", style: TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.bold)),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center, // Căn giữa text ghi chú và icon theo chiều dọc
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Expanded(
                         child: Text(
-                          state.note.isEmpty ? "Nhập ghi chú" : state.note,
+                          state.preferences.note.isEmpty ? "Nhập ghi chú" : state.preferences.note,
                           style: TMLabsTextStyle.body,
                           textAlign: TextAlign.right,
                           maxLines: 2,
@@ -207,26 +176,19 @@ class OrderConfirmationContentPrices extends StatelessWidget {
               ],
             ),
           ),
-
-
         ],
       ),
     );
   }
 
   void _showPaymentMethodPicker(BuildContext context, OrderConfirmationInteractor interactor) async {
-    final items = [
-      DefaultOptionItem(id: 1, key: "Tiền mặt", title: "Tiền mặt", icon: Icons.payments_outlined),
-      DefaultOptionItem(id: 2, key: "Ví MoMo", title: "Ví MoMo", icon: Icons.account_balance_wallet_outlined),
-      DefaultOptionItem(id: 3, key: "ZaloPay", title: "ZaloPay", icon: Icons.account_balance_wallet_outlined),
-      DefaultOptionItem(id: 4, key: "Thẻ ATM / Visa", title: "Thẻ ATM / Visa", icon: Icons.credit_card_outlined),
-    ];
+    final paymentRepo = PaymentMethodRepository();
 
-    final result = await OptionPickerModal.show<DefaultOptionItem>(
+    final result = await OptionPickerModal.show<PaymentMethod>(
       context: context,
       title: "Phương thức thanh toán",
-      items: items,
-      selectedKey: interactor.state.paymentMethod,
+      items: paymentRepo.all,
+      selectedKey: interactor.state.preferences.paymentMethodKey,
     );
 
     if (result != null) {
@@ -238,7 +200,7 @@ class OrderConfirmationContentPrices extends StatelessWidget {
     final result = await NotePickerModal.show(
       context: context,
       title: "Ghi chú",
-      initialValue: interactor.state.note,
+      initialValue: interactor.state.preferences.note,
     );
     if (result != null) {
       interactor.updateNote(result);

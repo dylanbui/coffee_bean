@@ -3,6 +3,7 @@ import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/widget/memb
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui_control/app_selection_row.dart';
 import 'package:db_core/utils/tap_effect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -39,7 +40,13 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
             const SizedBox(height: 16),
             _buildActionsList(),
             const SizedBox(height: 16),
-            _buildStoreServiceRow(),
+            AppSelectionRow(
+              leadingIcon: AppAssets.icons.icStoreService,
+              title: 'Dịch vụ tại cửa hàng',
+              trailingIcon: AppAssets.icons.icArrowRightNone,
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              onTap: () {},
+            ),
             const SizedBox(height: 32),
           ],
         ),
@@ -115,28 +122,6 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
     );
   }
 
-
-  Widget _buildStoreServiceRow() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))],
-      ),
-      child: Material(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        clipBehavior: Clip.antiAlias,
-        child: _buildActionRow(
-          AppAssets.icons.icStoreService,
-          'Dịch vụ tại cửa hàng',
-          height: 56,
-          borderRadius: BorderRadius.circular(28),
-        ),
-      ),
-    );
-  }
-
   Widget _buildActionRow(String icon, String title, {double height = 48, BorderRadius? borderRadius}) {
     return InkWell(
       onTap: () {}, // Thêm hiệu ứng loang khi tap
@@ -165,7 +150,19 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
                 style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.primary, fontWeight: FontWeight.w500),
               ),
             ),
-            AppIcon(AppAssets.icons.icArrowRightNone, size: 20, color: TMLabsColor.deepNavy.withValues(alpha: 0.8)),
+            const SizedBox(width: 8),
+            SizedBox(
+              width: 14,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: SvgPicture.asset(
+                  AppAssets.icons.icArrowRightNone,
+                  width: 18,
+                  height: 18,
+                  colorFilter: ColorFilter.mode(TMLabsColor.deepNavy.withValues(alpha: 0.8), BlendMode.srcIn),
+                ),
+              ),
+            ),
           ],
         ),
       ),

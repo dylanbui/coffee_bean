@@ -5,17 +5,16 @@ import 'package:db_core/utils/flash_utils/flash_modal_helper.dart';
 import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
 
+// Base abstraction cho mọi option item
 abstract class OptionItem {
-  int get id;
-  String get key;
-  String get title;
-  bool get active;
-  dynamic get icon;
+  String get key;    // unique string key
+  String get title;  // tên hiển thị
+  bool get active;   // có cho phép chọn không
+  dynamic get icon;  // icon asset hoặc widget
 }
 
+// Default implementation, user for simple Modal
 class DefaultOptionItem extends OptionItem {
-  @override
-  final int id;
   @override
   final String key;
   @override
@@ -26,12 +25,24 @@ class DefaultOptionItem extends OptionItem {
   final dynamic icon;
 
   DefaultOptionItem({
-    required this.id,
-    required this.key,
+    required dynamic key, // có thể là String hoặc int
     required this.title,
     this.active = true,
     this.icon,
-  });
+  }) : key = key is int ? key.toString() : key;
+}
+
+// Repository pattern để quản lý danh sách hardcode
+class OptionRepository<T extends OptionItem> {
+  final List<T> items;
+
+  const OptionRepository(this.items);
+
+  List<T> get all => items;
+
+  T get defaultItem => items.firstWhere((i) => i.active, orElse: () => items.first);
+
+  T? findByKey(String key) => items.firstWhere((i) => i.key == key, orElse: () => defaultItem);
 }
 
 class OptionPickerModal {

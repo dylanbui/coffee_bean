@@ -38,7 +38,7 @@ class OrderConfirmationFooter extends StatelessWidget {
                     NumberToVietnamese.formatNumber(displayAmount, "đ") ?? "0 đ",
                     style: TMLabsTextStyle.h2.copyWith(fontWeight: FontWeight.w900),
                   ),
-                  if (isLoggedIn && state.couponDiscount > 0)
+                  if (isLoggedIn && state.promotion.couponDiscount > 0)
                     const Text("Đã áp dụng mã giảm giá", style: TMLabsTextStyle.small),
                 ],
               ),
