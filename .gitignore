@@ -51,6 +51,7 @@ app.*.map.json
 # =========================================================================
 # Gemini / General AI Context
 AI_CONTEXT.md
+PAYMENT_GUIDE.md
 gemini.md
 .ai/
 

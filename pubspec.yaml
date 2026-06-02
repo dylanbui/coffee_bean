@@ -110,6 +110,12 @@ dependencies:
   # Internationalization and localization support (date, number formatting)
   intl: ^0.20.2
 
+  # --- Payment gateway ---
+  flutter_inappwebview: ^6.1.5
+  crypto: ^3.0.7
+  http: ^1.6.0
+  uuid: ^4.5.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

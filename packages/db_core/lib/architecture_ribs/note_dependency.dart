@@ -22,3 +22,30 @@ abstract class DbNoteComponent<D extends DbNoteDependency> implements DbNoteDepe
   final D dependency; // Tham chiếu về cha
   DbNoteComponent(this.dependency);
 }
+
+/*
+Mo ta cach su dung DbNoteDependency, no thay the cho locator, truyen cac class duoc su dung toan cuc cho cac note con
+// 1. Khai báo nhu cầu
+abstract interface class FoodDetailDependency {
+  CartService get cartService;
+  DatabaseService get dbService;
+}
+
+// 2. Builder nhận nhu cầu
+class FoodDetailBuilder extends DbNoteBuilder {
+  final FoodDetailDependency dependency;
+  FoodDetailBuilder(this.dependency);
+
+  @override
+  build() {
+    // 3. Tiêm vào Interactor
+    final interactor = FoodDetailInteractor(
+      cartService: dependency.cartService,
+      dbService: dependency.dbService,
+    );
+  }
+}
+
+
+
+ */
