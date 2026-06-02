@@ -2,6 +2,7 @@ import 'package:coffee_bean/config/app_pref.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
+import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
 import 'package:coffee_bean/scenes/coupon_list/interactor/coupon_list_interactor.dart';
 import 'package:coffee_bean/scenes/order_confirmation/interactor/order_confirmation_event_state.dart';
 import 'package:coffee_bean/scenes/order_confirmation/order_confirmation_router.dart';
@@ -12,14 +13,13 @@ import 'package:db_core/commons_constants.dart';
 import 'package:db_core/services/event_bus.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:db_core/utils/locator.dart';
-import 'package:db_core/utils/logger.dart';
-import 'package:flutter/material.dart';
 
 class OrderConfirmationInteractor extends CubitInteractor<OrderConfirmationRoutable, OrderConfirmationState>
     with _OrderConfirmationPaymentMixin, _OrderConfirmationLoginMixin, _CouponListListenerMixin
     implements CouponListListener, UserAuthFlowListener {
   final CartService _cartService = locator<CartService>();
   final DatabaseService _dbService = locator<DatabaseService>();
+  final PaymentDomainRepository paymentRepo = locator<PaymentDomainRepository>();
 
   OrderConfirmationInteractor(OrderConfirmationRoutable router) : super(OrderConfirmationState(), router: router);
 

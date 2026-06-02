@@ -10,8 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 /// DbNavigator: A utility class for handling navigation logic within the RIBs architecture.
-/// 
-/// It encapsulates the Flutter Navigator API and provides support for named routes, 
+///
+/// It encapsulates the Flutter Navigator API and provides support for named routes,
 /// custom transitions, and complex stack manipulations like `popUntilBefore`.
 ///
 /// ### Usage:
@@ -21,7 +21,6 @@ import 'package:page_transition/page_transition.dart';
 /// navigator.pop();
 /// ```
 class DbNavigator {
-
   /// Static global key to provide a default navigator state across all Routers.
   static final GlobalKey<NavigatorState> globalNavigatorState = GlobalKey<NavigatorState>();
 
@@ -30,12 +29,21 @@ class DbNavigator {
   DbNavigator(this._navigatorState);
 
   /// Pushes a [widget] onto the navigator stack.
-  /// 
+  ///
   /// [routeName]: Optional name for the route, useful for stack manipulation.
   /// [transitionType]: Custom page transition animation (default: rightToLeft).
-  void push(Widget widget, {BuildContext? fromContext, String? routeName, PageTransitionType transitionType = PageTransitionType.rightToLeft}) {
+  void push(
+    Widget widget, {
+    BuildContext? fromContext,
+    String? routeName,
+    PageTransitionType transitionType = PageTransitionType.rightToLeft,
+  }) {
     final state = _navigatorState.currentState;
-    final route = PageTransition(child: widget, type: transitionType, settings: RouteSettings(name: routeName),);
+    final route = PageTransition(
+      child: widget,
+      type: transitionType,
+      settings: RouteSettings(name: routeName),
+    );
     if (state != null) {
       state.push(route);
     } else if (fromContext != null && fromContext.mounted) {
@@ -43,10 +51,40 @@ class DbNavigator {
     }
   }
 
-  /// Pushes a [widget] and removes all previous routes.
-  void pushSameRootPage(Widget widget, {BuildContext? fromContext, String? routeName, PageTransitionType transitionType = PageTransitionType.rightToLeft}) {
+  /// Pushes a [widget] and replaces the current top route in the stack.
+  void pushReplacement(
+    Widget widget, {
+    BuildContext? fromContext,
+    String? routeName,
+    PageTransitionType transitionType = PageTransitionType.rightToLeft,
+  }) {
     final state = _navigatorState.currentState;
-    final route = PageTransition(child: widget, type: transitionType, settings: RouteSettings(name: routeName),);
+    final route = PageTransition(
+      child: widget,
+      type: transitionType,
+      settings: RouteSettings(name: routeName),
+    );
+
+    if (state != null) {
+      state.pushReplacement(route);
+    } else if (fromContext != null && fromContext.mounted) {
+      Navigator.pushReplacement(fromContext, route);
+    }
+  }
+
+  /// Pushes a [widget] and removes all previous routes.
+  void pushSameRootPage(
+    Widget widget, {
+    BuildContext? fromContext,
+    String? routeName,
+    PageTransitionType transitionType = PageTransitionType.rightToLeft,
+  }) {
+    final state = _navigatorState.currentState;
+    final route = PageTransition(
+      child: widget,
+      type: transitionType,
+      settings: RouteSettings(name: routeName),
+    );
     if (state != null) {
       state.pushAndRemoveUntil(route, (route) => false);
     } else if (fromContext != null && fromContext.mounted) {
@@ -65,7 +103,7 @@ class DbNavigator {
   }
 
   /// Pops the top route from the navigator.
-  /// 
+  ///
   /// [untilRouteName]: If provided, pops until the route with this name is found.
   void pop({BuildContext? fromContext, String? untilRouteName}) {
     final state = _navigatorState.currentState;
@@ -91,7 +129,7 @@ class DbNavigator {
   }
 
   /// Pops all routes until the route immediately BEFORE the [targetRouteName].
-  /// 
+  ///
   /// This is particularly useful for exiting an entire business flow without
   /// knowing the specific name of the root page.
   void popUntilBefore(String targetRouteName, {BuildContext? fromContext}) {
@@ -116,7 +154,6 @@ class DbNavigator {
       Navigator.popUntil(fromContext, (route) => funcPop(route, targetRouteName));
     }
 
-
     //   state.popUntil((route) {
     //     // 1. Nếu tìm thấy trang mục tiêu (ví dụ: 'make_product')
     //     if (route.settings.name == targetRouteName) {
@@ -131,35 +168,34 @@ class DbNavigator {
     //     return false;
     //   });
     // }
-
   }
 }
 
 /// A standard MaterialPageRoute without any entry/exit animations.
 class _NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
-  _NoAnimationPageRoute({ required super.builder, super.settings });
+  _NoAnimationPageRoute({required super.builder, super.settings});
 
   @override
   Widget buildTransitions(
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return child;
   }
 }
 
 /// Extension for complex navigation patterns like pushing multiple pages at once.
 extension DbNavigatorMultiple on DbNavigator {
-
   /// Pushes multiple [widgets] onto the navigator stack.
-  /// 
+  ///
   /// All widgets except the last one are pushed without animation using [_NoAnimationPageRoute].
   /// The last widget is pushed with the specified [transitionType] and standard animation.
-  /// 
+  ///
   /// This is particularly useful for deep-linking scenarios (e.g., from a Notification)
   /// where you want to build a navigation stack [List -> Detail] in one go.
-  /// 
+  ///
   /// ### Example:
   /// ```dart
   /// // When receiving a notification for a specific product
@@ -168,7 +204,7 @@ extension DbNavigatorMultiple on DbNavigator {
   ///   ProductDetailWidget(productId: '123'),
   /// ], transitionType: PageTransitionType.rightToLeft);
   /// ```
-  /// The user will see the ProductDetailWidget trandition in, and pressing 'Back' 
+  /// The user will see the ProductDetailWidget trandition in, and pressing 'Back'
   /// will reveal the ProductListWidget already loaded underneath.
   void pushMultiple(List<Widget> widgets, {PageTransitionType transitionType = PageTransitionType.rightToLeft}) {
     final state = _navigatorState.currentState;

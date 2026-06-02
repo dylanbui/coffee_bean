@@ -1,5 +1,5 @@
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
-import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
+import 'package:coffee_bean/data/model/payment_domain.dart';
 import 'package:coffee_bean/scenes/order_confirmation/interactor/order_confirmation_event_state.dart';
 import 'package:coffee_bean/scenes/order_confirmation/interactor/order_confirmation_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
@@ -8,7 +8,6 @@ import 'package:coffee_bean/shared/ui_control/app_selection_row.dart';
 import 'package:coffee_bean/shared/ui_control/note_picker_modal.dart';
 import 'package:coffee_bean/shared/ui_control/option_picker_modal.dart';
 import 'package:coffee_bean/utils/number_to_vietnamese.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:group_button/group_button.dart';
@@ -43,8 +42,7 @@ class OrderConfirmationContentPrices extends StatelessWidget {
 
   /// Layout dành cho thành viên (Hiện đầy đủ voucher, điểm, thanh toán, ghi chú)
   List<Widget> _buildMemberLayout(BuildContext context, OrderConfirmationState state) {
-    final paymentRepo = PaymentMethodRepository();
-    final paymentMethod = paymentRepo.findByKey(state.preferences.paymentMethodKey);
+    final paymentMethod = interactor.paymentRepo.findPaymentByKey(state.preferences.paymentMethodKey);
 
     return [
       AppSelectionRow(
@@ -182,12 +180,10 @@ class OrderConfirmationContentPrices extends StatelessWidget {
   }
 
   void _showPaymentMethodPicker(BuildContext context, OrderConfirmationInteractor interactor) async {
-    final paymentRepo = PaymentMethodRepository();
-
     final result = await OptionPickerModal.show<PaymentMethod>(
       context: context,
       title: "Phương thức thanh toán",
-      items: paymentRepo.all,
+      items: interactor.paymentRepo.allPayment,
       selectedKey: interactor.state.preferences.paymentMethodKey,
     );
 
