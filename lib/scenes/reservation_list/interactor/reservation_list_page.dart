@@ -72,7 +72,7 @@ class _ReservationListPageState extends AppCubitState<ReservationListPage, Reser
                     Expanded(
                       child: Text(
                         state.selectedCategory?.name ?? "Tất cả các loại",
-                        style: TMLabsTextStyle.bodyBold.copyWith(color: TMLabsColor.primary),
+                        style: TMLabsTextStyle.bodyBold,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -178,7 +178,7 @@ class _ReservationListPageState extends AppCubitState<ReservationListPage, Reser
                     ),
                     child: Text(
                       "Cách 189m", // Demo distance
-                      style: TMLabsTextStyle.caption.copyWith(color: Colors.white, fontSize: 10),
+                      style: TMLabsTextStyle.small.copyWith(color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -193,7 +193,7 @@ class _ReservationListPageState extends AppCubitState<ReservationListPage, Reser
                 children: [
                   Text(
                     item.name,
-                    style: TMLabsTextStyle.title.copyWith(fontSize: 14, color: TMLabsColor.primary),
+                    style: TMLabsTextStyle.title.copyWith(fontSize: 14),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

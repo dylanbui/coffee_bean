@@ -182,19 +182,19 @@ class _StoreListPageState extends AppCubitState<StoreListPage, StoreListInteract
                           ),
                           const SizedBox(height: 8),
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Icon(Icons.location_on, color: TMLabsColor.error, size: 20),
+                              const Padding(
+                                padding: EdgeInsets.only(top: 2),
+                                child: Icon(Icons.location_on, color: TMLabsColor.error, size: 20),
+                              ),
                               const SizedBox(width: 6),
                               Expanded(
-                                child: AppLabel(
+                                child: Text(
                                   store.address,
                                   style: TMLabsTextStyle.title.copyWith(color: TMLabsColor.white, height: 1.2),
                                   maxLines: 2,
-                                  minFontSize: 11,
-                                  padding: EdgeInsets.zero,
-                                  alignment: Alignment.centerLeft,
-                                  backgroundColor: Colors.transparent,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
