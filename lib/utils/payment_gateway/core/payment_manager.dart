@@ -1,3 +1,28 @@
+///
+/// * HƯỚNG DẪN SỬ DỤNG PAYMENT MANAGER
+//  *
+//  * 1. Khởi tạo và Đăng ký Gateway:
+//  *    final manager = PaymentManager();
+//  *    manager.registerGateway(MomoProvider());
+//  *    manager.registerGateway(VNPayProvider());
+//  *
+//  * 2. Cấu hình Backend Verifier (Bắt buộc để đối soát Server):
+//  *    manager.backendVerifier = (orderId, type, params) async {
+//  *      final res = await myApi.checkStatus(orderId);
+//  *      return res.isPaid ? PaymentResult.success() : PaymentResult.failed();
+//  *    };
+//  *
+//  * 3. Thực hiện thanh toán (Dùng URL từ Server để bảo mật):
+//  *    await manager.pay(
+//  *      type: PaymentType.momo,
+//  *      request: PaymentRequest(orderId: '123', amount: 50000, ...),
+//  *      paymentUrlFromServer: 'https://...',
+//  *    );
+//  *
+//  * 4. Xử lý Callback (Deep Link / Webview):
+//  *    final result = await manager.handleCallback(url);
+//  */
+
 import 'package:url_launcher/url_launcher.dart';
 import 'package:coffee_bean/utils/payment_gateway/models/payment_enums.dart';
 import 'package:coffee_bean/utils/payment_gateway/models/payment_request.dart';

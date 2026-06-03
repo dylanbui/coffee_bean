@@ -10,13 +10,13 @@ import 'package:coffee_bean/utils/payment_gateway/momo_payment/utils/signature.d
 /// Lớp chính để xử lý thanh toán MoMo
 class MomoPayment {
   /// Mã đối tác (Partner Code) được cung cấp bởi MoMo
-  final String partnerCode;
+  final String? partnerCode;
 
   /// Access Key được cung cấp bởi MoMo
-  final String accessKey;
+  final String? accessKey;
 
   /// Secret Key được cung cấp bởi MoMo (Dùng để tạo chữ ký)
-  final String secretKey;
+  final String? secretKey;
 
   /// Chế độ kiểm thử (Test Mode). Mặc định là true.
   /// Nếu true, sẽ gọi đến endpoint test-payment.momo.vn
@@ -41,18 +41,26 @@ class MomoPayment {
       'https://test-payment.momo.vn/v2/gateway/api/query';
 
   MomoPayment({
-    required this.partnerCode,
-    required this.accessKey,
-    required this.secretKey,
+    this.partnerCode,
+    this.accessKey,
+    this.secretKey,
     this.isTestMode = true,
     this.isDebug = false,
   });
+
+  /// Kiểm tra xem có đủ thông tin để thực hiện các tác vụ cần ký tên không
+  bool get canSign => partnerCode != null && accessKey != null && secretKey != null;
 
   /// Tạo yêu cầu thanh toán (Create Payment)
   ///
   /// [info] chứa thông tin chi tiết về đơn hàng.
   /// Trả về [MomoPaymentResponse] chứa đường dẫn thanh toán (payUrl).
   Future<MomoPaymentResponse> createPayment(MomoPaymentInfo info) async {
+    // Kiểm tra cấu hình trước khi tạo chữ ký
+    if (!canSign) {
+      throw Exception('MomoPayment: Thất bại do thiếu thông tin cấu hình (Keys) để tạo chữ ký.');
+    }
+
     // Đảm bảo requestId được tạo nếu chưa có
     final paymentInfo = MomoPaymentInfo(
       orderId: info.orderId,
@@ -72,9 +80,9 @@ class MomoPayment {
     // Tạo chữ ký (Signature) bảo mật
     final signature = SignatureUtils.generateSignature(
       paymentInfo: paymentInfo,
-      partnerCode: partnerCode,
-      accessKey: accessKey,
-      secretKey: secretKey,
+      partnerCode: partnerCode!,
+      accessKey: accessKey!,
+      secretKey: secretKey!,
     );
 
     final requestBody = paymentInfo.toJson();
@@ -123,11 +131,16 @@ class MomoPayment {
     required String orderId,
     required String requestId,
   }) async {
+    // Kiểm tra cấu hình trước khi kiểm tra trạng thái
+    if (!canSign) {
+      throw Exception('MomoPayment: Không thể kiểm tra trạng thái do thiếu cấu hình Keys.');
+    }
+
     // Tạo chữ ký cho yêu cầu kiểm tra trạng thái
     final signature = SignatureUtils.generateQuerySignature(
-      partnerCode: partnerCode,
-      accessKey: accessKey,
-      secretKey: secretKey,
+      partnerCode: partnerCode!,
+      accessKey: accessKey!,
+      secretKey: secretKey!,
       orderId: orderId,
       requestId: requestId,
     );

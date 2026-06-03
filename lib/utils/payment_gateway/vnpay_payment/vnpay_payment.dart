@@ -20,10 +20,10 @@ class VNPAYPayment {
       'https://api.vnpayment.vn/merchant_webapi/api/transaction';
 
   /// Mã đơn vị tính tiền (TMN Code) của merchant
-  final String tmnCode;
+  final String? tmnCode;
 
   /// Khóa bí mật cho việc tính toán HMAC
-  final String hashSecret;
+  final String? hashSecret;
 
   /// true = Sandbox (test), false = Production (thực tế)
   final bool isSandbox;
@@ -37,17 +37,21 @@ class VNPAYPayment {
   /// [isSandbox]: Sử dụng sandbox hay production
   /// [hashType]: Loại hàm hash (mặc định SHA512)
   VNPAYPayment({
-    required this.tmnCode,
-    required this.hashSecret,
+    this.tmnCode,
+    this.hashSecret,
     this.isSandbox = true,
     this.hashType = VNPayHashType.sha512,
   });
+
+  /// Kiểm tra xem có đủ thông tin để thực hiện các tác vụ cần ký tên không
+  bool get canSign => tmnCode != null && hashSecret != null;
 
   /// Tính toán HMAC-SHA512
   /// [data]: Dữ liệu cần mã hóa
   /// Returns: Chuỗi hex đại diện cho hash
   String _generateHash(String data) {
-    final hmac = Hmac(sha512, utf8.encode(hashSecret));
+    if (hashSecret == null) return '';
+    final hmac = Hmac(sha512, utf8.encode(hashSecret!));
     final bytes = hmac.convert(utf8.encode(data)).bytes;
     return bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
   }
@@ -82,6 +86,11 @@ class VNPAYPayment {
     String locale = 'vn',
     String orderType = 'billpayment',
   }) {
+    // Kiểm tra cấu hình trước khi tạo URL
+    if (!canSign) {
+      throw Exception('VNPay: Thiếu thông tin tmnCode hoặc hashSecret để tạo URL thanh toán.');
+    }
+
     final now = DateTime.now();
     final createDate = DateFormat('yyyyMMddHHmmss').format(now);
     final finalExpireDate = expireDate ?? now.add(const Duration(minutes: 15));
@@ -92,7 +101,7 @@ class VNPAYPayment {
     final params = <String, String>{
       'vnp_Version': '2.1.0', // API version
       'vnp_Command': 'pay', // Lệnh thanh toán
-      'vnp_TmnCode': tmnCode, // Mã đơn vị merchant
+      'vnp_TmnCode': tmnCode!, // Mã đơn vị merchant
       'vnp_Locale': locale, // Ngôn ngữ
       'vnp_CurrCode': 'VND', // Đơn vị tiền tệ
       'vnp_TxnRef': txnRef, // Mã giao dịch
@@ -139,6 +148,9 @@ class VNPAYPayment {
   /// [params]: Map chứa các tham số từ deeplink/IPN callback
   /// Returns: true nếu chữ ký hợp lệ, false nếu không
   bool verifyResponse(Map<String, String> params) {
+    // Nếu App không có cấu hình SecretKey, mặc định trả về true để delegate cho bước verify tại Backend
+    if (!canSign) return true;
+
     // Lấy chữ ký từ phản hồi
     final receivedHash = params['vnp_SecureHash'];
     if (receivedHash == null || receivedHash.isEmpty) {
@@ -194,7 +206,7 @@ class VNPAYPayment {
       'vnp_RequestId': DateTime.now().millisecondsSinceEpoch.toString(),
       'vnp_Version': '2.1.0',
       'vnp_Command': 'querydr',
-      'vnp_TmnCode': tmnCode,
+      'vnp_TmnCode': tmnCode ?? '',
       'vnp_TxnRef': txnRef,
       'vnp_OrderInfo': txnRef,
       'vnp_TransactionDate': tranDateStr,
@@ -234,7 +246,7 @@ class VNPAYPayment {
       'vnp_RequestId': DateTime.now().millisecondsSinceEpoch.toString(),
       'vnp_Version': '2.1.0',
       'vnp_Command': 'refund',
-      'vnp_TmnCode': tmnCode,
+      'vnp_TmnCode': tmnCode ?? '',
       'vnp_TxnRef': txnRef,
       'vnp_Amount': amount.toString(),
       'vnp_TransactionDate': tranDateStr,

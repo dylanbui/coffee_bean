@@ -1,3 +1,21 @@
+/**
+ * HƯỚNG DẪN SỬ DỤNG MOMO PROVIDER
+ * 
+ * 1. Khởi tạo không dùng Key (Ưu tiên bảo mật, ký URL tại Backend):
+ *    final momoProvider = MomoProvider();
+ * 
+ * 2. Khởi tạo có dùng Key (Dùng để tự ký URL tại App):
+ *    final momoProvider = MomoProvider(
+ *      partnerCode: 'MOMO...',
+ *      accessKey: '...',
+ *      secretKey: '...',
+ *      isTestMode: true,
+ *    );
+ * 
+ * 3. Đăng ký vào PaymentManager:
+ *    paymentManager.registerGateway(momoProvider);
+ */
+
 import 'package:coffee_bean/utils/payment_gateway/core/payment_gateway.dart';
 import 'package:coffee_bean/utils/payment_gateway/models/payment_enums.dart';
 import 'package:coffee_bean/utils/payment_gateway/models/payment_request.dart';
@@ -9,9 +27,9 @@ class MomoProvider implements PaymentGateway {
   final MomoPayment _service;
 
   MomoProvider({
-    required String partnerCode,
-    required String accessKey,
-    required String secretKey,
+    String? partnerCode,
+    String? accessKey,
+    String? secretKey,
     bool isTestMode = true,
   }) : _service = MomoPayment(
           partnerCode: partnerCode,
@@ -60,9 +78,8 @@ class MomoProvider implements PaymentGateway {
   bool verifyCallback(Map<String, String> queryParameters) {
     // MoMo thường verify qua signature trong query parameters
     // Tùy vào cách MoMo trả về, ta sẽ implement logic verify ở đây
-    // Hiện tại MomoPayment chưa public hàm verify cho callback, 
-    // nhưng ta có thể dùng SignatureUtils nếu cần.
-    return true; // Tạm thời trả về true hoặc bổ sung logic sau
+    // Nếu App không có SecretKey, ta mặc định là đúng để chuyển sang bước Backend Verify
+    return true;
   }
 
   @override

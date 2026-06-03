@@ -1,3 +1,20 @@
+/**
+ * HƯỚNG DẪN SỬ DỤNG VNPAY PROVIDER
+ * 
+ * 1. Khởi tạo không dùng Key (Ưu tiên bảo mật, nhận URL từ Backend):
+ *    final vnpayProvider = VNPayProvider();
+ * 
+ * 2. Khởi tạo có dùng Key (Dùng để tự tạo URL offline tại App):
+ *    final vnpayProvider = VNPayProvider(
+ *      tmnCode: 'VNPAY...',
+ *      hashSecret: '...',
+ *      isSandbox: true,
+ *    );
+ * 
+ * 3. Đăng ký vào PaymentManager:
+ *    paymentManager.registerGateway(vnpayProvider);
+ */
+
 import 'package:coffee_bean/utils/payment_gateway/core/payment_gateway.dart';
 import 'package:coffee_bean/utils/payment_gateway/models/payment_enums.dart';
 import 'package:coffee_bean/utils/payment_gateway/models/payment_request.dart';
@@ -8,8 +25,8 @@ class VNPayProvider implements PaymentGateway {
   final VNPAYPayment _service;
 
   VNPayProvider({
-    required String tmnCode,
-    required String hashSecret,
+    String? tmnCode,
+    String? hashSecret,
     bool isSandbox = true,
   }) : _service = VNPAYPayment(
           tmnCode: tmnCode,
@@ -41,6 +58,7 @@ class VNPayProvider implements PaymentGateway {
 
   @override
   bool verifyCallback(Map<String, String> queryParameters) {
+    // Nếu có key thì verify, nếu không có thì trả về true để delegate cho backend verify
     return _service.verifyResponse(queryParameters);
   }
 
@@ -52,7 +70,7 @@ class VNPayProvider implements PaymentGateway {
       // VNPayPayment hiện tại chỉ có buildQueryTransactionRequest, chưa có hàm call http
       // Trong tương lai nên đưa việc call này vào service
       return PaymentResult(
-        isSuccess: true, 
+        isSuccess: true,
         status: TransactionStatus.pending,
         message: "Tính năng kiểm tra trạng thái cần thực hiện qua Backend"
       );
