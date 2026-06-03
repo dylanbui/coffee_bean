@@ -26,31 +26,40 @@ class _StorePointListPageState extends AppCubitState<StorePointListPage, StorePo
   String? getTitle() => "TÍCH ĐIỂM";
 
   @override
-  PreferredSizeWidget? getAppBar(BuildContext context) {
-    if (interactor.state.isSearchMode) {
-      return CoffeeAppBar(
-        hideBackButton: false,
-        onBackTap: () => interactor.toggleSearchMode(false),
-        titleWidget: SizedBox(
-          height: 40,
-          child: AppSearchBar(
-            hintText: "Tìm kiếm...",
-            backgroundColor: TMLabsColor.bgLight,
-            leftIcon: AppAssets.icons.icSearch,
-            onSearch: interactor.onSearchChanged,
-          ),
-        ),
-      );
-    }
-    return super.getAppBar(context);
-  }
-
-  @override
   Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
-    return Scaffold(
-      backgroundColor: TMLabsColor.bgMain,
-      appBar: appBar,
-      body: body,
+    return BlocBuilder<StorePointListInteractor, StorePointListState>(
+      builder: (context, state) {
+        PreferredSizeWidget? effectiveAppBar;
+        if (state.isSearchMode) {
+          effectiveAppBar = CoffeeAppBar(
+            hideBackButton: false,
+            onBackTap: () => interactor.toggleSearchMode(false),
+            titleWidget: SizedBox(
+              height: 40,
+              child: AppSearchBar(
+                hintText: "Tìm kiếm...",
+                backgroundColor: TMLabsColor.bgLight,
+                leftIcon: AppAssets.icons.icSearch,
+                onSearch: (value) {
+                  if (value.isEmpty) {
+                    interactor.toggleSearchMode(false);
+                  } else {
+                    interactor.onSearchChanged(value);
+                  }
+                },
+              ),
+            ),
+          );
+        } else {
+          effectiveAppBar = CoffeeAppBar(title: getTitle());
+        }
+
+        return Scaffold(
+          backgroundColor: TMLabsColor.bgMain,
+          appBar: effectiveAppBar,
+          body: body,
+        );
+      },
     );
   }
 
@@ -58,108 +67,102 @@ class _StorePointListPageState extends AppCubitState<StorePointListPage, StorePo
   Widget getBody(BuildContext context) {
     return BlocBuilder<StorePointListInteractor, StorePointListState>(
       builder: (context, state) {
-        return Column(
-          children: [
-            // Header with animation
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              height: state.isSearchMode ? 0 : 160,
-              curve: Curves.easeInOut,
-              child: SingleChildScrollView(
-                physics: const NeverScrollableScrollPhysics(),
-                child: PointStoreHeader(
-                  points: state.userPoints,
-                  onDetailTap: () {},
-                  onMoreTap: () {},
+        return Container(
+          width: double.infinity,
+          color: TMLabsColor.white, // Cả khối thống nhất màu trắng
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header with animation inside the white block
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                height: state.isSearchMode ? 0 : 135,
+                curve: Curves.easeInOut,
+                child: SingleChildScrollView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  child: PointStoreHeader(
+                    points: state.userPoints,
+                    onDetailTap: () {},
+                    onMoreTap: () {},
+                  ),
                 ),
               ),
-            ),
-            
-            // Content area
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: TMLabsColor.white,
-                  borderRadius: state.isSearchMode 
-                      ? BorderRadius.zero 
-                      : const BorderRadius.vertical(top: Radius.circular(24)),
-                ),
-                child: Column(
-                  children: [
-                    if (!state.isSearchMode) const SizedBox(height: 16),
-                    _buildTopActionArea(state),
-                    _buildCategoryBar(state),
-                    Expanded(
-                      child: state.isLoading 
-                        ? const Center(child: LoadingView(width: 150, height: 150)) 
-                        : _buildGridContent(state),
-                    ),
-                  ],
-                ),
+              
+              _buildTitleArea(state),
+              _buildCategoryBar(state),
+              
+              Expanded(
+                child: state.isLoading 
+                  ? const Center(child: LoadingView(width: 150, height: 150)) 
+                  : _buildGridContent(state),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
   }
 
-  Widget _buildTopActionArea(StorePointListState state) {
+  Widget _buildTitleArea(StorePointListState state) {
     if (state.isSearchMode) return const SizedBox.shrink();
-
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
-            "Cửa hàng điểm",
-            style: TMLabsTextStyle.h2,
-          ),
-          IconButton(
-            icon: AppIcon(AppAssets.icons.icSearch, size: 24, color: TMLabsColor.primary),
-            onPressed: () => interactor.toggleSearchMode(true),
-          ),
-        ],
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+      child: Text(
+        "Cửa hàng điểm",
+        style: TMLabsTextStyle.title.copyWith(fontWeight: FontWeight.bold),
       ),
     );
   }
 
   Widget _buildCategoryBar(StorePointListState state) {
     return Container(
-      height: 50,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: state.categories.length,
-        itemBuilder: (context, index) {
-          final cat = state.categories[index];
-          final isSelected = state.selectedCatId == cat.id;
-          return GestureDetector(
-            onTap: () => interactor.onCategorySelected(cat.id),
-            child: Container(
-              margin: const EdgeInsets.only(right: 16),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: isSelected ? TMLabsColor.primary : Colors.transparent,
-                    width: 2,
+      height: 44,
+      margin: const EdgeInsets.only(top: 0, bottom: 4),
+      child: Row(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: state.categories.length,
+              itemBuilder: (context, index) {
+                final cat = state.categories[index];
+                final isSelected = state.selectedCatId == cat.id;
+                return GestureDetector(
+                  onTap: () => interactor.onCategorySelected(cat.id),
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 10),
+                    alignment: Alignment.center,
+                    child: IntrinsicWidth(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            cat.name,
+                            style: TMLabsTextStyle.caption.copyWith(
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              color: isSelected ? TMLabsColor.primary : TMLabsColor.grey,
+                            ),
+                          ),
+                          if (isSelected)
+                            Container(height: 2, color: TMLabsColor.primary,),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              child: Text(
-                cat.name,
-                style: TMLabsTextStyle.body.copyWith(
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: isSelected ? TMLabsColor.primary : TMLabsColor.grey,
-                ),
+                );
+              },
+            ),
+          ),
+          if (!state.isSearchMode)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: IconButton(
+                icon: AppIcon(AppAssets.icons.icSearch, size: 20, color: TMLabsColor.primary),
+                onPressed: () => interactor.toggleSearchMode(true),
               ),
             ),
-          );
-        },
+        ],
       ),
     );
   }
@@ -168,9 +171,8 @@ class _StorePointListPageState extends AppCubitState<StorePointListPage, StorePo
     if (state.items.isEmpty) {
       return _buildEmptyState();
     }
-
     return GridView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         mainAxisSpacing: 16,
@@ -202,5 +204,4 @@ class _StorePointListPageState extends AppCubitState<StorePointListPage, StorePo
       ),
     );
   }
-
 }

@@ -19,7 +19,7 @@ class PointStoreHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
       decoration: const BoxDecoration(
         color: TMLabsColor.white,
       ),
@@ -28,14 +28,15 @@ class PointStoreHeader extends StatelessWidget {
           // Points Row
           Row(
             children: [
-              AppIcon(AppAssets.icons.icGoldCoin, size: 32),
-              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        AppIcon(AppAssets.icons.icGoldCoin, size: 20),
+                        const SizedBox(width: 8),
                         Text(
                           _formatPoints(points),
                           style: TMLabsTextStyle.h2.copyWith(fontSize: 24),
@@ -47,9 +48,12 @@ class PointStoreHeader extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Text(
-                      "268 điểm sẽ hết hạn vào ngày 31/12/2026",
-                      style: TMLabsTextStyle.small.copyWith(color: TMLabsColor.lightGrey, fontSize: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 28), // 20 (icon) + 8 (gap)
+                      child: Text(
+                        "268 điểm sẽ hết hạn vào ngày 31/12/2026",
+                        style: TMLabsTextStyle.small.copyWith(color: TMLabsColor.grey.withValues(alpha: 0.5)),
+                      ),
                     ),
                   ],
                 ),
@@ -80,7 +84,7 @@ class PointStoreHeader extends StatelessWidget {
             decoration: BoxDecoration(
               color: TMLabsColor.bgLight,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: TMLabsColor.lightGrey.withValues(alpha: 0.3)),
+              border: Border.all(color: TMLabsColor.lightGrey.withValues(alpha: 0.5)),
             ),
             child: Row(
               children: [
@@ -94,7 +98,7 @@ class PointStoreHeader extends StatelessWidget {
                       ),
                       Text(
                         "Hoàn thành nhiệm vụ để nhận thêm điểm thưởng",
-                        style: TMLabsTextStyle.small.copyWith(color: TMLabsColor.grey),
+                        style: TMLabsTextStyle.small.copyWith(color: TMLabsColor.grey.withValues(alpha: 0.5)),
                       ),
                     ],
                   ),
@@ -104,7 +108,7 @@ class PointStoreHeader extends StatelessWidget {
                   onPressed: onMoreTap,
                   style: TMLabsButtonStyle.primary.copyWith(
                     borderRadius: 20,
-                    textStyle: TMLabsTextStyle.small.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
+                    textStyle: TMLabsTextStyle.small.copyWith(color: Colors.white, fontWeight: FontWeight.w500),
                   ),
                   height: 32,
                   width: 100,
