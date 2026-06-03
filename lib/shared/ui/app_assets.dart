@@ -78,6 +78,7 @@ class _Images {
   final String imgNoImage = 'assets/images/app_coffee.png';
   final String imgLoginApple = 'assets/images/img_login_apple.svg';
   final String imgLoginGoogle = 'assets/images/img_login_google.svg';
+  final String imgNoneItem = 'assets/images/img_none_item.svg';
 
   // Member Cards - Gold
   final String imgBgGold = 'assets/images/member_card/img_bg_gold.svg';

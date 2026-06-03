@@ -2,6 +2,7 @@ import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/scenes/store_list/interactor/store_list_event_state.dart';
@@ -104,7 +105,7 @@ class _StoreListPageState extends AppCubitState<StoreListPage, StoreListInteract
 
   Widget _buildStoreList(StoreListState state) {
     if (state is StoreListLoading && state.stores.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: LoadingView(width: 150, height: 150));
     }
 
     if (state.stores.isEmpty) {
@@ -126,7 +127,7 @@ class _StoreListPageState extends AppCubitState<StoreListPage, StoreListInteract
 
     return TapEffect(
       enableSound: false,
-      onTap: () => interactor.onStoreSelected(model),
+      // onTap: () => interactor.onStoreSelected(model),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         constraints: const BoxConstraints(minHeight: 140),
@@ -193,6 +194,7 @@ class _StoreListPageState extends AppCubitState<StoreListPage, StoreListInteract
                                   minFontSize: 11,
                                   padding: EdgeInsets.zero,
                                   alignment: Alignment.centerLeft,
+                                  backgroundColor: Colors.transparent,
                                 ),
                               ),
                             ],

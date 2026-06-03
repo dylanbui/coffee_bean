@@ -24,6 +24,7 @@ class DatabaseService {
       TblStoreSchema,
       TblCommentSchema,
       TblCommentSyncMetadataSchema,
+      TblReservationSchema,
     ], directory: dir.path);
   }
 
@@ -39,6 +40,7 @@ class DatabaseService {
       await isar.tblStores.clear();
       await isar.tblComments.clear();
       await isar.tblCommentSyncMetadatas.clear();
+      await isar.tblReservations.clear();
     });
   }
 
@@ -254,6 +256,53 @@ class DatabaseService {
     await isar.writeTxn(() async {
       await isar.tblCartItems.filter().typeEqualTo(type.name).deleteAll();
     });
+  }
+
+  // --- RESERVATION OPERATIONS ---
+
+  Future<List<TblReservation>> getAllReservations() =>
+      isar.tblReservations.filter().isActiveEqualTo(true).findAll();
+
+  Future<List<TblReservation>> searchReservations({String? query, int? catId}) async {
+    QueryBuilder<TblReservation, TblReservation, QAfterFilterCondition> queryBuilder =
+        isar.tblReservations.filter().isActiveEqualTo(true);
+
+    if (query != null && query.isNotEmpty) {
+      final searchTerms = _toNoSign(query);
+      queryBuilder = queryBuilder.searchNameContains(searchTerms, caseSensitive: false);
+    }
+
+    if (catId != null) {
+      queryBuilder = queryBuilder.catIdsElementEqualTo(catId);
+    }
+
+    return queryBuilder.findAll();
+  }
+
+  Future<void> syncReservationData(List<dynamic> reservationJson) async {
+    await isar.writeTxn(() async {
+      final items = reservationJson.map((json) => _mapToReservation(json)).toList();
+      await isar.tblReservations.clear();
+      await isar.tblReservations.putAll(items);
+    });
+  }
+
+  TblReservation _mapToReservation(dynamic json) {
+    final name = json['name'] ?? '';
+    final address = json['address'] ?? '';
+    return TblReservation()
+      ..serverId = json['id']
+      ..name = name
+      ..address = address
+      ..searchName = _toNoSign("$name $address")
+      ..phone = json['phone']
+      ..latitude = (json['latitude'] ?? 0.0).toDouble()
+      ..longitude = (json['longitude'] ?? 0.0).toDouble()
+      ..openingTime = json['opening_time']
+      ..closingTime = json['closing_time']
+      ..images = _mapImages(json)
+      ..catIds = (json['category_ids'] as List?)?.map((e) => e as int).toList()
+      ..isActive = json['is_active'] ?? true;
   }
 
   // --- PRIVATE HELPERS ---

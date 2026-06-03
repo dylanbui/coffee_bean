@@ -31,4 +31,12 @@ class AppPrefs {
     DbSharedPreferences().set('selected_store_id', id);
   }
 
+  int getLastSyncTime(String key) {
+    return DbSharedPreferences().get('last_sync_$key') as int? ?? 0;
+  }
+
+  void setLastSyncTime(String key, int timestamp) {
+    DbSharedPreferences().set('last_sync_$key', timestamp);
+  }
+
 }

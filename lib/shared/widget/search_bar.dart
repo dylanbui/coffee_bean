@@ -55,22 +55,28 @@ class _AppSearchBarState extends State<AppSearchBar> {
         color: widget.backgroundColor ?? Colors.grey[200],
         borderRadius: BorderRadius.circular(widget.borderRadius),
       ),
-      child: TextField(
-        controller: _controller,
-        onChanged: _onChanged,
-        textAlignVertical: TextAlignVertical.center,
-        decoration: InputDecoration(
-          hintText: widget.hintText,
-          hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
-          prefixIcon: widget.leftIcon != null
-              ? Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: AppIcon(widget.leftIcon, color: Colors.grey, size: 20),
-                )
-              : null,
-          suffixIcon: _buildSuffixIcon(),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Center(
+        child: TextField(
+          controller: _controller,
+          onChanged: _onChanged,
+          textAlignVertical: TextAlignVertical.center,
+          style: const TextStyle(fontSize: 14),
+          decoration: InputDecoration(
+            isDense: true,
+            hintText: widget.hintText,
+            hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+            prefixIcon: widget.leftIcon != null
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: AppIcon(widget.leftIcon, color: Colors.grey, size: 18),
+                  )
+                : null,
+            prefixIconConstraints: const BoxConstraints(minWidth: 32, maxHeight: 32),
+            suffixIcon: _buildSuffixIcon(),
+            suffixIconConstraints: const BoxConstraints(minWidth: 32, maxHeight: 32),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+          ),
         ),
       ),
     );
@@ -79,22 +85,25 @@ class _AppSearchBarState extends State<AppSearchBar> {
   Widget? _buildSuffixIcon() {
     // If there is text, show clear icon
     if (_controller.text.isNotEmpty) {
-      return IconButton(
-        icon: AppIcon(widget.clearIcon, color: Colors.grey, size: 18),
-        onPressed: () {
+      return GestureDetector(
+        onTap: () {
           _controller.clear();
           widget.onSearch('');
           FocusScope.of(context).unfocus();
           setState(() {});
         },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: AppIcon(widget.clearIcon, color: Colors.black, size: 16),
+        ),
       );
     }
 
     // If no text, show rightIcon if provided
     if (widget.rightIcon != null) {
       return Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: AppIcon(widget.rightIcon, color: Colors.grey, size: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: AppIcon(widget.rightIcon, color: Colors.grey, size: 18),
       );
     }
 
