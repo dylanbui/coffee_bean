@@ -52,7 +52,7 @@ class _Icons {
   final String icLichDatHen = 'assets/icons/ic_lich_dat_hen.svg';
   final String icCheckboxCircle = 'assets/icons/ic_checkbox_circle.svg';
   final String icCheckboxBg = 'assets/icons/ic_checkbox_bg.svg';
-
+  final String icGoldCoin = 'assets/icons/ic_gold_coin.svg';
 
 
 

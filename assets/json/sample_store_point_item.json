@@ -1,0 +1,76 @@
+{
+  "store_points": [
+    {
+      "id": 1,
+      "name": "Voucher giảm 40% trà sữa",
+      "points": 199,
+      "image": "https://picsum.photos/id/1/200/300",
+      "cat_ids": [1, 2],
+      "description": "Giảm ngay 40% cho các loại trà sữa tại cửa hàng.",
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "name": "Giảm 25% các loại cà phê",
+      "points": 199,
+      "image": "https://picsum.photos/id/2/200/300",
+      "cat_ids": [1, 2],
+      "description": "Ưu đãi 25% cho tất cả dòng cà phê máy.",
+      "is_active": true
+    },
+    {
+      "id": 3,
+      "name": "Voucher đặt chỗ ưu tiên",
+      "points": 500,
+      "image": "https://picsum.photos/id/3/200/300",
+      "cat_ids": [1, 3],
+      "description": "Đặt chỗ trước không cần chờ đợi.",
+      "is_active": true
+    },
+    {
+      "id": 4,
+      "name": "Khóa học pha chế Latte Art",
+      "points": 1200,
+      "image": "https://picsum.photos/id/4/200/300",
+      "cat_ids": [1, 4],
+      "description": "Khóa học cơ bản về nghệ thuật vẽ bọt sữa.",
+      "is_active": true
+    },
+    {
+      "id": 5,
+      "name": "Sự kiện Coffee Talk cuối tuần",
+      "points": 150,
+      "image": "https://picsum.photos/id/5/200/300",
+      "cat_ids": [1, 5],
+      "description": "Giao lưu và chia sẻ kiến thức về cà phê.",
+      "is_active": true
+    },
+    {
+      "id": 6,
+      "name": "Voucher quà tặng 199k",
+      "points": 199,
+      "image": "https://picsum.photos/id/6/200/300",
+      "cat_ids": [1, 2],
+      "description": "Phiếu mua hàng trị giá 199k.",
+      "is_active": true
+    },
+    {
+      "id": 7,
+      "name": "Combo 2 bánh ngọt bất kỳ",
+      "points": 300,
+      "image": "https://picsum.photos/id/7/200/300",
+      "cat_ids": [1, 2],
+      "description": "Thưởng thức combo 2 bánh ngọt tự chọn.",
+      "is_active": true
+    },
+    {
+      "id": 8,
+      "name": "Khóa học Tasting Coffee",
+      "points": 1000,
+      "image": "https://picsum.photos/id/8/200/300",
+      "cat_ids": [1, 4],
+      "description": "Học cách phân biệt các hương vị cà phê.",
+      "is_active": true
+    }
+  ]
+}

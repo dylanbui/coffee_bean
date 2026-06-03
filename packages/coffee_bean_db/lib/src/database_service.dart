@@ -25,6 +25,7 @@ class DatabaseService {
       TblCommentSchema,
       TblCommentSyncMetadataSchema,
       TblReservationSchema,
+      TblStorePointSchema,
     ], directory: dir.path);
   }
 
@@ -41,6 +42,7 @@ class DatabaseService {
       await isar.tblComments.clear();
       await isar.tblCommentSyncMetadatas.clear();
       await isar.tblReservations.clear();
+      await isar.tblStorePoints.clear();
     });
   }
 
