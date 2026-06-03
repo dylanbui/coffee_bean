@@ -22,4 +22,7 @@ abstract class PaymentGateway {
 
   /// Lấy mã đơn hàng từ query parameters của callback
   String getOrderId(Map<String, String> queryParameters);
+
+  /// NEW: mỗi gateway tự biết cách nhận diện callback
+  bool matchesCallback(Map<String, String> queryParameters);
 }

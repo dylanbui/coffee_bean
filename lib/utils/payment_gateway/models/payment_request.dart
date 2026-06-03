@@ -12,8 +12,16 @@ class PaymentRequest {
   /// URL quay lại ứng dụng sau khi thanh toán xong
   final String returnUrl;
 
+  /// URL IPN (server nhận thông báo giao dịch) - tùy chọn
+  final String? notifyUrl;
+
+  /// Mã requestId (nếu gateway yêu cầu) - tùy chọn
+  final String? requestId;
+
+  /// URL thanh toán từ server (đã ký hash) - tùy chọn
+  final String? paymentUrlFromServer;
+
   /// Các dữ liệu bổ sung tùy chọn cho từng cổng thanh toán cụ thể
-  /// Ví dụ: items, userInfo cho MoMo
   final Map<String, dynamic>? extraData;
 
   PaymentRequest({
@@ -21,6 +29,9 @@ class PaymentRequest {
     required this.amount,
     required this.orderInfo,
     required this.returnUrl,
+    this.notifyUrl,
+    this.requestId,
+    this.paymentUrlFromServer,
     this.extraData,
   });
 }

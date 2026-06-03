@@ -21,6 +21,76 @@ import 'package:coffee_bean/utils/payment_gateway/models/payment_request.dart';
 import 'package:coffee_bean/utils/payment_gateway/models/payment_result.dart';
 import 'package:coffee_bean/utils/payment_gateway/vnpay_payment/vnpay_payment.dart';
 
+import 'package:coffee_bean/utils/payment_gateway/core/payment_gateway.dart';
+import 'package:coffee_bean/utils/payment_gateway/models/payment_enums.dart';
+import 'package:coffee_bean/utils/payment_gateway/models/payment_request.dart';
+import 'package:coffee_bean/utils/payment_gateway/models/payment_result.dart';
+
+/// VNPayProvider: chỉ nhận paymentUrl từ server, không giữ tmnCode/hashSecret
+/// Bo khong can dung module vnpay_payment
+class VNPayProvider implements PaymentGateway {
+  @override
+  PaymentType get type => PaymentType.vnpay;
+
+  @override
+  Future<PaymentResult> createPayment(PaymentRequest request) async {
+    try {
+      // Server sẽ trả về URL đã ký hash trong request.paymentUrlFromServer
+      final paymentUrl = request.paymentUrlFromServer;
+
+      if (paymentUrl == null || paymentUrl.isEmpty) {
+        return PaymentResult.failed(message: "Thiếu paymentUrl từ server");
+      }
+
+      return PaymentResult.success(
+        url: paymentUrl,
+        rawData: {"paymentUrl": paymentUrl},
+      );
+    } catch (e) {
+      return PaymentResult.failed(message: e.toString());
+    }
+  }
+
+  @override
+  bool verifyCallback(Map<String, String> queryParameters) {
+    // App không cần verify chữ ký, backend sẽ làm
+    return true;
+  }
+
+  @override
+  Future<PaymentResult> checkTransactionStatus(String orderId, {String? requestId}) async {
+    // Việc query trạng thái cần gọi API server-to-server
+    return PaymentResult.failed(
+      message: "Chức năng checkTransactionStatus cần backend hỗ trợ",
+    );
+  }
+
+  @override
+  TransactionStatus parseStatus(Map<String, String> queryParameters) {
+    final responseCode = queryParameters['vnp_ResponseCode'];
+    if (responseCode == '00') {
+      return TransactionStatus.success;
+    } else if (responseCode == '24') {
+      return TransactionStatus.cancelled;
+    } else {
+      return TransactionStatus.failed;
+    }
+  }
+
+  @override
+  String getOrderId(Map<String, String> queryParameters) {
+    return queryParameters['vnp_TxnRef'] ?? '';
+  }
+
+  @override
+  bool matchesCallback(Map<String, String> queryParameters) {
+    return queryParameters.containsKey('vnp_SecureHash');
+  }
+
+}
+
+
+/*
 class VNPayProvider implements PaymentGateway {
   final VNPAYPayment _service;
 
@@ -96,3 +166,4 @@ class VNPayProvider implements PaymentGateway {
     return queryParameters['vnp_TxnRef'] ?? '';
   }
 }
+ */

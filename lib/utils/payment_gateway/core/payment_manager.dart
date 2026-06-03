@@ -111,12 +111,13 @@ class PaymentManager {
     
     // 1. Nhận diện cổng thanh toán
     PaymentGateway? gateway;
-    if (params.containsKey('vnp_SecureHash')) {
-      gateway = _gateways[PaymentType.vnpay];
-    } else if (params.containsKey('partnerCode') || params.containsKey('resultCode')) {
-      gateway = _gateways[PaymentType.momo];
+    for (final g in _gateways.values) {
+      if (g.matchesCallback(params)) {
+        gateway = g;
+        break;
+      }
     }
-    
+
     if (gateway == null) {
       return PaymentResult.failed(message: 'Không xác định được cổng thanh toán từ callback');
     }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
@@ -197,5 +198,63 @@ class MomoPayment {
     } else {
       throw Exception('Could not launch $url');
     }
+  }
+}
+
+
+extension MomoPaymentPext on MomoPayment {
+  /// Tạo URL thanh toán MoMo giả lập (thay cho server)
+  static String createMomoPaymentUrl({
+    required String partnerCode,
+    required String accessKey,
+    required String secretKey,
+    required String orderId,
+    required String requestId,
+    required int amount,
+    required String orderInfo,
+    required String returnUrl,
+    required String notifyUrl,
+    String extraData = "",
+    bool isTestMode = true,
+  }) {
+    // 1. Tạo rawData theo format MoMo yêu cầu
+    final rawData =
+        "partnerCode=$partnerCode&accessKey=$accessKey&requestId=$requestId&amount=$amount&orderId=$orderId&orderInfo=$orderInfo&returnUrl=$returnUrl&notifyUrl=$notifyUrl&extraData=$extraData";
+
+    /// Sinh chữ ký SHA256 cho MoMo. Function in function
+    String generateSignature(String rawData, String secretKey) {
+      final key = utf8.encode(secretKey);
+      final bytes = utf8.encode(rawData);
+      final hmacSha256 = Hmac(sha256, key);
+      final digest = hmacSha256.convert(bytes);
+      return digest.toString();
+    }
+
+    // 2. Sinh chữ ký SHA256
+    final signature = generateSignature(rawData, secretKey);
+
+    // 3. Chọn endpoint theo môi trường
+    final endpoint = isTestMode
+        ? "https://test-payment.momo.vn/v2/gateway/api/create"
+        : "https://payment.momo.vn/v2/gateway/api/create";
+
+    // 4. Tạo payload JSON (thường server sẽ POST lên MoMo, nhưng ở đây ta giả lập URL)
+    final payload = {
+      "partnerCode": partnerCode,
+      "accessKey": accessKey,
+      "requestId": requestId,
+      "amount": amount.toString(),
+      "orderId": orderId,
+      "orderInfo": orderInfo,
+      "returnUrl": returnUrl,
+      "notifyUrl": notifyUrl,
+      "extraData": extraData,
+      "signature": signature,
+    };
+
+    // 5. Giả lập URL (thực tế server sẽ gọi API MoMo và nhận về payUrl)
+    // Ở đây ta encode payload thành query string để test
+    final query = payload.entries.map((e) => "${e.key}=${Uri.encodeComponent(e.value)}").join("&");
+    return "$endpoint?$query";
   }
 }

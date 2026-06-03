@@ -23,6 +23,74 @@ import 'package:coffee_bean/utils/payment_gateway/models/payment_result.dart';
 import 'package:coffee_bean/utils/payment_gateway/momo_payment/momo_payment.dart';
 import 'package:coffee_bean/utils/payment_gateway/momo_payment/models/payment_info.dart';
 
+import 'package:coffee_bean/utils/payment_gateway/core/payment_gateway.dart';
+import 'package:coffee_bean/utils/payment_gateway/models/payment_enums.dart';
+import 'package:coffee_bean/utils/payment_gateway/models/payment_request.dart';
+import 'package:coffee_bean/utils/payment_gateway/models/payment_result.dart';
+
+/// MomoProvider: chỉ nhận paymentUrl từ server, không giữ partnerCode/accessKey/secretKey
+/// Bo khong can dung module momo_payment
+class MomoProvider implements PaymentGateway {
+  @override
+  PaymentType get type => PaymentType.momo;
+
+  /// Vì bạn chỉ dùng paymentUrlFromServer, createPayment không cần gọi API MoMo nữa.
+  /// Nếu request có sẵn paymentUrlFromServer thì trả về luôn.
+  @override
+  Future<PaymentResult> createPayment(PaymentRequest request) async {
+    try {
+      final paymentUrl = request.extraData?['paymentUrlFromServer'];
+
+      if (paymentUrl == null || paymentUrl.isEmpty) {
+        return PaymentResult.failed(message: "Thiếu paymentUrl từ server");
+      }
+
+      return PaymentResult.success(
+        url: paymentUrl,
+        rawData: {"paymentUrl": paymentUrl},
+      );
+    } catch (e) {
+      return PaymentResult.failed(message: e.toString());
+    }
+  }
+
+  @override
+  bool verifyCallback(Map<String, String> queryParameters) {
+    // MoMo callback có thể chứa chữ ký, nhưng bạn sẽ verify ở backend.
+    // App chỉ cần trả true để tiếp tục flow.
+    return true;
+  }
+
+  @override
+  Future<PaymentResult> checkTransactionStatus(String orderId, {String? requestId}) async {
+    // Không gọi API MoMo trực tiếp nữa, chỉ hỏi backend của bạn.
+    return PaymentResult.failed(
+      message: "Chức năng checkTransactionStatus cần backend hỗ trợ",
+    );
+  }
+
+  @override
+  TransactionStatus parseStatus(Map<String, String> queryParameters) {
+    final resultCode = int.tryParse(queryParameters['resultCode'] ?? '');
+    if (resultCode == 0) return TransactionStatus.success;
+    if (resultCode == 1006 || resultCode == 9000) return TransactionStatus.cancelled;
+    return TransactionStatus.failed;
+  }
+
+  @override
+  String getOrderId(Map<String, String> queryParameters) {
+    return queryParameters['orderId'] ?? '';
+  }
+
+  @override
+  bool matchesCallback(Map<String, String> queryParameters) {
+    return queryParameters.containsKey('partnerCode') || queryParameters.containsKey('resultCode');
+  }
+
+}
+
+
+/*
 class MomoProvider implements PaymentGateway {
   final MomoPayment _service;
 
@@ -118,3 +186,4 @@ class MomoProvider implements PaymentGateway {
     return queryParameters['orderId'] ?? '';
   }
 }
+ */

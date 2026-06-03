@@ -276,3 +276,71 @@ class VNPAYPayment {
   /// Lấy URL truy vấn giao dịch
   String getQueryUrl() => isSandbox ? sandboxQueryUrl : productionQueryUrl;
 }
+
+extension VNPAYPaymentExt on VNPAYPayment {
+  /// Hàm giả lập tạo URL thanh toán VNPAY (thay cho server)
+  static String createVNPayPaymentUrl({
+    required String tmnCode,
+    required String hashSecret,
+    required String txnRef,
+    required double amount,
+    required String orderInfo,
+    required String returnUrl,
+    String ipAddr = '127.0.0.1',
+    String locale = 'vn',
+    String orderType = 'billpayment',
+    bool isSandbox = true,
+  }) {
+    final now = DateTime.now();
+    final createDate = DateFormat('yyyyMMddHHmmss').format(now);
+    final expireDate = now.add(const Duration(minutes: 15));
+    final expireDateStr = DateFormat('yyyyMMddHHmmss').format(expireDate);
+    final amountStr = (amount * 100).toInt().toString();
+
+    // Bước 1: Tạo danh sách tham số
+    final params = <String, String>{
+      'vnp_Version': '2.1.0',
+      'vnp_Command': 'pay',
+      'vnp_TmnCode': tmnCode,
+      'vnp_Locale': locale,
+      'vnp_CurrCode': 'VND',
+      'vnp_TxnRef': txnRef,
+      'vnp_OrderInfo': orderInfo,
+      'vnp_OrderType': orderType,
+      'vnp_Amount': amountStr,
+      'vnp_ReturnUrl': returnUrl,
+      'vnp_IpAddr': ipAddr,
+      'vnp_CreateDate': createDate,
+      'vnp_ExpireDate': expireDateStr,
+    };
+
+    // Bước 2: Sắp xếp tham số theo alphabet
+    final sorted = Map.fromEntries(
+      params.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
+    );
+
+    // Bước 3: Tạo query string
+    String encodedQuery = '';
+    sorted.forEach((key, value) {
+      final encoded = '${Uri.encodeComponent(key)}=${Uri.encodeComponent(value).replaceAll('%20', '+')}';
+      if (encodedQuery.isEmpty) {
+        encodedQuery = encoded;
+      } else {
+        encodedQuery += '&$encoded';
+      }
+    });
+
+    // Bước 4: Tính HMAC-SHA512
+    final hmac = Hmac(sha512, utf8.encode(hashSecret));
+    final digest = hmac.convert(utf8.encode(encodedQuery));
+    final hash = digest.toString();
+
+    // Bước 5: Tạo URL cuối cùng
+    final baseUrl = isSandbox
+        ? 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'
+        : 'https://pay.vnpay.vn/vpcpay.html';
+
+    return '$baseUrl?$encodedQuery&vnp_SecureHash=$hash';
+  }
+
+}
