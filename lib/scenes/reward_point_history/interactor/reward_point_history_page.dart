@@ -1,5 +1,4 @@
 import 'package:coffee_bean/data/model/response/reward_point_history.dart';
-import 'package:coffee_bean/scenes/app/app.dart';
 import 'package:coffee_bean/scenes/reward_point_history/interactor/reward_point_history_event_state.dart';
 import 'package:coffee_bean/scenes/reward_point_history/interactor/reward_point_history_interactor.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
@@ -7,9 +6,7 @@ import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui/app_ui.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
-import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:coffee_bean/utils/refresh_loadmore.dart';
-import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -34,43 +31,39 @@ class _RewardPointHistoryPageState
   Widget getBody(BuildContext context) {
     return BlocBuilder<RewardPointHistoryInteractor, RewardPointHistoryState>(
       builder: (context, state) {
-        // 1. Màn hình loading ban đầu (Khi danh sách trống và đang ở trạng thái Initial/Loading)
+        // 1. Màn hình loading ban đầu (Trạng thái khởi tạo chưa có data)
         if (state is RewardPointHistoryStartLoading) {
           return getLoadingView();
         }
-        if (state is RewardPointHistoryDone && state.items.isEmpty) {
-          return const Center(child: Text("Không có dữ liệu"));
-        }
-        // Xu ly tat cac cac trang thai con lai
-        dLog("Rebuild with items: ${state.items.length}, hasMore: ${state.hasMore}");
+
         return Container(
           color: TMLabsColor.white,
           child: RefreshLoadmore(
             onRefresh: () => interactor.loadData(isRefresh: true),
             onLoadmore: () => interactor.loadData(isRefresh: false),
-            color: TMLabsColor.primary,
             isLastPage: !state.hasMore,
-            refreshWidget: AppUi.getRefreshTopWidget(context),
+            isEmpty: state.items.isEmpty,
+            emptyWidget: const Center(child: Text("Không có dữ liệu")),
             loadingWidget: AppUi.getLoadingBottomWidget(context, color: TMLabsColor.primary),
-            // noMoreWidget: AppUi.getNoMoreWidget(),
-            child: ListView.builder(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: state.items.length,
-              itemBuilder: (context, index) {
-                final item = state.items[index];
-                return Column(
-                  children: [
-                    // Divider trên cùng của item đầu tiên
-                    if (index == 0) const Divider(height: 1, color: TMLabsColor.lightGrey, thickness: 1),
-                    _buildPointItem(item),
-                    // Divider dưới mỗi item
-                    const Divider(height: 1, color: TMLabsColor.lightGrey, thickness: 1),
-                  ],
-                );
-              },
-            ),
+            slivers: [
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final item = state.items[index];
+                    return Column(
+                      children: [
+                        // Divider trên cùng của item đầu tiên
+                        if (index == 0) const Divider(height: 1, color: TMLabsColor.lightGrey, thickness: 1),
+                        _buildPointItem(item),
+                        // Divider dưới mỗi item
+                        const Divider(height: 1, color: TMLabsColor.lightGrey, thickness: 1),
+                      ],
+                    );
+                  },
+                  childCount: state.items.length,
+                ),
+              ),
+            ],
           ),
         );
       },

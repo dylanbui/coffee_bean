@@ -1,192 +1,232 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+/// Các trạng thái của quá trình load-more
+enum LoadStatus { idle, loading, error, completed }
+
 class RefreshLoadmore extends StatefulWidget {
-  /// Callback function on pull down to refresh
+  /// Callback khi kéo xuống để refresh
   final Future<void> Function()? onRefresh;
 
-  /// Callback function on pull up to load more data
+  /// Callback khi cuộn xuống để load thêm
   final Future<void> Function()? onLoadmore;
 
-  /// Whether it is the last page, if it is true, you can not load more
+  /// Callback riêng cho việc thử lại refresh khi bị lỗi
+  final Future<void> Function()? onRetryRefresh;
+
+  /// Đã hết dữ liệu chưa
   final bool isLastPage;
 
-  /// Child widget
-  final Widget child;
+  /// Danh sách dữ liệu hiện tại có trống không
+  final bool isEmpty;
 
-  /// Prompt text widget when there is no more data at the bottom
+  /// Danh sách các slivers để hiển thị (SliverList, SliverGrid, v.v.)
+  final List<Widget> slivers;
+
+  /// Widget hiển thị khi không có dữ liệu
+  final Widget? emptyWidget;
+
+  /// Widget hiển thị khi đã load hết dữ liệu
   final Widget? noMoreWidget;
 
-  /// Prompt widget when loading new data at the bottom
+  /// Widget hiển thị khi đang load thêm
   final Widget? loadingWidget;
 
-  /// Prompt widget when refreshing at the top (Mainly for iOS style)
-  final Widget? refreshWidget;
+  /// Widget hiển thị khi lỗi load thêm
+  final Widget? errorWidget;
 
-  /// Prompt padding for body if needed
-  final EdgeInsetsGeometry? padding;
+  /// Ngưỡng cách đáy để kích hoạt load-more
+  final double loadMoreThreshold;
 
-  /// You can use your custom scrollController, or not
-  final ScrollController? scrollController;
-
-  /// Indicator color for Android
-  final Color? color;
-
-  /// Background color for Android
-  final Color? backgroundColor;
+  /// ScrollController để điều khiển cuộn từ bên ngoài
+  final ScrollController? controller;
 
   const RefreshLoadmore({
     super.key,
-    required this.child,
+    required this.slivers,
     required this.isLastPage,
+    this.isEmpty = false,
     this.onRefresh,
     this.onLoadmore,
+    this.onRetryRefresh,
+    this.emptyWidget,
     this.noMoreWidget,
     this.loadingWidget,
-    this.refreshWidget,
-    this.padding,
-    this.scrollController,
-    this.color,
-    this.backgroundColor,
+    this.errorWidget,
+    this.loadMoreThreshold = 200,
+    this.controller,
   });
 
   @override
-  _RefreshLoadmoreState createState() => _RefreshLoadmoreState();
+  State<RefreshLoadmore> createState() => _RefreshLoadmoreState();
 }
 
 class _RefreshLoadmoreState extends State<RefreshLoadmore> {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-  GlobalKey<RefreshIndicatorState>();
-
-  ScrollController? _scrollController;
-  bool _isLoading = false;
+  LoadStatus _loadMoreStatus = LoadStatus.idle;
+  bool _refreshError = false;
 
   @override
-  void initState() {
-    super.initState();
-    _scrollController = widget.scrollController ?? ScrollController();
-    _scrollController!.addListener(() async {
-      if (_scrollController!.position.pixels >=
-          _scrollController!.position.maxScrollExtent) {
-        if (_isLoading) {
-          return;
-        }
+  void didUpdateWidget(covariant RefreshLoadmore oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Cập nhật trạng thái completed dựa trên isLastPage từ widget cha
+    if (widget.isLastPage) {
+      _loadMoreStatus = LoadStatus.completed;
+    } else if (_loadMoreStatus == LoadStatus.completed) {
+      _loadMoreStatus = LoadStatus.idle;
+    }
+  }
 
-        if (mounted) {
-          setState(() {
-            _isLoading = true;
-          });
-        }
-
-        if (!widget.isLastPage && widget.onLoadmore != null) {
-          await widget.onLoadmore!();
-        }
-
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+  /// Xử lý refresh dữ liệu
+  Future<void> _handleRefresh() async {
+    try {
+      if (mounted) {
+        setState(() {
+          _refreshError = false;
+          _loadMoreStatus = LoadStatus.idle;
+        });
       }
-    });
+      if (widget.onRefresh != null) {
+        await widget.onRefresh!();
+      }
+    } catch (_) {
+      if (mounted) setState(() => _refreshError = true);
+    }
   }
 
-  @override
-  void dispose() {
-    if (widget.scrollController == null) _scrollController!.dispose();
-    super.dispose();
+  /// Xử lý retry khi refresh lỗi
+  Future<void> _handleRetryRefresh() async {
+    if (widget.onRetryRefresh != null) {
+      try {
+        if (mounted) setState(() => _refreshError = false);
+        await widget.onRetryRefresh!();
+      } catch (_) {
+        if (mounted) setState(() => _refreshError = true);
+      }
+    } else {
+      await _handleRefresh();
+    }
   }
 
-  Widget _buildBottomWidget() {
-    final bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+  /// Xử lý load thêm dữ liệu
+  void _triggerLoadMore() async {
+    if (_loadMoreStatus == LoadStatus.loading ||
+        _loadMoreStatus == LoadStatus.completed ||
+        widget.isLastPage ||
+        widget.onLoadmore == null) {
+      return;
+    }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: _isLoading
-              ? widget.loadingWidget ??
-                  (isIOS
-                      ? const CupertinoActivityIndicator()
-                      : SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: widget.color != null ? AlwaysStoppedAnimation<Color>(widget.color!) : null,
-                          ),
-                        ))
-              : widget.isLastPage
-                  ? widget.noMoreWidget ??
-                      Text(
-                        'No more data',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Theme.of(context).disabledColor,
-                        ),
-                      )
-                  : Container(),
-        ),
-      ],
-    );
+    if (mounted) {
+      setState(() {
+        _loadMoreStatus = LoadStatus.loading;
+      });
+    }
+
+    try {
+      await widget.onLoadmore!();
+      if (mounted) {
+        setState(() {
+          _loadMoreStatus = widget.isLastPage ? LoadStatus.completed : LoadStatus.idle;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _loadMoreStatus = LoadStatus.error);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Check if it's iOS to support custom refresh widget style (Push down)
-    final bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
-
-    if (isIOS && widget.onRefresh != null) {
-      return CustomScrollView(
-        controller: _scrollController,
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          CupertinoSliverRefreshControl(
-            onRefresh: widget.onRefresh,
-            builder: (context, refreshState, pulledExtent, _, __) {
-              return Center(child: widget.refreshWidget ?? const CupertinoActivityIndicator());
-            },
-          ),
-          SliverPadding(
-            padding: widget.padding ?? EdgeInsets.zero,
-            sliver: SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  widget.child,
-                  _buildBottomWidget(),
-                ],
+    // 1. Trường hợp: Lỗi khi refresh và danh sách đang trống
+    if (_refreshError && widget.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              widget.errorWidget ??
+                  const Text(
+                    "Đã có lỗi xảy ra khi tải dữ liệu",
+                    textAlign: TextAlign.center,
+                  ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: _handleRetryRefresh,
+                icon: const Icon(Icons.refresh),
+                label: const Text("Thử lại"),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       );
     }
 
-    Widget mainWiget = ListView(
-      /// Solve the problem that there are too few items to pull down and refresh | 解决item太少，无法下拉刷新的问题
-      physics: AlwaysScrollableScrollPhysics(),
-      padding: widget.padding,
-      controller: _scrollController,
-      children: <Widget>[
-        widget.child,
-        _buildBottomWidget(),
-      ],
-    );
-
-    if (widget.onRefresh == null) {
-      return Scrollbar(child: mainWiget);
-    }
-
-    return RefreshIndicator(
-      key: _refreshIndicatorKey,
-      color: widget.color,
-      backgroundColor: widget.backgroundColor,
-      onRefresh: () async {
-        if (_isLoading) return;
-        await widget.onRefresh!();
+    return NotificationListener<ScrollNotification>(
+      onNotification: (scrollInfo) {
+        // Chỉ kích hoạt load more khi cuộn tới ngưỡng ở danh sách chính
+        if (scrollInfo.depth == 0 &&
+            scrollInfo.metrics.pixels >=
+                scrollInfo.metrics.maxScrollExtent - widget.loadMoreThreshold) {
+          _triggerLoadMore();
+        }
+        return false;
       },
-      child: mainWiget,
+      child: RefreshIndicator(
+        onRefresh: _handleRefresh,
+        child: CustomScrollView(
+          controller: widget.controller,
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            // 2. Trường hợp: Danh sách trống
+            if (widget.isEmpty && widget.emptyWidget != null)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Center(child: widget.emptyWidget),
+              )
+            else ...[
+              // 3. Danh sách dữ liệu chính
+              ...widget.slivers,
+
+              // 4. Trạng thái dưới cùng (Loading/Error/Completed)
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                sliver: SliverToBoxAdapter(
+                  child: Center(
+                    child: _buildBottomWidget(),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
+  }
+
+  Widget _buildBottomWidget() {
+    switch (_loadMoreStatus) {
+      case LoadStatus.loading:
+        return widget.loadingWidget ?? const CupertinoActivityIndicator();
+      case LoadStatus.error:
+        return Column(
+          children: [
+            const Text("Không thể tải thêm dữ liệu"),
+            TextButton(
+              onPressed: _triggerLoadMore,
+              child: const Text("Thử lại"),
+            ),
+          ],
+        );
+      case LoadStatus.completed:
+        // Chỉ hiển thị "No more data" nếu không phải là trang đầu tiên trống
+        if (widget.isEmpty) return const SizedBox.shrink();
+        return widget.noMoreWidget ??
+            Text(
+              "Đã xem hết danh sách",
+              style: TextStyle(color: Colors.grey[500], fontSize: 13),
+            );
+      case LoadStatus.idle:
+        return const SizedBox.shrink();
+    }
   }
 }
