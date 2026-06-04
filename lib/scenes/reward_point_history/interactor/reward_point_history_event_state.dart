@@ -21,8 +21,16 @@ class RewardPointHistoryInitial extends RewardPointHistoryState {
   RewardPointHistoryInitial() : super(items: []);
 }
 
-class RewardPointHistoryLoading extends RewardPointHistoryState {
-  RewardPointHistoryLoading({required super.items, super.hasMore});
+class RewardPointHistoryStartLoading extends RewardPointHistoryState {
+  RewardPointHistoryStartLoading() : super(items: []);
+}
+
+// class RewardPointHistoryLoading extends RewardPointHistoryState {
+//   RewardPointHistoryLoading({required super.items, super.hasMore});
+// }
+
+class RewardPointHistoryRefreshing extends RewardPointHistoryState {
+  RewardPointHistoryRefreshing({required super.items, required super.hasMore});
 }
 
 class RewardPointHistoryDone extends RewardPointHistoryState {

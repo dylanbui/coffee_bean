@@ -1,4 +1,5 @@
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
+import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
@@ -59,4 +60,9 @@ abstract class AppCubitState<T extends AppCubitStateFulWidget<B, S>, B extends C
       body: content,
     );
   }
+
+  Widget getLoadingView() {
+    return const Center(child: LoadingView(width: 150, height: 150));
+  }
+
 }

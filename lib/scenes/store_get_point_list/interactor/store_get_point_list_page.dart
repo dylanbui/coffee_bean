@@ -6,6 +6,7 @@ import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui/app_ui.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:coffee_bean/shared/widget/search_bar.dart';
@@ -185,7 +186,7 @@ class _StorePointListPageState extends AppCubitState<StoreGetPointListPage, Stor
 
   Widget _buildGridContent(StoreGetPointListState state) {
     if (state.items.isEmpty) {
-      return _buildEmptyState();
+      return AppUi.getEmptyItemWidget();
     }
     return GridView.builder(
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
@@ -202,22 +203,22 @@ class _StorePointListPageState extends AppCubitState<StoreGetPointListPage, Stor
     );
   }
 
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            AppAssets.images.imgNoneItem,
-            width: 160,
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            "Không tìm thấy nội dung liên quan",
-            style: TMLabsTextStyle.body,
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildEmptyState() {
+  //   return Center(
+  //     child: Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         SvgPicture.asset(
+  //           AppAssets.images.imgNoneItem,
+  //           width: 160,
+  //         ),
+  //         const SizedBox(height: 16),
+  //         const Text(
+  //           "Không tìm thấy nội dung liên quan",
+  //           style: TMLabsTextStyle.body,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }

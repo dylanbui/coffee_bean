@@ -1,11 +1,14 @@
 import 'package:coffee_bean/data/model/response/reward_point_history.dart';
+import 'package:coffee_bean/scenes/app/app.dart';
 import 'package:coffee_bean/scenes/reward_point_history/interactor/reward_point_history_event_state.dart';
 import 'package:coffee_bean/scenes/reward_point_history/interactor/reward_point_history_interactor.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui/app_ui.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
+import 'package:coffee_bean/utils/refresh_loadmore.dart';
 import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,46 +35,30 @@ class _RewardPointHistoryPageState
     return BlocBuilder<RewardPointHistoryInteractor, RewardPointHistoryState>(
       builder: (context, state) {
         // 1. Màn hình loading ban đầu (Khi danh sách trống và đang ở trạng thái Initial/Loading)
-        if (state.items.isEmpty && (state is RewardPointHistoryInitial || state is RewardPointHistoryLoading)) {
-          return const Center(child: LoadingView(width: 150, height: 150));
+        if (state is RewardPointHistoryStartLoading) {
+          return getLoadingView();
         }
         if (state is RewardPointHistoryDone && state.items.isEmpty) {
-          return const Text("Khong co du lieu");
+          return const Center(child: Text("Không có dữ liệu"));
         }
-
-        dLog("Rebuild with items: ${state.items.length}, isLoadingMore: ${state.isLoadingMore}");
-
+        // Xu ly tat cac cac trang thai con lai
+        dLog("Rebuild with items: ${state.items.length}, hasMore: ${state.hasMore}");
         return Container(
           color: TMLabsColor.white,
-          child: RefreshIndicator(
+          child: RefreshLoadmore(
             onRefresh: () => interactor.loadData(isRefresh: true),
+            onLoadmore: () => interactor.loadData(isRefresh: false),
+            color: TMLabsColor.primary,
+            isLastPage: !state.hasMore,
+            refreshWidget: AppUi.getRefreshTopWidget(context),
+            loadingWidget: AppUi.getLoadingBottomWidget(context, color: TMLabsColor.primary),
+            // noMoreWidget: AppUi.getNoMoreWidget(),
             child: ListView.builder(
               padding: EdgeInsets.zero,
-              physics: const AlwaysScrollableScrollPhysics(), // Đảm bảo luôn vuốt được để refresh
-              itemCount: state.items.length + (state.hasMore ? 1 : 0),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: state.items.length,
               itemBuilder: (context, index) {
-                // 2. Hiển thị Spinner Load More ở dòng cuối cùng
-                if (index == state.items.length) {
-                  // Nếu còn dữ liệu và không phải đang load thì trigger load more
-                  if (!state.isLoadingMore) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      dLog("Trigger load more");
-                      interactor.loadData(isRefresh: false);
-                    });
-                  }
-
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 24),
-                    child: Center(
-                      child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    ),
-                  );
-                }
-                
                 final item = state.items[index];
                 return Column(
                   children: [
@@ -125,7 +112,7 @@ class _RewardPointHistoryPageState
             children: [
               Text(
                 "${item.points > 0 ? '+' : ''}${item.points.toInt()}",
-                style: TMLabsTextStyle.bodyBold.copyWith(
+                style: TMLabsTextStyle.title.copyWith(
                   color: item.points > 0 ? TMLabsColor.success : TMLabsColor.error,
                   fontSize: 18,
                 ),
@@ -134,9 +121,8 @@ class _RewardPointHistoryPageState
               Text(
                 item.dateTime,
                 style: TMLabsTextStyle.small.copyWith(
-                  color: TMLabsColor.lightGrey,
+                  color: TMLabsColor.grey,
                   fontWeight: FontWeight.normal,
-                  fontSize: 10,
                 ),
                 maxLines: 1,
               ),
