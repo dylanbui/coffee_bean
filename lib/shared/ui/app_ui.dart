@@ -23,7 +23,7 @@ class AppUi {
   }
 
   /// Default widget for loading more at bottom
-  static Widget? getLoadingBottomWidget(BuildContext context, {Color? color}) {
+  static Widget getLoadingBottomWidget(BuildContext context, {Color? color}) {
     final bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
     if (isIOS) {
       return const CupertinoActivityIndicator();
@@ -43,18 +43,17 @@ class AppUi {
     return RefreshLoadmoreStyle(
       color: TMLabsColor.primary,
       loadingWidget: AppUi.getLoadingBottomWidget(context, color: TMLabsColor.primary),
+      noMoreWidget: AppUi.getNoMoreWidget(context),
+      errorLoadMoreWidget: const Text("Không thể tải thêm dữ liệu"),
+      errorRefreshWidget: const Text("Đã có lỗi xảy ra khi tải dữ liệu", textAlign: TextAlign.center,),
     );
   }
 
   /// Default widget for no more data at bottom
-  static Widget? getNoMoreWidget() => Padding(
+  static Widget getNoMoreWidget(BuildContext context) => Padding(
     padding: const EdgeInsets.all(16.0),
-    child: Text(
-      'Đã hiển thị tất cả lịch sử',
-      style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),
-    ),
+    child: Text('Đã hiển thị tất cả dữ liệu', style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),),
   );
-
 
   static Widget getLoadingView() {
     return const Center(child: LoadingView(width: 150, height: 150));

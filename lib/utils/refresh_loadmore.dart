@@ -16,11 +16,42 @@ class RefreshLoadmoreStyle {
   /// Widget hiển thị khi đang loading (mặc định là CupertinoActivityIndicator)
   final Widget? loadingWidget;
 
+  /// Widget hiển thị khi đã load hết dữ liệu
+  final Widget? noMoreWidget;
+
+  /// Widget hiển thị khi lỗi tải thêm dữ liệu ở đáy
+  final Widget? errorLoadMoreWidget;
+
+  /// Widget hiển thị khi lỗi tải dữ liệu toàn màn hình (refresh lỗi)
+  final Widget? errorRefreshWidget;
+
   const RefreshLoadmoreStyle({
     this.color,
     this.backgroundColor,
     this.loadingWidget,
+    this.noMoreWidget,
+    this.errorLoadMoreWidget,
+    this.errorRefreshWidget,
   });
+
+  /// Giúp tạo ra một bản sao của style hiện tại nhưng thay đổi một vài thuộc tính
+  RefreshLoadmoreStyle copyWith({
+    Color? color,
+    Color? backgroundColor,
+    Widget? loadingWidget,
+    Widget? noMoreWidget,
+    Widget? errorLoadMoreWidget,
+    Widget? errorRefreshWidget,
+  }) {
+    return RefreshLoadmoreStyle(
+      color: color ?? this.color,
+      backgroundColor: backgroundColor ?? this.backgroundColor,
+      loadingWidget: loadingWidget ?? this.loadingWidget,
+      noMoreWidget: noMoreWidget ?? this.noMoreWidget,
+      errorLoadMoreWidget: errorLoadMoreWidget ?? this.errorLoadMoreWidget,
+      errorRefreshWidget: errorRefreshWidget ?? this.errorRefreshWidget,
+    );
+  }
 }
 
 class RefreshLoadmore extends StatefulWidget {
@@ -167,6 +198,9 @@ class _RefreshLoadmoreState extends State<RefreshLoadmore> {
 
   @override
   Widget build(BuildContext context) {
+    // Lấy style mặc định nếu không được truyền vào
+    final currentStyle = widget.style ?? const RefreshLoadmoreStyle();
+
     // 1. Trường hợp: Lỗi khi refresh và danh sách đang trống
     if (_refreshError && widget.isEmpty) {
       return Center(
@@ -176,8 +210,11 @@ class _RefreshLoadmoreState extends State<RefreshLoadmore> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               widget.errorWidget ??
-                  const Text("Đã có lỗi xảy ra khi tải dữ liệu",
-                      textAlign: TextAlign.center),
+                  currentStyle.errorRefreshWidget ??
+                  const Text(
+                    "Đã có lỗi xảy ra khi tải dữ liệu",
+                    textAlign: TextAlign.center,
+                  ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
                 onPressed: _handleRetryRefresh,
@@ -216,7 +253,7 @@ class _RefreshLoadmoreState extends State<RefreshLoadmore> {
           SliverPadding(
             padding: const EdgeInsets.symmetric(vertical: 24),
             sliver: SliverToBoxAdapter(
-              child: Center(child: _buildBottomWidget()),
+              child: Center(child: _buildBottomWidget(currentStyle)),
             ),
           ),
         ],
@@ -237,24 +274,26 @@ class _RefreshLoadmoreState extends State<RefreshLoadmore> {
           ? scrollView
           : RefreshIndicator(
               onRefresh: _handleRefresh,
-              color: widget.style?.color ?? TMLabsColor.primary,
-              backgroundColor: widget.style?.backgroundColor ?? Colors.white,
+              color: currentStyle.color ?? TMLabsColor.primary,
+              backgroundColor: currentStyle.backgroundColor ?? Colors.white,
               child: scrollView,
             ),
     );
   }
 
   /// Xây dựng widget hiển thị ở đáy danh sách dựa trên trạng thái load-more
-  Widget _buildBottomWidget() {
+  Widget _buildBottomWidget(RefreshLoadmoreStyle style) {
     switch (_loadMoreStatus) {
       case LoadStatus.loading:
         // Ưu tiên loadingWidget từ style, sau đó mới đến mặc định
-        return widget.style?.loadingWidget ??
-            CupertinoActivityIndicator(color: widget.style?.color);
+        return style.loadingWidget ??
+            CupertinoActivityIndicator(color: style.color);
       case LoadStatus.error:
         return Column(
           children: [
-            const Text("Không thể tải thêm dữ liệu"),
+            widget.errorWidget ??
+                style.errorLoadMoreWidget ??
+                const Text("Không thể tải thêm dữ liệu"),
             TextButton(
               onPressed: _triggerLoadMore,
               child: const Text("Thử lại"),
@@ -264,8 +303,11 @@ class _RefreshLoadmoreState extends State<RefreshLoadmore> {
       case LoadStatus.completed:
         if (widget.isEmpty) return const SizedBox.shrink();
         return widget.noMoreWidget ??
-            Text("Đã xem hết danh sách",
-                style: TextStyle(color: Colors.grey[500], fontSize: 13));
+            style.noMoreWidget ??
+            const Text(
+              "Đã xem hết danh sách",
+              style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 13),
+            );
       case LoadStatus.idle:
         return const SizedBox.shrink();
     }
