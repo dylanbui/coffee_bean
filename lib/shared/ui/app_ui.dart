@@ -4,6 +4,7 @@ import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
+import 'package:coffee_bean/utils/refresh_loadmore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -34,6 +35,14 @@ class AppUi {
         strokeWidth: 2,
         valueColor: color != null ? AlwaysStoppedAnimation<Color>(color) : null,
       ),
+    );
+  }
+
+  // Default style for RefreshLoadmore
+  static RefreshLoadmoreStyle getDefaultRefreshLoadmoreStyle(BuildContext context) {
+    return RefreshLoadmoreStyle(
+      color: TMLabsColor.primary,
+      loadingWidget: AppUi.getLoadingBottomWidget(context, color: TMLabsColor.primary),
     );
   }
 

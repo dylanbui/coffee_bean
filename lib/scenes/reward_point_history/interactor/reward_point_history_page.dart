@@ -44,7 +44,7 @@ class _RewardPointHistoryPageState
             isLastPage: !state.hasMore,
             isEmpty: state.items.isEmpty,
             emptyWidget: const Center(child: Text("Không có dữ liệu")),
-            loadingWidget: AppUi.getLoadingBottomWidget(context, color: TMLabsColor.primary),
+            style: AppUi.getDefaultRefreshLoadmoreStyle(context),
             slivers: [
               SliverList(
                 delegate: SliverChildBuilderDelegate(
@@ -53,10 +53,11 @@ class _RewardPointHistoryPageState
                     return Column(
                       children: [
                         // Divider trên cùng của item đầu tiên
-                        if (index == 0) const Divider(height: 1, color: TMLabsColor.lightGrey, thickness: 1),
+                        const Divider(height: 1, color: TMLabsColor.lightGrey, thickness: 1),
                         _buildPointItem(item),
                         // Divider dưới mỗi item
                         const Divider(height: 1, color: TMLabsColor.lightGrey, thickness: 1),
+                        SizedBox(height: 5,),
                       ],
                     );
                   },
