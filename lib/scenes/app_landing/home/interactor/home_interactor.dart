@@ -161,7 +161,11 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
 
   void quickActions(int index) {
     // Logic for quick actions
-    // router?.navigate(ChooseStoreRoute());
+    if (index == 0) {
+      router?.navigate(ReservationListRoute());
+    } else if (index == 1) {
+      router?.navigate(StoreGetPointListRoute());
+    }
   }
 
   void selectSeller(SellerItem item) {

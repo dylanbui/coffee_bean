@@ -1,3 +1,5 @@
+import 'package:coffee_bean/scenes/site_reservation_features/reservation_list/reservation_list_builder.dart';
+import 'package:coffee_bean/scenes/store_get_point_list/store_get_point_list_builder.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/global_search/global_search_builder.dart';
 import 'package:coffee_bean/scenes/store_list/store_list_builder.dart';
@@ -6,6 +8,8 @@ import 'package:flutter/material.dart';
 // Route
 class ChooseStoreRoute implements DbNoteRoute {}
 class GlobalSearchRoute implements DbNoteRoute {}
+class ReservationListRoute implements DbNoteRoute {}
+class StoreGetPointListRoute implements DbNoteRoute {}
 
 abstract class HomeRoutable implements DbNoteRoutable {}
 
@@ -16,10 +20,20 @@ class HomeRouter extends DbNoteRouter implements HomeRoutable {
       final nextBuilder = StoreListBuilder();
       final nextRouter = nextBuilder.build();
       navigator.push(nextRouter.viewController);
+
     } else if (toRoute is GlobalSearchRoute) {
       final nextBuilder = GlobalSearchBuilder();
       final nextRouter = nextBuilder.build();
       navigator.push(nextRouter.viewController);
+
+    } else if (toRoute is ReservationListRoute) {
+      final nextBuilder = ReservationListBuilder();
+      navigator.push(nextBuilder.build().viewController);
+
+    } else if (toRoute is StoreGetPointListRoute) {
+      final nextBuilder = StoreGetPointListBuilder();
+      navigator.push(nextBuilder.build().viewController);
+
     }
   }
 }

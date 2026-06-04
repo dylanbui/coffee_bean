@@ -1,6 +1,6 @@
 import 'package:coffee_bean/data/repository/reservation_repository.dart';
-import 'package:coffee_bean/scenes/reservation_list/interactor/reservation_list_event_state.dart';
-import 'package:coffee_bean/scenes/reservation_list/reservation_list_router.dart';
+import 'package:coffee_bean/scenes/site_reservation_features/reservation_list/interactor/reservation_list_event_state.dart';
+import 'package:coffee_bean/scenes/site_reservation_features/reservation_list/reservation_list_router.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:db_core/utils/locator.dart';

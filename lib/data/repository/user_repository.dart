@@ -1,6 +1,9 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:db_core/network/base_repository.dart';
 import 'package:db_core/network/network_common.dart';
 import 'package:coffee_bean/data/model/user.dart';
+import 'package:coffee_bean/data/model/response/reward_point_history.dart';
 
 /// A repository that handles user related API requests.
 class UserRepository extends BaseRepository {
@@ -26,5 +29,29 @@ class UserRepository extends BaseRepository {
   /// Fetches details for a single user by their ID.
   Future<(User?, NetworkError?)> fetchUserDetail(int userId) async {
     return await networkClient.request('/users/$userId').mapToObject<User>(User.fromJson);
+  }
+
+  Future<(List<RewardPointHistoryItem>?, NetworkError?)> fetchRewardPointHistory({int offset = 0, int limit = 20}) async {
+    try {
+      final String response = await rootBundle.loadString('assets/json/reward_point_history.json');
+      final data = await json.decode(response);
+      if (data['history'] != null) {
+        final List<dynamic> jsonList = data['history'];
+        final allItems = jsonList.map((j) => RewardPointHistoryItem.fromJson(j)).toList();
+        
+        final start = offset;
+        final end = (offset + limit) > allItems.length ? allItems.length : (offset + limit);
+        
+        if (start >= allItems.length) return (<RewardPointHistoryItem>[], null);
+        
+        // Giả lập delay mạng
+        await Future.delayed(const Duration(milliseconds: 500));
+        
+        return (allItems.sublist(start, end), null);
+      }
+      return (<RewardPointHistoryItem>[], null);
+    } catch (e) {
+      return (null, NetworkError(500, e.toString()));
+    }
   }
 }
