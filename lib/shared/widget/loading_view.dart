@@ -10,7 +10,7 @@ class LoadingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Lottie.asset(
-      'assets/json/loading.json',
+      'assets/json/loading-tmlabs.json',
       width: width,
       height: height,
       repeat: true,

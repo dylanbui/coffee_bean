@@ -39,6 +39,9 @@ abstract class AppCubitState<T extends AppCubitStateFulWidget<B, S>, B extends C
       title: title,
       actions: getActions(),
       style: getAppBarStyle(),
+      onBackTap: () {
+        interactor.router?.pop();
+      },
     );
   }
 

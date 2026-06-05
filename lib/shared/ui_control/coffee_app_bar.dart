@@ -130,7 +130,7 @@ class CoffeeAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: style.elevation,
       leadingWidth: style.leadingWidth,
       leading: hideBackButton
-          ? (leading != null ? leading : null)
+          ? (leading)
           : (leading ??
                 IconButton(
                   icon: Icon(style.backIcon, size: 20),

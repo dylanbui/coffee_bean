@@ -1,5 +1,7 @@
 import 'package:coffee_bean/data/repository/store_point_repository.dart';
 import 'package:coffee_bean/scenes/store_get_point_list/store_get_point_list_router.dart';
+import 'package:coffee_bean_db/coffee_bean_db.dart';
+import 'package:db_core/db_core.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:db_core/utils/locator.dart';
 import 'package:coffee_bean/scenes/store_get_point_list/interactor/store_get_point_list_event_state.dart';
@@ -46,6 +48,8 @@ class StoreGetPointListInteractor extends CubitInteractor<StoreGetPointListRoute
 
   void toggleSearchMode(bool isSearch) {
     if (state is StoreGetPointListDataState) {
+      if (state.isSearchMode == isSearch) return;
+
       emit((state as StoreGetPointListDataState).copyWith(
         isSearchMode: isSearch,
         // Reset search text when closing search mode
@@ -55,6 +59,15 @@ class StoreGetPointListInteractor extends CubitInteractor<StoreGetPointListRoute
         _loadData();
       }
     }
+  }
+
+  void onRewardHistoryTap() {
+    router?.navigate(RewardPointHistoryRoute());
+  }
+
+  void onStorePointTap(TblStorePoint item) {
+    // Xử lý khi chọn item, ví dụ: mở chi tiết hoặc thực hiện đổi điểm
+    iLog("Selected store point: ${item.name} with ID: ${item.id}");
   }
 
   void onSearchChanged(String text) {

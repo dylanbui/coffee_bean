@@ -12,7 +12,6 @@ import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:coffee_bean/shared/widget/search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 //ignore: must_be_immutable
 class StoreGetPointListPage extends AppCubitStateFulWidget<StoreGetPointListInteractor, StoreGetPointListState> {
@@ -27,70 +26,73 @@ class _StorePointListPageState extends AppCubitState<StoreGetPointListPage, Stor
   String? getTitle() => "TÍCH ĐIỂM";
 
   @override
-  Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
-    return BlocBuilder<StoreGetPointListInteractor, StoreGetPointListState>(
-      builder: (context, state) {
-        PreferredSizeWidget? effectiveAppBar;
-        if (state.isSearchMode) {
-          effectiveAppBar = CoffeeAppBar(
-            hideBackButton: false,
-            titleWidget: SizedBox(
-              height: 40,
-              child: Stack(
-                children: [
-                  AppSearchBar(
-                    hintText: "Tìm kiếm...",
-                    backgroundColor: TMLabsColor.bgLight,
-                    leftIcon: AppAssets.icons.icSearch,
-                    rightIcon: Icons.close, // Hiển thị nút X khi trống
-                    clearIcon: Icons.close, // Hiển thị nút X khi có text
-                    onSearch: (value) {
-                      if (value.isEmpty) {
-                        interactor.toggleSearchMode(false);
-                      } else {
-                        interactor.onSearchChanged(value);
-                      }
-                    },
-                  ),
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    width: 40,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () => interactor.toggleSearchMode(false),
-                      child: Container(color: Colors.transparent),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        } else {
-          effectiveAppBar = CoffeeAppBar(title: getTitle());
-        }
+  bool get tapToUnfocus => true;
 
-        return Scaffold(
-          backgroundColor: TMLabsColor.bgMain,
-          appBar: effectiveAppBar,
-          body: body,
-        );
-      },
+  @override
+  PreferredSizeWidget? getAppBar(BuildContext context) {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(kToolbarHeight),
+      child: BlocBuilder<StoreGetPointListInteractor, StoreGetPointListState>(
+        buildWhen: (prev, curr) => prev.isSearchMode != curr.isSearchMode,
+        builder: (context, state) {
+          if (state.isSearchMode) {
+            return CoffeeAppBar(
+              hideBackButton: false,
+              onBackTap: () => interactor.toggleSearchMode(false),
+              titleWidget: SizedBox(
+                height: 40,
+                child: Stack(
+                  children: [
+                    AppSearchBar(
+                      hintText: "Tìm kiếm...",
+                      backgroundColor: TMLabsColor.bgLight,
+                      leftIcon: AppAssets.icons.icSearch,
+                      rightIcon: Icons.close,
+                      clearIcon: Icons.close,
+                      onSearch: (value) {
+                        if (value.isEmpty) {
+                          // Tạm thời không auto close khi empty để tránh giật lag khi đang gõ
+                          // interactor.toggleSearchMode(false);
+                          interactor.onSearchChanged("");
+                        } else {
+                          interactor.onSearchChanged(value);
+                        }
+                      },
+                    ),
+                    // Lớp phủ để bắt sự kiện tap vào nút X (vì AppSearchBar chưa hỗ trợ callback riêng cho nút này)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: 40,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () => interactor.toggleSearchMode(false),
+                        child: Container(color: Colors.transparent),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+          return CoffeeAppBar(title: getTitle());
+        },
+      ),
     );
   }
 
   @override
   Widget getBody(BuildContext context) {
-    return BlocBuilder<StoreGetPointListInteractor, StoreGetPointListState>(
-      builder: (context, state) {
-        return Container(
-          width: double.infinity,
-          color: TMLabsColor.white, // Cả khối thống nhất màu trắng
-          child: Column(
+    return Container(
+      width: double.infinity,
+      color: TMLabsColor.white,
+      child: BlocBuilder<StoreGetPointListInteractor, StoreGetPointListState>(
+        builder: (context, state) {
+          return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header with animation inside the white block
+              // Header with animation
               AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 height: state.isSearchMode ? 0 : 135,
@@ -99,8 +101,8 @@ class _StorePointListPageState extends AppCubitState<StoreGetPointListPage, Stor
                   physics: const NeverScrollableScrollPhysics(),
                   child: PointStoreHeader(
                     points: state.userPoints,
-                    onDetailTap: () {},
-                    onMoreTap: () {},
+                    onDetailTap: interactor.onRewardHistoryTap,
+                    onMoreTap: interactor.onRewardHistoryTap,
                   ),
                 ),
               ),
@@ -110,13 +112,13 @@ class _StorePointListPageState extends AppCubitState<StoreGetPointListPage, Stor
               
               Expanded(
                 child: state.isLoading 
-                  ? const Center(child: LoadingView(width: 150, height: 150)) 
+                  ? getLoadingView() 
                   : _buildGridContent(state),
               ),
             ],
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -176,7 +178,12 @@ class _StorePointListPageState extends AppCubitState<StoreGetPointListPage, Stor
               padding: const EdgeInsets.only(right: 8),
               child: IconButton(
                 icon: AppIcon(AppAssets.icons.icSearch, size: 20, color: TMLabsColor.primary),
-                onPressed: () => interactor.toggleSearchMode(true),
+                onPressed: () {
+                  // Guard against double tap
+                  if (!state.isSearchMode) {
+                    interactor.toggleSearchMode(true);
+                  }
+                },
               ),
             ),
         ],
@@ -198,27 +205,11 @@ class _StorePointListPageState extends AppCubitState<StoreGetPointListPage, Stor
       ),
       itemCount: state.items.length,
       itemBuilder: (context, index) {
-        return PointStoreCard(item: state.items[index]);
+        return PointStoreCard(
+          item: state.items[index],
+          onTap: interactor.onStorePointTap,
+        );
       },
     );
   }
-
-  // Widget _buildEmptyState() {
-  //   return Center(
-  //     child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         SvgPicture.asset(
-  //           AppAssets.images.imgNoneItem,
-  //           width: 160,
-  //         ),
-  //         const SizedBox(height: 16),
-  //         const Text(
-  //           "Không tìm thấy nội dung liên quan",
-  //           style: TMLabsTextStyle.body,
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }

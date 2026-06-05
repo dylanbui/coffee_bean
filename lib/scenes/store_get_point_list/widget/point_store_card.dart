@@ -1,12 +1,14 @@
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
+import 'package:db_core/utils/flash_utils/flash_toast_helper.dart';
+import 'package:db_core/utils/tap_effect.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 
 class PointStoreCard extends StatelessWidget {
   final TblStorePoint item;
-  final VoidCallback? onTap;
+  final ValueChanged<TblStorePoint>? onTap;
 
   const PointStoreCard({
     super.key,
@@ -16,8 +18,13 @@ class PointStoreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
+    return TapEffect(
+      effectType: TapEffectType.ripple,
+      borderRadius: BorderRadius.circular(16),
+      onTap: () {
+        DbFlashToastHelper.info(context, "ID: ${item.id} - Name: ${item.name}");
+        onTap?.call(item);
+      },
       child: Container(
         // width: 176,
         // height: 250,
