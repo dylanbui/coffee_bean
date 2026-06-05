@@ -12,8 +12,8 @@ import 'package:coffee_bean/scenes/exchange_point/interactor/exchange_point_inte
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/shared/ui_control/coffee_sliver_app_bar.dart';
 import 'package:db_core/utils/app_button.dart';
+import 'package:db_core/utils/parallax_sliver_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -37,48 +37,10 @@ class _ExchangePointPageState extends AppCubitState<ExchangePointPage, ExchangeP
         return CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            CoffeeSliverAppBar(
-              imageUrl: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=1000",
+            ParallaxSliverAppBar(
+              imageUrl: "https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=1080&auto=format&fit=crop",
               onBackTap: () => interactor.router?.pop(),
             ),
-
-            // Parallax + Stretch
-            // CoffeeSliverAppBar(
-            //   // title: "Profile",
-            //   imageUrl: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=1000",
-            //   mode: CoffeeAppBarMode.parallax,
-            //   parallaxRate: 0.5,
-            //   // blurOnStretch: true,
-            //   // maxBlurSigma: 8.0,
-            // ),
-
-            // FadeOnScroll + Stretch
-            // CoffeeSliverAppBar(
-            //   title: "Details",
-            //   imageUrl: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=1000",
-            //   mode: CoffeeAppBarMode.fadeOnScroll,
-            //   //blurOnStretch: true,
-            //   //maxBlurSigma: 10.0,
-            // ),
-
-            // SolidOnScroll + Stretch
-            // CoffeeSliverAppBar(
-            //   mode: CoffeeAppBarMode.solidOnScroll,
-            //   leading: SizedBox(width: 10,),
-            //   imageUrl: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=1000",
-            //   solidBackgroundColor: TMLabsColor.primary,
-            //   collapsedWidget: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //     children: [
-            //       const Text("My AppBar", style: TextStyle(color: Colors.white, fontSize: 16)),
-            //       IconButton(
-            //         icon: const Icon(Icons.search, color: Colors.white),
-            //         onPressed: () {},
-            //       ),
-            //     ],
-            //   ),
-            // ),
-
 
             // Danh sách nội dung
             SliverPadding(
@@ -104,7 +66,7 @@ class _ExchangePointPageState extends AppCubitState<ExchangePointPage, ExchangeP
       decoration: BoxDecoration(
         color: TMLabsColor.white,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
