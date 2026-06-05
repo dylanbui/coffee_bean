@@ -31,34 +31,39 @@ class _ExchangePointPageState extends AppCubitState<ExchangePointPage, ExchangeP
   Widget getBody(BuildContext context) {
     return BlocBuilder<ExchangePointInteractor, ExchangePointState>(
       builder: (context, state) {
-        // if (state is ExchangePointLoading) {
-        //   return getLoadingView();
-        // }
+        if (state is ExchangePointLoading) {
+          return getLoadingView();
+        }
 
         return CustomScrollView(
+          physics: const BouncingScrollPhysics(),
           slivers: [
-            // SliverAppBar với hiệu ứng parallax
             SliverAppBar(
               expandedHeight: 250,
               pinned: true,
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: TMLabsColor.primary, size: 20),
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
                 onPressed: () => interactor.router?.pop(),
               ),
-              backgroundColor: TMLabsColor.bgMain,
-              flexibleSpace: FlexibleSpaceBar(
-                background: const DbCachedImageWidget(
-                  imageUrl: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=1000",
-                  borderRadius: 0,
-                  fit: BoxFit.cover,
-                ),
+              // title: const Text("Tích điểm"), //
+              backgroundColor: Colors.transparent, // Màu nền khi collapse hoàn toàn
+              surfaceTintColor: Colors.transparent,
+              flexibleSpace: Stack(
+                fit: StackFit.expand,
+                children: [
+                  const DbCachedImageWidget(
+                    imageUrl: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=1000",
+                    fit: BoxFit.cover,
+                  ),
+                ],
               ),
             ),
 
+
             // Danh sách nội dung
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
@@ -79,10 +84,17 @@ class _ExchangePointPageState extends AppCubitState<ExchangePointPage, ExchangeP
     return Container(
       height: 65,
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(
         color: TMLabsColor.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -94,20 +106,27 @@ class _ExchangePointPageState extends AppCubitState<ExchangePointPage, ExchangeP
               children: [
                 Text(
                   item.title,
-                  style: TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.w900),
+                  style: TMLabsTextStyle.body.copyWith(
+                    color: TMLabsColor.primary,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 14,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   item.caption,
-                  style: TMLabsTextStyle.small.copyWith(color: TMLabsColor.lightGrey,),
+                  style: TMLabsTextStyle.small.copyWith(
+                    color: TMLabsColor.grey,
+                    fontSize: 11,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: 8),
           AppButton(
             text: item.buttonText,
             onPressed: () {
