@@ -12,8 +12,8 @@ import 'package:coffee_bean/scenes/exchange_point/interactor/exchange_point_inte
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui_control/coffee_sliver_app_bar.dart';
 import 'package:db_core/utils/app_button.dart';
-import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -38,62 +38,10 @@ class _ExchangePointPageState extends AppCubitState<ExchangePointPage, ExchangeP
         return CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            SliverAppBar(
-              expandedHeight: 250,
-              pinned: true,
-              stretch: true,
-              elevation: 0,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-                onPressed: () => interactor.router?.pop(),
-              ),
-              backgroundColor: Colors.transparent,
-              surfaceTintColor: Colors.transparent,
-              flexibleSpace: LayoutBuilder(
-                builder: (context, constraints) {
-                  final double appBarHeight = constraints.biggest.height;
-                  final double statusBarHeight = MediaQuery.paddingOf(context).top;
-                  final double expandedHeight = 250.0 + statusBarHeight;
-                  
-                  // Tính toán độ cuộn (scrollOffset > 0 khi cuộn lên)
-                  final double scrollOffset = expandedHeight - appBarHeight;
-                  
-                  // 1. Hiệu ứng Parallax khi cuộn lên: di chuyển ảnh lên chậm hơn tốc độ cuộn
-                  // Dùng giá trị nhỏ (0.3) để ảnh không bị đẩy đi quá xa
-                  final double parallaxOffset = scrollOffset > 0 ? -scrollOffset * 0.3 : 0.0;
-
-                  // 2. Hiệu ứng Stretch khi kéo xuống (overscroll)
-                  final double scale = appBarHeight > expandedHeight 
-                      ? appBarHeight / expandedHeight 
-                      : 1.0;
-
-                  return Stack(
-                    clipBehavior: Clip.hardEdge,
-                    children: [
-                      // Image layer sử dụng Positioned để đảm bảo ảnh luôn che phủ kín diện tích AppBar
-                      Positioned(
-                        top: parallaxOffset,
-                        left: 0,
-                        right: 0,
-                        // Chiều cao ảnh luôn giữ ở mức expandedHeight (nhân thêm scale khi stretch)
-                        // Điều này đảm bảo khi cuộn lên, phần dưới của ảnh vẫn che phủ vùng Toolbar
-                        height: expandedHeight * scale,
-                        child: const DbCachedImageWidget(
-                          imageUrl: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=1000",
-                          fit: BoxFit.cover,
-                          borderRadius: 0,
-                        ),
-                      ),
-                      // Overlay mờ để đảm bảo icon/text luôn rõ nét
-                      Container(
-                        color: Colors.black.withOpacity(0.25),
-                      ),
-                    ],
-                  );
-                },
-              ),
+            CoffeeSliverAppBar(
+              imageUrl: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=1000",
+              onBackTap: () => interactor.router?.pop(),
             ),
-
 
             // Danh sách nội dung
             SliverPadding(
