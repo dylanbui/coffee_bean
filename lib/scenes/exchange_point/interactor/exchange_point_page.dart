@@ -26,7 +26,6 @@ class ExchangePointPage extends AppCubitStateFulWidget<ExchangePointInteractor, 
 }
 
 class _ExchangePointPageState extends AppCubitState<ExchangePointPage, ExchangePointInteractor, ExchangePointState> {
-
   @override
   Widget getBody(BuildContext context) {
     return BlocBuilder<ExchangePointInteractor, ExchangePointState>(
@@ -43,17 +42,52 @@ class _ExchangePointPageState extends AppCubitState<ExchangePointPage, ExchangeP
               onBackTap: () => interactor.router?.pop(),
             ),
 
+            // Parallax + Stretch
+            // CoffeeSliverAppBar(
+            //   // title: "Profile",
+            //   imageUrl: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=1000",
+            //   mode: CoffeeAppBarMode.parallax,
+            //   parallaxRate: 0.5,
+            //   // blurOnStretch: true,
+            //   // maxBlurSigma: 8.0,
+            // ),
+
+            // FadeOnScroll + Stretch
+            // CoffeeSliverAppBar(
+            //   title: "Details",
+            //   imageUrl: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=1000",
+            //   mode: CoffeeAppBarMode.fadeOnScroll,
+            //   //blurOnStretch: true,
+            //   //maxBlurSigma: 10.0,
+            // ),
+
+            // SolidOnScroll + Stretch
+            // CoffeeSliverAppBar(
+            //   mode: CoffeeAppBarMode.solidOnScroll,
+            //   leading: SizedBox(width: 10,),
+            //   imageUrl: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=1000",
+            //   solidBackgroundColor: TMLabsColor.primary,
+            //   collapsedWidget: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: [
+            //       const Text("My AppBar", style: TextStyle(color: Colors.white, fontSize: 16)),
+            //       IconButton(
+            //         icon: const Icon(Icons.search, color: Colors.white),
+            //         onPressed: () {},
+            //       ),
+            //     ],
+            //   ),
+            // ),
+
+
             // Danh sách nội dung
             SliverPadding(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
               sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final item = state.items[index];
-                    return _buildListItem(item);
-                  },
-                  childCount: state.items.length,
-                ),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final item = state.items[index];
+                  return _buildListItem(item);
+                }, childCount: state.items.length),
               ),
             ),
           ],
@@ -70,13 +104,7 @@ class _ExchangePointPageState extends AppCubitState<ExchangePointPage, ExchangeP
       decoration: BoxDecoration(
         color: TMLabsColor.white,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -98,10 +126,7 @@ class _ExchangePointPageState extends AppCubitState<ExchangePointPage, ExchangeP
                 ),
                 Text(
                   item.caption,
-                  style: TMLabsTextStyle.small.copyWith(
-                    color: TMLabsColor.grey,
-                    fontSize: 11,
-                  ),
+                  style: TMLabsTextStyle.small.copyWith(color: TMLabsColor.grey, fontSize: 11),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -129,5 +154,4 @@ class _ExchangePointPageState extends AppCubitState<ExchangePointPage, ExchangeP
       ),
     );
   }
-
 }
