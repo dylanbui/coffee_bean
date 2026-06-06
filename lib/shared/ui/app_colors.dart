@@ -79,7 +79,7 @@ class TMLabsColor {
   // --- 4. SPECIAL BACKGROUNDS (Màu nền đặc biệt) ---
   //static const bgMain = Color(0xFFF8F8F8);      // Nền xám nhạt toàn bộ ứng dụng
   static const bgMain = Color(0xFFEEEDEE);      // Nền xám nhạt toàn bộ ứng dụng
-  // static const bgSecond = Color(0xFFEEEDEE);      // Nền xám nhạt toàn bộ ứng dụng
+  static const bgSecond = Color(0xFFEEEDEE);      // Nền xám nhạt toàn bộ ứng dụng
   static const bgBeige = Color(0xFFF2EFED);     // Nền kem (Dành cho quà tặng, promo)
   static const bgTabbarWhile = Color(0xFFFFFFFF);     // Tabbar
 

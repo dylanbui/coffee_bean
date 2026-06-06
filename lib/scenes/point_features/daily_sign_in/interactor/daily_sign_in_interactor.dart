@@ -30,10 +30,10 @@ class DailySignInInteractor extends CubitInteractor<DailySignInRoutable, DailySi
       CheckInItem(dateLabel: "5/1", pointLabel: "+7", isPast: true, isChecked: true),
       CheckInItem(dateLabel: "6/1", pointLabel: "/", isPast: true, isChecked: false),
       CheckInItem(dateLabel: "7/1", pointLabel: "+1", isPast: true, isChecked: true),
-      CheckInItem(dateLabel: "5/1", pointLabel: "+2", isToday: true, isChecked: false),
-      CheckInItem(dateLabel: "6/1", pointLabel: "+3", isFuture: true),
-      CheckInItem(dateLabel: "7/1", pointLabel: "+4", isFuture: true),
-      CheckInItem(dateLabel: "7/1", pointLabel: "+5", isFuture: true),
+      CheckInItem(dateLabel: "8/1", pointLabel: "+2", isToday: true, isChecked: false),
+      CheckInItem(dateLabel: "9/1", pointLabel: "+3", isFuture: true),
+      CheckInItem(dateLabel: "10/1", pointLabel: "+4", isFuture: true),
+      CheckInItem(dateLabel: "11/1", pointLabel: "+5", isFuture: true),
     ];
 
     emit(DailySignInSuccess(

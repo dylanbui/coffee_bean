@@ -32,7 +32,7 @@ class _DailySignInPageState
   @override
   Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
     return Scaffold(
-      backgroundColor: TMLabsColor.bgMain,
+      backgroundColor: Colors.white,
       appBar: appBar,
       body: body,
     );
@@ -61,7 +61,7 @@ class _DailySignInPageState
               child: Container(
                 transform: Matrix4.translationValues(0, -30, 0),
                 decoration: const BoxDecoration(
-                  color: TMLabsColor.bgMain,
+                  color: Colors.white,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),
@@ -75,19 +75,13 @@ class _DailySignInPageState
                       const SizedBox(height: 50),
                       _buildUserCard(state),
                       const SizedBox(height: 30),
-                      Text(
-                        "Điểm danh nhận điểm tích lũy",
-                        style: TMLabsTextStyle.title.copyWith(fontSize: 18),
-                      ),
+                      Text("Điểm danh nhận điểm tích lũy", style: TMLabsTextStyle.title.copyWith(fontSize: 18),),
                       const SizedBox(height: 20),
                       _buildCheckInGrid(state),
                       const SizedBox(height: 30),
                       _buildCheckInButton(state),
-                      const SizedBox(height: 40),
-                      Text(
-                        "Quy tắc điểm danh",
-                        style: TMLabsTextStyle.title.copyWith(fontSize: 18),
-                      ),
+                      const SizedBox(height: 16),
+                      Text("Quy tắc điểm danh", style: TMLabsTextStyle.title.copyWith(fontSize: 18),),
                       const SizedBox(height: 16),
                       _buildRulesSection(),
                       const SizedBox(height: 10),
@@ -141,9 +135,17 @@ class _DailySignInPageState
                     ],
                   ),
                 ),
-                Text(
-                  "Hôm nay điểm danh có thể nhận ${state.todayPoints} điểm",
-                  style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),
+                RichText(
+                  text: TextSpan(
+                    style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),
+                    children: [
+                      const TextSpan(text: "Hôm nay điểm danh có thể nhận "),
+                      TextSpan(
+                        text: "${state.todayPoints} điểm",
+                        style: TMLabsTextStyle.caption.copyWith(fontWeight: FontWeight.w900,),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -162,76 +164,89 @@ class _DailySignInPageState
 
   Widget _buildCheckInItem(CheckInItem item) {
     Decoration decoration;
-    Color textColor = TMLabsColor.grey;
+    Color dateColor = TMLabsColor.grey;
+    Color pointColor = TMLabsColor.primary;
+    Color labelColor = TMLabsColor.grey;
+    bool isBoldLabel = false;
+    double coinOpacity = 0.5;
 
     if (item.isToday) {
       decoration = BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFFFFE082), Color(0xFFFFD54F)],
+          colors: [Color(0xFFFFE8A4), Color(0xFFFDBB4E)],
         ),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFFD54F).withValues(alpha: 0.3),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: const Color(0xFFFDBB4E).withValues(alpha: 0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
         ],
       );
-      textColor = TMLabsColor.primary;
+      dateColor = TMLabsColor.grey.withValues(alpha: 0.8);
+      pointColor = const Color(0xFFBF360C); // Màu đỏ cam đậm cho số điểm ngày hiện tại
+      labelColor = TMLabsColor.primary;
+      isBoldLabel = true;
+      coinOpacity = 1.0;
     } else if (item.isFuture) {
       decoration = BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFFFFF9C4), Color(0xFFFFF59D)],
+          colors: [Color(0xFFFFF7DC), Color(0xFFF3C358)],
         ),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
       );
-      textColor = TMLabsColor.primary.withValues(alpha: 0.5);
+      dateColor = TMLabsColor.grey.withValues(alpha: 0.6);
+      pointColor = const Color(0xFFF57C00); // Màu cam cho tương lai
+      labelColor = TMLabsColor.grey.withValues(alpha: 0.6);
     } else {
       decoration = BoxDecoration(
-        color: const Color(0xFFE8E8E8), // Light gray for past
-        borderRadius: BorderRadius.circular(10),
+        color: const Color(0xFFEEEDEE), // Xám nhạt cho quá khứ
+        borderRadius: BorderRadius.circular(12),
       );
-      textColor = TMLabsColor.grey.withValues(alpha: 0.6);
+      dateColor = TMLabsColor.grey.withValues(alpha: 0.6);
+      pointColor = TMLabsColor.grey;
+      labelColor = TMLabsColor.grey.withValues(alpha: 0.6);
     }
 
     return Container(
-      width: (MediaQuery.of(context).size.width - 40 - 30) / 7,
-      height: 110,
+      width: (MediaQuery.of(context).size.width - 40 - 36) / 7,
+      height: 125,
       decoration: decoration,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Text(
             item.dateLabel,
-            style: TMLabsTextStyle.caption.copyWith(color: textColor, fontWeight: FontWeight.w600),
+            style: TMLabsTextStyle.caption.copyWith(color: dateColor, fontSize: 11),
           ),
           Text(
             item.pointLabel,
-            style: TMLabsTextStyle.bodyBold.copyWith(color: textColor),
+            style: TMLabsTextStyle.bodyBold.copyWith(color: pointColor, fontSize: 15),
           ),
-          AppIcon(
-            item.isChecked ? AppAssets.icons.icGoldCoin : AppAssets.icons.icGrayCoin,
-            size: 24,
-          ),
-          if (item.isToday)
-            Text(
-              "Hôm nay",
-              style: TMLabsTextStyle.small.copyWith(color: TMLabsColor.primary),
-            )
-          else
-            Text(
-              item.isChecked ? "Đã điểm danh" : (item.isPast ? "Chưa điểm danh" : "Chờ điểm danh"),
-              textAlign: TextAlign.center,
-              style: TMLabsTextStyle.small.copyWith(
-                fontSize: 8,
-                color: textColor.withValues(alpha: 0.7),
-              ),
+          Opacity(
+            opacity: coinOpacity,
+            child: AppIcon(
+              item.isChecked || item.isFuture || item.isToday 
+                ? AppAssets.icons.icGoldCoin 
+                : AppAssets.icons.icGrayCoin,
+              size: 28,
             ),
+          ),
+          Text(
+            item.isToday ? (item.isChecked ? "Đã điểm danh" : "Hôm nay") : 
+            (item.isChecked ? "Đã điểm danh" : (item.isPast ? "Chưa điểm danh" : "Chờ điểm danh")),
+            textAlign: TextAlign.center,
+            style: TMLabsTextStyle.small.copyWith(
+              fontSize: 9,
+              color: labelColor,
+              fontWeight: isBoldLabel ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
         ],
       ),
     );
