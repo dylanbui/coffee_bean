@@ -63,7 +63,7 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
     return Scaffold(
       backgroundColor: TMLabsColor.white,
       appBar: appBar,
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true, // Để Scaffold tự động xử lý khoảng trống bàn phím
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -84,41 +84,54 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
     return BlocConsumer<UserRegisterInteractor, UserRegisterState>(
       listener: _onRegisterStateChanged,
       builder: (context, state) {
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-            double availableHeight = constraints.maxHeight - keyboardHeight;
-
-            return SingleChildScrollView(
-              physics: const ClampingScrollPhysics(),
-              child: Container(
-                height: availableHeight,
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Column(
-                  children: <Widget>[
-                    _buildLogo(),
-                    _buildInputs(),
-                    const SizedBox(height: 40),
-                    AppButton(
-                      text: "Register",
-                      style: TMLabsButtonStyle.primary,
-                      isLoading: state is UserRegisterInProgress,
-                      onPressed: () {
-                        _registerController.validateRegister(interactor, _showError);
-                      },
+        return Column(
+          children: [
+            // Phần nội dung cuộn được (Sliver)
+            Expanded(
+              child: CustomScrollView(
+                physics: const ClampingScrollPhysics(),
+                slivers: [
+                  SliverToBoxAdapter(child: _buildLogo()),
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    sliver: SliverToBoxAdapter(child: _buildInputs()),
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    sliver: SliverToBoxAdapter(child: _buildFooterLinks()),
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                  // Register button placed below the "Already have an account..." link
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    sliver: SliverToBoxAdapter(
+                      child: AppButton(
+                        text: "Register",
+                        style: TMLabsButtonStyle.primary,
+                        isLoading: state is UserRegisterInProgress,
+                        onPressed: () {
+                          _registerController.validateRegister(interactor, _showError);
+                        },
+                      ),
                     ),
-                    const SizedBox(height: 20),
-                    _buildFooterLinks(),
-                    const Expanded(child: SizedBox.shrink()),
-                    _buildPolicyAgreement(),
-                    const SizedBox(height: 20),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          },
+            ),
+            
+            // Sticky Footer: Only contains the Policy Agreement
+            _buildStickyFooter(state),
+          ],
         );
       },
+    );
+  }
+
+  Widget _buildStickyFooter(UserRegisterState state) {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: _buildPolicyAgreement(),
     );
   }
 
@@ -130,7 +143,7 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
     } else {
       hideLoading();
       if (state is UserSetPassword) {
-        // Dang chuyen trang qua set password
+        // Chuyển trang
       } else if (state is UserRegisterSuccess) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Register Success!"), backgroundColor: Colors.green),
@@ -153,9 +166,11 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
         top: _isKeyboardVisible ? 30.0 : 60.0,
         bottom: _isKeyboardVisible ? 20.0 : 60.0,
       ),
-      child: Text(
-        "TMLabs Coffee",
-        style: _isKeyboardVisible ? TMLabsTextStyle.h2 : TMLabsTextStyle.h1,
+      child: Center(
+        child: Text(
+          "TMLabs Coffee",
+          style: _isKeyboardVisible ? TMLabsTextStyle.h2 : TMLabsTextStyle.h1,
+        ),
       ),
     );
   }
@@ -211,8 +226,7 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
         Text("Already have an account? ", style: TMLabsTextStyle.body),
         InkWell(
           onTap: () {
-            iLog("Tap: Go to Login - khong cho phep o day, se bi cycle app");
-            // interactor.router?.navigate(UserLoginRoute());
+            iLog("Tap: Go to Login");
           },
           child: Text(
             "Go to Login",

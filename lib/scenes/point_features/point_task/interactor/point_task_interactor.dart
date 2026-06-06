@@ -7,14 +7,16 @@
 //
 // Copyright (c) 2026. All rights reserved.
 // **************************************************************************
-import 'package:coffee_bean/scenes/exchange_point/exchange_point_builder.dart';
-import 'package:coffee_bean/scenes/exchange_point/interactor/exchange_point_event_state.dart';
+
+import 'package:coffee_bean/scenes/point_features/point_task/point_task_builder.dart';
+import 'package:coffee_bean/scenes/point_features/point_task/interactor/point_task_event_state.dart';
+
 import 'package:db_core/db_core.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 
 // INTERACTOR
-class ExchangePointInteractor extends CubitInteractor<ExchangePointRoutable, ExchangePointState> {
-  ExchangePointInteractor(ExchangePointRoutable router) : super(ExchangePointInitial(), router: router);
+class PointTaskInteractor extends CubitInteractor<PointTaskRoutable, PointTaskState> {
+  PointTaskInteractor(PointTaskRoutable router) : super(PointTaskInitial(), router: router);
 
   @override
   void onDidBecomeActive() {
@@ -23,53 +25,53 @@ class ExchangePointInteractor extends CubitInteractor<ExchangePointRoutable, Exc
   }
 
   void loadData() {
-    emit(ExchangePointLoading());
+    emit(PointTaskLoading());
 
 
     final items = [
-      ExchangePointItem(
+      PointTaskItem(
         title: 'Hàng ngày điểm danh',
         caption: 'Hoàn thành điểm danh hàng ngày để nhận điểm',
         buttonText: 'Điểm danh',
         action: 'checkin',
       ),
-      ExchangePointItem(
+      PointTaskItem(
         title: 'Phần thưởng tiêu dùng',
         caption: 'Đặt đơn hàng tiêu dùng để nhận điểm thưởng tương ứng',
         buttonText: 'Đặt đơn',
         action: 'order',
       ),
-      ExchangePointItem(
+      PointTaskItem(
         title: 'Tương tác cộng đồng',
         caption: 'Đăng bài/ bình luận trong cộng đồng để nhận điểm',
         buttonText: 'Đi ngay',
         action: 'community',
       ),
-      ExchangePointItem(
+      PointTaskItem(
         title: 'Đặt chỗ',
         caption: 'Đặt chỗ sàn để nhận điểm thưởng',
         buttonText: 'Đặt ngay',
         action: 'reservation',
       ),
-      ExchangePointItem(
+      PointTaskItem(
         title: 'Đăng ký hoạt động',
         caption: 'Tham gia hoạt động để nhận điểm thưởng',
         buttonText: 'Đi xem',
         action: 'activity',
       ),
-      ExchangePointItem(
+      PointTaskItem(
         title: 'Phần thưởng đánh giá đơn hàng',
         caption: 'Đánh giá đơn hàng sản phẩm/khóa học để nhận điểm',
         buttonText: 'Đánh giá',
         action: 'review',
       ),
-      ExchangePointItem(
+      PointTaskItem(
         title: 'Phần thưởng mời bạn',
         caption: 'Mời bạn bè đăng ký / hoàn thành đơn đầu tiên để nhận thưởng',
         buttonText: 'Đi mời',
         action: 'referral',
       ),
-      ExchangePointItem(
+      PointTaskItem(
         title: 'Điểm thêm cho đơn đầu',
         caption: 'Hoàn thành đơn đầu tiên nhận điểm thưởng thêm',
         buttonText: 'Đặt đơn',
@@ -78,49 +80,49 @@ class ExchangePointInteractor extends CubitInteractor<ExchangePointRoutable, Exc
 
       // ----------------------------------
 
-      ExchangePointItem(
+      PointTaskItem(
         title: 'Đăng ký hoạt động',
         caption: 'Tham gia hoạt động để nhận điểm thưởng',
         buttonText: 'Đi xem',
         action: 'activity',
       ),
-      ExchangePointItem(
+      PointTaskItem(
         title: 'Phần thưởng đánh giá đơn hàng',
         caption: 'Đánh giá đơn hàng sản phẩm/khóa học để nhận điểm',
         buttonText: 'Đánh giá',
         action: 'review',
       ),
-      ExchangePointItem(
+      PointTaskItem(
         title: 'Phần thưởng mời bạn',
         caption: 'Mời bạn bè đăng ký / hoàn thành đơn đầu tiên để nhận thưởng',
         buttonText: 'Đi mời',
         action: 'referral',
       ),
-      ExchangePointItem(
+      PointTaskItem(
         title: 'Điểm thêm cho đơn đầu',
         caption: 'Hoàn thành đơn đầu tiên nhận điểm thưởng thêm',
         buttonText: 'Đặt đơn',
         action: 'first_order',
       ),
-      ExchangePointItem(
+      PointTaskItem(
         title: 'Đăng ký hoạt động',
         caption: 'Tham gia hoạt động để nhận điểm thưởng',
         buttonText: 'Đi xem',
         action: 'activity',
       ),
-      ExchangePointItem(
+      PointTaskItem(
         title: 'Phần thưởng đánh giá đơn hàng',
         caption: 'Đánh giá đơn hàng sản phẩm/khóa học để nhận điểm',
         buttonText: 'Đánh giá',
         action: 'review',
       ),
-      ExchangePointItem(
+      PointTaskItem(
         title: 'Phần thưởng mời bạn',
         caption: 'Mời bạn bè đăng ký / hoàn thành đơn đầu tiên để nhận thưởng',
         buttonText: 'Đi mời',
         action: 'referral',
       ),
-      ExchangePointItem(
+      PointTaskItem(
         title: 'Điểm thêm cho đơn đầu',
         caption: 'Hoàn thành đơn đầu tiên nhận điểm thưởng thêm',
         buttonText: 'Đặt đơn',
@@ -128,10 +130,10 @@ class ExchangePointInteractor extends CubitInteractor<ExchangePointRoutable, Exc
       ),
     ];
 
-    emit(ExchangePointSuccess(items));
+    emit(PointTaskSuccess(items));
   }
 
-  void chooseExchangePointItem(ExchangePointItem item) {
+  void choosePointTaskItem(PointTaskItem item) {
     iLog("title: ${item.title} - action: ${item.action}");
   }
 }

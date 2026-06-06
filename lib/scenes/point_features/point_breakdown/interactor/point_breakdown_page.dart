@@ -1,6 +1,6 @@
-import 'package:coffee_bean/data/model/response/reward_point_history.dart';
-import 'package:coffee_bean/scenes/reward_point_history/interactor/reward_point_history_event_state.dart';
-import 'package:coffee_bean/scenes/reward_point_history/interactor/reward_point_history_interactor.dart';
+import 'package:coffee_bean/data/model/response/point_breakdown.dart';
+import 'package:coffee_bean/scenes/point_features/point_breakdown/interactor/point_breakdown_event_state.dart';
+import 'package:coffee_bean/scenes/point_features/point_breakdown/interactor/point_breakdown_interactor.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
@@ -11,15 +11,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 //ignore: must_be_immutable
-class RewardPointHistoryPage extends AppCubitStateFulWidget<RewardPointHistoryInteractor, RewardPointHistoryState> {
-  RewardPointHistoryPage({super.key, required super.interactor});
+class PointBreakdownPage extends AppCubitStateFulWidget<PointBreakdownInteractor, PointBreakdownState> {
+  PointBreakdownPage({super.key, required super.interactor});
 
   @override
-  State<RewardPointHistoryPage> createState() => _RewardPointHistoryPageState();
+  State<PointBreakdownPage> createState() => _PointBreakdownPageState();
 }
 
-class _RewardPointHistoryPageState
-    extends AppCubitState<RewardPointHistoryPage, RewardPointHistoryInteractor, RewardPointHistoryState> {
+class _PointBreakdownPageState
+    extends AppCubitState<PointBreakdownPage, PointBreakdownInteractor, PointBreakdownState> {
 
   @override
   String? getTitle() => "CHI TIẾT ĐIỂM THƯỞNG";
@@ -29,10 +29,10 @@ class _RewardPointHistoryPageState
 
   @override
   Widget getBody(BuildContext context) {
-    return BlocBuilder<RewardPointHistoryInteractor, RewardPointHistoryState>(
+    return BlocBuilder<PointBreakdownInteractor, PointBreakdownState>(
       builder: (context, state) {
         // 1. Màn hình loading ban đầu (Trạng thái khởi tạo chưa có data)
-        if (state is RewardPointHistoryStartLoading) {
+        if (state is PointBreakdownStartLoading) {
           return getLoadingView();
         }
 
@@ -71,7 +71,7 @@ class _RewardPointHistoryPageState
     );
   }
 
-  Widget _buildPointItem(RewardPointHistoryItem item) {
+  Widget _buildPointItem(PointBreakdownItem item) {
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(horizontal: 16),

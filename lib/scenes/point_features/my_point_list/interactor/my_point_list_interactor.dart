@@ -1,21 +1,21 @@
 import 'package:coffee_bean/data/repository/store_point_repository.dart';
-import 'package:coffee_bean/scenes/store_get_point_list/store_get_point_list_router.dart';
+import 'package:coffee_bean/scenes/point_features/my_point_list/my_point_list_router.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:db_core/db_core.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:db_core/utils/locator.dart';
-import 'package:coffee_bean/scenes/store_get_point_list/interactor/store_get_point_list_event_state.dart';
+import 'package:coffee_bean/scenes/point_features/my_point_list/interactor/my_point_list_event_state.dart';
 
-class StoreGetPointListInteractor extends CubitInteractor<StoreGetPointListRouter, StoreGetPointListState> {
+class MyPointListInteractor extends CubitInteractor<MyPointListRouter, MyPointListState> {
   final StorePointRepository _repository = locator<StorePointRepository>();
 
-  StoreGetPointListInteractor(StoreGetPointListRouter router) : super(StoreGetPointListInitial(), router: router) {
+  MyPointListInteractor(MyPointListRouter router) : super(MyPointListInitial(), router: router) {
     _init();
   }
 
   void _init() async {
     final categories = _repository.getCategories();
-    emit(StoreGetPointListDataState(categories: categories, isLoading: true));
+    emit(MyPointListDataState(categories: categories, isLoading: true));
     await _loadData();
   }
 
@@ -25,7 +25,7 @@ class StoreGetPointListInteractor extends CubitInteractor<StoreGetPointListRoute
       query: currentState.searchText,
       catId: currentState.selectedCatId,
     );
-    emit(StoreGetPointListDataState(
+    emit(MyPointListDataState(
       items: items,
       categories: currentState.categories,
       selectedCatId: currentState.selectedCatId,
@@ -39,7 +39,7 @@ class StoreGetPointListInteractor extends CubitInteractor<StoreGetPointListRoute
   void onCategorySelected(int catId) async {
     if (state.selectedCatId == catId) return;
     
-    emit((state as StoreGetPointListDataState).copyWith(
+    emit((state as MyPointListDataState).copyWith(
       selectedCatId: catId,
       isLoading: true,
     ));
@@ -47,10 +47,10 @@ class StoreGetPointListInteractor extends CubitInteractor<StoreGetPointListRoute
   }
 
   void toggleSearchMode(bool isSearch) {
-    if (state is StoreGetPointListDataState) {
+    if (state is MyPointListDataState) {
       if (state.isSearchMode == isSearch) return;
 
-      emit((state as StoreGetPointListDataState).copyWith(
+      emit((state as MyPointListDataState).copyWith(
         isSearchMode: isSearch,
         // Reset search text when closing search mode
         searchText: isSearch ? state.searchText : "",
@@ -71,8 +71,8 @@ class StoreGetPointListInteractor extends CubitInteractor<StoreGetPointListRoute
   }
 
   void onSearchChanged(String text) {
-    if (state is StoreGetPointListDataState) {
-      emit((state as StoreGetPointListDataState).copyWith(
+    if (state is MyPointListDataState) {
+      emit((state as MyPointListDataState).copyWith(
         searchText: text,
       ));
       _loadData();

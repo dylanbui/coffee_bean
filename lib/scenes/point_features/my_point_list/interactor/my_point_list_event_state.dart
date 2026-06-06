@@ -1,7 +1,7 @@
 import 'package:coffee_bean/data/repository/store_point_repository.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 
-abstract class StoreGetPointListState {
+abstract class MyPointListState {
   final List<TblStorePoint> items;
   final List<StorePointCategory> categories;
   final int selectedCatId;
@@ -10,7 +10,7 @@ abstract class StoreGetPointListState {
   final bool isLoading;
   final double userPoints;
 
-  StoreGetPointListState({
+  MyPointListState({
     this.items = const [],
     this.categories = const [],
     this.selectedCatId = 1,
@@ -21,12 +21,12 @@ abstract class StoreGetPointListState {
   });
 }
 
-class StoreGetPointListInitial extends StoreGetPointListState {
-  StoreGetPointListInitial() : super();
+class MyPointListInitial extends MyPointListState {
+  MyPointListInitial() : super();
 }
 
-class StoreGetPointListDataState extends StoreGetPointListState {
-  StoreGetPointListDataState({
+class MyPointListDataState extends MyPointListState {
+  MyPointListDataState({
     super.items,
     super.categories,
     super.selectedCatId,
@@ -36,7 +36,7 @@ class StoreGetPointListDataState extends StoreGetPointListState {
     super.userPoints,
   });
 
-  StoreGetPointListDataState copyWith({
+  MyPointListDataState copyWith({
     List<TblStorePoint>? items,
     List<StorePointCategory>? categories,
     int? selectedCatId,
@@ -45,7 +45,7 @@ class StoreGetPointListDataState extends StoreGetPointListState {
     bool? isLoading,
     double? userPoints,
   }) {
-    return StoreGetPointListDataState(
+    return MyPointListDataState(
       items: items ?? this.items,
       categories: categories ?? this.categories,
       selectedCatId: selectedCatId ?? this.selectedCatId,

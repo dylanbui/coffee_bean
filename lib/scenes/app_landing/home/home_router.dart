@@ -1,5 +1,5 @@
+import 'package:coffee_bean/scenes/point_features/my_point_list/my_point_list_builder.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/reservation_list/reservation_list_builder.dart';
-import 'package:coffee_bean/scenes/store_get_point_list/store_get_point_list_builder.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/global_search/global_search_builder.dart';
 import 'package:coffee_bean/scenes/store_list/store_list_builder.dart';
@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 class ChooseStoreRoute implements DbNoteRoute {}
 class GlobalSearchRoute implements DbNoteRoute {}
 class ReservationListRoute implements DbNoteRoute {}
-class StoreGetPointListRoute implements DbNoteRoute {}
+class MyPointListRoute implements DbNoteRoute {}
 
 abstract class HomeRoutable implements DbNoteRoutable {}
 
@@ -30,8 +30,8 @@ class HomeRouter extends DbNoteRouter implements HomeRoutable {
       final nextBuilder = ReservationListBuilder();
       navigator.push(nextBuilder.build().viewController);
 
-    } else if (toRoute is StoreGetPointListRoute) {
-      final nextBuilder = StoreGetPointListBuilder();
+    } else if (toRoute is MyPointListRoute) {
+      final nextBuilder = MyPointListBuilder();
       navigator.push(nextBuilder.build().viewController);
 
     }

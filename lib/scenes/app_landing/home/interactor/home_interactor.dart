@@ -164,7 +164,7 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
     if (index == 0) {
       router?.navigate(ReservationListRoute());
     } else if (index == 1) {
-      router?.navigate(StoreGetPointListRoute());
+      router?.navigate(MyPointListRoute());
     }
   }
 

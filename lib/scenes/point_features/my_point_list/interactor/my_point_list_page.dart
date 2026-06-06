@@ -1,7 +1,7 @@
-import 'package:coffee_bean/scenes/store_get_point_list/interactor/store_get_point_list_event_state.dart';
-import 'package:coffee_bean/scenes/store_get_point_list/interactor/store_get_point_list_interactor.dart';
-import 'package:coffee_bean/scenes/store_get_point_list/widget/point_store_card.dart';
-import 'package:coffee_bean/scenes/store_get_point_list/widget/point_store_header.dart';
+import 'package:coffee_bean/scenes/point_features/my_point_list/interactor/my_point_list_event_state.dart';
+import 'package:coffee_bean/scenes/point_features/my_point_list/interactor/my_point_list_interactor.dart';
+import 'package:coffee_bean/scenes/point_features/my_point_list/widget/point_store_card.dart';
+import 'package:coffee_bean/scenes/point_features/my_point_list/widget/point_store_header.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
@@ -14,14 +14,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 //ignore: must_be_immutable
-class StoreGetPointListPage extends AppCubitStateFulWidget<StoreGetPointListInteractor, StoreGetPointListState> {
-  StoreGetPointListPage({super.key, required super.interactor});
+class MyPointListPage extends AppCubitStateFulWidget<MyPointListInteractor, MyPointListState> {
+  MyPointListPage({super.key, required super.interactor});
 
   @override
-  State<StoreGetPointListPage> createState() => _StorePointListPageState();
+  State<MyPointListPage> createState() => _MyPointListPageState();
 }
 
-class _StorePointListPageState extends AppCubitState<StoreGetPointListPage, StoreGetPointListInteractor, StoreGetPointListState> {
+class _MyPointListPageState extends AppCubitState<MyPointListPage, MyPointListInteractor, MyPointListState> {
   @override
   String? getTitle() => "TÍCH ĐIỂM";
 
@@ -32,7 +32,8 @@ class _StorePointListPageState extends AppCubitState<StoreGetPointListPage, Stor
   PreferredSizeWidget? getAppBar(BuildContext context) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
-      child: BlocBuilder<StoreGetPointListInteractor, StoreGetPointListState>(
+      child: BlocBuilder<MyPointListInteractor, MyPointListState>(
+        bloc: interactor,
         buildWhen: (prev, curr) => prev.isSearchMode != curr.isSearchMode,
         builder: (context, state) {
           if (state.isSearchMode) {
@@ -87,7 +88,8 @@ class _StorePointListPageState extends AppCubitState<StoreGetPointListPage, Stor
     return Container(
       width: double.infinity,
       color: TMLabsColor.white,
-      child: BlocBuilder<StoreGetPointListInteractor, StoreGetPointListState>(
+      child: BlocBuilder<MyPointListInteractor, MyPointListState>(
+        bloc: interactor,
         builder: (context, state) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,7 +124,7 @@ class _StorePointListPageState extends AppCubitState<StoreGetPointListPage, Stor
     );
   }
 
-  Widget _buildTitleArea(StoreGetPointListState state) {
+  Widget _buildTitleArea(MyPointListState state) {
     if (state.isSearchMode) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
@@ -133,7 +135,7 @@ class _StorePointListPageState extends AppCubitState<StoreGetPointListPage, Stor
     );
   }
 
-  Widget _buildCategoryBar(StoreGetPointListState state) {
+  Widget _buildCategoryBar(MyPointListState state) {
     return Container(
       height: 44,
       margin: const EdgeInsets.only(top: 0, bottom: 4),
@@ -191,7 +193,7 @@ class _StorePointListPageState extends AppCubitState<StoreGetPointListPage, Stor
     );
   }
 
-  Widget _buildGridContent(StoreGetPointListState state) {
+  Widget _buildGridContent(MyPointListState state) {
     if (state.items.isEmpty) {
       return AppUi.getEmptyItemWidget();
     }

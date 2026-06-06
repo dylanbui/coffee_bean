@@ -7,8 +7,8 @@
 //
 // Copyright (c) 2026. All rights reserved.
 // **************************************************************************
-import 'package:coffee_bean/scenes/exchange_point/interactor/exchange_point_event_state.dart';
-import 'package:coffee_bean/scenes/exchange_point/interactor/exchange_point_interactor.dart';
+import 'package:coffee_bean/scenes/point_features/point_task/interactor/point_task_event_state.dart';
+import 'package:coffee_bean/scenes/point_features/point_task/interactor/point_task_interactor.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
@@ -18,19 +18,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 //ignore: must_be_immutable
-class ExchangePointPage extends AppCubitStateFulWidget<ExchangePointInteractor, ExchangePointState> {
-  ExchangePointPage({super.key, required super.interactor});
+class PointTaskPage extends AppCubitStateFulWidget<PointTaskInteractor, PointTaskState> {
+  PointTaskPage({super.key, required super.interactor});
 
   @override
-  State<ExchangePointPage> createState() => _ExchangePointPageState();
+  State<PointTaskPage> createState() => _PointTaskPageState();
 }
 
-class _ExchangePointPageState extends AppCubitState<ExchangePointPage, ExchangePointInteractor, ExchangePointState> {
+class _PointTaskPageState extends AppCubitState<PointTaskPage, PointTaskInteractor, PointTaskState> {
   @override
   Widget getBody(BuildContext context) {
-    return BlocBuilder<ExchangePointInteractor, ExchangePointState>(
+    return BlocBuilder<PointTaskInteractor, PointTaskState>(
       builder: (context, state) {
-        if (state is ExchangePointLoading) {
+        if (state is PointTaskLoading) {
           return getLoadingView();
         }
 
@@ -58,7 +58,7 @@ class _ExchangePointPageState extends AppCubitState<ExchangePointPage, ExchangeP
     );
   }
 
-  Widget _buildListItem(ExchangePointItem item) {
+  Widget _buildListItem(PointTaskItem item) {
     return Container(
       height: 65,
       margin: const EdgeInsets.only(bottom: 12),
@@ -99,7 +99,7 @@ class _ExchangePointPageState extends AppCubitState<ExchangePointPage, ExchangeP
           AppButton(
             text: item.buttonText,
             onPressed: () {
-              interactor.chooseExchangePointItem(item);
+              interactor.choosePointTaskItem(item);
             },
             width: 90,
             height: 28,

@@ -8,13 +8,14 @@
 //
 // Copyright (c) 2026. All rights reserved.
 // **************************************************************************
-import 'package:coffee_bean/scenes/daily_sign_in/interactor/daily_sign_in_event_state.dart';
-import 'package:coffee_bean/scenes/daily_sign_in/interactor/daily_sign_in_interactor.dart';
+import 'package:coffee_bean/scenes/point_features/daily_sign_in/interactor/daily_sign_in_event_state.dart';
+import 'package:coffee_bean/scenes/point_features/daily_sign_in/interactor/daily_sign_in_interactor.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_sliver_app_bar.dart';
+import 'package:db_core/utils/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -29,17 +30,18 @@ class DailySignInPage extends AppCubitStateFulWidget<DailySignInInteractor, Dail
 class _DailySignInPageState
     extends AppCubitState<DailySignInPage, DailySignInInteractor, DailySignInState> {
   @override
-  Widget build(BuildContext context) {
-    buildContext = context;
+  Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
     return Scaffold(
       backgroundColor: TMLabsColor.bgMain,
-      body: getBody(context),
+      appBar: appBar,
+      body: body,
     );
   }
 
   @override
   Widget getBody(BuildContext context) {
     return BlocBuilder<DailySignInInteractor, DailySignInState>(
+      bloc: interactor,
       builder: (context, state) {
         return CustomScrollView(
           slivers: [
@@ -47,11 +49,11 @@ class _DailySignInPageState
               imageUrl:
                   'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop',
               expandedHeight: 300,
-              pinned: true,
+              pinned: false,
               style: TmLabAppBarStyle.transparentStyle.copyWith(
                 foregroundColor: Colors.white,
               ),
-              onBackTap: () => Navigator.of(context).pop(),
+              onBackTap: () => interactor.router?.pop(),
             ),
 
             // Main Content
@@ -70,7 +72,7 @@ class _DailySignInPageState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 50),
                       _buildUserCard(state),
                       const SizedBox(height: 30),
                       Text(
@@ -87,6 +89,8 @@ class _DailySignInPageState
                         style: TMLabsTextStyle.title.copyWith(fontSize: 18),
                       ),
                       const SizedBox(height: 16),
+                      _buildRulesSection(),
+                      const SizedBox(height: 10),
                       _buildRulesSection(),
                       const SizedBox(height: 50),
                     ],
@@ -235,37 +239,21 @@ class _DailySignInPageState
 
   Widget _buildCheckInButton(DailySignInState state) {
     if (state.alreadyCheckedInToday) {
-      return Container(
-        width: double.infinity,
-        height: 50,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: TMLabsColor.lightGrey.withValues(alpha: 0.3),
-          borderRadius: BorderRadius.circular(25),
-        ),
-        child: Text(
-          "Hôm nay đã điểm danh, mai quay lại nhé.",
-          style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
+      return AppButton(
+        text: "Hôm nay đã điểm danh, mai quay lại nhé.",
+        onPressed: null, // Disable button
+        style: TMLabsButtonStyle.primary.copyWith(
+          backgroundColor: TMLabsColor.lightGrey.withValues(alpha: 0.3),
+          textColor: TMLabsColor.grey,
         ),
       );
     }
 
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: () => interactor.checkIn(),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: TMLabsColor.primary,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-          elevation: 0,
-        ),
-        child: Text(
-          "Điểm danh",
-          style: TMLabsTextStyle.bodyBold.copyWith(color: Colors.white),
-        ),
-      ),
+    return AppButton(
+      text: "Điểm danh",
+      onPressed: () => interactor.checkIn(),
+      isLoading: state is DailySignInLoading,
+      style: TMLabsButtonStyle.primary,
     );
   }
 

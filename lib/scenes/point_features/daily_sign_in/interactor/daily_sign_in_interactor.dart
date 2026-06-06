@@ -8,8 +8,8 @@
 //
 // Copyright (c) 2026. All rights reserved.
 // **************************************************************************
-import 'package:coffee_bean/scenes/daily_sign_in/interactor/daily_sign_in_event_state.dart';
-import 'package:coffee_bean/scenes/daily_sign_in/daily_sign_in_builder.dart';
+import 'package:coffee_bean/scenes/point_features/daily_sign_in/daily_sign_in_builder.dart';
+import 'package:coffee_bean/scenes/point_features/daily_sign_in/interactor/daily_sign_in_event_state.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 
 // INTERACTOR

@@ -9,13 +9,13 @@
 // **************************************************************************
 import 'package:db_core/state_management/lib_bloc/constants.dart';
 
-class ExchangePointItem {
+class PointTaskItem {
   final String title;
   final String caption;
   final String buttonText;
   final String action;
 
-  ExchangePointItem({
+  PointTaskItem({
     required this.title,
     required this.caption,
     required this.buttonText,
@@ -24,15 +24,15 @@ class ExchangePointItem {
 }
 
 // STATES
-abstract class ExchangePointState extends BaseBlocState {
-  final List<ExchangePointItem> items;
-  ExchangePointState({this.items = const []});
+abstract class PointTaskState extends BaseBlocState {
+  final List<PointTaskItem> items;
+  PointTaskState({this.items = const []});
 }
 
-class ExchangePointInitial extends ExchangePointState {}
+class PointTaskInitial extends PointTaskState {}
 
-class ExchangePointLoading extends ExchangePointState {}
+class PointTaskLoading extends PointTaskState {}
 
-class ExchangePointSuccess extends ExchangePointState {
-  ExchangePointSuccess(List<ExchangePointItem> items) : super(items: items);
+class PointTaskSuccess extends PointTaskState {
+  PointTaskSuccess(List<PointTaskItem> items) : super(items: items);
 }
