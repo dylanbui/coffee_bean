@@ -24,4 +24,11 @@ class AppStrings {
   static const String selectStore = 'Cửa hàng tp.HCM';
   static const String morningWelcome = 'Chào buổi sáng';
   static const String welcomeBack = 'Chào mừng bạn\nđã quay trở lại';
+
+  // Auth
+  static const String loginRequired = 'Yêu cầu đăng nhập';
+  static const String loginRequiredMsg = 'Bạn cần đăng nhập để thực hiện chức năng này.';
+  static const String redeemPointsLoginMsg = 'Vui lòng đăng nhập để kiểm tra và đổi quà tặng hấp dẫn!';
+  static const String login = 'Đăng nhập';
+  static const String cancel = 'Bỏ qua';
 }

@@ -27,15 +27,10 @@ class DailySignInPage extends AppCubitStateFulWidget<DailySignInInteractor, Dail
   State<DailySignInPage> createState() => _DailySignInPageState();
 }
 
-class _DailySignInPageState
-    extends AppCubitState<DailySignInPage, DailySignInInteractor, DailySignInState> {
+class _DailySignInPageState extends AppCubitState<DailySignInPage, DailySignInInteractor, DailySignInState> {
   @override
   Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: appBar,
-      body: body,
-    );
+    return Scaffold(backgroundColor: Colors.white, appBar: appBar, body: body);
   }
 
   @override
@@ -46,13 +41,10 @@ class _DailySignInPageState
         return CustomScrollView(
           slivers: [
             CoffeeSliverAppBar(
-              imageUrl:
-                  'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop',
+              imageUrl: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop',
               expandedHeight: 300,
               pinned: false,
-              style: TmLabAppBarStyle.transparentStyle.copyWith(
-                foregroundColor: Colors.white,
-              ),
+              style: TmLabAppBarStyle.transparentStyle.copyWith(foregroundColor: Colors.white),
               onBackTap: () => interactor.router?.pop(),
             ),
 
@@ -62,10 +54,7 @@ class _DailySignInPageState
                 transform: Matrix4.translationValues(0, -30, 0),
                 decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -73,15 +62,25 @@ class _DailySignInPageState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 50),
-                      _buildUserCard(state),
-                      const SizedBox(height: 30),
-                      Text("Điểm danh nhận điểm tích lũy", style: TMLabsTextStyle.title.copyWith(fontSize: 18),),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          _buildUserCard(state),
+                          const SizedBox(height: 20),
+                          Text("Điểm danh nhận điểm tích lũy", style: TMLabsTextStyle.title.copyWith(fontSize: 18)),
+                        ]),
+                      ),
                       const SizedBox(height: 20),
                       _buildCheckInGrid(state),
-                      const SizedBox(height: 30),
-                      _buildCheckInButton(state),
-                      const SizedBox(height: 16),
-                      Text("Quy tắc điểm danh", style: TMLabsTextStyle.title.copyWith(fontSize: 18),),
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          _buildCheckInButton(state),
+                          const SizedBox(height: 16),
+                          Text("Quy tắc điểm danh", style: TMLabsTextStyle.title.copyWith(fontSize: 18)),
+                        ]),
+                      ),
                       const SizedBox(height: 16),
                       _buildRulesSection(),
                       const SizedBox(height: 10),
@@ -102,15 +101,9 @@ class _DailySignInPageState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: TMLabsColor.bgLight,
+        color: TMLabsColor.bgMain,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4))],
       ),
       child: Row(
         children: [
@@ -128,10 +121,7 @@ class _DailySignInPageState
                     style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.secondary),
                     children: [
                       const TextSpan(text: "Bạn đã điểm danh liên tiếp "),
-                      TextSpan(
-                        text: "${state.streakDays} ngày",
-                        style: TMLabsTextStyle.bodyBold,
-                      ),
+                      TextSpan(text: "${state.streakDays} ngày", style: TMLabsTextStyle.bodyBold),
                     ],
                   ),
                 ),
@@ -142,7 +132,7 @@ class _DailySignInPageState
                       const TextSpan(text: "Hôm nay điểm danh có thể nhận "),
                       TextSpan(
                         text: "${state.todayPoints} điểm",
-                        style: TMLabsTextStyle.caption.copyWith(fontWeight: FontWeight.w900,),
+                        style: TMLabsTextStyle.caption.copyWith(fontWeight: FontWeight.w900),
                       ),
                     ],
                   ),
@@ -179,11 +169,7 @@ class _DailySignInPageState
         ),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(
-            color: const Color(0xFFFDBB4E).withValues(alpha: 0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
+          BoxShadow(color: const Color(0xFFFDBB4E).withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 4)),
         ],
       );
       dateColor = TMLabsColor.grey.withValues(alpha: 0.8);
@@ -220,26 +206,19 @@ class _DailySignInPageState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text(
-            item.dateLabel,
-            style: TMLabsTextStyle.caption.copyWith(color: dateColor, fontSize: 11),
-          ),
-          Text(
-            item.pointLabel,
-            style: TMLabsTextStyle.bodyBold.copyWith(color: pointColor, fontSize: 15),
-          ),
+          Text(item.dateLabel, style: TMLabsTextStyle.caption.copyWith(color: dateColor, fontSize: 11)),
+          Text(item.pointLabel, style: TMLabsTextStyle.bodyBold.copyWith(color: pointColor, fontSize: 15)),
           Opacity(
             opacity: coinOpacity,
             child: AppIcon(
-              item.isChecked || item.isFuture || item.isToday 
-                ? AppAssets.icons.icGoldCoin 
-                : AppAssets.icons.icGrayCoin,
+              item.isChecked || item.isFuture || item.isToday ? AppAssets.icons.icGoldCoin : AppAssets.icons.icGrayCoin,
               size: 28,
             ),
           ),
           Text(
-            item.isToday ? (item.isChecked ? "Đã điểm danh" : "Hôm nay") : 
-            (item.isChecked ? "Đã điểm danh" : (item.isPast ? "Chưa điểm danh" : "Chờ điểm danh")),
+            item.isToday
+                ? (item.isChecked ? "Đã điểm danh" : "Hôm nay")
+                : (item.isChecked ? "Đã điểm danh" : (item.isPast ? "Chưa điểm danh" : "Chờ điểm danh")),
             textAlign: TextAlign.center,
             style: TMLabsTextStyle.small.copyWith(
               fontSize: 9,

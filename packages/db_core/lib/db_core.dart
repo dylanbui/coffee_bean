@@ -12,6 +12,8 @@ export 'architecture_ribs/note_plugin.dart';
 export 'architecture_ribs/window_controller.dart';
 export 'architecture_ribs/lifecycle.dart';
 
+export 'package:page_transition/page_transition.dart';
+
 // Network
 export 'network/base_repository.dart';
 export 'network/base_request.dart';

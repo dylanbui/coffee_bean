@@ -104,7 +104,7 @@ class _MyPointListPageState extends AppCubitState<MyPointListPage, MyPointListIn
                   child: PointStoreHeader(
                     points: state.userPoints,
                     onDetailTap: interactor.onRewardHistoryTap,
-                    onMoreTap: interactor.onRewardHistoryTap,
+                    onMoreTap: interactor.onEarnPointsTap,
                   ),
                 ),
               ),

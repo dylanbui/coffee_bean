@@ -1,7 +1,10 @@
-import 'package:db_core/architecture_ribs/note_router.dart';
-import 'package:db_core/commons_constants.dart';
-import 'package:db_core/services/event_bus.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
+import 'package:coffee_bean/shared/ui/app_strings.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_toast_helper.dart';
+import 'package:db_core/db_core.dart';
+import 'package:flutter/material.dart';
+
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
@@ -98,3 +101,62 @@ class AuthHelper implements UserAuthFlowListener {
     _listener = null; // Clear listener reference after cancellation
   }
 }
+
+/// ActionAuthListener: A convenient implementation of AuthHelperListener using callbacks.
+class ActionAuthListener implements AuthHelperListener {
+  final void Function(UserSession userData)? onSuccess;
+  final void Function(DbError error)? onError;
+
+  ActionAuthListener({this.onSuccess, this.onError});
+
+  @override
+  void onAuthSuccess(UserSession userData) => onSuccess?.call(userData);
+
+  @override
+  void onAuthCancelled(DbError error) => onError?.call(error);
+}
+
+extension AuthHelperExt on AuthHelper {
+  /// Requires authentication before performing an action.
+  /// If not logged in, it shows a confirmation dialog.
+  Future<void> requireAuth({
+    required BuildContext context,
+    required VoidCallback onAuthenticated,
+    String? confirmMessage,
+    VoidCallback? onCancel,
+  }) async {
+    if (isLoggedIn && currentUser != null) {
+      onAuthenticated();
+      return;
+    }
+
+    // Show login confirmation dialog
+    final bool? confirm = await FlashDialogHelper.show<bool>(
+      context: context,
+      title: AppStrings.loginRequired,
+      content: confirmMessage ?? AppStrings.loginRequiredMsg,
+      actions: [
+        FlashDialogAction(label: AppStrings.cancel, value: false),
+        FlashDialogAction(label: AppStrings.login, value: true, color: TMLabsColor.primary),
+      ],
+    );
+
+    if (confirm != true) {
+      onCancel?.call();
+      return;
+    }
+
+    // Start the login flow
+    runWithAuth(ActionAuthListener(
+      onSuccess: (_) => onAuthenticated(),
+      onError: (error) {
+        // If not cancelled by user closing the modal, show error
+        if (error.code != 100) {
+          FlashToastHelper.error(context, error.message);
+        }
+        onCancel?.call();
+      },
+    ));
+  }
+}
+

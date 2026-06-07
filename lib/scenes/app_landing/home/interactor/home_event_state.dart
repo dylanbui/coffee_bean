@@ -19,9 +19,10 @@ class TopImageData {
 }
 
 class QuickActionItem {
-  final IconData icon;
+  final String key;
+  final dynamic icon;
   final String label;
-  QuickActionItem({required this.icon, required this.label});
+  QuickActionItem({required this.key, required this.icon, required this.label});
 }
 
 class QuickActionsData {

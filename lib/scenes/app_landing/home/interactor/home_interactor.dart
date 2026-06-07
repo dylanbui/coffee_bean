@@ -2,10 +2,17 @@ import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/scenes/app_landing/home/home_router.dart';
+import 'package:coffee_bean/shared/ui/app_assets.dart';
+import 'package:coffee_bean/shared/ui/app_strings.dart';
+import 'package:coffee_bean/scenes/user_auth_features/user_auth_helper.dart';
+import 'package:db_core/architecture_ribs/note_router.dart';
 
 class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
+  late final AuthHelper _authHelper;
 
-  HomeInteractor(HomeRoutable router) : super(HomeInitial(), router: router);
+  HomeInteractor(HomeRoutable router) : super(HomeInitial(), router: router) {
+    _authHelper = AuthHelper(router as DbNoteRouter);
+  }
 
   @override
   void onDidBecomeActive() {
@@ -30,10 +37,10 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
       ),
       quickActionsData: QuickActionsData(
         items: [
-          QuickActionItem(icon: Icons.assignment_turned_in_outlined, label: 'Đặt chỗ'),
-          QuickActionItem(icon: Icons.sync_alt, label: 'Đổi điểm'),
-          QuickActionItem(icon: Icons.school_outlined, label: 'Tất cả khóa học'),
-          QuickActionItem(icon: Icons.business_center_outlined, label: 'Trung tâm sk'),
+          QuickActionItem(key: "dat_cho", icon: AppAssets.icons.icDatCho, label: AppStrings.booking),
+          QuickActionItem(key: "doi_diem", icon: AppAssets.icons.icDoiDiem, label: AppStrings.redeemPoints),
+          QuickActionItem(key: "khoa_hoc", icon: AppAssets.icons.icKhoaHoc, label: AppStrings.allCourses),
+          QuickActionItem(key: "trung_tam_sk", icon: AppAssets.icons.icTrungTam, label: AppStrings.healthCenter),
         ],
       ),
       announcementData: AnnouncementData(
@@ -159,13 +166,22 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
     router?.navigate(ChooseStoreRoute());
   }
 
-  void quickActions(int index) {
+  void quickActions(QuickActionItem actionItem) {
     // Logic for quick actions
-    if (index == 0) {
+    if (actionItem.key == "dat_cho") {
       router?.navigate(ReservationListRoute());
-    } else if (index == 1) {
-      router?.navigate(MyPointListRoute());
     }
+  }
+
+  void onRedeemPointsTap(BuildContext context) {
+    _authHelper.requireAuth(
+      context: context,
+      confirmMessage: AppStrings.redeemPointsLoginMsg,
+      onAuthenticated: () {
+        router?.navigate(MyPointListRoute());
+      },
+      onCancel: () => debugPrint("User cancelled login flow for points"),
+    );
   }
 
   void selectSeller(SellerItem item) {

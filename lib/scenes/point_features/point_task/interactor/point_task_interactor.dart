@@ -12,7 +12,6 @@ import 'package:coffee_bean/scenes/point_features/point_task/point_task_builder.
 import 'package:coffee_bean/scenes/point_features/point_task/interactor/point_task_event_state.dart';
 
 import 'package:db_core/db_core.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 
 // INTERACTOR
 class PointTaskInteractor extends CubitInteractor<PointTaskRoutable, PointTaskState> {
@@ -33,7 +32,7 @@ class PointTaskInteractor extends CubitInteractor<PointTaskRoutable, PointTaskSt
         title: 'Hàng ngày điểm danh',
         caption: 'Hoàn thành điểm danh hàng ngày để nhận điểm',
         buttonText: 'Điểm danh',
-        action: 'checkin',
+        action: 'check_in',
       ),
       PointTaskItem(
         title: 'Phần thưởng tiêu dùng',
@@ -135,5 +134,8 @@ class PointTaskInteractor extends CubitInteractor<PointTaskRoutable, PointTaskSt
 
   void choosePointTaskItem(PointTaskItem item) {
     iLog("title: ${item.title} - action: ${item.action}");
+    if (item.action == 'check_in') {
+      router?.navigate(DailySignInRoute());
+    }
   }
 }

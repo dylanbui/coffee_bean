@@ -65,6 +65,10 @@ class MyPointListInteractor extends CubitInteractor<MyPointListRouter, MyPointLi
     router?.navigate(RewardPointHistoryRoute());
   }
 
+  void onEarnPointsTap() {
+    router?.navigate(PointTaskRoute());
+  }
+
   void onStorePointTap(TblStorePoint item) {
     // Xử lý khi chọn item, ví dụ: mở chi tiết hoặc thực hiện đổi điểm
     iLog("Selected store point: ${item.name} with ID: ${item.id}");
