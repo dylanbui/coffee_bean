@@ -26,7 +26,7 @@ class ForgotPasswordRouter extends DbNoteRouter {
       // We then push the Router's viewController (the Widget).
       final nextRouter = setPasswordBuilder.build();
       // Use the navigator inherited from DbNoteRouter
-      parentRouter?.navigator.push(nextRouter.viewController);
+      parentRouter?.push(nextRouter.viewController);
     }
     else {
       parentRouter?.navigate(toRoute, fromContext: fromContext, routeName: routeName, parameters: parameters);

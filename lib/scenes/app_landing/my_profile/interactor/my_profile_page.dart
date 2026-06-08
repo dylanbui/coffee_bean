@@ -1,4 +1,3 @@
-import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/widget/my_profile_logged_out_member_panel.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/widget/my_profile_logged_out_panel.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/my_profile_interactor.dart';
@@ -27,9 +26,6 @@ class _MyProfilePageState extends AppCubitState<MyProfilePage, MyProfileInteract
 
   @override
   PreferredSizeWidget? getAppBar(BuildContext context) {
-    // Ẩn AppBar nếu chưa đăng nhập
-    if (!interactor.state.isLoggedIn) return null;
-
     return CoffeeAppBar(
       style: TmLabAppBarStyle.whiteStyle.copyWith(
         leadingWidth: 120,
@@ -98,11 +94,18 @@ class _MyProfilePageState extends AppCubitState<MyProfilePage, MyProfileInteract
 
   @override
   Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: TMLabsColor.bgMain,
-      appBar: appBar,
-      body: body,
+    return BlocBuilder<MyProfileInteractor, MyProfileState>(
+      bloc: interactor,
+      buildWhen: (p, c) => p.isLoggedIn != c.isLoggedIn,
+      builder: (context, state) {
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          backgroundColor: TMLabsColor.bgMain,
+          // Re-evaluate AppBar whenever isLoggedIn changes
+          appBar: state.isLoggedIn ? getAppBar(context) : null,
+          body: body,
+        );
+      },
     );
   }
 

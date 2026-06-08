@@ -35,22 +35,22 @@ class UserRegisterRouter extends DbNoteRouter {
     if (toRoute is UserAgreementRoute) {
       UserAgreementBuilder userAgreementBuilder = UserAgreementBuilder();
       // Neu can xu ly thi set router => userAgreementRouter.parentRouter = parentRouter;
-      parentRouter?.navigator.push(userAgreementBuilder.build().viewController);
+      parentRouter?.push(userAgreementBuilder.build().viewController);
 
     } else if (toRoute is PrivacyPolicyRoute) {
       PrivacyPolicyBuilder privacyPolicyBuilder = PrivacyPolicyBuilder();
       // Neu can xu ly thi set router => privacyPolicyRouter.parentRouter = parentRouter;
-      parentRouter?.navigator.push(privacyPolicyBuilder.build().viewController);
+      parentRouter?.push(privacyPolicyBuilder.build().viewController);
 
     } else if (toRoute is UserSetPasswordRoute) {
       final setPasswordRouter = SetPasswordBuilder().build();
       setPasswordRouter.parentRouter = parentRouter;
-      parentRouter?.navigator.push(setPasswordRouter.viewController);
+      parentRouter?.push(setPasswordRouter.viewController);
 
     } else if (toRoute is UserLoginRoute) {
       final userLoginRouter = UserLoginBuilder().build();
       userLoginRouter.parentRouter = this;
-      parentRouter?.navigator.push(userLoginRouter.viewController);
+      parentRouter?.push(userLoginRouter.viewController);
 
     } else {
       // Đẩy các route khác (UserLoginRoute, UserRegisterCompleteRoute) lên cho Flow xử lý

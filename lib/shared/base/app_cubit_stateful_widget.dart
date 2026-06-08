@@ -1,6 +1,7 @@
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
+import 'package:db_core/db_core.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,13 @@ abstract class AppCubitStateFulWidget<B extends CubitInteractor<DbNoteRoutable, 
 /// AppCubitState: Base state that integrates CoffeeAppBar and common behaviors.
 abstract class AppCubitState<T extends AppCubitStateFulWidget<B, S>, B extends CubitInteractor<DbNoteRoutable, S>, S> 
     extends CubitState<T, B, S> {
+
+  @override
+  void initState() {
+    super.initState();
+    // Log the current screen name for debugging
+    iLog('🚀 Pushed into Screen: ${widget.runtimeType}');
+  }
 
   /// Provides the title for the default CoffeeAppBar.
   String? getTitle() => null;

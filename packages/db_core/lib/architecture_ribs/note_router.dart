@@ -56,7 +56,7 @@ abstract interface class DbNoteRoutable {
 abstract class DbNoteRouter implements DbNoteRoutable {
   /// Parent router in the RIB tree hierarchy.
   @override
-  covariant DbNoteRouter? parentRouter;
+  DbNoteRoutable? parentRouter;
 
   /// Giỏ đồ nghề: Router nắm giữ để đưa cho các Builder của module con.
   late DbNoteDependency? dependency;

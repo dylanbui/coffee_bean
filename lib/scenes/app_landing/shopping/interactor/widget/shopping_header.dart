@@ -41,6 +41,7 @@ class ShoppingHeader extends StatelessWidget {
               backgroundColor: TMLabsColor.bgLight,
               leftIcon: AppAssets.icons.icSearch,
               borderRadius: 20,
+              height: 40,
             ),
           ),
         ],

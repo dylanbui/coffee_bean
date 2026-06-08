@@ -11,6 +11,7 @@ class AppSearchBar extends StatefulWidget {
   final dynamic rightIcon; // Supports IconData or String (SVG)
   final dynamic clearIcon;
   final double borderRadius;
+  final double? height;
 
   const AppSearchBar({
     super.key,
@@ -22,6 +23,7 @@ class AppSearchBar extends StatefulWidget {
     this.rightIcon,
     this.clearIcon = Icons.cancel,
     this.borderRadius = 25.0, // Default to capsule shape
+    this.height,
   });
 
   @override
@@ -51,6 +53,7 @@ class _AppSearchBarState extends State<AppSearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: widget.height,
       decoration: BoxDecoration(
         color: widget.backgroundColor ?? Colors.grey[200],
         borderRadius: BorderRadius.circular(widget.borderRadius),

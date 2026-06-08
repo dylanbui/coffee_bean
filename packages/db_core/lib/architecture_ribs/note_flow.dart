@@ -63,7 +63,7 @@ abstract class DbNoteFlow<L> extends DbNoteRouter {
   String get flowId => "Flow_${runtimeType}_$hashCode";
 
   /// Entry point: Initializes the flow and sets the listener.
-  void start(DbNoteRouter parentRouter, L listener) {
+  void start(DbNoteRoutable parentRouter, L listener) {
     this.parentRouter = parentRouter;
     this.listener = listener;
     onStart();
