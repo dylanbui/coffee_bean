@@ -1,9 +1,16 @@
 // This file defines logical routes for navigation, especially for deep linking.
 // They are simple data classes that carry the necessary parameters for a destination.
 
+import 'package:coffee_bean/config/app_pref.dart';
+import 'package:coffee_bean/data/local/live_service/cart_service.dart';
+import 'package:coffee_bean/scenes/coupon_list/coupon_list_builder.dart';
 import 'package:coffee_bean/scenes/food_detail/food_detail_builder.dart';
+import 'package:coffee_bean/scenes/order_confirmation/order_confirmation_builder.dart';
+import 'package:coffee_bean/scenes/point_features/daily_sign_in/daily_sign_in_builder.dart';
+import 'package:coffee_bean/scenes/point_features/point_task/point_task_builder.dart';
 import 'package:coffee_bean/scenes/rib_samples/dialog_demo/dialog_demo_builder.dart';
 import 'package:coffee_bean/scenes/rib_samples/flash_demo/flash_demo_builder.dart';
+import 'package:coffee_bean/scenes/user_auth_features/user_register/user_register_builder.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/shopping_builder.dart';
@@ -16,21 +23,26 @@ import 'package:db_core/utils/locator.dart';
 
 class AppRouter extends DbNoteRouter {
   Future<void> successSyncDataFormServer() async {
+
+    // Set default store id to match mock data
+    AppPrefs().setSelectedStoreId(3);
+
     // Load trang dau tien
     MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
     final router = mainTabbarBuilder.build();
     navigator.pushSameRootPage(router.viewController);
 
-    // final dbService = locator<DatabaseService>();
-    // final product = await dbService.isar.tblFoods.where().serverIdEqualTo(1).findFirst();
-    // FoodDetailBuilder builder = FoodDetailBuilder(1);
+    // await dataTestOrderConfirmationBuilder();
+    // // Điều hướng đến màn hình xác nhận đơn hàng
+    // final builder = OrderConfirmationBuilder();
     // navigator.pushSameRootPage(builder.build().viewController);
 
-
-    // final builder = DialogDemoBuilder();
+    // final builder = DailySignInBuilder();
+    // final builder = MyPointListBuilder();
+    // final builder = RewardPointHistoryBuilder();
     // navigator.pushSameRootPage(builder.build().viewController);
 
-
+    
     // final builder = FlashDemoBuilder();
     // navigator.pushSameRootPage(builder.build().viewController);
 
@@ -42,6 +54,83 @@ class AppRouter extends DbNoteRouter {
     // final builder = ShoppingBuilder();
     // navigator.pushSameRootPage(builder.build().viewController);
   }
+
+  Future<void> dataTestOrderConfirmationBuilder() async {
+    final dbService = locator<DatabaseService>();
+    final cartService = locator<CartService>();
+
+    // Xóa dữ liệu cũ để đảm bảo môi trường test sạch
+    await dbService.isar.writeTxn(() async {
+      await dbService.isar.tblStores.clear();
+      await dbService.isar.tblCartItems.clear();
+
+      // 1. Tạo Store Mock (Lấy từ sample_store.json - ID 1)
+      final mockStore = TblStore()
+        ..serverId = 1
+        ..name = "Coffee Bean - Hàn Thuyên"
+        ..address = "27 Hàn Thuyên, P. Bến Nghé, Quận 1, TP. HCM"
+        ..phone = "028 3827 3001"
+        ..openingTime = "07:00"
+        ..closingTime = "22:00"
+        ..images = [
+          TblImage()..url = "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&q=80"..isPrimary = true
+        ];
+      await dbService.isar.tblStores.put(mockStore);
+    });
+
+
+    // 2. Tạo Cart Items Mock (Lấy từ sample_data.json)
+
+    // Món 1: Cà Phê Sữa Đá Sài Gòn (ID 2)
+    final food1 = TblFood()
+      ..serverId = 2
+      ..name = "Cà Phê Sữa Đá Sài Gòn"
+      ..price = 35000.0
+      ..images = [TblImage()..url = "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=800&q=80"..isPrimary = true];
+
+    final options1 = [
+      SelectedOption()..groupName = "Size"..optionName = "L"..extraPrice = 10000,
+      SelectedOption()..groupName = "Độ ngọt"..optionName = "50% Đường"..extraPrice = 0,
+    ];
+
+    // Món 2: Trà Sữa Trân Châu Đen (ID 11)
+    final food2 = TblFood()
+      ..serverId = 11
+      ..name = "Trà Sữa Trân Châu Đen"
+      ..price = 45000.0
+      ..images = [TblImage()..url = "https://images.unsplash.com/photo-1544333346-64e4fe18274b?w=800&q=80"..isPrimary = true];
+
+    final options2 = [
+      SelectedOption()..groupName = "Topping"..optionName = "Trân châu đen"..extraPrice = 5000,
+      SelectedOption()..groupName = "Topping"..optionName = "Kem cheese"..extraPrice = 10000,
+    ];
+
+    // Món 3: Cappuccino Art (ID 3)
+    final food3 = TblFood()
+      ..serverId = 3
+      ..name = "Cappuccino Art"
+      ..price = 45000.0
+      ..images = [TblImage()..url = "https://images.unsplash.com/photo-1534778101976-62847782c213?w=800&q=80"..isPrimary = true];
+
+    final options3 = [
+      SelectedOption()..groupName = "Size"..optionName = "M"..extraPrice = 0,
+    ];
+
+    // Món 4: Tiramisu Classic (ID 17)
+    final food4 = TblFood()
+      ..serverId = 17
+      ..name = "Tiramisu Classic"
+      ..price = 45000.0
+      ..images = [TblImage()..url = "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=800&q=80"..isPrimary = true];
+
+    // Thêm vào giỏ hàng thông qua CartService
+    await cartService.addToCart(food1, quantity: 1, options: options1);
+    await cartService.addToCart(food2, quantity: 2, options: options2);
+    await cartService.addToCart(food3, quantity: 1, options: options3);
+    await cartService.addToCart(food4, quantity: 3);
+  }
+
+
   // Future<void> successSyncDataFormServer() async {
   //
   //   // TEST UI FoodDetail
