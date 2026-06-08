@@ -61,8 +61,8 @@ class MyPointListInteractor extends CubitInteractor<MyPointListRouter, MyPointLi
     }
   }
 
-  void onRewardHistoryTap() {
-    router?.navigate(RewardPointHistoryRoute());
+  void onPointBreakdownTap() {
+    router?.navigate(PointBreakdownRoute());
   }
 
   void onEarnPointsTap() {

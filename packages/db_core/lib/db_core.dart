@@ -12,8 +12,6 @@ export 'architecture_ribs/note_plugin.dart';
 export 'architecture_ribs/window_controller.dart';
 export 'architecture_ribs/lifecycle.dart';
 
-export 'package:page_transition/page_transition.dart';
-
 // Network
 export 'network/base_repository.dart';
 export 'network/base_request.dart';
@@ -64,3 +62,6 @@ export 'utils/loading_indicator_dialog.dart';
 export 'custom_app_bar.dart';
 export 'navigator_utils.dart';
 export 'commons_constants.dart';
+
+// Share packages
+export 'package:page_transition/page_transition.dart';

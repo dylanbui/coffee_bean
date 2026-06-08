@@ -103,7 +103,7 @@ class _MyPointListPageState extends AppCubitState<MyPointListPage, MyPointListIn
                   physics: const NeverScrollableScrollPhysics(),
                   child: PointStoreHeader(
                     points: state.userPoints,
-                    onDetailTap: interactor.onRewardHistoryTap,
+                    onDetailTap: interactor.onPointBreakdownTap,
                     onMoreTap: interactor.onEarnPointsTap,
                   ),
                 ),

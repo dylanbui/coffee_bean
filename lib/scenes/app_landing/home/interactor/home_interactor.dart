@@ -1,5 +1,9 @@
+import 'package:coffee_bean/utils/flash_utils/flash_toast_helper.dart';
+import 'package:coffee_bean/utils/utils.dart';
+import 'package:db_core/services/event_bus.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
+import 'package:db_core/utils/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/scenes/app_landing/home/home_router.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
@@ -177,10 +181,24 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
     _authHelper.requireAuth(
       context: context,
       confirmMessage: AppStrings.redeemPointsLoginMsg,
-      onAuthenticated: () {
+      onAuthenticated: (userData, isNewLogin) {
+        debugPrint("Auth Flow Success - isNewLogin: $isNewLogin");
+        if (isNewLogin) {
+          FlashToastHelper.success(context, "Đăng nhập thành công !");
+        }
+        // AuthHelper has automatically broadcasted UserLoginSuccessEvent upon successful new login
+        // NOTE: The navigate command might not execute immediately due to a race condition 
+        // with the Modal Login closure in the RIBs Flow. 
+        // For now, it's acceptable for the user to tap again to confirm the request.
+        // Future fix: Ensure the Modal is completely closed before performing a new navigation.
         router?.navigate(MyPointListRoute());
       },
-      onCancel: () => debugPrint("User cancelled login flow for points"),
+      onCancel: (error) {
+        if (error.code != 100) {
+          FlashToastHelper.error(context, error.message);
+        }
+        debugPrint("User cancelled or error login flow for points: ${error.message}");
+      },
     );
   }
 

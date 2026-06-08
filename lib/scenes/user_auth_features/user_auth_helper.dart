@@ -37,7 +37,9 @@ class UserLoginFailureEvent extends UserAuthEvent {
 abstract interface class AuthHelperListener {
   /// Called when the user is successfully authenticated.
   /// [userData] contains the session information.
-  void onAuthSuccess(UserSession userData);
+  /// [isNewLogin] is true if the user just completed the login flow, 
+  /// false if they were already logged in.
+  void onAuthSuccess(UserSession userData, bool isNewLogin);
 
   /// Called when the user cancels the authentication process.
   void onAuthCancelled(DbError error);
@@ -64,7 +66,7 @@ class AuthHelper implements UserAuthFlowListener {
     _listener = listener;
 
     if (isLoggedIn && currentUser != null) {
-      _listener?.onAuthSuccess(currentUser!);
+      _listener?.onAuthSuccess(currentUser!, false);
     } else {
       // Initialize the auth flow with a modal transition
       final authFlow = UserAuthFlow(
@@ -91,7 +93,10 @@ class AuthHelper implements UserAuthFlowListener {
 
   @override
   void onAuthFlowSuccess(UserSession userData) {
-    _listener?.onAuthSuccess(userData);
+    // Broadcast global login success event
+    locator<DbEventBus>().fire(UserLoginSuccessEvent(userData));
+
+    _listener?.onAuthSuccess(userData, true);
     _listener = null; // Clear listener reference after completion
   }
 
@@ -104,13 +109,13 @@ class AuthHelper implements UserAuthFlowListener {
 
 /// ActionAuthListener: A convenient implementation of AuthHelperListener using callbacks.
 class ActionAuthListener implements AuthHelperListener {
-  final void Function(UserSession userData)? onSuccess;
+  final void Function(UserSession userData, bool isNewLogin)? onSuccess;
   final void Function(DbError error)? onError;
 
   ActionAuthListener({this.onSuccess, this.onError});
 
   @override
-  void onAuthSuccess(UserSession userData) => onSuccess?.call(userData);
+  void onAuthSuccess(UserSession userData, bool isNewLogin) => onSuccess?.call(userData, isNewLogin);
 
   @override
   void onAuthCancelled(DbError error) => onError?.call(error);
@@ -121,12 +126,12 @@ extension AuthHelperExt on AuthHelper {
   /// If not logged in, it shows a confirmation dialog.
   Future<void> requireAuth({
     required BuildContext context,
-    required VoidCallback onAuthenticated,
+    required void Function(UserSession userData, bool isNewLogin) onAuthenticated,
     String? confirmMessage,
-    VoidCallback? onCancel,
+    void Function(DbError error)? onCancel,
   }) async {
     if (isLoggedIn && currentUser != null) {
-      onAuthenticated();
+      onAuthenticated(currentUser!, false);
       return;
     }
 
@@ -142,19 +147,16 @@ extension AuthHelperExt on AuthHelper {
     );
 
     if (confirm != true) {
-      onCancel?.call();
+      onCancel?.call(const DbError(100, "User cancelled login dialog"));
       return;
     }
 
     // Start the login flow
     runWithAuth(ActionAuthListener(
-      onSuccess: (_) => onAuthenticated(),
+      onSuccess: (userData, isNewLogin) => onAuthenticated(userData, isNewLogin),
       onError: (error) {
-        // If not cancelled by user closing the modal, show error
-        if (error.code != 100) {
-          FlashToastHelper.error(context, error.message);
-        }
-        onCancel?.call();
+        // The caller will handle error display if needed via onCancel
+        onCancel?.call(error);
       },
     ));
   }
