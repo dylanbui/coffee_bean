@@ -9,6 +9,7 @@
 import 'package:db_core/architecture_ribs/navigator.dart';
 import 'package:db_core/architecture_ribs/note_dependency.dart';
 import 'package:db_core/architecture_ribs/note_interactor.dart';
+import 'package:db_core/architecture_ribs/note_navigator.dart';
 import 'package:db_core/architecture_ribs/note_viewer.dart';
 import 'package:flutter/material.dart';
 
@@ -56,18 +57,21 @@ abstract interface class DbNoteRoutable {
 abstract class DbNoteRouter implements DbNoteRoutable {
   /// Parent router in the RIB tree hierarchy.
   @override
-  covariant DbNoteRouter? parentRouter;
+  DbNoteRoutable? parentRouter;
 
   /// Giỏ đồ nghề: Router nắm giữ để đưa cho các Builder của module con.
   late DbNoteDependency? dependency;
 
   /// Helper for performing navigation transitions.
-  late DbNavigator navigator;
+  // late DbNavigator navigator;
+  late DbNoteNavigatable navigator;
   
   GlobalKey<NavigatorState>? navigatorState;
 
   DbNoteRouter({this.parentRouter, this.navigatorState, this.dependency}) {
-    navigator = DbNavigator(navigatorState ??= DbNavigator.globalNavigatorState);
+    // navigator = DbNavigator(navigatorState ??= DbNavigator.globalNavigatorState);
+    navigator = DbMyNavigator(navigatorState ??= DbMyNavigator.globalNavigatorState);
+
   }
 
   DbNoteInteractor? _interactor;

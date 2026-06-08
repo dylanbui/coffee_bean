@@ -35,7 +35,8 @@ class UserAgreementBuilder extends DbNoteSimpleRouterBuilder {
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
     if (toRoute is UserAgreementCompleteRoute) {
-      navigator.pop(fromContext: fromContext);
+      // navigator.pop(fromContext: fromContext);
+      parentRouter?.pop();
     }
   }
 }

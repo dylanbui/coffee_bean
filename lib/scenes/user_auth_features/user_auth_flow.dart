@@ -1,5 +1,6 @@
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
+import 'package:db_core/architecture_ribs/navigator.dart';
 import 'package:db_core/architecture_ribs/note_flow.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/user_auth_features/forgot_password/forgot_password_builder.dart';
@@ -23,6 +24,9 @@ class UserAuthFlow extends DbNoteFlow<UserAuthFlowListener> {
   final AuthStartStep startStep;
   final PageTransitionType transitionType;
 
+  @override
+  String get flowId => "AuthFlow_${runtimeType}_$hashCode";
+
   UserAuthFlow({
     this.startStep = AuthStartStep.login,
     this.transitionType = PageTransitionType.bottomToTop,
@@ -34,14 +38,12 @@ class UserAuthFlow extends DbNoteFlow<UserAuthFlowListener> {
       // Bắt đầu trực tiếp từ Register nếu yêu cầu
       final regRouter = UserRegisterBuilder().build();
       regRouter.parentRouter = this;
-      runFlow(regRouter.interactor, regRouter.viewController, 
-              transitionType: transitionType);
+      runFlow(regRouter.interactor, regRouter.viewController, options: DbMyNavOptions(routeName: flowId, transitionType: transitionType));
     } else {
       // Mặc định bắt đầu từ Login
       final loginRouter = UserLoginBuilder().build();
       loginRouter.parentRouter = this;
-      runFlow(loginRouter.interactor, loginRouter.viewController, 
-              transitionType: transitionType);
+      runFlow(loginRouter.interactor, loginRouter.viewController, options: DbMyNavOptions(routeName: flowId, transitionType: transitionType));
     }
   }
 

@@ -36,11 +36,11 @@ class UserLoginRouter extends DbNoteRouter {
     // Day la nhung luong phu, goi parent xu ly nhung code de o day cho nhe,  main flow se day len parent
     if (toRoute is UserAgreementRoute) {
       UserAgreementBuilder userAgreementBuilder = UserAgreementBuilder();
-      parentRouter?.navigator.push(userAgreementBuilder.build().viewController, fromContext: fromContext);
+      parentRouter?.push(userAgreementBuilder.build().viewController);
 
     } else if (toRoute is PrivacyPolicyRoute) {
       PrivacyPolicyBuilder privacyPolicyBuilder = PrivacyPolicyBuilder();
-      parentRouter?.navigator.push(privacyPolicyBuilder.build().viewController, fromContext: fromContext);
+      parentRouter?.push(privacyPolicyBuilder.build().viewController);
       
     } else {
       // Đẩy các route khác (LoginSuccess, UserRegister, ForgotPassword) lên cho Flow xử lý

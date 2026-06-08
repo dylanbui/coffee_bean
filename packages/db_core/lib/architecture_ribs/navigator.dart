@@ -6,8 +6,153 @@
  * Date: 28/06/2022 - 10:35
  */
 
+import 'package:db_core/architecture_ribs/note_navigator.dart';
+import 'package:db_core/architecture_ribs/note_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+
+
+
+class DbMyNavOptions implements DbNoteNavOptions {
+  @override
+  final BuildContext? fromContext;
+  @override
+  final String? routeName;
+  final PageTransitionType transitionType;
+
+  // Sử dụng Constructor thay cho late final để tránh LateInitializationError
+  DbMyNavOptions({this.fromContext, this.routeName, this.transitionType = PageTransitionType.rightToLeft});
+}
+
+class DbMyNavigator implements DbNoteNavigatable {
+  /// Static global key to provide a default navigator state across all Routers.
+  static final GlobalKey<NavigatorState> globalNavigatorState = GlobalKey<NavigatorState>();
+
+  final GlobalKey<NavigatorState> _navigatorState;
+
+  DbMyNavigator(this._navigatorState);
+
+  @override
+  // void push(ViewController viewController, DbNoteNavOptions? option) {
+  void push(ViewController viewController, {DbMyNavOptions? options}) {
+    final state = _navigatorState.currentState;
+    final route = PageTransition(
+      child: viewController,
+      type: options?.transitionType ?? PageTransitionType.rightToLeft,
+      settings: RouteSettings(name: options?.routeName),
+    );
+    if (state != null) {
+      state.push(route);
+    } else if (options?.fromContext case var fromContext?) {
+      if (fromContext.mounted) {
+        Navigator.push(fromContext, route);
+      }
+    }
+  }
+
+  @override
+  void pushReplacement(ViewController viewController, {DbMyNavOptions? options}) {
+    final state = _navigatorState.currentState;
+    final route = PageTransition(
+      child: viewController,
+      type: options?.transitionType ?? PageTransitionType.rightToLeft,
+      settings: RouteSettings(name: options?.routeName),
+    );
+    if (state != null) {
+      state.pushReplacement(route);
+    } else if (options?.fromContext case var fromContext?) {
+      if (fromContext.mounted) {
+        Navigator.pushReplacement(fromContext, route);
+      }
+    }
+  }
+
+  @override
+  void pushSameRootPage(ViewController viewController, {DbMyNavOptions? options}) {
+    final state = _navigatorState.currentState;
+    final route = PageTransition(
+      child: viewController,
+      type: options?.transitionType ?? PageTransitionType.rightToLeft,
+      settings: RouteSettings(name: options?.routeName),
+    );
+    if (state != null) {
+      state.pushAndRemoveUntil(route, (route) => false);
+    } else if (options?.fromContext case var fromContext?) {
+      if (fromContext.mounted) {
+        Navigator.pushAndRemoveUntil(fromContext, route, (route) => false);
+      }
+    }
+  }
+
+  @override
+  void pop({covariant DbMyNavOptions? options}) {
+    final state = _navigatorState.currentState;
+    if (state != null) {
+      if (options?.routeName case var untilRouteName?) {
+        // Nếu có tên, quay về cho đến khi gặp trang đó
+        state.popUntil(ModalRoute.withName(untilRouteName));
+      } else {
+        // Nếu không có tên, chỉ pop 1 trang như bình thường
+        if (state.canPop()) {
+          state.pop();
+        }
+      }
+    } else if (options?.fromContext case var fromContext?) {
+      if (fromContext.mounted) {
+        if (options?.routeName case var untilRouteName?) {
+          Navigator.popUntil(fromContext, ModalRoute.withName(untilRouteName));
+        } else {
+          if (Navigator.of(fromContext).canPop()) {
+            Navigator.pop(fromContext);
+          }
+        }
+      }
+    }
+  }
+
+  @override
+  bool canPop({covariant DbMyNavOptions? options}) {
+    final state = _navigatorState.currentState;
+    if (state != null) {
+      return state.canPop();
+    } else if (options?.fromContext case var fromContext?) {
+      if (fromContext.mounted) {
+        return Navigator.canPop(fromContext);
+      }
+    }
+    return false;
+  }
+
+  @override
+  void popUntilBefore(String targetRouteName, {DbMyNavOptions? options}) {
+    final state = _navigatorState.currentState;
+    bool foundTarget = false;
+
+    // Make function do pop until
+    bool funcPop(route, targetRouteName) {
+      if (route.settings.name == targetRouteName) {
+        foundTarget = true;
+        return false; // Remove the target route
+      }
+      if (foundTarget) {
+        return true; // Stop at the route before the target
+      }
+      return false;
+    }
+
+    if (state != null) {
+      state.popUntil((route) => funcPop(route, targetRouteName));
+    } else if (options?.fromContext case var fromContext?) {
+      if (fromContext.mounted) {
+        Navigator.popUntil(fromContext, (route) => funcPop(route, targetRouteName));
+      }
+    }
+  }
+
+
+
+  
+}
 
 /// DbNavigator: A utility class for handling navigation logic within the RIBs architecture.
 ///

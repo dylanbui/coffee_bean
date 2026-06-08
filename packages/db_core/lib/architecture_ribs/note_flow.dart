@@ -1,3 +1,5 @@
+import 'package:db_core/architecture_ribs/navigator.dart';
+import 'package:db_core/architecture_ribs/note_navigator.dart';
 import 'package:db_core/architecture_ribs/note_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -59,11 +61,12 @@ abstract class DbNoteFlow<L> extends DbNoteRouter {
   L? listener;
   bool _isFinishing = false;
 
+  // 1. Biến nó thành abstract để bắt buộc lớp con phải override
   /// Unique ID to anchor the flow in the Navigator stack for auto-cleanup.
-  String get flowId => "Flow_${runtimeType}_$hashCode";
+  abstract final String flowId;
 
   /// Entry point: Initializes the flow and sets the listener.
-  void start(DbNoteRouter parentRouter, L listener) {
+  void start(DbNoteRoutable parentRouter, L listener) {
     this.parentRouter = parentRouter;
     this.listener = listener;
     onStart();
@@ -76,7 +79,11 @@ abstract class DbNoteFlow<L> extends DbNoteRouter {
   /// Helper to initialize RIB components and push the first screen.
   /// [transitionType]: Use bottomToTop for Modal or rightToLeft for Normal.
   @protected
-  void runFlow(DbNoteInteractor interactor, ViewController initialPage, {PageTransitionType transitionType = PageTransitionType.rightToLeft}) {
+  void runFlow(DbNoteInteractor interactor, ViewController initialPage, {DbNoteNavOptions? options}) {
+
+    // Bây giờ lớp base đã có thể kiểm tra "kỷ luật" của lớp con
+    assert(options?.routeName == flowId, "Error: You have routeName compare with flowId in options!");
+
     // 1. RIBs Wiring (Builder role)
     attach(interactor, initialPage);
 
@@ -92,7 +99,9 @@ abstract class DbNoteFlow<L> extends DbNoteRouter {
     );
 
     // 3. Navigate with unique name for auto-cleanup and custom transition
-    navigator.push(safePage, routeName: flowId, transitionType: transitionType);
+    //navigator.push(safePage, routeName: flowId, transitionType: transitionType);
+    navigator.push(safePage, options: options);
+
   }
 
   /// Hook for subclasses to notify the listener about flow cancellation.

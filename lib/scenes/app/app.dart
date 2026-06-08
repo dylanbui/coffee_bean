@@ -205,7 +205,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       // Connect GlobalKey from Router to Flutter Navigator
-      navigatorKey: DbNavigator.globalNavigatorState,
+      // navigatorKey: DbNavigator.globalNavigatorState,
+      navigatorKey: DbMyNavigator.globalNavigatorState,
       title: 'Coffee Bean',
       theme: ThemeData(primarySwatch: Colors.blue,),
       home: _appRouter.viewController,

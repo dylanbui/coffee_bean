@@ -48,7 +48,7 @@ abstract interface class AuthHelperListener {
 /// AuthHelper: A utility class that encapsulates authentication logic and flows.
 /// Instead of using static methods, it uses an instance-based approach with a listener.
 class AuthHelper implements UserAuthFlowListener {
-  final DbNoteRouter _parentRouter;
+  final DbNoteRoutable _parentRouter;
   AuthHelperListener? _listener;
 
   AuthHelper(this._parentRouter);
