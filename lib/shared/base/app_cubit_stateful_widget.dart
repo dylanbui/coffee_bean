@@ -18,13 +18,25 @@ abstract class AppCubitStateFulWidget<B extends CubitInteractor<DbNoteRoutable, 
 
 /// AppCubitState: Base state that integrates CoffeeAppBar and common behaviors.
 abstract class AppCubitState<T extends AppCubitStateFulWidget<B, S>, B extends CubitInteractor<DbNoteRoutable, S>, S> 
-    extends CubitState<T, B, S> {
+    extends CubitState<T, B, S> with WidgetsBindingObserver {
 
   @override
   void initState() {
     super.initState();
     // Log the current screen name for debugging
     iLog('🚀 Pushed into Screen: ${widget.runtimeType}');
+    
+    if (unfocusOnHide) {
+      WidgetsBinding.instance.addObserver(this);
+    }
+  }
+
+  @override
+  void dispose() {
+    if (unfocusOnHide) {
+      WidgetsBinding.instance.removeObserver(this);
+    }
+    super.dispose();
   }
 
   /// Provides the title for the default CoffeeAppBar.
@@ -36,6 +48,29 @@ abstract class AppCubitState<T extends AppCubitStateFulWidget<B, S>, B extends C
   /// Controls whether to unfocus the keyboard when tapping outside of input fields.
   /// Defaults to false as most pages may not require keyboard interaction.
   bool get tapToUnfocus => false;
+
+  /// Automatically remove focus from text fields when the keyboard is hidden (via back button or gesture).
+  /// Defaults to true for consistent UX across the app.
+  bool get unfocusOnHide => true;
+
+  double _lastBottomInset = 0;
+
+  @override
+  void didChangeMetrics() {
+    if (!unfocusOnHide) return;
+    
+    final view = View.of(context);
+    final currentBottomInset = view.viewInsets.bottom;
+    
+    // Only unfocus if the keyboard was previously open and is now closed.
+    // This prevents immediate unfocus when the keyboard is just starting to show.
+    if (_lastBottomInset > 0 && currentBottomInset == 0) {
+      iLog('⌨️ Keyboard closed → Unfocusing triggered for: ${widget.runtimeType}');
+      FocusManager.instance.primaryFocus?.unfocus();
+    }
+    
+    _lastBottomInset = currentBottomInset;
+  }
 
   /// Provides a custom style configuration for the default CoffeeAppBar.
   CoffeeAppBarStyleConfig getAppBarStyle() => const CoffeeAppBarStyleConfig();

@@ -63,29 +63,16 @@ class _CourseListPageState extends AppCubitState<CourseListPage, CourseListInter
           // Category Picker Button
           Expanded(
             flex: 4,
-            child: InkWell(
-              onTap: () => _showCategoryModal(context, state),
-              child: Container(
-                height: 36,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: TMLabsColor.bgLight,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        state.selectedCategory?.name ?? "Tất cả các loại",
-                        style: TMLabsTextStyle.bodyBold.copyWith(fontSize: 13),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    const Icon(Icons.arrow_drop_down, color: TMLabsColor.primary, size: 20),
-                  ],
-                ),
+            child: AppButton(
+              text: state.selectedCategory?.name ?? "Tất cả các loại",
+              onPressed: () => _showCategoryModal(context, state),
+              height: 36,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              rightIcon: const Icon(Icons.arrow_drop_down, color: TMLabsColor.primary, size: 20),
+              style: TMLabsButtonStyle.white.copyWith(
+                backgroundColor: TMLabsColor.bgLight,
+                borderRadius: 18,
+                textStyle: TMLabsTextStyle.bodyBold.copyWith(fontSize: 13),
               ),
             ),
           ),

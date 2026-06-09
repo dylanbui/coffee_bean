@@ -56,24 +56,16 @@ class _ReservationListPageState
         children: [
           Expanded(
             flex: 4,
-            child: InkWell(
-              onTap: () => _showCategoryModal(context, state),
-              child: Container(
-                height: 32,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(color: TMLabsColor.bgLight, borderRadius: BorderRadius.circular(22)),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        state.selectedCategory?.name ?? "Tất cả các loại",
-                        style: TMLabsTextStyle.bodyBold,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const Icon(Icons.arrow_drop_down, color: TMLabsColor.primary),
-                  ],
-                ),
+            child: AppButton(
+              text: state.selectedCategory?.name ?? "Tất cả các loại",
+              onPressed: () => _showCategoryModal(context, state),
+              height: 32,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              rightIcon: const Icon(Icons.arrow_drop_down, color: TMLabsColor.primary),
+              style: TMLabsButtonStyle.white.copyWith(
+                backgroundColor: TMLabsColor.bgLight,
+                borderRadius: 22,
+                textStyle: TMLabsTextStyle.bodyBold,
               ),
             ),
           ),
