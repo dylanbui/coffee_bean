@@ -110,7 +110,7 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
       buildWhen: (previous, current) =>
           current is UserLoginInitial || current is UserLoginStarted || current is UserLoginEmptyState,
       builder: (context, state) {
-        return FadeSwitcher(
+        return FadeSwitcher.binary(
           duration: const Duration(milliseconds: 500),
           showFirst: state is UserLoginInitial,
           first: const Center(child: LoadingView(width: 150, height: 150)),

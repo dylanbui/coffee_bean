@@ -3,13 +3,14 @@ import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
+import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/scenes/store_list/interactor/store_list_event_state.dart';
 import 'package:coffee_bean/scenes/store_list/interactor/store_list_interactor.dart';
 import 'package:db_core/utils/tap_effect.dart';
 import 'package:db_core/utils/app_button.dart';
-import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
+import 'package:db_core/utils/fade_switcher.dart';
 import 'package:coffee_bean/shared/widget/search_bar.dart';
 import 'package:db_core/utils/app_label.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
@@ -27,6 +28,16 @@ class _StoreListPageState extends AppCubitState<StoreListPage, StoreListInteract
   String? getTitle() => "Chọn cửa hàng";
 
   @override
+  PreferredSizeWidget? getAppBar(BuildContext context) {
+    return CoffeeAppBar(
+      title: getTitle(),
+      actions: getActions(),
+      style: getAppBarStyle(),
+      onBackTap: () => interactor.router?.pop(),
+    );
+  }
+
+  @override
   Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
     return Scaffold(
       appBar: appBar,
@@ -38,16 +49,49 @@ class _StoreListPageState extends AppCubitState<StoreListPage, StoreListInteract
   Widget getBody(BuildContext context) {
     return BlocBuilder<StoreListInteractor, StoreListState>(
       builder: (context, state) {
+        Widget bodyContent;
+        String stateKey;
         bool showLocationView = !state.isLocationAuthorized && !state.isManualSelection;
 
-        return Column(
-          children: [
-            AbsorbPointer(
-              absorbing: showLocationView,
-              child: Opacity(opacity: showLocationView ? 0.5 : 1.0, child: _buildSearchBar()),
-            ),
-            Expanded(child: showLocationView ? _buildLocationRequiredView(state) : _buildStoreList(state)),
-          ],
+        // 1. Xác định widget hiển thị dựa trên state
+        if (showLocationView) {
+          bodyContent = _buildLocationRequiredView(state);
+          stateKey = '_buildLocationRequiredView';
+        } else if (state is StoreListLoading && state.stores.isEmpty) {
+          bodyContent = const Center(
+            child: LoadingView(width: 150, height: 150),
+          );
+          stateKey = 'LoadingView';
+        } else if (state.stores.isEmpty && state.searchQuery.isEmpty) {
+          bodyContent = _buildEmptyState();
+          stateKey = '_buildEmptyState';
+        } else {
+          bodyContent = Column(
+            children: [
+              _buildSearchBar(),
+              Expanded(
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
+                    if (state.stores.isEmpty)
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: _buildEmptyState(),
+                      )
+                    else
+                      _buildSliverStoreList(state),
+                  ],
+                ),
+              ),
+            ],
+          );
+          stateKey = '_buildMainContent';
+        }
+
+        // 2. Sử dụng FadeSwitcher với stateKey để tự động quản lý chuyển cảnh
+        return FadeSwitcher(
+          stateKey: stateKey,
+          child: bodyContent,
         );
       },
     );
@@ -91,7 +135,7 @@ class _StoreListPageState extends AppCubitState<StoreListPage, StoreListInteract
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       color: TMLabsColor.white,
       child: SizedBox(
-        height: 50,
+        height: 40,
         child: AppSearchBar(
           hintText: "Tìm kiếm tên cửa hàng hoặc địa chỉ",
           backgroundColor: AppColor.basicSearchBg,
@@ -103,21 +147,15 @@ class _StoreListPageState extends AppCubitState<StoreListPage, StoreListInteract
     );
   }
 
-  Widget _buildStoreList(StoreListState state) {
-    if (state is StoreListLoading && state.stores.isEmpty) {
-      return const Center(child: LoadingView(width: 150, height: 150));
-    }
-
-    if (state.stores.isEmpty) {
-      return _buildEmptyState();
-    }
-
-    return ListView.builder(
+  Widget _buildSliverStoreList(StoreListState state) {
+    return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      itemCount: state.stores.length,
-      itemBuilder: (context, index) {
-        return _buildStoreCard(state.stores[index]);
-      },
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) => _buildStoreCard(state.stores[index]),
+          childCount: state.stores.length,
+        ),
+      ),
     );
   }
 

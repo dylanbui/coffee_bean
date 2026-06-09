@@ -42,7 +42,7 @@ class _CommentListPageState extends AppCubitState<CommentListPage, CommentListIn
   Widget getBody(BuildContext context) {
     return BlocBuilder<CommentListInteractor, CommentListState>(
       builder: (context, state) {
-        return FadeSwitcher(
+        return FadeSwitcher.binary(
           duration: const Duration(milliseconds: 300),
           showFirst: state.isLoading && state.comments.isEmpty,
           first: const Center(child: CircularProgressIndicator(color: TMLabsColor.primary)),

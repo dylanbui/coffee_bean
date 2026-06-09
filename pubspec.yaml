@@ -60,6 +60,10 @@ dependencies:
   implicitly_animated_reorderable_list_2: ^0.6.0
   # Lottie animation rendering (JSON based)
   lottie: ^3.3.3
+  # Material Design motion system (Container transform, shared axis, etc.)
+  animations: ^2.2.0
+  # Declarative animation library for easy drop-in effects
+  flutter_animate: ^4.5.2
   # Scrolling text effect
   marquee: ^2.3.0
   # Group button selector widget

@@ -96,8 +96,8 @@ class _AppSearchBarState extends State<AppSearchBar> {
           setState(() {});
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: AppIcon(widget.clearIcon, color: Colors.black, size: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: AppIcon(widget.clearIcon, color: Colors.black, size: 20),
         ),
       );
     }

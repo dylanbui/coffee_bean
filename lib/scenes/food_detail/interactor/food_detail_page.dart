@@ -30,7 +30,7 @@ class _FoodDetailPageState extends AppCubitState<FoodDetailPage, FoodDetailInter
   Widget getBody(BuildContext context) {
     return BlocBuilder<FoodDetailInteractor, FoodDetailState>(
       builder: (context, state) {
-        return FadeSwitcher(
+        return FadeSwitcher.binary(
           duration: const Duration(milliseconds: 300),
           showFirst: state.isLoading,
           first: const Center(child: LoadingView(width: 150, height: 150)),

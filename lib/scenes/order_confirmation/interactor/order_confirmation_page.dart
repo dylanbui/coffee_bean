@@ -53,7 +53,7 @@ class _OrderConfirmationPageState extends AppCubitState<OrderConfirmationPage, O
       builder: (context, state) {
         return Container(
           color: TMLabsColor.bgMain,
-          child: FadeSwitcher(
+          child: FadeSwitcher.binary(
             duration: const Duration(milliseconds: 300),
             showFirst: state.isLoading,
             first: const Center(child: LoadingView(width: 150, height: 150)),
