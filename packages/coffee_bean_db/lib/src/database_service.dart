@@ -125,7 +125,7 @@ class DatabaseService {
     final categories = jsonList.map((json) {
       final name = json['name'] ?? '';
       return TblCategory()
-        ..serverId = json['id']
+        ..serverId = json['server_id'] ?? json['id']
         ..name = name
         ..searchName = _toNoSign(name)
         ..type = json['type'] ?? 'FOOD'
@@ -293,7 +293,7 @@ class DatabaseService {
     final name = json['name'] ?? '';
     final address = json['address'] ?? '';
     return TblReservation()
-      ..serverId = json['id']
+      ..serverId = json['server_id'] ?? json['id']
       ..name = name
       ..address = address
       ..searchName = _toNoSign("$name $address")
@@ -305,6 +305,36 @@ class DatabaseService {
       ..images = _mapImages(json)
       ..catIds = (json['category_ids'] as List?)?.map((e) => e as int).toList()
       ..isActive = json['is_active'] ?? true;
+  }
+
+  // --- COURSE OPERATIONS ---
+
+  Future<List<TblCourse>> getAllCourses() =>
+      isar.tblCourses.filter().isActiveEqualTo(true).findAll();
+
+  Future<List<TblCourse>> searchCourses({String? query, int? catId}) async {
+    QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> queryBuilder =
+    isar.tblCourses.filter().isActiveEqualTo(true);
+
+    if (query != null && query.isNotEmpty) {
+      final searchTerms = _toNoSign(query);
+      queryBuilder = queryBuilder.searchNameContains(searchTerms, caseSensitive: false);
+    }
+
+    if (catId != null) {
+      queryBuilder = queryBuilder.catIdsElementEqualTo(catId);
+    }
+
+    return queryBuilder.findAll();
+  }
+
+  Future<void> syncCourseData(List<dynamic> courseJson) async {
+    await isar.writeTxn(() async {
+      final propertyMap = _assembleProperties([]); // Course may not have properties in this simple sync
+      final items = courseJson.map((json) => _mapToCourse(json, propertyMap[json['id']])).toList();
+      await isar.tblCourses.clear();
+      await isar.tblCourses.putAll(items);
+    });
   }
 
   // --- PRIVATE HELPERS ---
@@ -335,7 +365,7 @@ class DatabaseService {
   TblFood _mapToFood(dynamic json, List<TblProductProperty>? props) {
     final name = json['name'] ?? '';
     return TblFood()
-      ..serverId = json['id']
+      ..serverId = json['server_id'] ?? json['id']
       ..catId = json['category_id']
       ..name = name
       ..searchName = _toNoSign(name)
@@ -350,8 +380,8 @@ class DatabaseService {
   TblCourse _mapToCourse(dynamic json, List<TblProductProperty>? props) {
     final name = json['name'] ?? '';
     return TblCourse()
-      ..serverId = json['id']
-      ..catId = json['category_id']
+      ..serverId = json['server_id'] ?? json['id']
+      ..catIds = (json['category_ids'] as List?)?.map((e) => e as int).toList()
       ..name = name
       ..searchName = _toNoSign(name)
       ..sku = json['sku']
@@ -368,7 +398,7 @@ class DatabaseService {
     final name = json['name'] ?? '';
     final address = json['address'] ?? '';
     return TblStore()
-      ..serverId = json['id']
+      ..serverId = json['server_id'] ?? json['id']
       ..name = name
       ..address = address
       ..searchName = _toNoSign("$name $address")

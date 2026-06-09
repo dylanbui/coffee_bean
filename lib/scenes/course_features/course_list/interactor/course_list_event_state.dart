@@ -8,13 +8,54 @@
 //
 // Copyright (c) 2026. All rights reserved.
 // **************************************************************************
-import 'package:db_core/state_management/lib_bloc/constants.dart';
+import 'package:coffee_bean_db/coffee_bean_db.dart';
+import 'package:db_core/db_core.dart';
 
-// STATES
-abstract class CourseListState extends BaseBlocState {}
+class CourseListState extends Equatable {
+  final List<TblCategory> categories;
+  final List<TblCourse> courses;
+  final TblCategory? selectedCategory;
+  final String searchQuery;
+  final bool isLoading;
 
-class CourseListInitial extends CourseListState {}
+  const CourseListState({
+    this.categories = const [],
+    this.courses = const [],
+    this.selectedCategory,
+    this.searchQuery = "",
+    this.isLoading = false,
+  });
 
-class CourseListLoading extends CourseListState {}
+  CourseListState copyWith({
+    List<TblCategory>? categories,
+    List<TblCourse>? courses,
+    TblCategory? selectedCategory,
+    String? searchQuery,
+    bool? isLoading,
+    bool clearSelectedCategory = false,
+  }) {
+    return CourseListState(
+      categories: categories ?? this.categories,
+      courses: courses ?? this.courses,
+      selectedCategory: clearSelectedCategory ? null : (selectedCategory ?? this.selectedCategory),
+      searchQuery: searchQuery ?? this.searchQuery,
+      isLoading: isLoading ?? this.isLoading,
+    );
+  }
 
-class CourseListSuccess extends CourseListState {}
+  @override
+  List<Object?> get props => [categories, courses, selectedCategory, searchQuery, isLoading];
+}
+
+class CourseListInitial extends CourseListState {
+  const CourseListInitial() : super();
+}
+
+class CourseListLoading extends CourseListState {
+  const CourseListLoading({
+    super.courses,
+    super.categories,
+    super.selectedCategory,
+    super.searchQuery,
+  }) : super(isLoading: true);
+}

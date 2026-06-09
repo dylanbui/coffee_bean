@@ -8,10 +8,10 @@
 //
 // Copyright (c) 2026. All rights reserved.
 // **************************************************************************
-import 'package:db_core/architecture_ribs/note_builder.dart';
-import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/interactor/course_list_interactor.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/interactor/course_list_page.dart';
+import 'package:db_core/architecture_ribs/note_builder.dart';
+import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:flutter/material.dart';
 
 // ROUTE

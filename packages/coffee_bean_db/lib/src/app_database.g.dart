@@ -4161,7 +4161,7 @@ const TblCourseSchema = CollectionSchema(
   name: r'TblCourse',
   id: 7967970092054108223,
   properties: {
-    r'catId': PropertySchema(id: 0, name: r'catId', type: IsarType.long),
+    r'catIds': PropertySchema(id: 0, name: r'catIds', type: IsarType.longList),
     r'description': PropertySchema(
       id: 1,
       name: r'description',
@@ -4235,15 +4235,15 @@ const TblCourseSchema = CollectionSchema(
         ),
       ],
     ),
-    r'catId': IndexSchema(
-      id: -4437248163412783789,
-      name: r'catId',
+    r'catIds': IndexSchema(
+      id: 2864043476753028885,
+      name: r'catIds',
       unique: false,
       replace: false,
       properties: [
         IndexPropertySchema(
-          name: r'catId',
-          type: IndexType.value,
+          name: r'catIds',
+          type: IndexType.hash,
           caseSensitive: false,
         ),
       ],
@@ -4294,6 +4294,12 @@ int _tblCourseEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.catIds;
+    if (value != null) {
+      bytesCount += 3 + value.length * 8;
+    }
+  }
   {
     final value = object.description;
     if (value != null) {
@@ -4359,7 +4365,7 @@ void _tblCourseSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.catId);
+  writer.writeLongList(offsets[0], object.catIds);
   writer.writeString(offsets[1], object.description);
   writer.writeObjectList<TblImage>(
     offsets[2],
@@ -4390,7 +4396,7 @@ TblCourse _tblCourseDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = TblCourse();
-  object.catId = reader.readLong(offsets[0]);
+  object.catIds = reader.readLongList(offsets[0]);
   object.description = reader.readStringOrNull(offsets[1]);
   object.id = id;
   object.images = reader.readObjectList<TblImage>(
@@ -4424,7 +4430,7 @@ P _tblCourseDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongList(offset)) as P;
     case 1:
       return (reader.readStringOrNull(offset)) as P;
     case 2:
@@ -4545,14 +4551,6 @@ extension TblCourseQueryWhereSort
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         const IndexWhereClause.any(indexName: r'serverId'),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterWhere> anyCatId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        const IndexWhereClause.any(indexName: r'catId'),
       );
     });
   }
@@ -4824,34 +4822,55 @@ extension TblCourseQueryWhere
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QAfterWhereClause> catIdEqualTo(
-    int catId,
-  ) {
+  QueryBuilder<TblCourse, TblCourse, QAfterWhereClause> catIdsIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
-        IndexWhereClause.equalTo(indexName: r'catId', value: [catId]),
+        IndexWhereClause.equalTo(indexName: r'catIds', value: [null]),
       );
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QAfterWhereClause> catIdNotEqualTo(
-    int catId,
+  QueryBuilder<TblCourse, TblCourse, QAfterWhereClause> catIdsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'catIds',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterWhereClause> catIdsEqualTo(
+    List<int>? catIds,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'catIds', value: [catIds]),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterWhereClause> catIdsNotEqualTo(
+    List<int>? catIds,
   ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
             .addWhereClause(
               IndexWhereClause.between(
-                indexName: r'catId',
+                indexName: r'catIds',
                 lower: [],
-                upper: [catId],
+                upper: [catIds],
                 includeUpper: false,
               ),
             )
             .addWhereClause(
               IndexWhereClause.between(
-                indexName: r'catId',
-                lower: [catId],
+                indexName: r'catIds',
+                lower: [catIds],
                 includeLower: false,
                 upper: [],
               ),
@@ -4860,72 +4879,21 @@ extension TblCourseQueryWhere
         return query
             .addWhereClause(
               IndexWhereClause.between(
-                indexName: r'catId',
-                lower: [catId],
+                indexName: r'catIds',
+                lower: [catIds],
                 includeLower: false,
                 upper: [],
               ),
             )
             .addWhereClause(
               IndexWhereClause.between(
-                indexName: r'catId',
+                indexName: r'catIds',
                 lower: [],
-                upper: [catId],
+                upper: [catIds],
                 includeUpper: false,
               ),
             );
       }
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterWhereClause> catIdGreaterThan(
-    int catId, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.between(
-          indexName: r'catId',
-          lower: [catId],
-          includeLower: include,
-          upper: [],
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterWhereClause> catIdLessThan(
-    int catId, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.between(
-          indexName: r'catId',
-          lower: [],
-          upper: [catId],
-          includeUpper: include,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterWhereClause> catIdBetween(
-    int lowerCatId,
-    int upperCatId, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.between(
-          indexName: r'catId',
-          lower: [lowerCatId],
-          includeLower: includeLower,
-          upper: [upperCatId],
-          includeUpper: includeUpper,
-        ),
-      );
     });
   }
 
@@ -5236,47 +5204,59 @@ extension TblCourseQueryWhere
 
 extension TblCourseQueryFilter
     on QueryBuilder<TblCourse, TblCourse, QFilterCondition> {
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> catIdEqualTo(
-    int value,
-  ) {
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> catIdsIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'catId', value: value),
+        const FilterCondition.isNull(property: r'catIds'),
       );
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> catIdGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> catIdsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'catIds'),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition>
+  catIdsElementEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'catIds', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition>
+  catIdsElementGreaterThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.greaterThan(
           include: include,
-          property: r'catId',
+          property: r'catIds',
           value: value,
         ),
       );
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> catIdLessThan(
-    int value, {
-    bool include = false,
-  }) {
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition>
+  catIdsElementLessThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.lessThan(
           include: include,
-          property: r'catId',
+          property: r'catIds',
           value: value,
         ),
       );
     });
   }
 
-  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> catIdBetween(
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition>
+  catIdsElementBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -5285,12 +5265,63 @@ extension TblCourseQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.between(
-          property: r'catId',
+          property: r'catIds',
           lower: lower,
           includeLower: includeLower,
           upper: upper,
           includeUpper: includeUpper,
         ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> catIdsLengthEqualTo(
+    int length,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'catIds', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> catIdsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'catIds', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> catIdsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'catIds', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition>
+  catIdsLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'catIds', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition>
+  catIdsLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'catIds', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> catIdsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'catIds',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
       );
     });
   }
@@ -6606,18 +6637,6 @@ extension TblCourseQueryLinks
     on QueryBuilder<TblCourse, TblCourse, QFilterCondition> {}
 
 extension TblCourseQuerySortBy on QueryBuilder<TblCourse, TblCourse, QSortBy> {
-  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> sortByCatId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'catId', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> sortByCatIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'catId', Sort.desc);
-    });
-  }
-
   QueryBuilder<TblCourse, TblCourse, QAfterSortBy> sortByDescription() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.asc);
@@ -6729,18 +6748,6 @@ extension TblCourseQuerySortBy on QueryBuilder<TblCourse, TblCourse, QSortBy> {
 
 extension TblCourseQuerySortThenBy
     on QueryBuilder<TblCourse, TblCourse, QSortThenBy> {
-  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> thenByCatId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'catId', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> thenByCatIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'catId', Sort.desc);
-    });
-  }
-
   QueryBuilder<TblCourse, TblCourse, QAfterSortBy> thenByDescription() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.asc);
@@ -6864,9 +6871,9 @@ extension TblCourseQuerySortThenBy
 
 extension TblCourseQueryWhereDistinct
     on QueryBuilder<TblCourse, TblCourse, QDistinct> {
-  QueryBuilder<TblCourse, TblCourse, QDistinct> distinctByCatId() {
+  QueryBuilder<TblCourse, TblCourse, QDistinct> distinctByCatIds() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'catId');
+      return query.addDistinctBy(r'catIds');
     });
   }
 
@@ -6945,9 +6952,9 @@ extension TblCourseQueryProperty
     });
   }
 
-  QueryBuilder<TblCourse, int, QQueryOperations> catIdProperty() {
+  QueryBuilder<TblCourse, List<int>?, QQueryOperations> catIdsProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'catId');
+      return query.addPropertyName(r'catIds');
     });
   }
 

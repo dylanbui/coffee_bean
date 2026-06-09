@@ -66,3 +66,4 @@ export 'commons_constants.dart';
 // Share packages
 export 'package:page_transition/page_transition.dart';
 export 'package:flash/flash.dart';
+export 'package:equatable/equatable.dart';

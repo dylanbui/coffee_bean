@@ -4,6 +4,7 @@
 import 'package:coffee_bean/config/app_pref.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/scenes/coupon_list/coupon_list_builder.dart';
+import 'package:coffee_bean/scenes/course_features/course_list/course_list_builder.dart';
 import 'package:coffee_bean/scenes/food_detail/food_detail_builder.dart';
 import 'package:coffee_bean/scenes/order_confirmation/order_confirmation_builder.dart';
 import 'package:coffee_bean/scenes/point_features/daily_sign_in/daily_sign_in_builder.dart';
@@ -28,14 +29,14 @@ class AppRouter extends DbNoteRouter {
     AppPrefs().setSelectedStoreId(3);
 
     // Load trang dau tien
-    MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
-    final router = mainTabbarBuilder.build();
-    navigator.pushSameRootPage(router.viewController);
+    // MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
+    // final router = mainTabbarBuilder.build();
+    // navigator.pushSameRootPage(router.viewController);
 
     // await dataTestOrderConfirmationBuilder();
     // // Điều hướng đến màn hình xác nhận đơn hàng
-    // final builder = OrderConfirmationBuilder();
-    // navigator.pushSameRootPage(builder.build().viewController);
+    final builder = CourseListBuilder();
+    navigator.pushSameRootPage(builder.build().viewController);
 
     // final builder = DailySignInBuilder();
     // final builder = MyPointListBuilder();

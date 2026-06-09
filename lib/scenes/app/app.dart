@@ -23,8 +23,8 @@ import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/network/token_interceptor.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/scenes/app/app_builder.dart';
-import 'package:coffee_bean/scenes/app/app_router.dart';
 import 'package:coffee_bean/data/repository/comment_repository.dart';
+import 'package:coffee_bean/data/repository/course_repository.dart';
 import 'package:coffee_bean/data/repository/reservation_repository.dart';
 import 'package:coffee_bean/data/repository/store_point_repository.dart';
 import 'package:flutter/foundation.dart';
@@ -131,6 +131,7 @@ Future<void> _setupLocator() async {
   locator.registerLazySingleton<PaymentDomainRepository>(() => PaymentDomainRepository());
   locator.registerLazySingleton<CommentRepository>(() => CommentRepository());
   locator.registerLazySingleton<ReservationRepository>(() => ReservationRepository());
+  locator.registerLazySingleton<CourseRepository>(() => CourseRepository());
   locator.registerLazySingleton<StorePointRepository>(() => StorePointRepository());
 }
 

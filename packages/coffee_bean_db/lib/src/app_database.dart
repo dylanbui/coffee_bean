@@ -142,7 +142,7 @@ class TblCourse {
   String? sku;
 
   @Index()
-  int catId = 0;
+  List<int>? catIds; // Danh sách các Category ID (n-n)
 
   @Index(type: IndexType.value, caseSensitive: false)
   String name = "";
