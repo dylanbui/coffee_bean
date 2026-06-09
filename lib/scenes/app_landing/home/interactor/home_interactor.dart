@@ -175,6 +175,12 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
     if (actionItem.key == "dat_cho") {
       router?.navigate(ReservationListRoute());
     }
+    if (actionItem.key == "khoa_hoc") {
+      router?.navigate(CourseListRoute());
+    }
+    if (actionItem.key == "trung_tam_sk") {
+      router?.navigate(ActivityListRoute());
+    }
   }
 
   void onRedeemPointsTap(BuildContext context) {

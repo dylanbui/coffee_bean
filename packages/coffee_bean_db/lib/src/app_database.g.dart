@@ -4153,6 +4153,2447 @@ extension TblFoodQueryProperty
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
+extension GetTblActivityCollection on Isar {
+  IsarCollection<TblActivity> get tblActivitys => this.collection();
+}
+
+const TblActivitySchema = CollectionSchema(
+  name: r'TblActivity',
+  id: 6348300728815346619,
+  properties: {
+    r'catIds': PropertySchema(id: 0, name: r'catIds', type: IsarType.longList),
+    r'description': PropertySchema(
+      id: 1,
+      name: r'description',
+      type: IsarType.string,
+    ),
+    r'images': PropertySchema(
+      id: 2,
+      name: r'images',
+      type: IsarType.objectList,
+
+      target: r'TblImage',
+    ),
+    r'isActive': PropertySchema(id: 3, name: r'isActive', type: IsarType.bool),
+    r'name': PropertySchema(id: 4, name: r'name', type: IsarType.string),
+    r'price': PropertySchema(id: 5, name: r'price', type: IsarType.double),
+    r'properties': PropertySchema(
+      id: 6,
+      name: r'properties',
+      type: IsarType.objectList,
+
+      target: r'TblProductProperty',
+    ),
+    r'searchName': PropertySchema(
+      id: 7,
+      name: r'searchName',
+      type: IsarType.string,
+    ),
+    r'serverId': PropertySchema(id: 8, name: r'serverId', type: IsarType.long),
+    r'sku': PropertySchema(id: 9, name: r'sku', type: IsarType.string),
+  },
+
+  estimateSize: _tblActivityEstimateSize,
+  serialize: _tblActivitySerialize,
+  deserialize: _tblActivityDeserialize,
+  deserializeProp: _tblActivityDeserializeProp,
+  idName: r'id',
+  indexes: {
+    r'serverId': IndexSchema(
+      id: -7950187970872907662,
+      name: r'serverId',
+      unique: true,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'serverId',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+    r'sku': IndexSchema(
+      id: -3348042439688860591,
+      name: r'sku',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'sku',
+          type: IndexType.hash,
+          caseSensitive: true,
+        ),
+      ],
+    ),
+    r'catIds': IndexSchema(
+      id: 2864043476753028885,
+      name: r'catIds',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'catIds',
+          type: IndexType.hash,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+    r'name': IndexSchema(
+      id: 879695947855722453,
+      name: r'name',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'name',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+    r'searchName': IndexSchema(
+      id: 3842613567125804748,
+      name: r'searchName',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'searchName',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+  },
+  links: {},
+  embeddedSchemas: {
+    r'TblImage': TblImageSchema,
+    r'TblProductProperty': TblProductPropertySchema,
+    r'TblProductOption': TblProductOptionSchema,
+  },
+
+  getId: _tblActivityGetId,
+  getLinks: _tblActivityGetLinks,
+  attach: _tblActivityAttach,
+  version: '3.3.2',
+);
+
+int _tblActivityEstimateSize(
+  TblActivity object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  {
+    final value = object.catIds;
+    if (value != null) {
+      bytesCount += 3 + value.length * 8;
+    }
+  }
+  {
+    final value = object.description;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final list = object.images;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[TblImage]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += TblImageSchema.estimateSize(value, offsets, allOffsets);
+        }
+      }
+    }
+  }
+  bytesCount += 3 + object.name.length * 3;
+  {
+    final list = object.properties;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[TblProductProperty]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += TblProductPropertySchema.estimateSize(
+            value,
+            offsets,
+            allOffsets,
+          );
+        }
+      }
+    }
+  }
+  bytesCount += 3 + object.searchName.length * 3;
+  {
+    final value = object.sku;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  return bytesCount;
+}
+
+void _tblActivitySerialize(
+  TblActivity object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeLongList(offsets[0], object.catIds);
+  writer.writeString(offsets[1], object.description);
+  writer.writeObjectList<TblImage>(
+    offsets[2],
+    allOffsets,
+    TblImageSchema.serialize,
+    object.images,
+  );
+  writer.writeBool(offsets[3], object.isActive);
+  writer.writeString(offsets[4], object.name);
+  writer.writeDouble(offsets[5], object.price);
+  writer.writeObjectList<TblProductProperty>(
+    offsets[6],
+    allOffsets,
+    TblProductPropertySchema.serialize,
+    object.properties,
+  );
+  writer.writeString(offsets[7], object.searchName);
+  writer.writeLong(offsets[8], object.serverId);
+  writer.writeString(offsets[9], object.sku);
+}
+
+TblActivity _tblActivityDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = TblActivity();
+  object.catIds = reader.readLongList(offsets[0]);
+  object.description = reader.readStringOrNull(offsets[1]);
+  object.id = id;
+  object.images = reader.readObjectList<TblImage>(
+    offsets[2],
+    TblImageSchema.deserialize,
+    allOffsets,
+    TblImage(),
+  );
+  object.isActive = reader.readBool(offsets[3]);
+  object.name = reader.readString(offsets[4]);
+  object.price = reader.readDouble(offsets[5]);
+  object.properties = reader.readObjectList<TblProductProperty>(
+    offsets[6],
+    TblProductPropertySchema.deserialize,
+    allOffsets,
+    TblProductProperty(),
+  );
+  object.searchName = reader.readString(offsets[7]);
+  object.serverId = reader.readLong(offsets[8]);
+  object.sku = reader.readStringOrNull(offsets[9]);
+  return object;
+}
+
+P _tblActivityDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readLongList(offset)) as P;
+    case 1:
+      return (reader.readStringOrNull(offset)) as P;
+    case 2:
+      return (reader.readObjectList<TblImage>(
+            offset,
+            TblImageSchema.deserialize,
+            allOffsets,
+            TblImage(),
+          ))
+          as P;
+    case 3:
+      return (reader.readBool(offset)) as P;
+    case 4:
+      return (reader.readString(offset)) as P;
+    case 5:
+      return (reader.readDouble(offset)) as P;
+    case 6:
+      return (reader.readObjectList<TblProductProperty>(
+            offset,
+            TblProductPropertySchema.deserialize,
+            allOffsets,
+            TblProductProperty(),
+          ))
+          as P;
+    case 7:
+      return (reader.readString(offset)) as P;
+    case 8:
+      return (reader.readLong(offset)) as P;
+    case 9:
+      return (reader.readStringOrNull(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+Id _tblActivityGetId(TblActivity object) {
+  return object.id;
+}
+
+List<IsarLinkBase<dynamic>> _tblActivityGetLinks(TblActivity object) {
+  return [];
+}
+
+void _tblActivityAttach(
+  IsarCollection<dynamic> col,
+  Id id,
+  TblActivity object,
+) {
+  object.id = id;
+}
+
+extension TblActivityByIndex on IsarCollection<TblActivity> {
+  Future<TblActivity?> getByServerId(int serverId) {
+    return getByIndex(r'serverId', [serverId]);
+  }
+
+  TblActivity? getByServerIdSync(int serverId) {
+    return getByIndexSync(r'serverId', [serverId]);
+  }
+
+  Future<bool> deleteByServerId(int serverId) {
+    return deleteByIndex(r'serverId', [serverId]);
+  }
+
+  bool deleteByServerIdSync(int serverId) {
+    return deleteByIndexSync(r'serverId', [serverId]);
+  }
+
+  Future<List<TblActivity?>> getAllByServerId(List<int> serverIdValues) {
+    final values = serverIdValues.map((e) => [e]).toList();
+    return getAllByIndex(r'serverId', values);
+  }
+
+  List<TblActivity?> getAllByServerIdSync(List<int> serverIdValues) {
+    final values = serverIdValues.map((e) => [e]).toList();
+    return getAllByIndexSync(r'serverId', values);
+  }
+
+  Future<int> deleteAllByServerId(List<int> serverIdValues) {
+    final values = serverIdValues.map((e) => [e]).toList();
+    return deleteAllByIndex(r'serverId', values);
+  }
+
+  int deleteAllByServerIdSync(List<int> serverIdValues) {
+    final values = serverIdValues.map((e) => [e]).toList();
+    return deleteAllByIndexSync(r'serverId', values);
+  }
+
+  Future<Id> putByServerId(TblActivity object) {
+    return putByIndex(r'serverId', object);
+  }
+
+  Id putByServerIdSync(TblActivity object, {bool saveLinks = true}) {
+    return putByIndexSync(r'serverId', object, saveLinks: saveLinks);
+  }
+
+  Future<List<Id>> putAllByServerId(List<TblActivity> objects) {
+    return putAllByIndex(r'serverId', objects);
+  }
+
+  List<Id> putAllByServerIdSync(
+    List<TblActivity> objects, {
+    bool saveLinks = true,
+  }) {
+    return putAllByIndexSync(r'serverId', objects, saveLinks: saveLinks);
+  }
+}
+
+extension TblActivityQueryWhereSort
+    on QueryBuilder<TblActivity, TblActivity, QWhere> {
+  QueryBuilder<TblActivity, TblActivity, QAfterWhere> anyId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhere> anyServerId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'serverId'),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhere> anyName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'name'),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhere> anySearchName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'searchName'),
+      );
+    });
+  }
+}
+
+extension TblActivityQueryWhere
+    on QueryBuilder<TblActivity, TblActivity, QWhereClause> {
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> idEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> idNotEqualTo(
+    Id id,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            )
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            )
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> idGreaterThan(
+    Id id, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.greaterThan(lower: id, includeLower: include),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> idLessThan(
+    Id id, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.lessThan(upper: id, includeUpper: include),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> idBetween(
+    Id lowerId,
+    Id upperId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.between(
+          lower: lowerId,
+          includeLower: includeLower,
+          upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> serverIdEqualTo(
+    int serverId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'serverId', value: [serverId]),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> serverIdNotEqualTo(
+    int serverId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'serverId',
+                lower: [],
+                upper: [serverId],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'serverId',
+                lower: [serverId],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'serverId',
+                lower: [serverId],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'serverId',
+                lower: [],
+                upper: [serverId],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> serverIdGreaterThan(
+    int serverId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'serverId',
+          lower: [serverId],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> serverIdLessThan(
+    int serverId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'serverId',
+          lower: [],
+          upper: [serverId],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> serverIdBetween(
+    int lowerServerId,
+    int upperServerId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'serverId',
+          lower: [lowerServerId],
+          includeLower: includeLower,
+          upper: [upperServerId],
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> skuIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'sku', value: [null]),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> skuIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'sku',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> skuEqualTo(
+    String? sku,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'sku', value: [sku]),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> skuNotEqualTo(
+    String? sku,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'sku',
+                lower: [],
+                upper: [sku],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'sku',
+                lower: [sku],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'sku',
+                lower: [sku],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'sku',
+                lower: [],
+                upper: [sku],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> catIdsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'catIds', value: [null]),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> catIdsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'catIds',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> catIdsEqualTo(
+    List<int>? catIds,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'catIds', value: [catIds]),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> catIdsNotEqualTo(
+    List<int>? catIds,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'catIds',
+                lower: [],
+                upper: [catIds],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'catIds',
+                lower: [catIds],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'catIds',
+                lower: [catIds],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'catIds',
+                lower: [],
+                upper: [catIds],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> nameEqualTo(
+    String name,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'name', value: [name]),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> nameNotEqualTo(
+    String name,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'name',
+                lower: [],
+                upper: [name],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'name',
+                lower: [name],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'name',
+                lower: [name],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'name',
+                lower: [],
+                upper: [name],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> nameGreaterThan(
+    String name, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'name',
+          lower: [name],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> nameLessThan(
+    String name, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'name',
+          lower: [],
+          upper: [name],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> nameBetween(
+    String lowerName,
+    String upperName, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'name',
+          lower: [lowerName],
+          includeLower: includeLower,
+          upper: [upperName],
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> nameStartsWith(
+    String NamePrefix,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'name',
+          lower: [NamePrefix],
+          upper: ['$NamePrefix\u{FFFFF}'],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> nameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'name', value: ['']),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> nameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.lessThan(indexName: r'name', upper: ['']),
+            )
+            .addWhereClause(
+              IndexWhereClause.greaterThan(indexName: r'name', lower: ['']),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.greaterThan(indexName: r'name', lower: ['']),
+            )
+            .addWhereClause(
+              IndexWhereClause.lessThan(indexName: r'name', upper: ['']),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> searchNameEqualTo(
+    String searchName,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'searchName', value: [searchName]),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause>
+  searchNameNotEqualTo(String searchName) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'searchName',
+                lower: [],
+                upper: [searchName],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'searchName',
+                lower: [searchName],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'searchName',
+                lower: [searchName],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'searchName',
+                lower: [],
+                upper: [searchName],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause>
+  searchNameGreaterThan(String searchName, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'searchName',
+          lower: [searchName],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> searchNameLessThan(
+    String searchName, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'searchName',
+          lower: [],
+          upper: [searchName],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> searchNameBetween(
+    String lowerSearchName,
+    String upperSearchName, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'searchName',
+          lower: [lowerSearchName],
+          includeLower: includeLower,
+          upper: [upperSearchName],
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause>
+  searchNameStartsWith(String SearchNamePrefix) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'searchName',
+          lower: [SearchNamePrefix],
+          upper: ['$SearchNamePrefix\u{FFFFF}'],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause>
+  searchNameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'searchName', value: ['']),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause>
+  searchNameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.lessThan(indexName: r'searchName', upper: ['']),
+            )
+            .addWhereClause(
+              IndexWhereClause.greaterThan(
+                indexName: r'searchName',
+                lower: [''],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.greaterThan(
+                indexName: r'searchName',
+                lower: [''],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.lessThan(indexName: r'searchName', upper: ['']),
+            );
+      }
+    });
+  }
+}
+
+extension TblActivityQueryFilter
+    on QueryBuilder<TblActivity, TblActivity, QFilterCondition> {
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> catIdsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'catIds'),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  catIdsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'catIds'),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  catIdsElementEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'catIds', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  catIdsElementGreaterThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'catIds',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  catIdsElementLessThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'catIds',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  catIdsElementBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'catIds',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  catIdsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'catIds', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  catIdsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'catIds', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  catIdsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'catIds', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  catIdsLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'catIds', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  catIdsLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'catIds', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  catIdsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'catIds',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  descriptionIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'description'),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  descriptionIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'description'),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  descriptionEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'description',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  descriptionGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'description',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  descriptionLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'description',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  descriptionBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'description',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  descriptionStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'description',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  descriptionEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'description',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  descriptionContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'description',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  descriptionMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'description',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  descriptionIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'description', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  descriptionIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'description', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> idEqualTo(
+    Id value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'id', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> idGreaterThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> idLessThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> idBetween(
+    Id lower,
+    Id upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'id',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> imagesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'images'),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  imagesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'images'),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  imagesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'images', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  imagesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'images', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  imagesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'images', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  imagesLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'images', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  imagesLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'images', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  imagesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'images',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> isActiveEqualTo(
+    bool value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isActive', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> nameEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'name',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> nameGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'name',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> nameLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'name',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> nameBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'name',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> nameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'name',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> nameEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'name',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> nameContains(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'name',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> nameMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'name',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> nameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'name', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  nameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'name', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> priceEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'price',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  priceGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'price',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> priceLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'price',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> priceBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'price',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  propertiesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'properties'),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  propertiesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'properties'),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  propertiesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'properties', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  propertiesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'properties', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  propertiesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'properties', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  propertiesLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'properties', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  propertiesLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'properties', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  propertiesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'properties',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  searchNameEqualTo(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'searchName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  searchNameGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'searchName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  searchNameLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'searchName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  searchNameBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'searchName',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  searchNameStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'searchName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  searchNameEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'searchName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  searchNameContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'searchName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  searchNameMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'searchName',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  searchNameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'searchName', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  searchNameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'searchName', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> serverIdEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'serverId', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  serverIdGreaterThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'serverId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  serverIdLessThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'serverId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> serverIdBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'serverId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> skuIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'sku'),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> skuIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'sku'),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> skuEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'sku',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> skuGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'sku',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> skuLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'sku',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> skuBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'sku',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> skuStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'sku',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> skuEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'sku',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> skuContains(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'sku',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> skuMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'sku',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> skuIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'sku', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  skuIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'sku', value: ''),
+      );
+    });
+  }
+}
+
+extension TblActivityQueryObject
+    on QueryBuilder<TblActivity, TblActivity, QFilterCondition> {
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> imagesElement(
+    FilterQuery<TblImage> q,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'images');
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  propertiesElement(FilterQuery<TblProductProperty> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'properties');
+    });
+  }
+}
+
+extension TblActivityQueryLinks
+    on QueryBuilder<TblActivity, TblActivity, QFilterCondition> {}
+
+extension TblActivityQuerySortBy
+    on QueryBuilder<TblActivity, TblActivity, QSortBy> {
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortByDescription() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortByDescriptionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortByIsActive() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isActive', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortByIsActiveDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isActive', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortByName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'name', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortByNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortByPrice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'price', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortByPriceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'price', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortBySearchName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'searchName', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortBySearchNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'searchName', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortByServerId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'serverId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortByServerIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'serverId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortBySku() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sku', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortBySkuDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sku', Sort.desc);
+    });
+  }
+}
+
+extension TblActivityQuerySortThenBy
+    on QueryBuilder<TblActivity, TblActivity, QSortThenBy> {
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenByDescription() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenByDescriptionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenById() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenByIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenByIsActive() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isActive', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenByIsActiveDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isActive', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenByName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'name', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenByNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenByPrice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'price', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenByPriceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'price', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenBySearchName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'searchName', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenBySearchNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'searchName', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenByServerId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'serverId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenByServerIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'serverId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenBySku() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sku', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenBySkuDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sku', Sort.desc);
+    });
+  }
+}
+
+extension TblActivityQueryWhereDistinct
+    on QueryBuilder<TblActivity, TblActivity, QDistinct> {
+  QueryBuilder<TblActivity, TblActivity, QDistinct> distinctByCatIds() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'catIds');
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QDistinct> distinctByDescription({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'description', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QDistinct> distinctByIsActive() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isActive');
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QDistinct> distinctByName({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QDistinct> distinctByPrice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'price');
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QDistinct> distinctBySearchName({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'searchName', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QDistinct> distinctByServerId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'serverId');
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QDistinct> distinctBySku({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'sku', caseSensitive: caseSensitive);
+    });
+  }
+}
+
+extension TblActivityQueryProperty
+    on QueryBuilder<TblActivity, TblActivity, QQueryProperty> {
+  QueryBuilder<TblActivity, int, QQueryOperations> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<TblActivity, List<int>?, QQueryOperations> catIdsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'catIds');
+    });
+  }
+
+  QueryBuilder<TblActivity, String?, QQueryOperations> descriptionProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'description');
+    });
+  }
+
+  QueryBuilder<TblActivity, List<TblImage>?, QQueryOperations>
+  imagesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'images');
+    });
+  }
+
+  QueryBuilder<TblActivity, bool, QQueryOperations> isActiveProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isActive');
+    });
+  }
+
+  QueryBuilder<TblActivity, String, QQueryOperations> nameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<TblActivity, double, QQueryOperations> priceProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'price');
+    });
+  }
+
+  QueryBuilder<TblActivity, List<TblProductProperty>?, QQueryOperations>
+  propertiesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'properties');
+    });
+  }
+
+  QueryBuilder<TblActivity, String, QQueryOperations> searchNameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'searchName');
+    });
+  }
+
+  QueryBuilder<TblActivity, int, QQueryOperations> serverIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'serverId');
+    });
+  }
+
+  QueryBuilder<TblActivity, String?, QQueryOperations> skuProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'sku');
+    });
+  }
+}
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
 extension GetTblCourseCollection on Isar {
   IsarCollection<TblCourse> get tblCourses => this.collection();
 }

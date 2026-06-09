@@ -8,6 +8,7 @@
  */
 
 import 'package:chuck_interceptor/chuck_interceptor.dart';
+import 'package:coffee_bean/data/repository/activity_repository.dart';
 import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/flash_dialog_provider.dart';
@@ -132,6 +133,7 @@ Future<void> _setupLocator() async {
   locator.registerLazySingleton<CommentRepository>(() => CommentRepository());
   locator.registerLazySingleton<ReservationRepository>(() => ReservationRepository());
   locator.registerLazySingleton<CourseRepository>(() => CourseRepository());
+  locator.registerLazySingleton<ActivityRepository>(() => ActivityRepository());
   locator.registerLazySingleton<StorePointRepository>(() => StorePointRepository());
 }
 

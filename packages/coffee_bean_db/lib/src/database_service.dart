@@ -5,7 +5,8 @@ import 'package:path_provider/path_provider.dart';
 enum ProductType {
   food,
   course,
-  rental;
+  rental,
+  activity;
 
   String get name => toString().split('.').last.toUpperCase();
 }
@@ -20,6 +21,7 @@ class DatabaseService {
       TblCategorySchema,
       TblFoodSchema,
       TblCourseSchema,
+      TblActivitySchema,
       TblCartItemSchema,
       TblStoreSchema,
       TblCommentSchema,
@@ -37,6 +39,7 @@ class DatabaseService {
       await isar.tblCategorys.clear();
       await isar.tblFoods.clear();
       await isar.tblCourses.clear();
+      await isar.tblActivitys.clear();
       await isar.tblCartItems.clear();
       await isar.tblStores.clear();
       await isar.tblComments.clear();
@@ -337,6 +340,36 @@ class DatabaseService {
     });
   }
 
+  // --- ACTIVITY OPERATIONS ---
+
+  Future<List<TblActivity>> getAllActivities() =>
+      isar.tblActivitys.filter().isActiveEqualTo(true).findAll();
+
+  Future<List<TblActivity>> searchActivities({String? query, int? catId}) async {
+    QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> queryBuilder =
+    isar.tblActivitys.filter().isActiveEqualTo(true);
+
+    if (query != null && query.isNotEmpty) {
+      final searchTerms = _toNoSign(query);
+      queryBuilder = queryBuilder.searchNameContains(searchTerms, caseSensitive: false);
+    }
+
+    if (catId != null) {
+      queryBuilder = queryBuilder.catIdsElementEqualTo(catId);
+    }
+
+    return queryBuilder.findAll();
+  }
+
+  Future<void> syncActivityData(List<dynamic> activityJson) async {
+    await isar.writeTxn(() async {
+      final propertyMap = _assembleProperties([]);
+      final items = activityJson.map((json) => _mapToActivity(json, propertyMap[json['id']])).toList();
+      await isar.tblActivitys.clear();
+      await isar.tblActivitys.putAll(items);
+    });
+  }
+
   // --- PRIVATE HELPERS ---
 
   Map<int, List<TblProductProperty>> _assembleProperties(List<dynamic> json) {
@@ -391,6 +424,21 @@ class DatabaseService {
       ..isActive = json['is_active'] ?? true
       ..instructor = json['instructor']
       ..videoUrl = json['video_url']
+      ..properties = props;
+  }
+
+  TblActivity _mapToActivity(dynamic json, List<TblProductProperty>? props) {
+    final name = json['name'] ?? '';
+    return TblActivity()
+      ..serverId = json['server_id'] ?? json['id']
+      ..catIds = (json['category_ids'] as List?)?.map((e) => e as int).toList()
+      ..name = name
+      ..searchName = _toNoSign(name)
+      ..sku = json['sku']
+      ..price = (json['price'] ?? 0).toDouble()
+      ..images = _mapImages(json)
+      ..description = json['description']
+      ..isActive = json['is_active'] ?? true
       ..properties = props;
   }
 

@@ -1,3 +1,5 @@
+import 'package:coffee_bean/scenes/course_features/course_list/course_list_builder.dart';
+import 'package:coffee_bean/scenes/event_features/activity_list/activity_list_builder.dart';
 import 'package:coffee_bean/scenes/point_features/my_point_list/my_point_list_builder.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/reservation_list/reservation_list_builder.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
@@ -9,6 +11,8 @@ import 'package:flutter/material.dart';
 class ChooseStoreRoute implements DbNoteRoute {}
 class GlobalSearchRoute implements DbNoteRoute {}
 class ReservationListRoute implements DbNoteRoute {}
+class CourseListRoute implements DbNoteRoute {}
+class ActivityListRoute implements DbNoteRoute {}
 class MyPointListRoute implements DbNoteRoute {}
 
 abstract class HomeRoutable implements DbNoteRoutable {}
@@ -28,6 +32,14 @@ class HomeRouter extends DbNoteRouter implements HomeRoutable {
 
     } else if (toRoute is ReservationListRoute) {
       final nextBuilder = ReservationListBuilder();
+      navigator.push(nextBuilder.build().viewController);
+
+    } else if (toRoute is CourseListRoute) {
+      final nextBuilder = CourseListBuilder();
+      navigator.push(nextBuilder.build().viewController);
+
+    } else if (toRoute is ActivityListRoute) {
+      final nextBuilder = ActivityListBuilder();
       navigator.push(nextBuilder.build().viewController);
 
     } else if (toRoute is MyPointListRoute) {

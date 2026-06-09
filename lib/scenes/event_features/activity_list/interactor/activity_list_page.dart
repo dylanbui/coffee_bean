@@ -1,16 +1,16 @@
 // **************************************************************************
 // Personal/Company: TMLabs
 // Project: coffee_bean
-// File: course_list_page.dart
+// File: activity_list_page.dart
 // Author: dylanbui
 // Create Date: 2026-06-09
 // Description: [Add a brief description of the file's purpose]
 //
 // Copyright (c) 2026. All rights reserved.
 // **************************************************************************
-import 'package:coffee_bean/scenes/course_features/course_list/interactor/course_list_event_state.dart';
-import 'package:coffee_bean/scenes/course_features/course_list/interactor/course_list_interactor.dart';
-import 'package:coffee_bean/scenes/course_features/course_list/interactor/widget/course_category_picker.dart';
+import 'package:coffee_bean/scenes/event_features/activity_list/interactor/activity_list_event_state.dart';
+import 'package:coffee_bean/scenes/event_features/activity_list/interactor/activity_list_interactor.dart';
+import 'package:coffee_bean/scenes/event_features/activity_list/interactor/widget/activity_category_picker.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
@@ -18,7 +18,6 @@ import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:coffee_bean/shared/widget/search_bar.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_modal_helper.dart';
-import 'package:coffee_bean/utils/number_to_vietnamese.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:db_core/db_core.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
@@ -26,23 +25,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // ignore: must_be_immutable
-class CourseListPage extends AppCubitStateFulWidget<CourseListInteractor, CourseListState> {
-  CourseListPage({super.key, required super.interactor});
+class ActivityListPage extends AppCubitStateFulWidget<ActivityListInteractor, ActivityListState> {
+  ActivityListPage({super.key, required super.interactor});
 
   @override
-  State<CourseListPage> createState() => _CourseListPageState();
+  State<ActivityListPage> createState() => _ActivityListPageState();
 }
 
-class _CourseListPageState extends AppCubitState<CourseListPage, CourseListInteractor, CourseListState> {
+class _ActivityListPageState extends AppCubitState<ActivityListPage, ActivityListInteractor, ActivityListState> {
   @override
-  String? getTitle() => "TẤT CẢ KHÓA HỌC";
+  String? getTitle() => "TRUNG TÂM HOẠT ĐỘNG";
 
   @override
   CoffeeAppBarStyleConfig getAppBarStyle() => TmLabAppBarStyle.whiteStyle;
 
   @override
   Widget getBody(BuildContext context) {
-    return BlocBuilder<CourseListInteractor, CourseListState>(
+    return BlocBuilder<ActivityListInteractor, ActivityListState>(
       builder: (context, state) {
         return Column(
           children: [
@@ -54,7 +53,7 @@ class _CourseListPageState extends AppCubitState<CourseListPage, CourseListInter
     );
   }
 
-  Widget _buildFilterHeader(BuildContext context, CourseListState state) {
+  Widget _buildFilterHeader(BuildContext context, ActivityListState state) {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -96,7 +95,7 @@ class _CourseListPageState extends AppCubitState<CourseListPage, CourseListInter
             child: SizedBox(
               height: 36,
               child: AppSearchBar(
-                hintText: "Tìm kiếm khóa học",
+                hintText: "Tìm kiếm tên hoạt động",
                 onSearch: interactor.onSearchChanged,
                 backgroundColor: TMLabsColor.bgLight,
                 borderRadius: 18,
@@ -109,38 +108,37 @@ class _CourseListPageState extends AppCubitState<CourseListPage, CourseListInter
     );
   }
 
-  Widget _buildContent(BuildContext context, CourseListState state) {
-    if (state.isLoading && state.courses.isEmpty) {
+  Widget _buildContent(BuildContext context, ActivityListState state) {
+    if (state.isLoading && state.activities.isEmpty) {
       return FadeSwitcher(stateKey: "getLoadingView", child: getLoadingView());
     }
 
-    if (state.courses.isEmpty) {
+    if (state.activities.isEmpty) {
       return FadeSwitcher(stateKey: "getEmptyItemView", child: getEmptyItemView());
     }
 
     final content = ListView.separated(
       padding: const EdgeInsets.all(16),
-      itemCount: state.courses.length,
+      itemCount: state.activities.length,
       separatorBuilder: (context, index) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
-        return _buildCourseItem(context, state.courses[index]);
+        return _buildActivityItem(context, state.activities[index]);
       },
     );
-    
-    return FadeSwitcher(stateKey: "content_${state.courses.length}", child: content);
+
+    return FadeSwitcher(stateKey: "content_${state.activities.length}", child: content);
   }
 
-  Widget _buildCourseItem(BuildContext context, TblCourse item) {
+  Widget _buildActivityItem(BuildContext context, TblActivity item) {
     return TapEffect(
       onTap: () {
-        // Navigate to details or show info
+        // Navigate to details
       },
       child: Container(
-        height: 120,
-        padding: const EdgeInsets.all(12),
+        height: 154,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(24), // Larger radius from image
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -149,48 +147,34 @@ class _CourseListPageState extends AppCubitState<CourseListPage, CourseListInter
             ),
           ],
         ),
-        child: Row(
+        child: Column(
           children: [
-            // Course Image
-            DbCachedImageWidget(
-              imageUrl: item.mainImage,
-              width: 96,
-              height: 96,
-              borderRadius: 10,
-              fit: BoxFit.cover,
-            ),
-            const SizedBox(width: 12),
-            // Course Info
+            // Activity Image
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.name,
-                    style: TMLabsTextStyle.title.copyWith(fontSize: 15, height: 1.2),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    item.description ?? "",
-                    style: TMLabsTextStyle.body.copyWith(
-                      fontSize: 13,
-                      color: TMLabsColor.accent.withValues(alpha: 0.6),
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const Spacer(),
-                  Text(
-                    NumberToVietnamese.formatNumber(item.price, "vnd") ?? "0 vnd",
-                    style: TMLabsTextStyle.title.copyWith(
-                      fontSize: 16,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+              child: DbCachedImageWidget(
+                imageUrl: item.mainImage,
+                width: double.infinity,
+                borderRadius: 24, // Matches container but we want top rounded
+                // Actually image is on top, maybe only top rounded or ClipRRect
+                fit: BoxFit.cover,
+              ),
+            ),
+            // Activity Name
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24),
+                ),
+              ),
+              child: Text(
+                item.name.toUpperCase(),
+                style: TMLabsTextStyle.bodyBold.copyWith(fontSize: 13),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -199,13 +183,13 @@ class _CourseListPageState extends AppCubitState<CourseListPage, CourseListInter
     );
   }
 
-  void _showCategoryModal(BuildContext context, CourseListState state) {
+  void _showCategoryModal(BuildContext context, ActivityListState state) {
     FlashModalHelper.showSmartModal<TblCategory?>(
       context: context,
-      title: "Tất cả các loại", // Design has title in modal
+      title: "TẤT CẢ CÁC LOẠI",
       position: FlashModalPosition.top,
       childBuilder: (ctx, controller) {
-        return CourseCategoryPicker(
+        return ActivityCategoryPicker(
           categories: state.categories,
           selectedCategory: state.selectedCategory,
           controller: controller,

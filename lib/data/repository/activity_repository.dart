@@ -6,13 +6,13 @@ import 'package:db_core/utils/locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
-class CourseRepository {
+class ActivityRepository {
   final DatabaseService _dbService = locator<DatabaseService>();
   final AppPrefs _prefs = AppPrefs();
 
-  static const String _catSyncKey = "course_category_sync";
-  static const String _itemSyncKey = "course_item_sync";
-  static const int _cacheDuration = 0;//24 * 60 * 60 * 1000; // 1 day in ms
+  static const String _catSyncKey = "activity_category_sync";
+  static const String _itemSyncKey = "activity_item_sync";
+  static const int _cacheDuration = 0; //24 * 60 * 60 * 1000; // 1 day in ms
 
   bool _isExpired(String key) {
     final lastSync = _prefs.getLastSyncTime(key);
@@ -22,7 +22,7 @@ class CourseRepository {
 
   Future<void> _syncCategories() async {
     try {
-      final String response = await rootBundle.loadString('assets/json/sample_course_cat.json');
+      final String response = await rootBundle.loadString('assets/json/sample_activity_cat.json');
       final data = await json.decode(response);
       if (data['categories'] != null) {
         final List<dynamic> catJson = data['categories'];
@@ -32,65 +32,65 @@ class CourseRepository {
             ..serverId = json['server_id'] ?? json['id']
             ..name = name
             ..searchName = Utils.toNoSign(name)
-            ..type = json['type'] ?? 'COURSE'
+            ..type = json['type'] ?? 'ACTIVITY'
             ..sortOrder = json['sort_order'] ?? 0
             ..isActive = json['is_active'] ?? true;
         }).toList();
 
         await _dbService.isar.writeTxn(() async {
-          await _dbService.isar.tblCategorys.filter().typeEqualTo("COURSE").deleteAll();
+          await _dbService.isar.tblCategorys.filter().typeEqualTo("ACTIVITY").deleteAll();
           await _dbService.isar.tblCategorys.putAll(categories);
         });
         _prefs.setLastSyncTime(_catSyncKey, DateTime.now().millisecondsSinceEpoch);
       }
     } catch (e) {
-      debugPrint("Error syncing course categories: $e");
+      debugPrint("Error syncing activity categories: $e");
     }
   }
 
-  Future<void> _syncCourses() async {
+  Future<void> _syncActivities() async {
     try {
-      final String response = await rootBundle.loadString('assets/json/sample_course_item.json');
+      final String response = await rootBundle.loadString('assets/json/sample_activity_item.json');
       final data = await json.decode(response);
-      if (data['courses'] != null) {
-        await _dbService.syncCourseData(data['courses']);
+      if (data['activities'] != null) {
+        await _dbService.syncActivityData(data['activities']);
         _prefs.setLastSyncTime(_itemSyncKey, DateTime.now().millisecondsSinceEpoch);
       }
     } catch (e) {
-      debugPrint("Error syncing courses: $e");
+      debugPrint("Error syncing activities: $e");
     }
   }
 
   Future<List<TblCategory>> getCategories() async {
     final existing = await _dbService.isar.tblCategorys
         .filter()
-        .typeEqualTo("COURSE")
+        .typeEqualTo("ACTIVITY")
         .findAll();
 
     if (existing.isEmpty || _isExpired(_catSyncKey)) {
       await _syncCategories();
     }
 
-    // Gia lap cho cham lai
+    // Giả lập cho chậm lại
     //await Utils.delay(second: 1);
 
     return _dbService.isar.tblCategorys
         .filter()
-        .typeEqualTo("COURSE")
+        .typeEqualTo("ACTIVITY")
         .sortBySortOrder()
         .findAll();
   }
 
-  Future<List<TblCourse>> getCourses({String? query, int? catId}) async {
-    final existing = await _dbService.getAllCourses();
+  Future<List<TblActivity>> getActivities({String? query, int? catId}) async {
+    final existing = await _dbService.getAllActivities();
 
     if (existing.isEmpty || _isExpired(_itemSyncKey)) {
-      await _syncCourses();
+      await _syncActivities();
     }
 
-    // Gia lap cho cham lai
-    //await Utils.delay(second: 1);
+    // Giả lập cho chậm lại
+    // await Utils.delay(second: 1);
 
-    return _dbService.searchCourses(query: query, catId: catId);
+    return _dbService.searchActivities(query: query, catId: catId);
   }
 }

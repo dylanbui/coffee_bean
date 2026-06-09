@@ -1,0 +1,169 @@
+{
+  "activities": [
+    {
+      "id": 1,
+      "server_id": 1,
+      "name": "BUỔI CHIA SẺ KINH NGHIỆM TRONG GIAO DỊCH",
+      "sku": "ACT-001",
+      "category_ids": [101, 102],
+      "price": 0,
+      "description": "Tham gia buổi chia sẻ kinh nghiệm giao dịch cùng các chuyên gia hàng đầu.",
+      "images": [{ "url": "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=1000", "is_primary": true }],
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "server_id": 2,
+      "name": "HỘI THẢO CÔNG NGHỆ MỚI 2024",
+      "sku": "ACT-002",
+      "category_ids": [104, 105],
+      "price": 0,
+      "description": "Cập nhật xu hướng công nghệ mới nhất cùng cộng đồng TMLabs.",
+      "images": [{ "url": "https://images.unsplash.com/photo-1540575861501-7cf05a4b125a?auto=format&fit=crop&q=80&w=1000", "is_primary": true }],
+      "is_active": true
+    },
+    {
+      "id": 3,
+      "server_id": 3,
+      "name": "GIẢI BÓNG ĐÁ GIAO HỮU COFFEE BEAN",
+      "sku": "ACT-003",
+      "category_ids": [103],
+      "price": 0,
+      "description": "Giao lưu bóng đá giữa các chi nhánh và đối tác.",
+      "images": [{ "url": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=1000", "is_primary": true }],
+      "is_active": true
+    },
+    {
+      "id": 4,
+      "server_id": 4,
+      "name": "WORKSHOP PHA CHẾ CÀ PHÊ NGHỆ THUẬT",
+      "sku": "ACT-004",
+      "category_ids": [101],
+      "price": 200000,
+      "description": "Học cách pha chế Latte Art và Pour-over chuyên nghiệp.",
+      "images": [{ "url": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=1000", "is_primary": true }],
+      "is_active": true
+    },
+    {
+      "id": 5,
+      "server_id": 5,
+      "name": "GIẢI TENNIS TRANH CÚP TMLABS",
+      "sku": "ACT-005",
+      "category_ids": [106],
+      "price": 0,
+      "description": "Hoạt động thể thao thường niên cho thành viên Salon.",
+      "images": [{ "url": "https://images.unsplash.com/photo-1595435064212-3626382d3463?auto=format&fit=crop&q=80&w=1000", "is_primary": true }],
+      "is_active": true
+    },
+    {
+      "id": 6,
+      "server_id": 6,
+      "name": "ĐÊM NHẠC ACOUSTIC TẠI COFFEE BEAN",
+      "sku": "ACT-006",
+      "category_ids": [102, 108],
+      "price": 50000,
+      "description": "Thưởng thức âm nhạc nhẹ nhàng bên tách cà phê ấm nóng.",
+      "images": [{ "url": "https://images.unsplash.com/photo-1514525253361-bee8718a74a7?auto=format&fit=crop&q=80&w=1000", "is_primary": true }],
+      "is_active": true
+    },
+    {
+      "id": 7,
+      "server_id": 7,
+      "name": "LỚP HỌC VẼ TRANH THƯ GIÃN",
+      "sku": "ACT-007",
+      "category_ids": [108],
+      "price": 150000,
+      "description": "Vừa nhâm nhi cà phê vừa sáng tạo nghệ thuật.",
+      "images": [{ "url": "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&q=80&w=1000", "is_primary": true }],
+      "is_active": true
+    },
+    {
+      "id": 8,
+      "server_id": 8,
+      "name": "HỘI THẢO KHỞI NGHIỆP TRẺ",
+      "sku": "ACT-008",
+      "category_ids": [105, 107],
+      "price": 0,
+      "description": "Kết nối và học hỏi từ các startup thành công.",
+      "images": [{ "url": "https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&q=80&w=1000", "is_primary": true }],
+      "is_active": true
+    },
+    {
+      "id": 9,
+      "server_id": 9,
+      "name": "GIAO LƯU BOARD GAME CUỐI TUẦN",
+      "sku": "ACT-009",
+      "category_ids": [108],
+      "price": 30000,
+      "description": "Tham gia các trò chơi trí tuệ và kết nối bạn bè.",
+      "images": [{ "url": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?auto=format&fit=crop&q=80&w=1000", "is_primary": true }],
+      "is_active": true
+    },
+    {
+      "id": 10,
+      "server_id": 10,
+      "name": "TOUR THAM QUAN NÔNG TRẠI CÀ PHÊ",
+      "sku": "ACT-010",
+      "category_ids": [101],
+      "price": 500000,
+      "description": "Trải nghiệm thực tế quy trình trồng và thu hoạch cà phê.",
+      "images": [{ "url": "https://images.unsplash.com/photo-1447933631397-84727c593853?auto=format&fit=crop&q=80&w=1000", "is_primary": true }],
+      "is_active": true
+    },
+    {
+      "id": 11,
+      "server_id": 11,
+      "name": "BUỔI CHIA SẺ KINH NGHIỆM TRONG GIAO DỊCH - LOẠI A",
+      "sku": "ACT-011",
+      "category_ids": [109],
+      "price": 0,
+      "description": "Dành cho nhóm đối tượng Loại A.",
+      "images": [{ "url": "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=1000", "is_primary": true }],
+      "is_active": true
+    },
+    {
+      "id": 12,
+      "server_id": 12,
+      "name": "HỘI THẢO CHUYÊN ĐỀ LOẠI B",
+      "sku": "ACT-012",
+      "category_ids": [110],
+      "price": 0,
+      "description": "Dành cho nhóm đối tượng Loại B.",
+      "images": [{ "url": "https://images.unsplash.com/photo-1540575861501-7cf05a4b125a?auto=format&fit=crop&q=80&w=1000", "is_primary": true }],
+      "is_active": true
+    },
+    {
+      "id": 13,
+      "server_id": 13,
+      "name": "SỰ KIỆN KẾT NỐI LOẠI C",
+      "sku": "ACT-013",
+      "category_ids": [111],
+      "price": 0,
+      "description": "Dành cho nhóm đối tượng Loại C.",
+      "images": [{ "url": "https://images.unsplash.com/photo-1514525253361-bee8718a74a7?auto=format&fit=crop&q=80&w=1000", "is_primary": true }],
+      "is_active": true
+    },
+    {
+      "id": 14,
+      "server_id": 14,
+      "name": "TRAINING NỘI BỘ LOẠI D",
+      "sku": "ACT-014",
+      "category_ids": [112],
+      "price": 0,
+      "description": "Dành cho nhóm đối tượng Loại D.",
+      "images": [{ "url": "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&q=80&w=1000", "is_primary": true }],
+      "is_active": true
+    },
+    {
+      "id": 15,
+      "server_id": 15,
+      "name": "HỌP MẶT THƯỜNG NIÊN LOẠI E",
+      "sku": "ACT-015",
+      "category_ids": [113],
+      "price": 0,
+      "description": "Dành cho nhóm đối tượng Loại E.",
+      "images": [{ "url": "https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&q=80&w=1000", "is_primary": true }],
+      "is_active": true
+    }
+  ]
+}
