@@ -6,17 +6,14 @@ import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
-import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:coffee_bean/shared/widget/search_bar.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_modal_helper.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_toast_helper.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
+import 'package:db_core/db_core.dart';
 import 'package:db_core/utils/app_label.dart';
-import 'package:db_core/utils/tap_effect.dart';
-import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 
 // ignore: must_be_immutable
 class ReservationListPage extends AppCubitStateFulWidget<ReservationListInteractor, ReservationListState> {
@@ -26,8 +23,8 @@ class ReservationListPage extends AppCubitStateFulWidget<ReservationListInteract
   State<ReservationListPage> createState() => _ReservationListPageState();
 }
 
-class _ReservationListPageState extends AppCubitState<ReservationListPage, ReservationListInteractor, ReservationListState> {
-  
+class _ReservationListPageState
+    extends AppCubitState<ReservationListPage, ReservationListInteractor, ReservationListState> {
   @override
   String? getTitle() => "ĐẶT CHỖ";
 
@@ -41,9 +38,7 @@ class _ReservationListPageState extends AppCubitState<ReservationListPage, Reser
         return Column(
           children: [
             _buildFilterHeader(context, state),
-            Expanded(
-              child: _buildContent(context, state),
-            ),
+            Expanded(child: _buildContent(context, state)),
           ],
         );
       },
@@ -52,7 +47,10 @@ class _ReservationListPageState extends AppCubitState<ReservationListPage, Reser
 
   Widget _buildFilterHeader(BuildContext context, ReservationListState state) {
     return Container(
-      color: Colors.white,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: TMLabsColor.bgLight, width: 1)),
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       child: Row(
         children: [
@@ -63,10 +61,7 @@ class _ReservationListPageState extends AppCubitState<ReservationListPage, Reser
               child: Container(
                 height: 32,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: TMLabsColor.bgLight,
-                  borderRadius: BorderRadius.circular(22),
-                ),
+                decoration: BoxDecoration(color: TMLabsColor.bgLight, borderRadius: BorderRadius.circular(22)),
                 child: Row(
                   children: [
                     Expanded(
@@ -103,14 +98,14 @@ class _ReservationListPageState extends AppCubitState<ReservationListPage, Reser
 
   Widget _buildContent(BuildContext context, ReservationListState state) {
     if (state.isLoading && state.reservations.isEmpty) {
-      return const Center(child: LoadingView(width: 150, height: 150));
+      return FadeSwitcher(stateKey: "getLoadingView", child: getLoadingView());
     }
 
     if (state.reservations.isEmpty) {
-      return _buildEmptyState();
+      return FadeSwitcher(stateKey: "getEmptyItemView", child: getEmptyItemView());
     }
 
-    return ListView.separated(
+    final content =  ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: state.reservations.length,
       separatorBuilder: (context, index) => const SizedBox(height: 12),
@@ -118,17 +113,15 @@ class _ReservationListPageState extends AppCubitState<ReservationListPage, Reser
         return _buildReservationItem(context, state.reservations[index]);
       },
     );
+    // Nếu bạn muốn mỗi lần search kết quả mới đều có hiệu ứng mờ nhẹ
+    // bạn nên dùng key động (ví dụ: "content_${state.reservations.length}" hoặc dựa trên query).
+    return FadeSwitcher(stateKey: "content_${state.reservations.length}", child: content);
   }
 
   Widget _buildReservationItem(BuildContext context, TblReservation item) {
     return TapEffect(
       onTap: () {
-        FlashToastHelper.info(
-          context,
-          "ID: ${item.serverId}",
-          title: item.name,
-          position: FlashPosition.bottom,
-        );
+        FlashToastHelper.info(context, "ID: ${item.serverId}", title: item.name, position: FlashPosition.bottom);
       },
       child: Container(
         padding: const EdgeInsets.all(12),
@@ -136,11 +129,7 @@ class _ReservationListPageState extends AppCubitState<ReservationListPage, Reser
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4)),
           ],
         ),
         child: Row(
@@ -239,22 +228,6 @@ class _ReservationListPageState extends AppCubitState<ReservationListPage, Reser
     );
   }
 
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AppIcon(AppAssets.images.imgNoneItem, size: 120),
-          const SizedBox(height: 16),
-          Text(
-            "Không tìm thấy nội dung liên quan",
-            style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _showCategoryModal(BuildContext context, ReservationListState state) {
     FlashModalHelper.showSmartModal<TblCategory?>(
       context: context,
@@ -269,7 +242,7 @@ class _ReservationListPageState extends AppCubitState<ReservationListPage, Reser
       },
     ).then((selected) {
       if (selected != null || (selected == null && state.selectedCategory != null)) {
-         interactor.onCategorySelected(selected);
+        interactor.onCategorySelected(selected);
       }
     });
   }
