@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
@@ -21,8 +22,17 @@ class NetworkClient {
     _dio.options.headers['content-Type'] = 'application/json';
     _dio.options.headers['Accept'] = 'application/json';
 
-    // default log
-    _dio.interceptors.add(PrettyDioLogger(requestHeader: true, requestBody: true, responseBody: true, responseHeader: false, error: true, compact: true, maxWidth: 90));
+    // PERFORMANCE: Chỉ bật log trong môi trường Debug
+    if (kDebugMode) {
+      _dio.interceptors.add(PrettyDioLogger(
+          requestHeader: true,
+          requestBody: true,
+          responseBody: true,
+          responseHeader: false,
+          error: true,
+          compact: true,
+          maxWidth: 90));
+    }
 
     // Cho phép thêm các interceptor tùy biến từ dự án cụ thể
     // Same if let interceptors = config.interceptors in Swift

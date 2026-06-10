@@ -21,18 +21,21 @@ typedef JsonMapper<T> = T Function(Map<String, dynamic> json);
 /// Safely parse a list of JSON objects into a list of models.
 /// If an element fails to parse, it will be skipped instead of crashing the whole list.
 List<T> parseList<T>(dynamic json, JsonMapper<T> fromJson) {
-    if (json is! List) return [];
-    final List<T> result = [];
-    for (var element in json) {
-        try {
-            if (element is Map<String, dynamic>) {
-                result.add(fromJson(element));
-            }
-        } catch (e) {
-            // Ignore element parsing error to prevent crashing the entire list
-        }
+  if (json is! List || json.isEmpty) return <T>[];
+  
+  final List<T> result = [];
+  // Lưu ý: Dart tự động tối ưu việc tăng kích thước List (exponential growth)
+  // Việc check type trước khi try-catch giúp giảm chi phí CPU.
+  for (final element in json) {
+    if (element is Map<String, dynamic>) {
+      try {
+        result.add(fromJson(element));
+      } catch (e) {
+        // Log lỗi parse để debug nếu cần, nhưng không làm crash app
+      }
     }
-    return result;
+  }
+  return result;
 }
 
 // Class configure network
@@ -119,47 +122,47 @@ extension NetworkMappingCommon<T> on Future<Response<T>> {
     /// [M]: Kiểu đối tượng Model sinh ra từ mapper (Ví dụ: ProductModel)
     /// [R]: Kiểu dữ liệu trả về cuối cùng (Ví dụ: ProductModel hoặc List<ProductModel>)
     // Future<(R? data, NetworkError? error)> superMapToObject<R, M>(M Function(Map<String, dynamic>) mapper) async {
-    Future<(R? data, NetworkError? error)> superMapToObject<R, M>(JsonMapper<M> mapper) async {
+    Future<ResultType<R>> superMapToObject<R, M>(JsonMapper<M> mapper) async {
         try {
             final response = await this;
             final rawData = response.data;
             // Check data for mapper
             if (rawData is Map<String, dynamic>) {
                 final result = mapper(rawData);
-                return (result as R, null);
+                return (data: result as R, error: null);
             } else if (rawData is List) {
                 // Automatically handle if data is List without needing manual fromJsonList
                 final list = rawData.map((e) => mapper(e as Map<String, dynamic>)).toList();
-                return (list as R, null);
+                return (data: list as R, error: null);
             }
-            return (null, NetworkError(500, "Invalid Data format (Map/List)"));
+            return (data: null, error: NetworkError(500, "Invalid Data format (Map/List)"));
         } on DioException catch (ex) {
-            return (null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
+            return (data: null, error: NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
         } catch (e) {
-            return (null, NetworkError(500, e.toString()));
+            return (data: null, error: NetworkError(500, e.toString()));
         }
     }
 
-    Future<(R? data, NetworkError? error)> mapToObject<R>(R Function(Map<String, dynamic>) mapper) async {
+    Future<ResultType<R>> mapToObject<R>(R Function(Map<String, dynamic>) mapper) async {
       try {
         final response = await this;
         final rawData = response.data;
         // Check data for mapper
         if (rawData is Map<String, dynamic>) {
           final result = mapper(rawData);
-          return (result, null);
+          return (data: result, error: null);
         }
-        return (null, NetworkError(500, "Invalid Data format (Map/List)"));
+        return (data: null, error: NetworkError(500, "Invalid Data format (Map/List)"));
       } on DioException catch (ex) {
-        return (null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
+        return (data: null, error: NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
       } catch (e) {
-        return (null, NetworkError(500, e.toString()));
+        return (data: null, error: NetworkError(500, e.toString()));
       }
     }
 
 
 /// Xử lý trả về một Danh sách Object
-  Future<(List<R>? data, NetworkError? error)> mapToObjectList<R>(R Function(Map<String, dynamic>) mapper) async {
+  Future<ResultType<List<R>>> mapToObjectList<R>(R Function(Map<String, dynamic>) mapper) async {
     try {
       final response = await this;
       final rawData = response.data;
@@ -167,14 +170,14 @@ extension NetworkMappingCommon<T> on Future<Response<T>> {
       if (rawData is List) {
         // Tận dụng kiểu R rõ ràng để tạo List<R> chuẩn xác ngay từ đầu
         final list = rawData.map((e) => mapper(e as Map<String, dynamic>)).toList();
-        return (list, null);
+        return (data: list, error: null);
       }
 
-      return (null, NetworkError(500, "Server không trả về List"));
+      return (data: null, error: NetworkError(500, "Server không trả về List"));
     } on DioException catch (ex) {
-      return (null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Lỗi kết nối"));
+      return (data: null, error: NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Lỗi kết nối"));
     } catch (e) {
-      return (null, NetworkError(500, e.toString()));
+      return (data: null, error: NetworkError(500, e.toString()));
     }
   }
     
@@ -190,36 +193,36 @@ extension NetworkMappingCommon<T> on Future<Response<T>> {
 // =========================================================================
 class NetworkParsingUtils {
   /// Parse Data into an Object (includes fallback to the first element if data is a List)
-  static (M? data, NetworkError? error) parseToObject<M>(dynamic rawData, JsonMapper<M> mapper) {
+  static ResultType<M> parseToObject<M>(dynamic rawData, JsonMapper<M> mapper) {
     try {
-      if (rawData == null) return (null, null);
+      if (rawData == null) return (data: null, error: null);
       if (rawData is Map<String, dynamic>) {
-        return (mapper(rawData), null);
+        return (data: mapper(rawData), error: null);
       } else if (rawData is List) {
         if (rawData.isNotEmpty) {
-          return (mapper(rawData.first as Map<String, dynamic>), null);
+          return (data: mapper(rawData.first as Map<String, dynamic>), error: null);
         }
-        return (null, NetworkError(500, "The list is empty, no first element found"));
+        return (data: null, error: NetworkError(500, "The list is empty, no first element found"));
       }
-      return (null, NetworkError(500, "Invalid data format (Not Map/List)"));
+      return (data: null, error: NetworkError(500, "Invalid data format (Not Map/List)"));
     } catch (e) {
-      return (null, NetworkError(500, e.toString()));
+      return (data: null, error: NetworkError(500, e.toString()));
     }
   }
 
   /// Parse Data into a List (includes fallback to wrap Object in a List)
-  static (List<M>? data, NetworkError? error) parseToList<M>(dynamic rawData, JsonMapper<M> mapper) {
+  static ResultType<List<M>> parseToList<M>(dynamic rawData, JsonMapper<M> mapper) {
     try {
-      if (rawData == null) return (<M>[], null);
+      if (rawData == null) return (data: <M>[], error: null);
       if (rawData is List) {
         // Using the global parseList function to handle fault tolerance
-        return (parseList(rawData, mapper), null);
+        return (data: parseList(rawData, mapper), error: null);
       } else if (rawData is Map<String, dynamic>) {
-        return ([mapper(rawData)], null);
+        return (data: [mapper(rawData)], error: null);
       }
-      return (null, NetworkError(500, "Invalid data format (Not Map/List)"));
+      return (data: null, error: NetworkError(500, "Invalid data format (Not Map/List)"));
     } catch (e) {
-      return (null, NetworkError(500, e.toString()));
+      return (data: null, error: NetworkError(500, e.toString()));
     }
   }
 }
@@ -237,28 +240,28 @@ class NetworkDataMapper<T, M> {
   NetworkDataMapper(this.responseFuture, this.mapper);
 
   /// Parse data into a single Object (Model)
-  Future<(M? data, NetworkError? error)> toObject() async {
+  Future<ResultType<M>> toObject() async {
     try {
       final response = await responseFuture;
       // Call the shared Utility function
       return NetworkParsingUtils.parseToObject(response.data, mapper);
     } on DioException catch (ex) {
-      return (null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Connection Error"));
+      return (data: null, error: NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Connection Error"));
     } catch (e) {
-      return (null, NetworkError(500, e.toString()));
+      return (data: null, error: NetworkError(500, e.toString()));
     }
   }
 
   /// Parse data into a List of Objects
-  Future<(List<M>? data, NetworkError? error)> toList() async {
+  Future<ResultType<List<M>>> toList() async {
     try {
       final response = await responseFuture;
       // Call the shared Utility function
       return NetworkParsingUtils.parseToList(response.data, mapper);
     } on DioException catch (ex) {
-      return (null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Connection Error"));
+      return (data: null, error: NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Connection Error"));
     } catch (e) {
-      return (null, NetworkError(500, e.toString()));
+      return (data: null, error: NetworkError(500, e.toString()));
     }
   }
 }

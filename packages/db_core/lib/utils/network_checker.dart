@@ -1,36 +1,9 @@
-/*
- * Created with Android Studio
- * Package: 
- * User: dylanbui
- * Email: buivantienduc@gmail.com
- * Date: 5/5/26 - 09:33
- * To change this template use File | Settings | File Templates.
- */
-
-/*
-Document: https://apparencekit.dev/flutter-tips/continuous-network-monitoring-flutter/
-Usage:
-final networkChecker = DbNetworkChecker();
-networkChecker.start();
-
-networkChecker.stream.listen((status) {
-  switch (status) {
-    case DbNetworkStatusOnline():
-      print("Online via ${status.type}");
-      if (status.isWifi) print("Connected to Wifi");
-    case DbNetworkStatusOffline():
-      print("Network disconnected or no internet access");
-  }
-});
-
-// In dispose method of your widget/provider
-networkChecker.dispose();
-*/
-
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+/// Trạng thái mạng
 sealed class DbNetworkStatus {}
 
 class DbNetworkStatusOffline extends DbNetworkStatus {}
@@ -44,24 +17,33 @@ class DbNetworkStatusOnline extends DbNetworkStatus {
     bool get isMobile => type == ConnectivityResult.mobile;
 }
 
+/// Network checker với debounce + config URL
 class DbNetworkChecker {
     final HttpClient _client = HttpClient();
     final Connectivity _connectivity = Connectivity();
 
     final _controller = StreamController<DbNetworkStatus>.broadcast();
+    Stream<DbNetworkStatus> get stream => _controller.stream;
 
     DbNetworkStatus? _lastStatus;
     StreamSubscription? _sub;
+    Timer? _debounceTimer;
 
-    Stream<DbNetworkStatus> get stream => _controller.stream;
+    /// URL để kiểm tra internet, mặc định là Google 204
+    final Uri testUri;
+
+    /// Thời gian debounce để tránh flicker khi mạng chập chờn
+    final Duration debounceDuration;
+
+    DbNetworkChecker({
+        Uri? uri,
+        this.debounceDuration = const Duration(milliseconds: 500),
+    }) : testUri = uri ?? Uri.parse('https://clients3.google.com/generate_204');
 
     void start() {
-        // listen connectivity changes
         _sub = _connectivity.onConnectivityChanged.listen((results) async {
             await _handleConnectivity(results);
         });
-
-        // trigger initial check
         _initCheck();
     }
 
@@ -71,65 +53,57 @@ class DbNetworkChecker {
     }
 
     Future<void> _handleConnectivity(List<ConnectivityResult> results) async {
-        // không có mạng vật lý
         if (results.isEmpty || results.contains(ConnectivityResult.none)) {
             _emit(DbNetworkStatusOffline());
             return;
         }
 
-        // có wifi/4g → check internet thật
         final hasInternet = await _hasInternet();
         if (!hasInternet) {
             _emit(DbNetworkStatusOffline());
             return;
         }
 
-        // online + có loại mạng
-        final result = results.firstWhere((element) => element != ConnectivityResult.none, orElse: () => results.first);
+        final result = results.firstWhere(
+                (element) => element != ConnectivityResult.none,
+            orElse: () => results.first,
+        );
         _emit(DbNetworkStatusOnline(result));
     }
 
     Future<bool> _hasInternet() async {
         try {
-            final request = await _client.getUrl(
-                Uri.parse('https://clients3.google.com/generate_204'),
-            );
-
-            final response = await request
-                .close()
-                .timeout(const Duration(seconds: 5));
-
+            final request = await _client.getUrl(testUri);
+            final response = await request.close().timeout(const Duration(seconds: 5));
             return response.statusCode == HttpStatus.noContent;
-        } catch (_) {
+        } catch (e) {
+            debugPrint("Network check failed: $e");
             return false;
         }
     }
 
-    // void _emit(DbNetworkStatus status) {
-    //     // deduplicate
-    //     if (_lastStatus.runtimeType == status.runtimeType) return;
-    //
-    //     _lastStatus = status;
-    //     _controller.add(status);
-    // }
-
-    // Emit ca khi network type thay doi tu Wifi -> 4G hoac nguoc lai
     void _emit(DbNetworkStatus status) {
-        if (_lastStatus is DbNetworkStatusOnline && status is DbNetworkStatusOnline) {
-            if (_lastStatus is DbNetworkStatusOnline && (_lastStatus as DbNetworkStatusOnline).type == status.type) {
-                return;
+        _debounceTimer?.cancel();
+        _debounceTimer = Timer(debounceDuration, () {
+            if (_controller.isClosed) return;
+
+            // Tránh phát lại cùng một trạng thái (Sửa lỗi crash khi _lastStatus null)
+            if (_lastStatus != null) {
+                if (_lastStatus is DbNetworkStatusOnline && status is DbNetworkStatusOnline) {
+                    if ((_lastStatus as DbNetworkStatusOnline).type == status.type) return;
+                } else if (_lastStatus.runtimeType == status.runtimeType) {
+                    return;
+                }
             }
-        } else if (_lastStatus.runtimeType == status.runtimeType) {
-            return;
-        }
 
-        _lastStatus = status;
-        _controller.add(status);
+            _lastStatus = status;
+            _controller.add(status);
+        });
     }
-
 
     void dispose() {
         _sub?.cancel();
+        _debounceTimer?.cancel();
         _controller.close();
         _client.close(force: true);
     }

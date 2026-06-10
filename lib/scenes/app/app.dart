@@ -21,6 +21,7 @@ import 'package:db_core/services/event_bus.dart';
 import 'package:db_core/utils/shared_preferences.dart';
 import 'package:coffee_bean/config/app_config.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
+import 'package:coffee_bean/data/network/header_interceptor.dart';
 import 'package:coffee_bean/data/network/token_interceptor.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/scenes/app/app_builder.dart';
@@ -109,8 +110,14 @@ Future<void> _setupNetwork() async {
   NetworkServiceProvider.init(NetworkConfig(
     baseUrl: AppConfig().url,
     timeout: Duration(seconds: 30),
-    interceptors: [chuck.dioInterceptor, tokenInterceptor],
-
+    interceptors: [
+      chuck.dioInterceptor, 
+      tokenInterceptor,
+      HeaderInterceptor(headers: {
+        'tenantId': '162',
+        // Bạn có thể thêm các tham số global khác ở đây trong tương lai
+      }),
+    ],
   ));
 }
 

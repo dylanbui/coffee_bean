@@ -10,105 +10,57 @@
 import 'package:db_core/network/network_common.dart';
 import 'package:dio/dio.dart';
 
+/// Lớp bọc phản hồi tiêu chuẩn của dự án (Project Standard Wrapper)
+/// Cấu trúc: { "code": 0, "msg": "", "data": ... }
 class NetworkResponse<T> {
-    final String message;
-    final String code;
-    final bool result;
-    final T? data;
+  final String msg;
+  final int code;
+  final T? data;
 
-    NetworkResponse({required this.message, required this.code, required this.result, this.data});
+  NetworkResponse({required this.msg, required this.code, this.data});
 
-    factory NetworkResponse.fromJson(Map<String, dynamic> json, JsonMapper<dynamic> mapper) {
-        final dynamic rawData = json['data'];
-        dynamic parsedData;
-        // Check and parse json from rawData
-        if (rawData != null) {
-            if (rawData is List) {
-                // Tự động map nếu là List
-                parsedData = rawData.map((e) => mapper(e as Map<String, dynamic>)).toList();
-            } else if (rawData is Map<String, dynamic>) {
-                // Parse Object đơn
-                parsedData = mapper(rawData);
-            }
-        }
-        return NetworkResponse(
-            message: json['message'] ?? "",
-            code: json['code']?.toString() ?? "0",
-            result: json['result'] ?? false,
-            data: parsedData as T?,
-        );
+  /// Kiểm tra xem phản hồi có thành công theo nghiệp vụ không (code == 0)
+  bool get isSuccess => code == 0;
+
+  factory NetworkResponse.fromJson(Map<String, dynamic> json, JsonMapper<dynamic> mapper) {
+    final dynamic rawData = json['data'];
+    dynamic parsedData;
+
+    // Sử dụng logic parseList an toàn để xử lý data là List
+    // Tránh lỗi crash khi map dynamic trực tiếp
+    if (rawData != null) {
+      if (rawData is List) {
+        parsedData = parseList(rawData, mapper);
+      } else if (rawData is Map<String, dynamic>) {
+        parsedData = mapper(rawData);
+      }
     }
-}
 
-extension NetworkMappingProject<T> on Future<Response<T>> {
-
-    /// Process for project-specific NetworkResponse
-    /// This extension automatically checks 'result == true'
-    /// If true, it returns data (List<Post>, User...).
-    /// If false or network error, it returns NetworkError.
-    Future<ResultType<R>> mapToNetworkResponse<R>(JsonMapper<dynamic> mapper) async {
-        try {
-            final response = await this;
-            final rawData = response.data;
-
-            if (rawData is Map<String, dynamic>) {
-                // 1. Parse into NetworkResponse wrapper first
-                final networkRes = NetworkResponse<R>.fromJson(rawData, mapper);
-                // 2. Check Server business logic (result variable)
-                if (networkRes.result == true) {
-                    // Success: Return data (e.g., List<Post>)
-                    return (data: networkRes.data, error: null);
-                } else {
-                    // Business error (e.g., wrong password, expired package): Return error
-                    return (data: null, error: NetworkError(int.tryParse(networkRes.code) ?? 500, networkRes.message));
-                }
-            }
-            return (data: null, error: NetworkError(500, "Invalid JSON format"));
-        } on DioException catch (ex) {
-            return (data: null, error: NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
-        } catch (e) {
-            return (data: null, error: NetworkError(500, e.toString()));
-        }
-    }
-}
-
-/*
-// Ví dụ về một loại phản hồi khác từ bên thứ 3 hoặc dự án khác
-class YourResponse<T> {
-  final int errorCode;
-  final T? content;
-
-  YourResponse({required this.errorCode, this.content});
-
-  factory YourResponse.fromJson(Map<String, dynamic> json, T Function(dynamic) mapper) {
-    return YourResponse(
-      errorCode: json['errorCode'] ?? 0,
-      content: json['content'] != null ? mapper(json['content']) : null,
+    return NetworkResponse(
+      msg: json['msg']?.toString() ?? json['message']?.toString() ?? "",
+      code: json['code'] is int ? json['code'] : (int.tryParse(json['code']?.toString() ?? "0") ?? 0),
+      data: parsedData as T?,
     );
   }
 }
 
-extension NetworkMappingYourResponse<T> on Future<Response<T>> {
-
-  /// Extension for parsing YourResponse structure (errorCode, content)
-  Future<ResultType<R>> mapToYourResponse<R>(JsonMapper<dynamic> mapper) async {
+extension NetworkMappingProject<T> on Future<Response<T>> {
+  /// Xử lý phản hồi theo cấu trúc NetworkResponse cũ/tương thích ngược
+  /// Khuyến khích sử dụng mapResponseTo().toObject() thay thế
+  Future<ResultType<R>> mapToNetworkResponse<R>(JsonMapper<dynamic> mapper) async {
     try {
       final response = await this;
       final rawData = response.data;
 
       if (rawData is Map<String, dynamic>) {
-        // 1. Parse into YourResponse wrapper
-        final yourRes = YourResponse<R>.fromJson(rawData, mapper);
-
-        // 2. Check errorCode (Assume 0 is success)
-        if (yourRes.errorCode == 0) {
-          return (data: yourRes.content, error: null); // Return actual data (content)
+        final networkRes = NetworkResponse<R>.fromJson(rawData, mapper);
+        if (networkRes.isSuccess) {
+          return (data: networkRes.data, error: null);
         } else {
-          // Return business error from YourResponse
-          return (data: null, error: NetworkError(yourRes.errorCode, "Error from YourResponse"));
+          return (data: null, error: NetworkError(networkRes.code, networkRes.msg));
         }
       }
-      return (data: null, error: NetworkError(500, "Invalid YourResponse JSON format"));
+      return (data: null, error: NetworkError(500, "Invalid JSON format"));
     } on DioException catch (ex) {
       return (data: null, error: NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
     } catch (e) {
@@ -117,40 +69,34 @@ extension NetworkMappingYourResponse<T> on Future<Response<T>> {
   }
 }
 
-
-*
-* */
-
 // =========================================================================
-// PHIÊN BẢN MỚI: FLUENT INTERFACE CHO PROJECT-SPECIFIC WRAPPER
-// (Không sửa class cũ bên trên để có thể đối chiếu, so sánh)
+// PHIÊN BẢN FLUENT INTERFACE CHO PROJECT WRAPPER (RECOMMENDED)
 // =========================================================================
 
-/// Lớp trung gian xử lý cấu trúc bọc (Wrapper) của dự án
+/// Lớp trung gian xử lý cấu trúc bọc {code, msg, data}
 class NetworkResponseDataMapper<T, M> {
   final Future<Response<T>> responseFuture;
   final JsonMapper<M> mapper;
 
   NetworkResponseDataMapper(this.responseFuture, this.mapper);
 
-  /// Hàm nội bộ: Bóc tách vỏ bọc JSON, kiểm tra 'result' và lấy ra trường 'data'
+  /// Hàm nội bộ: Bóc tách vỏ bọc JSON, kiểm tra 'code' và lấy ra trường 'data'
   Future<(dynamic innerData, NetworkError? error)> _extractInnerData() async {
     try {
       final response = await responseFuture;
       final rawData = response.data;
 
       if (rawData is Map<String, dynamic>) {
-        // Kiểm tra Server business logic theo cấu trúc dự án của bạn
-        final bool result = rawData['result'] ?? false;
-        final String code = rawData['code']?.toString() ?? "0";
-        final String message = rawData['message'] ?? "";
+        // Kiểm tra Server business logic theo cấu trúc mới: code == 0 là thành công
+        final int code = rawData['code'] is int ? rawData['code'] : (int.tryParse(rawData['code']?.toString() ?? "-1") ?? -1);
+        final String msg = rawData['msg']?.toString() ?? rawData['message']?.toString() ?? "";
 
-        if (result == true) {
-          // Thành công: Lấy trường 'data' bên trong để đưa cho Utility xử lý
+        if (code == 0) {
+          // Thành công: Trả về phần data bên trong
           return (rawData['data'], null);
         } else {
-          // Lỗi nghiệp vụ (VD: Sai mật khẩu)
-          return (null, NetworkError(int.tryParse(code) ?? 500, message));
+          // Lỗi nghiệp vụ từ Server
+          return (null, NetworkError(code, msg));
         }
       }
       return (null, NetworkError(500, "Invalid JSON wrapper format"));
@@ -161,23 +107,23 @@ class NetworkResponseDataMapper<T, M> {
     }
   }
 
-  /// Lấy trường 'data' và nhờ Utility parse thành Object
-  Future<(M? data, NetworkError? error)> toObject() async {
+  /// Parse trường 'data' thành một Object đơn
+  Future<ResultType<M>> toObject() async {
     final (innerData, error) = await _extractInnerData();
-    if (error != null) return (null, error); // Thoát sớm nếu việc bóc vỏ bị lỗi
+    if (error != null) return (data: null, error: error);
     return NetworkParsingUtils.parseToObject(innerData, mapper);
   }
 
-  /// Lấy trường 'data' và nhờ Utility parse thành List
-  Future<(List<M>? data, NetworkError? error)> toList() async {
+  /// Parse trường 'data' thành một Danh sách Object
+  Future<ResultType<List<M>>> toList() async {
     final (innerData, error) = await _extractInnerData();
-    if (error != null) return (null, error); // Thoát sớm nếu việc bóc vỏ bị lỗi
+    if (error != null) return (data: null, error: error);
     return NetworkParsingUtils.parseToList(innerData, mapper);
   }
 }
 
 extension NetworkMappingProjectChaining<T> on Future<Response<T>> {
-  /// Cung cấp hàm mapResponseTo() cho các API bọc cấu trúc NetworkResponse
+  /// Bắt đầu chuỗi xử lý cho các API có bọc cấu trúc {code, msg, data}
   NetworkResponseDataMapper<T, M> mapResponseTo<M>(JsonMapper<M> mapper) {
     return NetworkResponseDataMapper<T, M>(this, mapper);
   }
