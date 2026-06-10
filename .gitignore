@@ -51,6 +51,7 @@ app.*.map.json
 # =========================================================================
 # Gemini / General AI Context
 AI_CONTEXT.md
+AGENTS.md
 lib/utils/payment_gateway/PAYMENT_GUIDE.md
 gemini.md
 .ai/
