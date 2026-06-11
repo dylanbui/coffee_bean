@@ -204,6 +204,6 @@ class OrderConfirmationContentPrices extends StatelessWidget {
   }
 
   String _formatPrice(double price) {
-    return NumberToVietnamese.formatNumber(price, "đ") ?? "0 đ";
+    return NumberToVietnamese.formatNumber(price);
   }
 }

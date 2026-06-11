@@ -60,7 +60,7 @@ class FoodDetailSuggestedSection extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          NumberToVietnamese.formatNumber(item.price, "đ") ?? "",
+                          NumberToVietnamese.formatNumber(item.price),
                           style: const TextStyle(color: TMLabsColor.grey, fontSize: 11),
                         ),
                       ],

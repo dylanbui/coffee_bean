@@ -117,10 +117,7 @@ Future<void> _setupNetwork() async {
     interceptors: [
       chuck.dioInterceptor, 
       tokenInterceptor,
-      HeaderInterceptor(headers: {
-        'tenantId': '162',
-        // Bạn có thể thêm các tham số global khác ở đây trong tương lai
-      }),
+      HeaderInterceptor(headers: AppConfig().defaultHeaders),
     ],
   ));
 }

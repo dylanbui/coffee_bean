@@ -1,0 +1,190 @@
+import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
+import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_interactor.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:db_core/utils/tap_effect.dart';
+import 'package:flutter/material.dart';
+
+class VenueDetailMainContent extends StatelessWidget {
+  final VenueDetailState state;
+  final VenueDetailInteractor interactor;
+
+  const VenueDetailMainContent({
+    super.key,
+    required this.state,
+    required this.interactor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLegend(),
+        _buildBookingMatrix(),
+        _buildRulesSection(),
+      ],
+    );
+  }
+
+  Widget _buildLegend() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildLegendItem(Colors.white, "Còn trống", border: true),
+          const SizedBox(width: 16),
+          _buildLegendItem(TMLabsColor.primary, "Đã chọn"),
+          const SizedBox(width: 16),
+          _buildLegendItem(TMLabsColor.bgLight, "Đã hết chỗ"),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLegendItem(Color color, String text, {bool border = false}) {
+    return Row(
+      children: [
+        Container(
+          width: 30,
+          height: 16,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(4),
+            border: border ? Border.all(color: TMLabsColor.lightGrey) : null,
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(text, style: TMLabsTextStyle.caption.copyWith(fontSize: 10)),
+      ],
+    );
+  }
+
+  Widget _buildBookingMatrix() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Time Column
+          Container(
+            width: 60,
+            padding: const EdgeInsets.only(top: 40),
+            child: Column(
+              children: state.timeSlots.map((time) {
+                return SizedBox(
+                  height: 60,
+                  child: Center(
+                    child: Text(time, style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          // Courts Matrix
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Court Headers
+                  Row(
+                    children: state.courts.map((court) {
+                      return Container(
+                        width: 100,
+                        height: 32,
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        decoration: BoxDecoration(
+                          color: TMLabsColor.primary,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Center(
+                          child: Text(
+                            court.name,
+                            style: TMLabsTextStyle.small.copyWith(color: Colors.white),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 8),
+                  // Matrix Cells
+                  ...state.timeSlots.map((time) {
+                    return Row(
+                      children: state.courts.map((court) {
+                        final slot = state.allSlots.firstWhere(
+                          (s) => DateUtils.isSameDay(s.date, state.selectedDate) && s.courtId == court.id && s.time == time,
+                          orElse: () => VenueBookingSlot(date: state.selectedDate, courtId: court.id, time: time, price: 400000),
+                        );
+                        final isSelected = interactor.isSlotSelected(slot);
+                        final priceK = "${(slot.price / 1000).toInt()}K";
+
+                        return TapEffect(
+                          onTap: () => interactor.onSlotTapped(slot),
+                          child: Container(
+                            width: 100,
+                            height: 52,
+                            margin: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? TMLabsColor.primary
+                                  : (slot.isBooked ? TMLabsColor.bgLight : Colors.white),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: isSelected ? TMLabsColor.primary : TMLabsColor.bgLight,
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                slot.isBooked ? "" : priceK,
+                                style: TMLabsTextStyle.caption.copyWith(
+                                  color: isSelected ? Colors.white : TMLabsColor.grey,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRulesSection() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("Quy định đặt chỗ", style: TMLabsTextStyle.title),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            height: 200,
+            decoration: BoxDecoration(
+              color: TMLabsColor.bgLight,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: TMLabsColor.lightGrey.withValues(alpha: 0.5), style: BorderStyle.solid),
+            ),
+            child: Center(
+              child: Text(
+                "Giới thiệu quy tắc cố định bằng hình ảnh",
+                style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

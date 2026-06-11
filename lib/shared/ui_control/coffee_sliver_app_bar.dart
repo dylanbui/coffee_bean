@@ -34,6 +34,9 @@ class CoffeeSliverAppBar extends StatelessWidget {
   /// Cấu hình phong cách hiển thị (màu nền, màu chữ, icon quay lại, v.v.).
   final CoffeeAppBarStyleConfig style;
 
+  /// Widget tùy chỉnh cho background của FlexibleSpaceBar.
+  final Widget? background;
+
   /// Hàm gọi lại khi nhấn vào nút quay lại mặc định.
   final VoidCallback? onBackTap;
   
@@ -57,6 +60,7 @@ class CoffeeSliverAppBar extends StatelessWidget {
     this.leading,
     this.hideBackButton = false,
     this.imageUrl,
+    this.background,
     this.expandedHeight = 200.0,
     this.style = const CoffeeAppBarStyleConfig(),
     this.onBackTap,
@@ -70,11 +74,11 @@ class CoffeeSliverAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     // Kiểm tra trạng thái trong suốt của AppBar
     final isTransparent = style.backgroundColor == Colors.transparent;
-    // Kiểm tra xem có cung cấp hình ảnh hay không
-    final bool hasImage = imageUrl != null && imageUrl!.isNotEmpty;
+    // Kiểm tra xem có cung cấp hình ảnh hoặc background hay không
+    final bool hasImage = (imageUrl != null && imageUrl!.isNotEmpty) || background != null;
 
     return SliverAppBar(
-      // Nếu có ảnh thì mở rộng chiều cao, nếu không thì dùng chiều cao mặc định
+      // Nếu có ảnh hoặc background thì mở rộng chiều cao, nếu không thì dùng chiều cao mặc định
       expandedHeight: hasImage ? expandedHeight : null,
       pinned: pinned,
       floating: floating,
@@ -119,10 +123,12 @@ class CoffeeSliverAppBar extends StatelessWidget {
                     )
                   : null),
               centerTitle: style.centerTitle,
-              titlePadding: const EdgeInsets.only(left: 56, bottom: 16),
-              background: imageUrl!.startsWith('http')
+              titlePadding: style.centerTitle 
+                  ? const EdgeInsets.only(bottom: 16) 
+                  : const EdgeInsets.only(left: 56, bottom: 16),
+              background: background ?? (imageUrl!.startsWith('http')
                   ? DbCachedImageWidget(imageUrl: imageUrl!, fit: BoxFit.cover, borderRadius: 0)
-                  : Image.asset(imageUrl!, fit: BoxFit.cover),
+                  : Image.asset(imageUrl!, fit: BoxFit.cover)),
             )
           : (title != null || titleWidget != null
               ? FlexibleSpaceBar(
@@ -132,6 +138,9 @@ class CoffeeSliverAppBar extends StatelessWidget {
                         TextStyle(color: style.foregroundColor, fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   centerTitle: style.centerTitle,
+                  titlePadding: style.centerTitle 
+                      ? const EdgeInsets.only(bottom: 16) 
+                      : const EdgeInsets.only(left: 56, bottom: 16),
                 )
               : null),
     );

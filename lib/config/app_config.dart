@@ -18,25 +18,38 @@ class AppConfig {
   String email = "";
   String username = "";
 
+  Map<String, String> defaultHeaders = {
+    'tenantId': '162',
+  };
+
   void init(Environment env) {
     switch (env) {
       case Environment.dev:
         path = "dev path";
-        url = "https://api.escuelajs.co/api/v1";
+        url = "https://inter.tmlabs.ai";
         email = "dev email";
         username = "dev username";
+        defaultHeaders = {
+          'tenantId': '162',
+        };
         break;
       case Environment.test:
         path = "test path";
         url = "test url";
         email = "test email";
         username = "test username";
+        defaultHeaders = {
+          'tenantId': '162',
+        };
         break;
       case Environment.production:
         path = "production path";
         url = "production url";
         email = "production email";
         username = "production username";
+        defaultHeaders = {
+          'tenantId': '162',
+        };
         break;
     }
   }

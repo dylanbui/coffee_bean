@@ -68,7 +68,7 @@ class ShoppingFooter extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        NumberToVietnamese.formatNumber(totalPrice, "đ") ?? "0 đ",
+                        NumberToVietnamese.formatNumber(totalPrice),
                         style: TMLabsTextStyle.title.copyWith(color: TMLabsColor.white, fontWeight: FontWeight.bold),
                       ),
                       const Text(

@@ -170,7 +170,7 @@ class _CourseListPageState extends AppCubitState<CourseListPage, CourseListInter
                   ),
                   const Spacer(),
                   Text(
-                    NumberToVietnamese.formatNumber(item.price, "vnd") ?? "0 vnd",
+                    NumberToVietnamese.formatNumber(item.price),
                     style: TMLabsTextStyle.title.copyWith(
                       fontSize: 16,
                       color: Colors.black,

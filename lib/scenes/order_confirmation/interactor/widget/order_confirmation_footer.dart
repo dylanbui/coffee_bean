@@ -35,7 +35,7 @@ class OrderConfirmationFooter extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    NumberToVietnamese.formatNumber(displayAmount, "đ") ?? "0 đ",
+                    NumberToVietnamese.formatNumber(displayAmount),
                     style: TMLabsTextStyle.h2.copyWith(fontWeight: FontWeight.w900),
                   ),
                   if (isLoggedIn && state.promotion.couponDiscount > 0)

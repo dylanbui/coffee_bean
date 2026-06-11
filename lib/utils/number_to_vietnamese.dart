@@ -78,9 +78,9 @@ class NumberToVietnamese {
     }
   }
 
-  static String? formatNumber(double? price, String? subfix) {
+  static String formatNumber(double? price, {String subfix = "đ"}) {
     if (price == null) {
-      return null;
+      return "";
     }
     var format = NumberFormat("#,###", "vi_VN");
     return "${format.format(price).replaceAll(",", ".")} ${subfix ?? ""}";

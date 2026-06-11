@@ -66,7 +66,7 @@ class OrderConfirmationContentItems extends StatelessWidget {
                           Text("x${item.quantity}",
                               style: TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.bold)),
                           Text(
-                            NumberToVietnamese.formatNumber(item.totalPrice, "đ") ?? "0 đ",
+                            NumberToVietnamese.formatNumber(item.totalPrice),
                             style: TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ],

@@ -36,7 +36,7 @@ class FoodDetailFooter extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      NumberToVietnamese.formatNumber(state.totalPrice, "đ") ?? "",
+                      NumberToVietnamese.formatNumber(state.totalPrice),
                       style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: TMLabsColor.primary),
                     ),
                     _buildStepping(state),

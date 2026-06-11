@@ -60,7 +60,7 @@ class ShoppingProductItem extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        NumberToVietnamese.formatNumber(product.price, "đ") ?? "",
+                        NumberToVietnamese.formatNumber(product.price),
                         style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
                       ),
                     ],

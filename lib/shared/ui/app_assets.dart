@@ -54,7 +54,7 @@ class _Icons {
   final String icCheckboxBg = 'assets/icons/ic_checkbox_bg.svg';
   final String icGoldCoin = 'assets/icons/ic_gold_coin.svg';
   final String icGrayCoin = 'assets/icons/ic_gray_coin.svg';
-
+  final String icDanDuong = 'assets/icons/ic_dan_duong.svg';
 
 
 }
