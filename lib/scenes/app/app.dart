@@ -7,12 +7,16 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'dart:async';
+
 import 'package:chuck_interceptor/chuck_interceptor.dart';
 import 'package:coffee_bean/data/repository/activity_repository.dart';
 import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/flash_dialog_provider.dart';
 import 'package:coffee_bean/shared/ui/flash_toast_provider.dart';
+import 'package:coffee_bean/shared/widget/offline_widget.dart';
+import 'package:db_core/utils/network_checker.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:db_core/architecture_ribs/navigator.dart';
 import 'package:db_core/network/network_client.dart';
@@ -163,65 +167,108 @@ Future<void> _setupUiUtils() async {
   TMLabsDialogStyleProvider.init();
 }
 
-// Run GOOD
-// class App extends StatefulWidget {
-//   const App({super.key});
-//
-//   @override
-//   State<App> createState() => _AppState();
-// }
-//
-// class _AppState extends State<App> {
-//   // Khởi tạo instance duy nhất ở đây
-//   // late final AppBuildable _appBuilder;
-//
-//   late final AppBuilder _appBuilder;
-//   late final AppRouter _appRouter;
-//
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _appBuilder = AppBuilder();
-//     _appRouter = _appBuilder.build();
-//
-//     _appBuilder.startApp();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       navigatorKey: DbNavigator.globalNavigatorState,
-//       title: 'Coffee Bean',
-//       theme: ThemeData(primarySwatch: Colors.blue),
-//       home: _appRouter.viewController,
-//     );
-//   }
-// }
+/// -------------------------
+/// Main APP
+/// -------------------------
 
 
-class App extends StatelessWidget {
-
+class App extends StatefulWidget {
   final AppBuilder _appBuilder = AppBuilder();
   late final _appRouter = _appBuilder.build();
 
   App({super.key}) {
-    // Run sync data
     _appBuilder.startApp();
   }
 
-  // This widget is the root of your application.
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  late final DbNetworkChecker _checker;
+  bool _isOffline = false;
+  StreamSubscription? _sub;
+
+  @override
+  void initState() {
+    super.initState();
+    _checker = DbNetworkChecker();
+    _checker.start();
+
+    _sub = _checker.stream.listen((status) {
+      if (status is DbNetworkStatusOffline) {
+        if (!_isOffline) setState(() => _isOffline = true);
+      } else {
+        if (_isOffline) {
+          setState(() => _isOffline = false);
+          _refreshCurrentPage();
+        }
+      }
+    });
+  }
+
+  void _refreshCurrentPage() {
+    _checker.recheck();
+
+    final context = DbNavigator.globalNavigatorState.currentContext;
+    if (context != null) {
+      // Ví dụ: gọi Bloc hoặc interactor để refresh
+      // BlocProvider.of<ReservationListInteractor>(context).onRefresh();
+    }
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    _checker.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // Connect GlobalKey from Router to Flutter Navigator
       navigatorKey: DbNavigator.globalNavigatorState,
       title: 'Coffee Bean',
-      theme: ThemeData(primarySwatch: Colors.blue,),
-      home: _appRouter.viewController,
+      theme: ThemeData(primarySwatch: Colors.blue),
+      // Sử dụng builder để OfflineWidget che phủ TẤT CẢ mọi thứ (kể cả Dialog/Modal)
+      builder: (context, child) {
+        return Stack(
+          children: [
+            if (child != null) child,
+            if (_isOffline)
+              OfflineWidget(onRetry: _refreshCurrentPage),
+          ],
+        );
+      },
+      home: widget._appRouter.viewController,
     );
   }
 }
+
+
+// RUN GOOD
+// class App extends StatelessWidget {
+//
+//   final AppBuilder _appBuilder = AppBuilder();
+//   late final _appRouter = _appBuilder.build();
+//
+//   App({super.key}) {
+//     // Run sync data
+//     _appBuilder.startApp();
+//   }
+//
+//   // This widget is the root of your application.
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       // Connect GlobalKey from Router to Flutter Navigator
+//       navigatorKey: DbNavigator.globalNavigatorState,
+//       title: 'Coffee Bean',
+//       theme: ThemeData(primarySwatch: Colors.blue,),
+//       home: _appRouter.viewController,
+//     );
+//   }
+// }
 
 
 //

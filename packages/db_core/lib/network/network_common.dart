@@ -11,6 +11,8 @@ import 'package:db_core/commons_constants.dart';
 import 'package:db_core/network/network_client.dart';
 import 'package:dio/dio.dart';
 
+export 'package:db_core/network/network_utils.dart';
+
 typedef ResultType<T> = ({T? data, NetworkError? error});
 
 // Define JSON parse for Object

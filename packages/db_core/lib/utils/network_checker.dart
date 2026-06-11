@@ -44,10 +44,10 @@ class DbNetworkChecker {
         _sub = _connectivity.onConnectivityChanged.listen((results) async {
             await _handleConnectivity(results);
         });
-        _initCheck();
+        recheck();
     }
 
-    Future<void> _initCheck() async {
+    Future<void> recheck() async {
         final results = await _connectivity.checkConnectivity();
         await _handleConnectivity(results);
     }
@@ -58,7 +58,7 @@ class DbNetworkChecker {
             return;
         }
 
-        final hasInternet = await _hasInternet();
+        final hasInternet = await checkInternet();
         if (!hasInternet) {
             _emit(DbNetworkStatusOffline());
             return;
@@ -71,7 +71,8 @@ class DbNetworkChecker {
         _emit(DbNetworkStatusOnline(result));
     }
 
-    Future<bool> _hasInternet() async {
+    /// Kiểm tra internet thực tế (Public method để gọi thủ công)
+    Future<bool> checkInternet() async {
         try {
             final request = await _client.getUrl(testUri);
             final response = await request.close().timeout(const Duration(seconds: 5));
