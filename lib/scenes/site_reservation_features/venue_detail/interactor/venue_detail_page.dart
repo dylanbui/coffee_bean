@@ -205,7 +205,7 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
                   height: 26,
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   mainAxisSize: MainAxisSize.min,
-                  onPressed: () {},
+                  onPressed: interactor.onOpenMapTap,
                 ),
               ],
             ),

@@ -99,6 +99,10 @@ class VenueDetailInteractor extends CubitInteractor<VenueDetailRoutable, VenueDe
     router?.pop();
   }
 
+  void onOpenMapTap() {
+    router?.openMap("84a Nguyễn Cửu Vân, phường Gia Định, tp.HCM");
+  }
+
   void onBookingConfirm() {
     if (state.selectedSlots.isEmpty) {
       iLog("No slots selected");

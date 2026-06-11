@@ -4,10 +4,12 @@ import 'package:coffee_bean/scenes/site_reservation_features/venue_payment/inter
 import 'package:coffee_bean/scenes/site_reservation_features/venue_payment/venue_payment_builder.dart';
 import 'package:db_core/architecture_ribs/note_builder.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // ROUTABLE
 abstract class VenueDetailRoutable implements DbNoteRoutable {
   void openVenuePayment(VenuePaymentParams params);
+  void openMap(String address);
 }
 
 
@@ -21,6 +23,18 @@ class VenueDetailRouter extends DbNoteRouter implements VenueDetailRoutable {
     // Actually, following the project's DI pattern:
     final nextRouter = builder.build();
     navigator.push(nextRouter.viewController);
+  }
+
+  @override
+  void openMap(String address) async {
+    final Uri googleMapsUrl = Uri.parse("https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}");
+    final Uri appleMapsUrl = Uri.parse("http://maps.apple.com/?q=${Uri.encodeComponent(address)}");
+
+    if (await canLaunchUrl(googleMapsUrl)) {
+      await launchUrl(googleMapsUrl);
+    } else if (await canLaunchUrl(appleMapsUrl)) {
+      await launchUrl(appleMapsUrl);
+    }
   }
 }
 
