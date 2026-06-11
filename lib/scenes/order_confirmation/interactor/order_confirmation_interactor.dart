@@ -2,6 +2,7 @@ import 'package:coffee_bean/config/app_pref.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
+import 'package:coffee_bean/data/model/payment_domain.dart';
 import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
 import 'package:coffee_bean/scenes/coupon_list/interactor/coupon_list_interactor.dart';
 import 'package:coffee_bean/scenes/order_confirmation/interactor/order_confirmation_event_state.dart';

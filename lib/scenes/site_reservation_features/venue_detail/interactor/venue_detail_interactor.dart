@@ -1,5 +1,6 @@
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/venue_detail_builder.dart';
+import 'package:coffee_bean/scenes/site_reservation_features/venue_payment/interactor/venue_payment_event_state.dart';
 import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 
@@ -99,10 +100,20 @@ class VenueDetailInteractor extends CubitInteractor<VenueDetailRoutable, VenueDe
   }
 
   void onBookingConfirm() {
+    if (state.selectedSlots.isEmpty) {
+      iLog("No slots selected");
+      return;
+    }
 
+    final params = VenuePaymentParams(
+      venueName: state.selectedTab,
+      imageUrl: "https://images.unsplash.com/photo-1599423088114-f81d83764835?q=80&w=2670&auto=format&fit=crop", // Mock image
+      address: "Sân Nguyễn Cửu Vân, phường Gia Định, TP HCM",
+      openingHours: "6h00' - 23h00'",
+      selectedSlots: state.selectedSlots,
+      courts: state.courts,
+    );
 
-
-    // Handle booking
-    iLog("Confirmed booking for ${state.selectedSlots.length} slots. Total: ${state.totalAmount}");
+    router?.openVenuePayment(params);
   }
 }

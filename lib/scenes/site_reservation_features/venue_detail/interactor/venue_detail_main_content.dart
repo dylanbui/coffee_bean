@@ -138,7 +138,7 @@ class VenueDetailMainContent extends StatelessWidget {
                             ),
                             child: Center(
                               child: Text(
-                                slot.isBooked ? "" : priceK,
+                                slot.isBooked ? "Đã được đặt" : priceK,
                                 style: TMLabsTextStyle.caption.copyWith(
                                   color: isSelected ? Colors.white : TMLabsColor.grey,
                                   fontWeight: FontWeight.w600,

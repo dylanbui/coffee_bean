@@ -112,9 +112,7 @@ class _ReservationListPageState
 
   Widget _buildReservationItem(BuildContext context, TblReservation item) {
     return TapEffect(
-      onTap: () {
-        FlashToastHelper.info(context, "ID: ${item.serverId}", title: item.name, position: FlashPosition.bottom);
-      },
+      onTap: () => interactor.onVenueTapped(item),
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(

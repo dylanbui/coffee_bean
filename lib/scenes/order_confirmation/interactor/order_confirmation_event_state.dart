@@ -1,8 +1,6 @@
-import 'package:db_core/state_management/lib_bloc/constants.dart';
+import 'package:coffee_bean/data/model/payment_domain.dart';
+import 'package:db_core/db_core.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
-import 'package:equatable/equatable.dart';
-
-enum DeliveryMethod { dineIn, takeAway }
 
 enum OrderConfirmationStatus { confirming, processing, success, failure }
 
@@ -35,66 +33,6 @@ class UIStatus extends Equatable {
   List<Object?> get props => [isLoading, processingMessage, successMessageKey];
 }
 
-class OrderPromotion extends Equatable {
-  final String? selectedCoupon;
-  final double couponDiscount;
-  final int usedPoints;
-  final double pointsDiscount;
-
-  const OrderPromotion({
-    this.selectedCoupon,
-    this.couponDiscount = 0,
-    this.usedPoints = 4500,
-    this.pointsDiscount = 4000,
-  });
-
-  double get totalDiscount => couponDiscount + pointsDiscount;
-
-  OrderPromotion copyWith({
-    String? selectedCoupon,
-    double? couponDiscount,
-    int? usedPoints,
-    double? pointsDiscount,
-  }) {
-    return OrderPromotion(
-      selectedCoupon: selectedCoupon ?? this.selectedCoupon,
-      couponDiscount: couponDiscount ?? this.couponDiscount,
-      usedPoints: usedPoints ?? this.usedPoints,
-      pointsDiscount: pointsDiscount ?? this.pointsDiscount,
-    );
-  }
-
-  @override
-  List<Object?> get props => [selectedCoupon, couponDiscount, usedPoints, pointsDiscount];
-}
-
-class CheckoutPreferences extends Equatable {
-  final String paymentMethodKey;
-  final DeliveryMethod deliveryMethod;
-  final String note;
-
-  const CheckoutPreferences({
-    this.paymentMethodKey = 'cash',
-    this.deliveryMethod = DeliveryMethod.dineIn,
-    this.note = '',
-  });
-
-  CheckoutPreferences copyWith({
-    String? paymentMethodKey,
-    DeliveryMethod? deliveryMethod,
-    String? note,
-  }) {
-    return CheckoutPreferences(
-      paymentMethodKey: paymentMethodKey ?? this.paymentMethodKey,
-      deliveryMethod: deliveryMethod ?? this.deliveryMethod,
-      note: note ?? this.note,
-    );
-  }
-
-  @override
-  List<Object?> get props => [paymentMethodKey, deliveryMethod, note];
-}
-
 // --- MAIN STATE ---
 
 class OrderConfirmationState extends BaseBlocState {
@@ -104,7 +42,7 @@ class OrderConfirmationState extends BaseBlocState {
   final List<TblCartItem> cartItems;
 
   final UIStatus uiStatus;
-  final OrderPromotion promotion;
+  final CheckoutPromotion promotion;
   final CheckoutPreferences preferences;
 
   OrderConfirmationState({
@@ -113,7 +51,7 @@ class OrderConfirmationState extends BaseBlocState {
     this.selectedStore,
     this.cartItems = const [],
     this.uiStatus = const UIStatus(),
-    this.promotion = const OrderPromotion(),
+    this.promotion = const CheckoutPromotion(),
     this.preferences = const CheckoutPreferences(),
   });
 
@@ -132,7 +70,7 @@ class OrderConfirmationState extends BaseBlocState {
     TblStore? selectedStore,
     List<TblCartItem>? cartItems,
     UIStatus? uiStatus,
-    OrderPromotion? promotion,
+    CheckoutPromotion? promotion,
     CheckoutPreferences? preferences,
   }) {
     return OrderConfirmationState(

@@ -5,10 +5,10 @@ import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:db_core/utils/locator.dart';
 
-class ReservationListInteractor extends CubitInteractor<ReservationListRouter, ReservationListState> {
+class ReservationListInteractor extends CubitInteractor<ReservationListRoutable, ReservationListState> {
   final ReservationRepository _repository = locator<ReservationRepository>();
 
-  ReservationListInteractor(ReservationListRouter router)
+  ReservationListInteractor(ReservationListRoutable router)
       : super(const ReservationListInitial(), router: router);
 
   @override
@@ -66,5 +66,9 @@ class ReservationListInteractor extends CubitInteractor<ReservationListRouter, R
 
   void onCategorySelected(TblCategory? category) {
     fetchReservations(selectedCategory: category);
+  }
+
+  void onVenueTapped(TblReservation venue) {
+    router?.openVenueDetail(venue);
   }
 }

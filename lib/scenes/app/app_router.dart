@@ -3,6 +3,8 @@
 
 import 'package:coffee_bean/config/app_pref.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
+import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
+import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/scenes/coupon_list/coupon_list_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/course_list_builder.dart';
 import 'package:coffee_bean/scenes/event_features/activity_list/activity_list_builder.dart';
@@ -13,6 +15,9 @@ import 'package:coffee_bean/scenes/point_features/point_task/point_task_builder.
 import 'package:coffee_bean/scenes/rib_samples/dialog_demo/dialog_demo_builder.dart';
 import 'package:coffee_bean/scenes/rib_samples/flash_demo/flash_demo_builder.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/venue_detail_builder.dart';
+import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
+import 'package:coffee_bean/scenes/site_reservation_features/venue_payment/interactor/venue_payment_event_state.dart';
+import 'package:coffee_bean/scenes/site_reservation_features/venue_payment/venue_payment_builder.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/user_register_builder.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_builder.dart';
@@ -30,15 +35,62 @@ class AppRouter extends DbNoteRouter {
     // Set default store id to match mock data
     AppPrefs().setSelectedStoreId(3);
 
+    // --- GIẢ LẬP ĐĂNG NHẬP (Bật/Tắt dòng dưới để test Guest/Member) ---
+    await _simulateLogin();
+
     // Load trang dau tien
-    // MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
-    // final router = mainTabbarBuilder.build();
-    // navigator.pushSameRootPage(router.viewController);
+    MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
+    final router = mainTabbarBuilder.build();
+    navigator.pushSameRootPage(router.viewController);
+
+    // --- TẠO DỮ LIỆU MOCK ĐỂ TEST UI VENUE PAYMENT ---
+    // final params = VenuePaymentParams(
+    //   venueName: "Sân Pickle ball",
+    //   imageUrl: "https://images.unsplash.com/photo-1599423088114-f81d83764835?q=80&w=2670&auto=format&fit=crop",
+    //   address: "27 Nguyễn Cửu Vân, phường Gia Định, TP HCM",
+    //   openingHours: "6h00' - 23h00'",
+    //   selectedSlots: [
+    //     VenueBookingSlot(
+    //       date: DateTime.now(),
+    //       courtId: "vip2",
+    //       time: "07:00 - 8:00",
+    //       price: 400000,
+    //     ),
+    //     VenueBookingSlot(
+    //       date: DateTime.now(),
+    //       courtId: "std1",
+    //       time: "09:00 - 10:00",
+    //       price: 300000,
+    //     ),
+    //     VenueBookingSlot(
+    //       date: DateTime.now(),
+    //       courtId: "std2",
+    //       time: "14:00 - 15:00",
+    //       price: 300000,
+    //     ),
+    //     VenueBookingSlot(
+    //       date: DateTime.now(),
+    //       courtId: "vip1",
+    //       time: "19:00 - 20:00",
+    //       price: 450000,
+    //     ),
+    //   ],
+    //   courts: [
+    //     const VenueCourtModel(id: 'vip2', name: 'VIP 2'),
+    //     const VenueCourtModel(id: 'vip1', name: 'VIP 1'),
+    //     const VenueCourtModel(id: 'std1', name: 'Sân 1'),
+    //     const VenueCourtModel(id: 'std2', name: 'Sân 2'),
+    //   ],
+    // );
+    //
+    // final builder = VenuePaymentBuilder(params);
+    // navigator.pushSameRootPage(builder.build().viewController);
+
 
     // await dataTestOrderConfirmationBuilder();
     // Điều hướng đến màn hình xác nhận đơn hàng
-    final builder = VenueDetailBuilder();
-    navigator.pushSameRootPage(builder.build().viewController);
+    // final builder = VenueDetailBuilder();
+    // navigator.pushSameRootPage(builder.build().viewController);
 
     // final builder = DailySignInBuilder();
     // final builder = MyPointListBuilder();
@@ -56,6 +108,17 @@ class AppRouter extends DbNoteRouter {
 
     // final builder = ShoppingBuilder();
     // navigator.pushSameRootPage(builder.build().viewController);
+  }
+
+  Future<void> _simulateLogin() async {
+    final mockUser = UserSession(
+      id: 1,
+      userName: "dylanbui",
+      fullName: "Dylan Bui",
+      email: "dylan@example.com",
+      accessToken: "mock_access_token",
+    );
+    await UserManager().saveSession(mockUser);
   }
 
   Future<void> dataTestOrderConfirmationBuilder() async {

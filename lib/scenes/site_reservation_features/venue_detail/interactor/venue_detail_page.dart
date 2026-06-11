@@ -158,7 +158,7 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
           const SizedBox(height: 16),
           Container(
             height: 64,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
               color: TMLabsColor.bgLight,
               borderRadius: BorderRadius.circular(12),
@@ -196,10 +196,15 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
                 ),
                 AppButton(
                   text: "Dẫn đường",
-                  style: TMLabsButtonStyle.primary.copyWith(borderRadius: 20),
+                  style: TMLabsButtonStyle.primary.copyWith(
+                    borderRadius: 13,
+                    textStyle: TMLabsTextStyle.small.copyWith(color: Colors.white),
+                  ),
                   leftIcon: AppIcon(AppAssets.icons.icDanDuong, size: 14),
-                  width: 120,
-                  height: 36,
+                  width: 100,
+                  height: 26,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  mainAxisSize: MainAxisSize.min,
                   onPressed: () {},
                 ),
               ],
