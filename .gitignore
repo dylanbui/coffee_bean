@@ -52,9 +52,12 @@ app.*.map.json
 # Gemini / General AI Context
 AI_CONTEXT.md
 AGENTS.md
+docs/
 lib/utils/payment_gateway/PAYMENT_GUIDE.md
 gemini.md
 .ai/
+# API interfaces
+*_OpenAPI.json
 
 # Cursor AI Editor
 .cursor/

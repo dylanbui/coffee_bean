@@ -46,6 +46,11 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
   void initState() {
     super.initState();
     _registerController = RegisterController();
+    // Set default values for testing
+    _registerController.phoneController.text = "0988123456";
+    _registerController.smsController.text = "9999";
+    _registerController.countryCode = "+84";
+    _registerController.isAgreed = true;
   }
 
   @override

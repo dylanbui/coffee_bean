@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/data/model/response/point_breakdown.dart';
 import 'package:flutter/services.dart';
 import 'package:db_core/network/base_repository.dart';
@@ -9,6 +10,14 @@ import 'package:coffee_bean/data/network/network_response.dart';
 /// A repository that handles user related API requests.
 class UserRepository extends BaseRepository {
   UserRepository({super.client});
+
+  /// Lấy thông tin cá nhân (Profile)
+  Future<ResultType<UserInfo>> getUserInfo() async {
+    return await networkClient
+        .request('/app-api/member/user/get', type: NetworkType.get)
+        .mapResponseTo(UserInfo.fromJson)
+        .toObject();
+  }
 
   /// Lấy danh sách users (Sử dụng cấu trúc Wrapper Project)
   Future<ResultType<List<User>>> fetchUsers() async {

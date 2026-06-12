@@ -65,7 +65,7 @@ class NetworkClient {
   }
 
   /// Do Request
-  Future<Response<T>> _executeRequest<T>(String url, NetworkType type, Object? requestData, Options? options, bool isPublic) {
+  Future<Response<T>> _executeRequest<T>(String url, NetworkType type, Object? requestData, Map<String, dynamic>? queryParameters, Options? options, bool isPublic) {
     // Logic GET use queryParameters, other use data
     final isGet = type == NetworkType.get;
 
@@ -84,7 +84,7 @@ class NetworkClient {
       url,
       data: isGet ? null : requestData,
       // Cast an toàn sang Map<String, dynamic> cho QueryParams của Dio
-      queryParameters: isGet && requestData is Map<String, dynamic> ? requestData : null,
+      queryParameters: queryParameters ?? (isGet && requestData is Map<String, dynamic> ? requestData : null),
       options: finalOptions,
     );
   }
@@ -93,9 +93,9 @@ class NetworkClient {
 
   /// Đây là hàm trung tâm mới thay thế cho makeCall.
   /// Nó trả về Future<Response<T>> để các Extension có thể "chain" vào.
-  Future<Response<T>> request<T>(String url, {NetworkType type = NetworkType.get, Object? params, Options? options, bool isPublic = false}) {
+  Future<Response<T>> request<T>(String url, {NetworkType type = NetworkType.get, Object? params, Map<String, dynamic>? queryParameters, Options? options, bool isPublic = false}) {
     final requestData = _extractRequestData(params);
-    return _executeRequest<T>(url, type, requestData, options, isPublic);
+    return _executeRequest<T>(url, type, requestData, queryParameters, options, isPublic);
   }
 
   // --- RETRY LOGIC (Dành cho Interceptor) ---

@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
+import 'package:coffee_bean/data/repository/auth_repository.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_helper.dart';
 import 'package:db_core/commons_constants.dart';
 import 'package:db_core/services/event_bus.dart';
@@ -16,22 +18,24 @@ import 'package:flutter/cupertino.dart';
 abstract class MyProfileState extends BaseBlocState {
   final bool isLoggedIn;
   final bool isCheckedIn;
-  final UserSession? user;
-  MyProfileState({this.isLoggedIn = false, this.isCheckedIn = false, this.user});
+  final UserSession? session;
+  final UserInfo? userInfo;
+  MyProfileState({this.isLoggedIn = false, this.isCheckedIn = false, this.session, this.userInfo});
 
   @override
-  List<Object?> get props => [isLoggedIn, isCheckedIn, user];
+  List<Object?> get props => [isLoggedIn, isCheckedIn, session, userInfo];
 }
 
 class MyProfileInitial extends MyProfileState {
-  MyProfileInitial() : super(isLoggedIn: false, isCheckedIn: false, user: null);
+  MyProfileInitial() : super(isLoggedIn: false, isCheckedIn: false, session: null, userInfo: null);
 }
 
 class MyProfileLoaded extends MyProfileState {
-  MyProfileLoaded({required super.isLoggedIn, super.isCheckedIn, super.user});
+  MyProfileLoaded({required super.isLoggedIn, super.isCheckedIn, super.session, super.userInfo});
 }
 
 class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileState> implements UserAuthFlowListener {
+  final _authRepo = AuthRepository();
 
   MyProfileInteractor(MyProfileRoutable router) : super(MyProfileInitial(), router: router);
 
@@ -50,7 +54,8 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
     emit(MyProfileLoaded(
       isLoggedIn: UserManager().isLogin,
       isCheckedIn: state.isCheckedIn,
-      user: UserManager().currentUser,
+      session: UserManager().currentUser,
+      userInfo: UserManager().userInfo,
     ));
   }
 
@@ -59,14 +64,19 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
     emit(MyProfileLoaded(
       isLoggedIn: state.isLoggedIn,
       isCheckedIn: !state.isCheckedIn,
-      user: state.user,
+      session: state.session,
+      userInfo: state.userInfo,
     ));
   }
 
   void doLogout() async {
+    // Gọi API logout của server
+    await _authRepo.logout();
+    
+    // Xóa sạch dữ liệu local
     await UserManager().doLogoutAndClearAll();
-    // Bắn event logout cho toàn hệ thống.
-    // Listener AuthEvent sẽ tự động gọi checkLoginStatus() để cập nhật UI.
+    
+    // Bắn event logout cho toàn hệ thống
     locator<DbEventBus>().fire(UserLogoutEvent());
 
     router?.doLogout();
@@ -79,7 +89,6 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
   void onAuthFlowSuccess(UserSession userData) {
     debugPrint("Auth Flow Success - Reload Profile Data");
     // Chỉ cần bắn event. Listener trong onDidBecomeActive sẽ tự động gọi checkLoginStatus()
-    // Điều này tránh việc checkLoginStatus() bị chạy 2 lần.
     locator<DbEventBus>().fire(UserLoginSuccessEvent(userData));
   }
 

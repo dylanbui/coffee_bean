@@ -55,6 +55,7 @@ class _Icons {
   final String icGoldCoin = 'assets/icons/ic_gold_coin.svg';
   final String icGrayCoin = 'assets/icons/ic_gray_coin.svg';
   final String icDanDuong = 'assets/icons/ic_dan_duong.svg';
+  final String icLogout = 'assets/icons/ic_system.svg'; // Temporary
 
 
 }

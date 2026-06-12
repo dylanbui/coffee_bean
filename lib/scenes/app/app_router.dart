@@ -36,7 +36,7 @@ class AppRouter extends DbNoteRouter {
     AppPrefs().setSelectedStoreId(3);
 
     // --- GIẢ LẬP ĐĂNG NHẬP (Bật/Tắt dòng dưới để test Guest/Member) ---
-    await _simulateLogin();
+    // await _simulateLogin();
 
     // Load trang dau tien
     MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
@@ -113,9 +113,6 @@ class AppRouter extends DbNoteRouter {
   Future<void> _simulateLogin() async {
     final mockUser = UserSession(
       id: 1,
-      userName: "dylanbui",
-      fullName: "Dylan Bui",
-      email: "dylan@example.com",
       accessToken: "mock_access_token",
     );
     await UserManager().saveSession(mockUser);

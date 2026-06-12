@@ -16,7 +16,7 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
-    final user = interactor.state.user;
+    final userInfo = interactor.state.userInfo;
     
     return Container(
       color: TMLabsColor.bgMain,
@@ -26,13 +26,13 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
             SizedBox(height: topPadding),
             MemberCardWidget(
               style: MemberCardStyle.diamond,
-              name: user?.fullName ?? user?.userName ?? 'MEMBER',
-              id: user?.id.toString() ?? '---',
-              voucherCount: '5', // Mock data, should be from user or separate service
-              points: '1998',    // Mock data
-              rankName: 'Hạng Lục Bảo', // Mock data
-              className: 'Class A',    // Mock data
-              avatarUrl: user?.avatarUrl,
+              name: userInfo?.nickname ?? 'MEMBER',
+              id: userInfo?.id.toString() ?? '---',
+              voucherCount: '0', // TODO: Cần API voucher
+              points: userInfo?.point.toString() ?? '0',
+              rankName: userInfo?.level?.name ?? '---',
+              className: '---', // TODO: Cần API class
+              avatarUrl: userInfo?.avatar,
               padding: const EdgeInsets.only(top: 24, left: 20, right: 20),
             ),
             const SizedBox(height: 16),
@@ -47,6 +47,8 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 20),
               onTap: () {},
             ),
+            const SizedBox(height: 16),
+            _buildLogoutButton(),
             const SizedBox(height: 32),
           ],
         ),
@@ -166,6 +168,16 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildLogoutButton() {
+    return AppSelectionRow(
+      leadingIcon: AppAssets.icons.icLogout, // TODO: Cần icLogout trong Assets
+      title: 'Đăng xuất',
+      trailingIcon: AppAssets.icons.icArrowRightNone,
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      onTap: () => interactor.doLogout(),
     );
   }
 }

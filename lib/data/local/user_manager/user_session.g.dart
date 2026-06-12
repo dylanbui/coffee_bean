@@ -8,10 +8,6 @@ part of 'user_session.dart';
 
 UserSession _$UserSessionFromJson(Map<String, dynamic> json) => UserSession(
   id: (json['id'] as num).toInt(),
-  userName: json['userName'] as String?,
-  email: json['email'] as String?,
-  avatarUrl: json['avatarUrl'] as String?,
-  fullName: json['fullName'] as String?,
   accessToken: json['accessToken'] as String?,
   refreshToken: json['refreshToken'] as String?,
 );
@@ -19,10 +15,6 @@ UserSession _$UserSessionFromJson(Map<String, dynamic> json) => UserSession(
 Map<String, dynamic> _$UserSessionToJson(UserSession instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'userName': instance.userName,
-      'email': instance.email,
-      'avatarUrl': instance.avatarUrl,
-      'fullName': instance.fullName,
       'accessToken': instance.accessToken,
       'refreshToken': instance.refreshToken,
     };

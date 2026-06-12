@@ -12,33 +12,28 @@ import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/user_auth_features/set_password/interactor/set_password_interactor.dart';
 import 'package:coffee_bean/scenes/user_auth_features/set_password/interactor/set_password_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 // --- ROUTE ---
 class SetPasswordCompleteRoute implements DbNoteRoute {}
 
 // --- BUILDER & ROUTER ---
 class SetPasswordBuilder extends DbNoteSimpleRouterBuilder {
+  final String mobile;
+  final String code;
 
-  SetPasswordBuilder();
+  SetPasswordBuilder({required this.mobile, required this.code});
 
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
-    // if (toRoute is SetPasswordCompleteRoute) {
-    //   navigator.pop(fromContext: fromContext);
-    // }
-
     // Day toan bo cho router cha xu ly
     parentRouter?.navigate(toRoute, fromContext: fromContext, routeName: routeName, parameters: parameters);
   }
 
   @override
   SetPasswordBuilder build() {
-    final interactor = SetPasswordInteractor(router: this);
+    final interactor = SetPasswordInteractor(mobile: mobile, code: code, router: this);
     final page = SetPasswordPage(interactor: interactor);
     attach(interactor, page);
     return this;
   }
-
-
 }

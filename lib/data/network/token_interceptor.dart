@@ -9,6 +9,8 @@
 
 import 'dart:ui';
 
+import 'package:coffee_bean/data/model/response/user/auth_login_response.dart';
+import 'package:coffee_bean/data/network/network_response.dart';
 import 'package:db_core/network/network_client.dart';
 import 'package:db_core/network/network_common.dart';
 import 'package:dio/dio.dart';
@@ -43,6 +45,7 @@ class TokenInterceptor extends QueuedInterceptorsWrapper {
         if (options.extra["isPublic"] == true) {
             return handler.next(options);
         }
+
         // Get accessToken insert to Header Auth
         final accessToken = await tokenProvider.getAccessToken();
         if (accessToken != null && accessToken.isNotEmpty) {
@@ -55,7 +58,18 @@ class TokenInterceptor extends QueuedInterceptorsWrapper {
     void onError(DioException err, ErrorInterceptorHandler handler) async {
         // Chỉ xử lý 401 khi không phải là lỗi từ chính API Refresh
         if (err.response?.statusCode == 401 && !err.requestOptions.path.contains(refreshPath)) {
-            await _handle401(err, handler);
+            final success = await _executeRefreshTokenFlow();
+            if (success) {
+                // Retry lại request cũ với token mới
+                final newAccess = await tokenProvider.getAccessToken();
+                final opts = err.requestOptions;
+                opts.headers["Authorization"] = "Bearer $newAccess";
+                
+                final retryResponse = await client.reTryConnectionWithOption(options: opts);
+                return handler.resolve(retryResponse);
+            } else {
+                return handler.next(err);
+            }
         } else {
             return handler.next(err);
         }
@@ -63,60 +77,36 @@ class TokenInterceptor extends QueuedInterceptorsWrapper {
 
     // region Private Functions
 
-    Future<void> _handle401(DioException err, ErrorInterceptorHandler handler) async {
-        // final refreshToken = await LocalStorage.getRefreshToken();
+    /// Thực hiện luồng Refresh Token
+    Future<bool> _executeRefreshTokenFlow() async {
         final refreshToken = await tokenProvider.getRefreshToken();
-        if (refreshToken == null) {
-            _performLogout();
-            return handler.next(err);
+        if (refreshToken == null || refreshToken.isEmpty) {
+            await _performLogout();
+            return false;
         }
 
         try {
-            // TODO: Gọi Refresh API
-            // TODO: Cho nay chua hoan thanh, khi su dung den day, phai kiem tra ham ben duoi coi goi len server
-            // kieu tra ve la gi, con phai xư ly them
-            // Temporarily not fixing the expired token bug
-            _performLogout();
+            // Gọi API Refresh Token (POST với Query Parameter theo OpenAPI)
+            final result = await _refreshClient
+                .request(refreshPath, 
+                    type: NetworkType.post, 
+                    queryParameters: {'refreshToken': refreshToken})
+                .mapResponseTo(AuthLoginResponse.fromJson)
+                .toObject();
 
-            // final response = await _refreshClient.makeCall(refreshPath, type: NetworkType.post, params: {'refresh_token': refreshToken});
-            // final response = await _refreshDio.post(refreshPath, data: {'refresh_token': refreshToken});
-            // if (response.statusCode == 200) {
-            //     final newAccess = response.data['access_token'];
-            //     final newRefresh = response.data['refresh_token'];
-            //
-            //     // await LocalStorage.saveTokens(newAccess, newRefresh);
-            //     await _saveTokenToStorage(newAccess, newRefresh);
-            //
-            //     // Retry lại request cũ với token mới
-            //     final opts = err.requestOptions;
-            //     opts.headers["Authorization"] = "Bearer $newAccess";
-            //
-            //     final retryResponse = await client.reTryConnectionWithOption(options: opts);// dio.fetch(opts);
-            //     return handler.resolve(retryResponse);
-            // }
+            if (result.data != null) {
+                // CHỈ CẬP NHẬT: accessToken
+                await tokenProvider.updateAccessToken(result.data!.accessToken);
+                return true;
+            } else {
+                await _performLogout();
+                return false;
+            }
         } catch (e) {
-            _performLogout();
-            return handler.next(err);
+            await _performLogout();
+            return false;
         }
     }
-
-    // --- Các hàm bổ trợ logic (Thay bằng storage thực tế của bạn) ---
-    // Future<String?> _getAccessTokenFromStorage() async {
-    //     return UserSession.readAccessToken();
-    // }
-    //
-    // Future<String?> _getRefreshTokenFromStorage() async {
-    //     return UserSession.readRefreshToken();
-    // }
-    //
-    // Future<void> _saveTokenToStorage(String accessToken, String refreshToken) async {
-    //     UserSession.updateAccessToken(accessToken);
-    // }
-    //
-    // Future<String?> _performRefreshToken() async {
-    //     // Gọi API refresh ở đây
-    //     return "NEW_ACCESS_TOKEN";
-    // }
 
     Future<void> _performLogout() async {
         await tokenProvider.clearAll(); // Dọn sạch bộ nhớ của App

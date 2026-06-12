@@ -43,7 +43,10 @@ class UserRegisterRouter extends DbNoteRouter {
       parentRouter?.push(privacyPolicyBuilder.build().viewController);
 
     } else if (toRoute is UserSetPasswordRoute) {
-      final setPasswordRouter = SetPasswordBuilder().build();
+      final mobile = parameters?['mobile'] as String? ?? '';
+      final code = parameters?['code'] as String? ?? '';
+
+      final setPasswordRouter = SetPasswordBuilder(mobile: mobile, code: code).build();
       setPasswordRouter.parentRouter = parentRouter;
       parentRouter?.push(setPasswordRouter.viewController);
 

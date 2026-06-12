@@ -7,17 +7,23 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
-import 'package:db_core/utils/logger.dart';
+import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
+import 'package:coffee_bean/data/repository/auth_repository.dart';
+import 'package:coffee_bean/data/repository/user_repository.dart';
+import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/interactor/user_login_event_state.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:coffee_bean/scenes/user_auth_features/user_login/shared/social_auth_service.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/user_login_builder.dart';
 import 'package:coffee_bean/utils/utils.dart';
-import 'package:coffee_bean/scenes/user_auth_features/user_login/shared/social_auth_service.dart';
+import 'package:db_core/network/network_utils.dart';
+import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:db_core/utils/logger.dart';
 
 // Interactor
 class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginState> {
+  final _authRepo = AuthRepository();
+  final _userRepo = UserRepository();
 
   UserLoginInteractor(UserLoginRouter router) : super(UserLoginInitial(), router: router);
 
@@ -30,9 +36,9 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
     try {
       final String providerName = type == SocialLoginType.google ? "Google" : "Apple";
       emit(UserLoginInProgress(message: "Connecting to $providerName..."));
-      
+
       final SocialAuthResult? result = await SocialAuthService.login(type);
-      
+
       if (result == null) {
         emit(UserLoginFailure(error: "Sign-In failed: User cancelled")); // User cancelled
         return;
@@ -46,25 +52,36 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
       // giúp lần sau nhấn vào Login Google sẽ phải chọn lại account
       SocialAuthService.disconnectSocialAccount(type);
 
-      // GIẢ LẬP: Gửi idToken lên Backend của bạn
-      await Utils.delay(second: 2);
+      // GIẢ LẬP: Gửi idToken lên Backend
+      await Utils.delay(second: 1);
 
-      // Giả lập Backend trả về User Session với thông tin từ Social Account đã chọn
+      // 1. Giả lập Backend trả về User Session
       final userSession = UserSession(
         id: type == SocialLoginType.google ? 100 : 101,
-        userName: result.displayName ?? "$providerName User",
-        email: result.email ?? "",
-        fullName: result.displayName ?? "User Name", // Sử dụng name từ google account đã chọn
-        avatarUrl: result.photoUrl ?? "https://i.pravatar.cc/150?img=${type == SocialLoginType.google ? 24 : 68}",
-        accessToken: "mock_${providerName.toLowerCase()}_access_token_${DateTime.now().millisecondsSinceEpoch}",
+        accessToken: "mock_${providerName.toLowerCase()}_access_token",
         refreshToken: "mock_${providerName.toLowerCase()}_refresh_token",
       );
 
-      iLog("Login thành công: ${userSession.fullName}");
-      // Sent state local
+      // 2. Giả lập tạo UserInfo (Thường sẽ gọi thêm 1 API Profile nếu login ko trả về đủ)
+      final userInfo = UserInfo(
+        id: userSession.id,
+        nickname: result.displayName ?? "User $providerName",
+        avatar: result.photoUrl ?? "https://i.pravatar.cc/150?img=${userSession.id}",
+        mobile: result.email ?? "",
+        sex: 0,
+        point: 100,
+        experience: 50,
+        brokerageEnabled: false,
+      );
+
+      iLog("Login Social thành công: ${userInfo.nickname}");
+      
       emit(UserLoginSuccess(userSession));
-      // Call parent flow
-      router?.navigate(LoginSuccessRoute(), parameters: {'userData': userSession});
+      // Gửi cả session và info cho Flow xử lý tập trung
+      router?.navigate(LoginSuccessRoute(), parameters: {
+        'userSession': userSession,
+        'userInfo': userInfo,
+      });
 
     } catch (error) {
       eLog("Social Sign-In Error: $error");
@@ -79,69 +96,64 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
   void doLoginWithApple() => _handleSocialLogin(SocialLoginType.apple);
 
   void doLoginWithPw(String phoneNumber, String password) async {
-    emit(UserLoginInProgress());
-    iLog("Login with Password: $phoneNumber / $password");
+    try {
+      emit(UserLoginInProgress());
+      iLog("Login with Password: $phoneNumber");
 
-    // GIẢ LẬP: Gửi call lên Backend Auth
-    await Utils.delay(second: 2);
+      final loginData = (await _authRepo.login(phoneNumber, password)).getOrThrow();
 
-    if (phoneNumber.contains("0988818597") && password == "1234567890") {
       final userSession = UserSession(
-        id: 1,
-        userName: "Dylan Bui",
-        email: "buivantienduc@gmail.com",
-        fullName: "Bui Van Tien Duc",
-        avatarUrl: "https://i.pravatar.cc/150?img=24",
-        accessToken: "mock_access_token_123456",
-        refreshToken: "mock_refresh_token_abcdef",
+        id: loginData.userId,
+        accessToken: loginData.accessToken,
+        refreshToken: loginData.refreshToken,
       );
 
-      // Chuyen thong tin logic ve flow
-      iLog("Login thành công: ${userSession.fullName}");
-      // Sent state local
-      emit(UserLoginSuccess(userSession));
-      // Call parent flow
-      router?.navigate(LoginSuccessRoute(), parameters: {'userData': userSession});
+      // Fetch Profile info sau khi login
+      final userInfo = (await _userRepo.getUserInfo()).getOrThrow();
 
-    } else {
-      emit(UserLoginFailure(error: "Account does not exist. Please check your phone number and password."));
+      iLog("Login PW thành công: ${userInfo.nickname}");
+      emit(UserLoginSuccess(userSession));
+      
+      router?.navigate(LoginSuccessRoute(), parameters: {
+        'userSession': userSession,
+        'userInfo': userInfo,
+      });
+    } catch (error) {
+      eLog("Login PW Error: $error");
+      emit(UserLoginFailure(error: error.toString()));
     }
   }
 
   void doLoginWithSms(String phoneNumber, String sms) async {
-    emit(UserLoginInProgress());
-    iLog("Login with SMS: $phoneNumber / $sms");
+    try {
+      emit(UserLoginInProgress());
+      iLog("Login with SMS: $phoneNumber");
 
-    // GIẢ LẬP: Gửi call lên Backend Auth
-    await Utils.delay(second: 2);
+      final loginData = (await _authRepo.smsLogin(phoneNumber, sms)).getOrThrow();
 
-    if (phoneNumber.contains("0988818597") && sms == "999999") {
       final userSession = UserSession(
-        id: 1,
-        userName: "Dylan Bui",
-        email: "buivantienduc@gmail.com",
-        fullName: "Bui Van Tien Duc",
-        avatarUrl: "https://i.pravatar.cc/150?img=24",
-        accessToken: "mock_access_token_sms_123456",
-        refreshToken: "mock_refresh_token_sms_abcdef",
+        id: loginData.userId,
+        accessToken: loginData.accessToken,
+        refreshToken: loginData.refreshToken,
       );
 
-      // await UserManager().saveSession(userSession);
-      // locator<DbEventBus>().fire(UserLoginSuccessEvent(userSession));
-      // Chuyen thong tin logic ve flow
-      iLog("Login thành công: ${userSession.fullName}");
-      // Sent state local
-      emit(UserLoginSuccess(userSession));
-      // Call parent flow
-      router?.navigate(LoginSuccessRoute(), parameters: {'userData': userSession});
+      // Fetch Profile info sau khi login
+      final userInfo = (await _userRepo.getUserInfo()).getOrThrow();
 
-    } else {
-      emit(UserLoginFailure(error: "Invalid SMS code. Please check and try again."));
+      iLog("Login SMS thành công: ${userInfo.nickname}");
+      emit(UserLoginSuccess(userSession));
+      
+      router?.navigate(LoginSuccessRoute(), parameters: {
+        'userSession': userSession,
+        'userInfo': userInfo,
+      });
+    } catch (error) {
+      eLog("Login SMS Error: $error");
+      emit(UserLoginFailure(error: error.toString()));
     }
   }
 
   Future loadData() async {
-    // Init social login
     await SocialAuthService.initialize();
     await Utils.delay(second: 1);
     emit(UserLoginStarted());

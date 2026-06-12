@@ -33,6 +33,9 @@ class NetworkResponse<T> {
         parsedData = parseList(rawData, mapper);
       } else if (rawData is Map<String, dynamic>) {
         parsedData = mapper(rawData);
+      } else {
+        // Hỗ trợ các kiểu dữ liệu cơ bản: bool, int, String...
+        parsedData = rawData;
       }
     }
 
@@ -111,7 +114,19 @@ class NetworkResponseDataMapper<T, M> {
   Future<ResultType<M>> toObject() async {
     final (innerData, error) = await _extractInnerData();
     if (error != null) return (data: null, error: error);
-    return NetworkParsingUtils.parseToObject(innerData, mapper);
+    if (innerData == null) return (data: null, error: null);
+
+    // Nếu là Map mới dùng mapper để bóc tách
+    if (innerData is Map<String, dynamic>) {
+      return NetworkParsingUtils.parseToObject(innerData, mapper);
+    }
+
+    // Nếu là kiểu Primitive (bool, int, String...) trả về trực tiếp
+    try {
+      return (data: innerData as M?, error: null);
+    } catch (e) {
+      return (data: null, error: NetworkError(500, "Type mismatch: expected $M but got ${innerData.runtimeType}"));
+    }
   }
 
   /// Parse trường 'data' thành một Danh sách Object
@@ -120,11 +135,34 @@ class NetworkResponseDataMapper<T, M> {
     if (error != null) return (data: null, error: error);
     return NetworkParsingUtils.parseToList(innerData, mapper);
   }
+
+  /// Parse trường 'data' thành một giá trị Primitive (bool, int, String, double...)
+  /// Đảm bảo bắt đúng kiểu dữ liệu V yêu cầu.
+  Future<ResultType<V>> toValue<V>() async {
+    final (innerData, error) = await _extractInnerData();
+    if (error != null) return (data: null, error: error);
+
+    if (innerData is V) {
+      return (data: innerData, error: null);
+    }
+
+    if (innerData == null) {
+      return (data: null, error: null);
+    }
+
+    // Trường hợp kiểu dữ liệu không khớp
+    return (data: null, error: NetworkError(500, "Type mismatch: expected $V but got ${innerData.runtimeType}"));
+  }
 }
 
 extension NetworkMappingProjectChaining<T> on Future<Response<T>> {
   /// Bắt đầu chuỗi xử lý cho các API có bọc cấu trúc {code, msg, data}
   NetworkResponseDataMapper<T, M> mapResponseTo<M>(JsonMapper<M> mapper) {
     return NetworkResponseDataMapper<T, M>(this, mapper);
+  }
+
+  /// Khởi tạo chuỗi xử lý API mà không cần mapper (dùng khi data trả về kiểu cơ bản)
+  NetworkResponseDataMapper<T, dynamic> mapResponse() {
+    return NetworkResponseDataMapper<T, dynamic>(this, (json) => json);
   }
 }

@@ -1,13 +1,11 @@
+import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
-import 'package:db_core/architecture_ribs/note_flow.dart';
-import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/user_auth_features/forgot_password/forgot_password_builder.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/user_login_builder.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/user_register_builder.dart';
-import 'package:db_core/commons_constants.dart';
+import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 
 // --- START STEP ENUM ---
 enum AuthStartStep { login, register }
@@ -64,12 +62,13 @@ class UserAuthFlow extends DbNoteFlow<UserAuthFlowListener> {
       navigator.push(loginRouter.viewController);
     }
     else if (toRoute is LoginSuccessRoute) {
-      // Giả định params chứa UserSession sau khi login thành công từ Interactor
-      final userData = parameters?['userData'] as UserSession?;
-      if (userData != null) {
-        handleAuthSuccess(userData);
+      final session = parameters?['userSession'] as UserSession?;
+      final info = parameters?['userInfo'] as UserInfo?;
+      
+      if (session != null && info != null) {
+        handleAuthSuccess(session, info);
       } else {
-        listener?.onAuthFlowCancelled(DbError(101, "UserSession not found !!"));
+        listener?.onAuthFlowCancelled(DbError(101, "Auth Data (Session/Info) not found !!"));
         finish();
       }
     }
@@ -85,12 +84,14 @@ class UserAuthFlow extends DbNoteFlow<UserAuthFlowListener> {
     finish();
   }
 
-  void handleAuthSuccess(UserSession userData) {
-    // 1. Lưu session vào UserManager (Global Source of Truth)
-    UserManager().saveSession(userData);
+  void handleAuthSuccess(UserSession session, UserInfo info) {
+    // Lưu đồng thời cả 2 để đảm bảo đồng bộ
+    UserManager().saveSession(session);
+    UserManager().saveUserInfo(info);
     
-    // 2. Trả về cho caller qua listener
-    listener?.onAuthFlowSuccess(userData);
+    // iLog("AuthFlow: Đã lưu Session và Profile đồng bộ cho ${info.nickname}");
+
+    listener?.onAuthFlowSuccess(session);
 
     // Tự động giải phóng stack và quay về màn hình trước khi bắt đầu Flow
     finish();

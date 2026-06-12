@@ -8,8 +8,6 @@
  */
 
 import 'dart:convert';
-
-import 'package:db_core/utils/base_secure_storage.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user_session.g.dart';
@@ -17,19 +15,11 @@ part 'user_session.g.dart';
 @JsonSerializable()
 class UserSession {
   final int id;
-  String? userName;
-  String? email;
-  String? avatarUrl;
-  String? fullName;
   String? accessToken;
   String? refreshToken;
 
   UserSession({
     required this.id,
-    this.userName,
-    this.email,
-    this.avatarUrl,
-    this.fullName,
     this.accessToken,
     this.refreshToken,
   });

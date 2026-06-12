@@ -7,17 +7,25 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/data/repository/auth_repository.dart';
 import 'package:coffee_bean/scenes/user_auth_features/set_password/interactor/set_password_event_state.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
+import 'package:db_core/network/network_common.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/user_register_builder.dart';
-import 'package:coffee_bean/utils/utils.dart';
 
 // Interactor
 
 class SetPasswordInteractor extends CubitInteractor<DbNoteRoutable, SetPasswordState> {
+  final String mobile;
+  final String code;
+  final _authRepo = AuthRepository();
 
-  SetPasswordInteractor({DbNoteRoutable? router}) : super(SetPasswordInitial(), router: router);
+  SetPasswordInteractor({
+    required this.mobile,
+    required this.code,
+    DbNoteRoutable? router,
+  }) : super(SetPasswordInitial(), router: router);
 
   @override
   void onDidBecomeActive() {
@@ -31,8 +39,21 @@ class SetPasswordInteractor extends CubitInteractor<DbNoteRoutable, SetPasswordS
 
   Future<void> doSetPassword(String password) async {
     emit(SetPasswordInProgress());
-    await Utils.delay();
-    emit(SetPasswordSuccess());
-    router?.navigate(UserRegisterCompleteRoute());
+    
+    final result = await _authRepo.resetPassword(mobile, code, password);
+    
+    result.toResult().when(
+      success: (isSuccess) {
+        if (isSuccess) {
+          emit(SetPasswordSuccess());
+          router?.navigate(UserRegisterCompleteRoute());
+        } else {
+          emit(SetPasswordError(message:  "Set password failed (Server returned false)"));
+        }
+      },
+      failure: (error) {
+        emit(SetPasswordError(message:  error.message));
+      },
+    );
   }
 }
