@@ -14,6 +14,7 @@ import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/widget/password_field.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,7 +50,7 @@ class _SetPasswordPageState extends AppCubitState<SetPasswordPage, SetPasswordIn
   @override
   Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
     return PopScope(
-      canPop: false,
+      canPop: false, // Dont allow pop by gesture
       child: Scaffold(
         backgroundColor: TMLabsColor.white,
         appBar: appBar,
@@ -84,7 +85,7 @@ class _SetPasswordPageState extends AppCubitState<SetPasswordPage, SetPasswordIn
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: TMLabsColor.error));
+    context.showFlashError(message, title: "Set password error");
   }
 
   Widget _buildMainContent(BuildContext context, SetPasswordState state) {

@@ -180,7 +180,10 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
           controller: _registerController.phoneController,
           countryCodes: const ["+86", "+84", "+156"],
           initialCountryCode: _registerController.countryCode,
-          onChanged: (val) => _registerController.countryCode = val.countryCode,
+          onChanged: (val) {
+            _registerController.countryCode = val.countryCode;
+            _registerController.isPhoneValid = val.isValid;
+          },
         ),
         const SizedBox(height: 20),
         UnderlineInputField(
@@ -201,9 +204,8 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
   Widget _buildCountdownButton() {
     return InkWell(
       onTap: _isCountingDown ? null : () {
-        final phoneError = _registerController.validatePhoneNumber();
-        if (phoneError != null) {
-          _showError(phoneError);
+        if (!_registerController.isPhoneValid) {
+          _showError("Phone number must be more than 8 digits");
           return;
         }
         _startCountdown();
@@ -307,26 +309,9 @@ class RegisterController {
 
   String countryCode = "+84";
   bool isAgreed = false;
+  bool isPhoneValid = false;
 
-  String get formattedPhoneNumber {
-    String phone = phoneController.text.trim();
-    if (phone.startsWith('0')) {
-      phone = phone.substring(1);
-    }
-    return "$countryCode$phone";
-  }
-
-  String? validatePhoneNumber() {
-    String phone = phoneController.text.trim();
-    if (phone.isEmpty) {
-      return "Please enter phone number";
-    }
-    String checkPhone = phone.startsWith('0') ? phone.substring(1) : phone;
-    if (checkPhone.length <= 8) {
-      return "Phone number must be more than 8 digits";
-    }
-    return null;
-  }
+  String get formattedPhoneNumber => "$countryCode${phoneController.text}";
 
   void validateRegister(UserRegisterInteractor interactor, Function(String) onError) {
     if (!isAgreed) {
@@ -334,9 +319,8 @@ class RegisterController {
       return;
     }
 
-    final phoneError = validatePhoneNumber();
-    if (phoneError != null) {
-      onError(phoneError);
+    if (!isPhoneValid) {
+      onError("Phone number must be more than 8 digits");
       return;
     }
 

@@ -140,7 +140,10 @@ class _ForgotPasswordPageState extends AppCubitState<ForgotPasswordPage, ForgotP
           controller: _forgotPwController.phoneController,
           countryCodes: const ["+86", "+84", "+196"],
           initialCountryCode: _forgotPwController.countryCode,
-          onChanged: (val) => _forgotPwController.countryCode = val.countryCode,
+          onChanged: (val) {
+            _forgotPwController.countryCode = val.countryCode;
+            _forgotPwController.isPhoneValid = val.isValid;
+          },
         ),
         const SizedBox(height: 20),
         UnderlineInputField(
@@ -170,9 +173,8 @@ class _ForgotPasswordPageState extends AppCubitState<ForgotPasswordPage, ForgotP
   // region Logic Handlers
 
   void _handleSendSms() {
-    final phoneError = _forgotPwController.validatePhone();
-    if (phoneError != null) {
-      _showError(phoneError);
+    if (!_forgotPwController.isPhoneValid) {
+      _showError("Phone number must be more than 8 digits");
       return;
     }
     _startCountdown();
@@ -203,31 +205,13 @@ class ForgotPasswordController {
   final smsController = TextEditingController();
 
   String countryCode = "+84";
+  bool isPhoneValid = false;
 
-  String get formattedPhoneNumber {
-    String phone = phoneController.text.trim();
-    if (phone.startsWith('0')) {
-      phone = phone.substring(1);
-    }
-    return "$countryCode$phone";
-  }
-
-  String? validatePhone() {
-    String phone = phoneController.text.trim();
-    if (phone.isEmpty) {
-      return "Please enter phone number";
-    }
-    String checkPhone = phone.startsWith('0') ? phone.substring(1) : phone;
-    if (checkPhone.length <= 8) {
-      return "Phone number must be more than 8 digits";
-    }
-    return null;
-  }
+  String get formattedPhoneNumber => "$countryCode${phoneController.text}";
 
   void validateAndSubmit(ForgotPasswordInteractor interactor, Function(String) onError) {
-    final phoneError = validatePhone();
-    if (phoneError != null) {
-      onError(phoneError);
+    if (!isPhoneValid) {
+      onError("Phone number must be more than 8 digits");
       return;
     }
     if (smsController.text.isEmpty) {

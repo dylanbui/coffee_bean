@@ -167,7 +167,6 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
   }
 
   void _showError(String message) {
-    // DbToast.show(message, context: context);
     context.showFlashError(message, title: "Login error");
   }
 
@@ -238,7 +237,10 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
             initialCountryCode: _loginController.countryCode1,
             errorText: _loginController.phonePwError,
             hintText: "0988818597",
-            onChanged: (val) => _loginController.countryCode1 = val.countryCode,
+            onChanged: (val) {
+              _loginController.countryCode1 = val.countryCode;
+              _loginController.isPhonePwValid = val.isValid;
+            },
           ),
           const SizedBox(height: 20),
           PasswordField(controller: _loginController.passwordController, hint: "Enter Password"),
@@ -272,7 +274,10 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
             countryCodes: const ["+86", "+84", "+1"],
             initialCountryCode: _loginController.countryCode2,
             errorText: _loginController.phoneSmsError,
-            onChanged: (val) => _loginController.countryCode2 = val.countryCode,
+            onChanged: (val) {
+              _loginController.countryCode2 = val.countryCode;
+              _loginController.isPhoneSmsValid = val.isValid;
+            },
           ),
           const SizedBox(height: 20),
           UnderlineInputField(
@@ -305,9 +310,8 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
       onTap: _isCountingDown
           ? null
           : () {
-              final phoneError = _loginController.validatePhone(_loginController.phoneSmsLogin.text);
-              if (phoneError != null) {
-                _showError(phoneError);
+              if (!_loginController.isPhoneSmsValid) {
+                _showError("Phone number must be more than 8 digits");
                 return;
               }
               _startCountdown();
@@ -438,32 +442,14 @@ class LoginController {
   String countryCode1 = "+84";
   String countryCode2 = "+84";
   bool isAgreed = false;
+  bool isPhonePwValid = false;
+  bool isPhoneSmsValid = false;
 
   String? phonePwError;
   String? phoneSmsError;
 
-  String get formattedPhonePwLogin => _getFormattedPhone(phonePwLogin.text, countryCode1);
-  String get formattedPhoneSmsLogin => _getFormattedPhone(phoneSmsLogin.text, countryCode2);
-
-  String _getFormattedPhone(String phoneText, String countryCode) {
-    String phone = phoneText.trim();
-    if (phone.startsWith('0')) {
-      phone = phone.substring(1);
-    }
-    return "$countryCode$phone";
-  }
-
-  String? validatePhone(String phoneText) {
-    String phone = phoneText.trim();
-    if (phone.isEmpty) {
-      return "Please enter phone number";
-    }
-    String checkPhone = phone.startsWith('0') ? phone.substring(1) : phone;
-    if (checkPhone.length <= 8) {
-      return "Phone number must be more than 8 digits";
-    }
-    return null;
-  }
+  String get formattedPhonePwLogin => "$countryCode1${phonePwLogin.text}";
+  String get formattedPhoneSmsLogin => "$countryCode2${phoneSmsLogin.text}";
 
   void validatePwLogin(UserLoginInteractor interactor, Function(String) onError) {
     phonePwError = null;
@@ -472,10 +458,8 @@ class LoginController {
       return;
     }
 
-    phonePwError = validatePhone(phonePwLogin.text);
-    if (phonePwError != null) {
-      // In Login, we might want to show error on field or via toast
-      // For consistency with current code, we return if error exists
+    if (!isPhonePwValid) {
+      phonePwError = "Phone number must be more than 8 digits";
       return;
     }
 
@@ -493,8 +477,8 @@ class LoginController {
       return;
     }
 
-    phoneSmsError = validatePhone(phoneSmsLogin.text);
-    if (phoneSmsError != null) {
+    if (!isPhoneSmsValid) {
+      phoneSmsError = "Phone number must be more than 8 digits";
       return;
     }
 
