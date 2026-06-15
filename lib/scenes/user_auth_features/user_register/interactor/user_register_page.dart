@@ -143,19 +143,12 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
   // region Private functions
 
   void _onRegisterStateChanged(BuildContext context, UserRegisterState state) {
-    if (state is UserRegisterInProgress) {
-      showLoading();
-    } else {
-      hideLoading();
-      if (state is UserSetPassword) {
-        // Chuyển trang
-      } else if (state is UserRegisterSuccess) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Register Success!"), backgroundColor: Colors.green),
-        );
-      } else if (state is UserRegisterError) {
-        _showError(state.message);
-      }
+    if (state is UserRegisterSuccess) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Register Success!"), backgroundColor: Colors.green),
+      );
+    } else if (state is UserRegisterError) {
+      _showError(state.message);
     }
   }
 
@@ -185,7 +178,7 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
       children: [
         PhoneInputField(
           controller: _registerController.phoneController,
-          countryCodes: const ["+86", "+84", "+1"],
+          countryCodes: const ["+86", "+84", "+156"],
           initialCountryCode: _registerController.countryCode,
           onChanged: (val) => _registerController.countryCode = val.countryCode,
         ),
@@ -208,12 +201,13 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
   Widget _buildCountdownButton() {
     return InkWell(
       onTap: _isCountingDown ? null : () {
-        if (_registerController.phoneController.text.isEmpty) {
-          _showError("Please enter phone number");
+        final phoneError = _registerController.validatePhoneNumber();
+        if (phoneError != null) {
+          _showError(phoneError);
           return;
         }
         _startCountdown();
-        interactor.sendSmsCode("${_registerController.countryCode}${_registerController.phoneController.text}");
+        interactor.sendSmsCode(_registerController.formattedPhoneNumber);
       },
       child: Text(
         _isCountingDown ? "Resend (${_start}s)" : "Send Code",
@@ -292,7 +286,7 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
     if (_isCountingDown) return;
     setState(() {
       _isCountingDown = true;
-      _start = 60;
+      _start = 90;
     });
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_start == 0) {
@@ -311,23 +305,46 @@ class RegisterController {
   final smsController = TextEditingController();
   final invitationController = TextEditingController();
 
-  String countryCode = "+86";
+  String countryCode = "+84";
   bool isAgreed = false;
+
+  String get formattedPhoneNumber {
+    String phone = phoneController.text.trim();
+    if (phone.startsWith('0')) {
+      phone = phone.substring(1);
+    }
+    return "$countryCode$phone";
+  }
+
+  String? validatePhoneNumber() {
+    String phone = phoneController.text.trim();
+    if (phone.isEmpty) {
+      return "Please enter phone number";
+    }
+    String checkPhone = phone.startsWith('0') ? phone.substring(1) : phone;
+    if (checkPhone.length <= 8) {
+      return "Phone number must be more than 8 digits";
+    }
+    return null;
+  }
 
   void validateRegister(UserRegisterInteractor interactor, Function(String) onError) {
     if (!isAgreed) {
       onError("Please agree to the User Agreement and Privacy Policy");
       return;
     }
-    if (phoneController.text.isEmpty) {
-      onError("Please enter phone number");
+
+    final phoneError = validatePhoneNumber();
+    if (phoneError != null) {
+      onError(phoneError);
       return;
     }
+
     if (smsController.text.isEmpty) {
       onError("Please enter verification code");
       return;
     }
-    interactor.doRegister("$countryCode${phoneController.text}", smsController.text, invitationController.text);
+    interactor.doRegister(formattedPhoneNumber, smsController.text, invitationController.text);
   }
 
   void dispose() {

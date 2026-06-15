@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:db_core/commons_constants.dart';
 import 'package:coffee_bean/config/app_pref.dart';
 import 'package:coffee_bean/utils/utils.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
@@ -23,18 +24,19 @@ class CourseRepository {
   Future<void> _syncCategories() async {
     try {
       final String response = await rootBundle.loadString('assets/json/sample_course_cat.json');
-      final data = await json.decode(response);
+      final Dictionary data = json.decode(response);
       if (data['categories'] != null) {
-        final List<dynamic> catJson = data['categories'];
-        final categories = catJson.map((json) {
-          final name = json['name'] ?? '';
+        final List<dynamic> catJson = data['categories'] as List<dynamic>;
+        final categories = catJson.map((item) {
+          final json = item as Dictionary;
+          final name = (json['name'] as String?) ?? '';
           return TblCategory()
-            ..serverId = json['server_id'] ?? json['id']
+            ..serverId = (json['server_id'] as int?) ?? 0
             ..name = name
             ..searchName = Utils.toNoSign(name)
-            ..type = json['type'] ?? 'COURSE'
-            ..sortOrder = json['sort_order'] ?? 0
-            ..isActive = json['is_active'] ?? true;
+            ..type = (json['type'] as String?) ?? 'COURSE'
+            ..sortOrder = (json['sort_order'] as int?) ?? 0
+            ..isActive = (json['is_active'] as bool?) ?? true;
         }).toList();
 
         await _dbService.isar.writeTxn(() async {
@@ -51,9 +53,9 @@ class CourseRepository {
   Future<void> _syncCourses() async {
     try {
       final String response = await rootBundle.loadString('assets/json/sample_course_item.json');
-      final data = await json.decode(response);
+      final Dictionary data = json.decode(response);
       if (data['courses'] != null) {
-        await _dbService.syncCourseData(data['courses']);
+        await _dbService.syncCourseData(data['courses'] as List<dynamic>);
         _prefs.setLastSyncTime(_itemSyncKey, DateTime.now().millisecondsSinceEpoch);
       }
     } catch (e) {

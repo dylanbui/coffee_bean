@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/data/model/response/point_breakdown.dart';
+import 'package:db_core/commons_constants.dart';
 import 'package:flutter/services.dart';
 import 'package:db_core/network/base_repository.dart';
 import 'package:db_core/network/network_common.dart';
@@ -41,7 +42,7 @@ class UserRepository extends BaseRepository {
     required String email,
     required String password,
   }) async {
-    final postData = {
+    final Dictionary postData = {
       'name': name,
       'email': email,
       'password': password,
@@ -56,6 +57,52 @@ class UserRepository extends BaseRepository {
         )
         .mapResponseTo(User.fromJson)
         .toObject();
+  }
+
+  /// Cập nhật thông tin cá nhân
+  Future<ResultType<bool>> updateUserInfo({
+    required String nickname,
+    required String avatar,
+    required int sex,
+  }) async {
+    return await networkClient
+        .request('/app-api/member/user/update',
+            type: NetworkType.put,
+            params: {
+              'nickname': nickname,
+              'avatar': avatar,
+              'sex': sex,
+            })
+        .mapResponse()
+        .toValue<bool>();
+  }
+
+  /// Thay đổi số điện thoại
+  Future<ResultType<bool>> updateMobile({
+    required String mobile,
+    required String code,
+    String? oldCode,
+  }) async {
+    final Dictionary params = {
+      'mobile': mobile,
+      'code': code,
+    };
+    if (oldCode != null) params['oldCode'] = oldCode;
+
+    return await networkClient
+        .request('/app-api/member/user/update-mobile',
+            type: NetworkType.put,
+            params: params)
+        .mapResponse()
+        .toValue<bool>();
+  }
+
+  /// Điểm danh hàng ngày
+  Future<ResultType<Dictionary>> createSignInRecord() async {
+    return await networkClient
+        .request('/app-api/member/sign-in/record/create', type: NetworkType.post)
+        .mapResponse()
+        .toValue<Dictionary>();
   }
 
   /// Ví dụ cũ dùng Local JSON

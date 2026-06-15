@@ -1,6 +1,7 @@
 import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
+import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/scenes/user_auth_features/forgot_password/forgot_password_builder.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/user_login_builder.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/user_register_builder.dart';
@@ -61,6 +62,7 @@ class UserAuthFlow extends DbNoteFlow<UserAuthFlowListener> {
       loginRouter.parentRouter = this;
       navigator.push(loginRouter.viewController);
     }
+    
     else if (toRoute is LoginSuccessRoute) {
       final session = parameters?['userSession'] as UserSession?;
       final info = parameters?['userInfo'] as UserInfo?;
@@ -72,9 +74,34 @@ class UserAuthFlow extends DbNoteFlow<UserAuthFlowListener> {
         finish();
       }
     }
+
     else if (toRoute is UserRegisterCompleteRoute) {
-      // Có thể tự động đăng nhập hoặc quay lại Login sau khi đăng ký thành công
-      // handleAuthSuccess();
+      if (UserManager().currentUser != null && UserManager().userInfo != null) {
+        handleAuthSuccess(UserManager().currentUser!, UserManager().userInfo!);
+      } else {
+        listener?.onAuthFlowCancelled(DbError(101, "Auth Data (Session/Info) not found !!"));
+        finish();
+      }
+
+      if (UserManager().isLogin) {
+        // Registration flow - User is already logged in from Step 2
+        // Fetch UserInfo to complete the profile
+        // final userRepo = UserRepository();
+        // final result = await userRepo.getUserInfo();
+        // result.toResult().when(
+        //   success: (info) {
+        //     handleAuthSuccess(UserManager().currentUser!, info);
+        //   },
+        //   failure: (error) {
+        //     // If failed to fetch info, still might want to proceed or show error
+        //     // navigator.popToRoot(); // Go back to login if critical
+        //   },
+        // );
+      } else {
+        // Forgot Password flow - Just go back to login
+        // navigator.popToRoot();
+        // Maybe show a success message via toast
+      }
     }
   }
 

@@ -7,6 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/repository/auth_repository.dart';
 import 'package:coffee_bean/scenes/user_auth_features/set_password/interactor/set_password_event_state.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
@@ -40,7 +41,15 @@ class SetPasswordInteractor extends CubitInteractor<DbNoteRoutable, SetPasswordS
   Future<void> doSetPassword(String password) async {
     emit(SetPasswordInProgress());
     
-    final result = await _authRepo.resetPassword(mobile, code, password);
+    ResultType<bool> result;
+    
+    if (UserManager().isLogin) {
+      // Step 3 Registration (Logged in via smsLogin)
+      result = await _authRepo.updatePassword(password);
+    } else {
+      // Forgot Password flow
+      result = await _authRepo.resetPassword(mobile, code, password);
+    }
     
     result.toResult().when(
       success: (isSuccess) {

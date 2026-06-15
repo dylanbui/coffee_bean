@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:db_core/commons_constants.dart';
 import 'package:coffee_bean/config/app_pref.dart';
 import 'package:coffee_bean/utils/utils.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
@@ -23,16 +24,17 @@ class ReservationRepository {
   Future<void> _syncCategories() async {
     try {
       final String response = await rootBundle.loadString('assets/json/sample_reservation_cat.json');
-      final data = await json.decode(response);
+      final Dictionary data = json.decode(response);
       if (data['categories'] != null) {
-        final List<dynamic> catJson = data['categories'];
-        final categories = catJson.map((json) {
+        final List<dynamic> catJson = (data['categories'] as List);
+        final categories = catJson.map((item) {
+          final json = item as Dictionary;
           return TblCategory()
-            ..serverId = json['id']
-            ..name = json['name'] ?? ''
-            ..type = json['type'] ?? 'RESERVATION'
-            ..sortOrder = json['sort_order'] ?? 0
-            ..isActive = json['is_active'] ?? true;
+            ..serverId = (json['id'] as int?) ?? 0
+            ..name = (json['name'] as String?) ?? ''
+            ..type = (json['type'] as String?) ?? 'RESERVATION'
+            ..sortOrder = (json['sort_order'] as int?) ?? 0
+            ..isActive = (json['is_active'] as bool?) ?? true;
         }).toList();
 
         await _dbService.isar.writeTxn(() async {
@@ -49,9 +51,9 @@ class ReservationRepository {
   Future<void> _syncReservations() async {
     try {
       final String response = await rootBundle.loadString('assets/json/sample_reservation_item.json');
-      final data = await json.decode(response);
+      final Dictionary data = json.decode(response);
       if (data['reservations'] != null) {
-        await _dbService.syncReservationData(data['reservations']);
+        await _dbService.syncReservationData(data['reservations'] as List<dynamic>);
         _prefs.setLastSyncTime(_itemSyncKey, DateTime.now().millisecondsSinceEpoch);
       }
     } catch (e) {

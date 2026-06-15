@@ -13,7 +13,7 @@ import 'package:coffee_bean/scenes/user_auth_features/forgot_password/interactor
 import 'package:coffee_bean/scenes/user_auth_features/forgot_password/interactor/forgot_password_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
@@ -33,7 +33,7 @@ class _ForgotPasswordPageState extends AppCubitState<ForgotPasswordPage, ForgotP
   late ForgotPasswordController _forgotPwController;
 
   // Logic Countdown for SMS
-  int _start = 60;
+  int _start = 90;
   bool _isCountingDown = false;
   Timer? _timer;
 
@@ -43,7 +43,7 @@ class _ForgotPasswordPageState extends AppCubitState<ForgotPasswordPage, ForgotP
     _forgotPwController = ForgotPasswordController();
     
     // Nhập số điện thoại mặc định
-    _forgotPwController.phoneController.text = "0901234567";
+    _forgotPwController.phoneController.text = "0988123457";
   }
 
   @override
@@ -81,24 +81,13 @@ class _ForgotPasswordPageState extends AppCubitState<ForgotPasswordPage, ForgotP
   // region UI Builders
 
   void _onStateListener(BuildContext context, ForgotPasswordState state) {
-    if (state is ForgotPasswordInProgress) {
-      // showLoading(); // Use button loading
-    } else if (state is ForgotPasswordSendCodeDone) {
-      hideLoading();
-    } else {
-      hideLoading();
-      if (state is ForgotPasswordSuccess) {
-        // Handle success
-      } else if (state is ForgotPasswordError) {
-        _showError(state.message);
-      }
+    if (state is ForgotPasswordError) {
+      _showError(state.message);
     }
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
-    );
+    context.showFlashError(message, title: "Error");
   }
 
   Widget _buildMainContent(BuildContext context, ForgotPasswordState state) {
@@ -149,7 +138,7 @@ class _ForgotPasswordPageState extends AppCubitState<ForgotPasswordPage, ForgotP
       children: [
         PhoneInputField(
           controller: _forgotPwController.phoneController,
-          countryCodes: const ["+86", "+84", "+1"],
+          countryCodes: const ["+86", "+84", "+196"],
           initialCountryCode: _forgotPwController.countryCode,
           onChanged: (val) => _forgotPwController.countryCode = val.countryCode,
         ),
@@ -181,19 +170,20 @@ class _ForgotPasswordPageState extends AppCubitState<ForgotPasswordPage, ForgotP
   // region Logic Handlers
 
   void _handleSendSms() {
-    if (_forgotPwController.phoneController.text.isEmpty) {
-      _showError("Please enter phone number");
+    final phoneError = _forgotPwController.validatePhone();
+    if (phoneError != null) {
+      _showError(phoneError);
       return;
     }
     _startCountdown();
-    interactor.sendSmsCode("${_forgotPwController.countryCode}${_forgotPwController.phoneController.text}");
+    interactor.sendSmsCode(_forgotPwController.formattedPhoneNumber);
   }
 
   void _startCountdown() {
     if (_isCountingDown) return;
     setState(() {
       _isCountingDown = true;
-      _start = 60;
+      _start = 90;
     });
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_start == 0) {
@@ -212,18 +202,39 @@ class ForgotPasswordController {
   final phoneController = TextEditingController();
   final smsController = TextEditingController();
 
-  String countryCode = "+86";
+  String countryCode = "+84";
+
+  String get formattedPhoneNumber {
+    String phone = phoneController.text.trim();
+    if (phone.startsWith('0')) {
+      phone = phone.substring(1);
+    }
+    return "$countryCode$phone";
+  }
+
+  String? validatePhone() {
+    String phone = phoneController.text.trim();
+    if (phone.isEmpty) {
+      return "Please enter phone number";
+    }
+    String checkPhone = phone.startsWith('0') ? phone.substring(1) : phone;
+    if (checkPhone.length <= 8) {
+      return "Phone number must be more than 8 digits";
+    }
+    return null;
+  }
 
   void validateAndSubmit(ForgotPasswordInteractor interactor, Function(String) onError) {
-    if (phoneController.text.isEmpty) {
-      onError("Please enter phone number");
+    final phoneError = validatePhone();
+    if (phoneError != null) {
+      onError(phoneError);
       return;
     }
     if (smsController.text.isEmpty) {
       onError("Please enter verification code");
       return;
     }
-    interactor.forgotPassword("$countryCode${phoneController.text}", smsController.text);
+    interactor.forgotPassword(formattedPhoneNumber, smsController.text);
   }
 
   void dispose() {

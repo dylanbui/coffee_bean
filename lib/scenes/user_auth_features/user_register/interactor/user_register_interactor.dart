@@ -10,8 +10,8 @@
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/data/repository/auth_repository.dart';
+import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/interactor/user_register_event_state.dart';
-import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:db_core/network/network_common.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/user_register_builder.dart';
@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 
 class UserRegisterInteractor extends CubitInteractor<UserRegisterRouter, UserRegisterState> {
   final _authRepo = AuthRepository();
+  final _userRepo = UserRepository();
 
   UserRegisterInteractor(UserRegisterRouter router) : super(UserRegisterInitial(), router: router);
 
@@ -51,27 +52,43 @@ class UserRegisterInteractor extends CubitInteractor<UserRegisterRouter, UserReg
   void doRegister(String phoneNumber, String smsCode, String? invitationCode) async {
     emit(UserRegisterInProgress());
     
-    final result = await _authRepo.smsLogin(phoneNumber, smsCode);
-    
-    result.toResult().when(
-      success: (data) async {
-        // Lưu session sau khi login bằng SMS thành công
-        final session = UserSession(
-          id: data.userId,
-          accessToken: data.accessToken,
-          refreshToken: data.refreshToken,
-        );
-        await UserManager().saveSession(session);
+    final loginRes = await _authRepo.smsLogin(phoneNumber, smsCode);
+    final loginResult = loginRes.toResult();
 
-        // Chuyển sang màn hình đặt Password, truyền theo phone và code để reset pass ở bước sau
-        router?.navigate(UserSetPasswordRoute(), parameters: {
-          'mobile': phoneNumber,
-          'code': smsCode,
-        });
-      },
-      failure: (error) {
-        emit(UserRegisterError(message: error.message));
-      },
-    );
+    if (loginResult case DbFailure(:final error)) {
+      emit(UserRegisterError(message: error.message));
+      return;
+    }
+
+    if (loginResult case DbSuccess(:final data)) {
+      // 1. Lưu session sau khi login bằng SMS thành công
+      final session = UserSession(
+        id: data.userId,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      );
+      // Can luu session truoc de su dung accessToken cho cac API tiep theo
+      await UserManager().saveSession(session);
+
+      // 2. Lấy thông tin Profile và lưu vào UserManager
+      // accessToken se duoc TokenInterceptor tu dong lay tu UserManager cho request nay
+      final profileRes = await _userRepo.getUserInfo();
+      final profileResult = profileRes.toResult();
+      
+      if (profileResult case DbSuccess(data: final userInfo)) {
+        await UserManager().saveUserInfo(userInfo);
+      } else {
+        // Co the log loi hoac thong bao neu can, nhung van cho phep tiep tuc sang step Set Password
+        debugPrint("Fetch profile error: ${profileResult.errorOrNull?.message}");
+      }
+
+      emit(UserRegisterSuccess());
+
+      // 3. Chuyển sang màn hình đặt Password, truyền theo phone và code để reset pass ở bước sau
+      router?.navigate(UserSetPasswordRoute(), parameters: {
+        'mobile': phoneNumber,
+        'code': smsCode,
+      });
+    }
   }
 }

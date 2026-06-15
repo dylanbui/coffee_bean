@@ -31,12 +31,9 @@ class TokenInterceptor extends QueuedInterceptorsWrapper {
     final AuthTokenProvider tokenProvider; // Nhận interface được tiêm từ ngoài vào
 
     TokenInterceptor({required this.client, required this.refreshPath, required this.onLogout, required this.tokenProvider,}) {
-        // Instance riêng để gọi Refresh API, tránh bị loop bởi chính interceptor này
-        NetworkConfig refreshConfig = NetworkConfig(
-            baseUrl: client.config.baseUrl,
-            timeout: client.config.timeout
-        );
-        _refreshClient = NetworkClient(refreshConfig);
+        // Sử dụng trực tiếp client được truyền vào làm refresh client.
+        // Client này phải được cấu hình là một "clean client" (không chứa chính TokenInterceptor này).
+        _refreshClient = client;
     }
 
     @override

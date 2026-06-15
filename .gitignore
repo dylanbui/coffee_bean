@@ -58,6 +58,7 @@ gemini.md
 .ai/
 # API interfaces
 *_OpenAPI.json
+*.csv
 
 # Cursor AI Editor
 .cursor/

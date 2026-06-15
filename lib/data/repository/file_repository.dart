@@ -1,3 +1,4 @@
+import 'package:db_core/commons_constants.dart';
 import 'package:db_core/network/base_repository.dart';
 import 'package:db_core/network/network_upload_response.dart';
 import 'package:coffee_bean/data/model/file_upload_response.dart';
@@ -12,13 +13,13 @@ class FileRepository extends BaseRepository {
         filePath: filePath,
       );
       
-      final response = await networkClient.doUpload<Map<String, dynamic>>(
+      final response = await networkClient.doUpload<Dictionary>(
         '/files/upload',
         uploadData,
       );
 
       if (response.data != null) {
-        return FileUploadResponse.fromJson(response.data!);
+        return FileUploadResponse.fromJson(response.data as Map<String, dynamic>);
       }
       return null;
     } catch (e) {

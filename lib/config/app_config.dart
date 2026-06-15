@@ -19,7 +19,7 @@ class AppConfig {
   String username = "";
 
   Map<String, String> defaultHeaders = {
-    'tenantId': '162',
+    'tenant-id': '162',
   };
 
   void init(Environment env) {
@@ -30,7 +30,7 @@ class AppConfig {
         email = "dev email";
         username = "dev username";
         defaultHeaders = {
-          'tenantId': '162',
+          'tenant-id': '162',
         };
         break;
       case Environment.test:
@@ -39,7 +39,7 @@ class AppConfig {
         email = "test email";
         username = "test username";
         defaultHeaders = {
-          'tenantId': '162',
+          'tenant-id': '162',
         };
         break;
       case Environment.production:
@@ -48,7 +48,7 @@ class AppConfig {
         email = "production email";
         username = "production username";
         defaultHeaders = {
-          'tenantId': '162',
+          'tenant-id': '162',
         };
         break;
     }

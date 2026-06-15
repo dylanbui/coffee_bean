@@ -22,7 +22,13 @@ class NetworkClient {
     _dio.options.headers['content-Type'] = 'application/json';
     _dio.options.headers['Accept'] = 'application/json';
 
+    // Cho phép thêm các interceptor tùy biến từ dự án cụ thể
+    if (config.interceptors case final interceptors?) {
+      _dio.interceptors.addAll(interceptors);
+    }
+
     // PERFORMANCE: Chỉ bật log trong môi trường Debug
+    // Đưa PrettyDioLogger xuống cuối để nó log được các thay đổi từ Interceptor trước đó (như Header/Token)
     if (kDebugMode) {
       _dio.interceptors.add(PrettyDioLogger(
           requestHeader: true,
@@ -32,12 +38,6 @@ class NetworkClient {
           error: true,
           compact: true,
           maxWidth: 90));
-    }
-
-    // Cho phép thêm các interceptor tùy biến từ dự án cụ thể
-    // Same if let interceptors = config.interceptors in Swift
-    if (config.interceptors case final interceptors?) {
-      _dio.interceptors.addAll(interceptors);
     }
   }
   // endregion

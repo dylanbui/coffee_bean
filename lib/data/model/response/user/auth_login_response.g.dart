@@ -11,7 +11,7 @@ AuthLoginResponse _$AuthLoginResponseFromJson(Map<String, dynamic> json) =>
       userId: (json['userId'] as num).toInt(),
       accessToken: json['accessToken'] as String,
       refreshToken: json['refreshToken'] as String,
-      expiresTime: json['expiresTime'] as String,
+      expiresTime: (json['expiresTime'] as num).toInt(),
       openid: json['openid'] as String?,
     );
 

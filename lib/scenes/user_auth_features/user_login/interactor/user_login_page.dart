@@ -44,7 +44,7 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
   bool _isKeyboardVisible = false;
 
   // Logic Countdown cho SMS
-  int _start = 60;
+  int _start = 90;
   bool _isCountingDown = false;
   Timer? _timer;
 
@@ -305,11 +305,13 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
       onTap: _isCountingDown
           ? null
           : () {
-              if (_loginController.phoneSmsLogin.text.isEmpty) {
-                _showError("Please enter phone number");
+              final phoneError = _loginController.validatePhone(_loginController.phoneSmsLogin.text);
+              if (phoneError != null) {
+                _showError(phoneError);
                 return;
               }
               _startCountdown();
+              interactor.sendSmsCode(_loginController.formattedPhoneSmsLogin);
             },
       child: Text(
         _isCountingDown ? "Resend (${_start}s)" : "Send Code",
@@ -428,17 +430,40 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
 }
 
 class LoginController {
-  final phonePwLogin = TextEditingController(text: "0988818597");
-  final passwordController = TextEditingController(text: "1234567890");
-  final phoneSmsLogin = TextEditingController(text: "0988818597");
-  final smsController = TextEditingController(text: "999999");
+  final phonePwLogin = TextEditingController(text: "0988123457");
+  final passwordController = TextEditingController(text: "123456");
+  final phoneSmsLogin = TextEditingController(text: "0988123457");
+  final smsController = TextEditingController(text: "9999");
 
-  String countryCode1 = "+86";
-  String countryCode2 = "+86";
+  String countryCode1 = "+84";
+  String countryCode2 = "+84";
   bool isAgreed = false;
 
   String? phonePwError;
   String? phoneSmsError;
+
+  String get formattedPhonePwLogin => _getFormattedPhone(phonePwLogin.text, countryCode1);
+  String get formattedPhoneSmsLogin => _getFormattedPhone(phoneSmsLogin.text, countryCode2);
+
+  String _getFormattedPhone(String phoneText, String countryCode) {
+    String phone = phoneText.trim();
+    if (phone.startsWith('0')) {
+      phone = phone.substring(1);
+    }
+    return "$countryCode$phone";
+  }
+
+  String? validatePhone(String phoneText) {
+    String phone = phoneText.trim();
+    if (phone.isEmpty) {
+      return "Please enter phone number";
+    }
+    String checkPhone = phone.startsWith('0') ? phone.substring(1) : phone;
+    if (checkPhone.length <= 8) {
+      return "Phone number must be more than 8 digits";
+    }
+    return null;
+  }
 
   void validatePwLogin(UserLoginInteractor interactor, Function(String) onError) {
     phonePwError = null;
@@ -446,15 +471,19 @@ class LoginController {
       onError("Please agree to the User Agreement and Privacy Policy");
       return;
     }
-    if (phonePwLogin.text.isEmpty) {
-      phonePwError = "Please enter phone number";
+
+    phonePwError = validatePhone(phonePwLogin.text);
+    if (phonePwError != null) {
+      // In Login, we might want to show error on field or via toast
+      // For consistency with current code, we return if error exists
       return;
     }
+
     if (passwordController.text.isEmpty) {
       onError("Please enter password");
       return;
     }
-    interactor.doLoginWithPw("$countryCode1${phonePwLogin.text}", passwordController.text);
+    interactor.doLoginWithPw(formattedPhonePwLogin, passwordController.text);
   }
 
   void validateSmsLogin(UserLoginInteractor interactor, Function(String) onError) {
@@ -463,15 +492,17 @@ class LoginController {
       onError("Please agree to the User Agreement and Privacy Policy");
       return;
     }
-    if (phoneSmsLogin.text.isEmpty) {
-      phoneSmsError = "Please enter phone number";
+
+    phoneSmsError = validatePhone(phoneSmsLogin.text);
+    if (phoneSmsError != null) {
       return;
     }
+
     if (smsController.text.isEmpty) {
       onError("Please enter SMS code");
       return;
     }
-    interactor.doLoginWithSms("$countryCode2${phoneSmsLogin.text}", smsController.text);
+    interactor.doLoginWithSms(formattedPhoneSmsLogin, smsController.text);
   }
 
   void dispose() {

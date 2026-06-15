@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/widget/checkbox_custom.dart';
 
-import 'package:coffee_bean/shared/widget/loading_view.dart';
-
 class WidgetUtils {
   static CheckboxFilter checkboxFilterAll({bool isSelected = false}) {
     return CheckboxFilter(

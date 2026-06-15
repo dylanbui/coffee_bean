@@ -22,7 +22,7 @@ class UserRegisterInProgress extends UserRegisterState {}
 
 class UserRegisterSuccess extends UserRegisterState {}
 
-class UserSetPassword extends UserRegisterState {}
+// class UserSetPassword extends UserRegisterState {}
 
 class UserRegisterError extends UserRegisterState {
   final String message;

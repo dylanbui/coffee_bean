@@ -30,19 +30,19 @@ class UserInfo {
   final int point;
   final int experience;
   final UserLevel? level;
-  final bool brokerageEnabled;
+  final bool? brokerageEnabled; // Allow true/false/null
 
   UserInfo({
     required this.id,
     required this.nickname,
-    required this.avatar,
+    required String avatar,
     required this.mobile,
     required this.sex,
     required this.point,
     required this.experience,
     this.level,
-    required this.brokerageEnabled,
-  });
+    this.brokerageEnabled,
+  }) : avatar = avatar.isEmpty ? "https://i.pravatar.cc/150?img=19" : avatar;
 
   factory UserInfo.fromJson(Map<String, dynamic> json) => _$UserInfoFromJson(json);
   Map<String, dynamic> toJson() => _$UserInfoToJson(this);

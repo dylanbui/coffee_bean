@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:db_core/commons_constants.dart';
 import 'package:coffee_bean/config/app_pref.dart';
 import 'package:coffee_bean/utils/utils.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
@@ -40,9 +41,9 @@ class StorePointRepository {
   Future<void> _syncStorePoints() async {
     try {
       final String response = await rootBundle.loadString('assets/json/sample_store_point_item.json');
-      final data = await json.decode(response);
+      final Dictionary data = json.decode(response);
       if (data['store_points'] != null) {
-        final List<dynamic> jsonList = data['store_points'];
+        final List<dynamic> jsonList = data['store_points'] as List<dynamic>;
         final items = jsonList.map((json) {
           final tblItem = TblStorePoint()
             ..serverId = json['id']

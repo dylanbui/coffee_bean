@@ -7,6 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/data/repository/auth_repository.dart';
@@ -107,6 +108,9 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
         accessToken: loginData.accessToken,
         refreshToken: loginData.refreshToken,
       );
+      
+      // Quan trọng: Lưu session để TokenInterceptor có token gọi API Profile
+      await UserManager().saveSession(userSession);
 
       // Fetch Profile info sau khi login
       final userInfo = (await _userRepo.getUserInfo()).getOrThrow();
@@ -137,6 +141,9 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
         refreshToken: loginData.refreshToken,
       );
 
+      // Quan trọng: Lưu session để TokenInterceptor có token gọi API Profile
+      await UserManager().saveSession(userSession);
+
       // Fetch Profile info sau khi login
       final userInfo = (await _userRepo.getUserInfo()).getOrThrow();
 
@@ -151,6 +158,22 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
       eLog("Login SMS Error: $error");
       emit(UserLoginFailure(error: error.toString()));
     }
+  }
+
+  void sendSmsCode(String phoneNumber) async {
+    iLog("Sending SMS Code to $phoneNumber");
+    // Scene 1 for Login
+    final result = await _authRepo.sendSmsCode(phoneNumber, 1);
+    result.toResult().when(
+      success: (isSent) {
+        if (!isSent) {
+          emit(UserLoginFailure(error: "Send SMS Failed"));
+        }
+      },
+      failure: (error) {
+        emit(UserLoginFailure(error: error.message));
+      },
+    );
   }
 
   Future loadData() async {

@@ -94,30 +94,36 @@ Future<void> _setupStoreManager() async {
 }
 
 Future<void> _setupNetwork() async {
-  // 3. Initialize Private Network Service
-  // Khởi tạo Client API chính của hệ thống (Dữ liệu URL lấy từ AppConfig sạch của bạn)
-  final networkClient = NetworkClient(NetworkConfig(baseUrl: AppConfig().url));
-  // 4. Cấu hình Interceptor và tiêm UserManager trực tiếp vào
+  // 1. Lấy cấu hình headers dùng chung (đã bao gồm tenant-id: 162)
+  final commonHeaders = AppConfig().defaultHeaders;
+
+  // 2. Khởi tạo một NetworkClient "sạch" - CHỈ dùng để Refresh Token
+  // Client này không được chứa TokenInterceptor để tránh vòng lặp vô hạn (Infinite Loop)
+  final refreshClient = NetworkClient(NetworkConfig(
+    baseUrl: AppConfig().url,
+    interceptors: [
+      HeaderInterceptor(headers: commonHeaders),
+      // Có thể thêm Chuck ở đây nếu muốn theo dõi cả request refresh token
+      chuck.dioInterceptor, 
+    ],
+  ));
+  
+  // 3. Cấu hình TokenInterceptor
   final tokenInterceptor = TokenInterceptor(
-    client: networkClient,
-    refreshPath: "/auth/refresh", // Thay bằng endpoint thực tế của bạn
-    tokenProvider: UserManager(), // Truyền trực tiếp instance UserManager vào đây
-    onLogout: () {
-      // Thực hiện logic điều hướng ép buộc ra màn Login ở tầng Giao diện
-      // Ví dụ nếu bạn dùng GoRouter hoặc Navigator:
-      // navigatorKey.currentState?.pushNamedAndRemoveUntil('/login', (route) => false);
-    },
+    client: refreshClient, 
+    refreshPath: "/app-api/member/auth/refresh-token", 
+    tokenProvider: UserManager(), 
+    onLogout: () => UserManager().doLogoutAndClearAll(),
   );
 
-  // Khởi tạo Client API chính của hệ thống (Dữ liệu URL lấy từ AppConfig sạch của bạn)
-  // final networkClient = NetworkClient(NetworkConfig(baseUrl: AppConfig().url));
+  // 4. Khởi tạo NetworkServiceProvider CHÍNH cho toàn bộ App
   NetworkServiceProvider.init(NetworkConfig(
     baseUrl: AppConfig().url,
-    timeout: Duration(seconds: 30),
+    timeout: const Duration(seconds: 30),
     interceptors: [
-      chuck.dioInterceptor, 
-      tokenInterceptor,
-      HeaderInterceptor(headers: AppConfig().defaultHeaders),
+      HeaderInterceptor(headers: commonHeaders), // Đảm bảo mọi request đều có tenant-id
+      tokenInterceptor,                          // Quản lý Access Token
+      chuck.dioInterceptor,                       // Logger/Inspector
     ],
   ));
 }

@@ -5,6 +5,8 @@ import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/app_selection_row.dart';
 import 'package:db_core/utils/tap_effect.dart';
+import 'package:db_core/utils/app_button.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -48,7 +50,7 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
               onTap: () {},
             ),
             const SizedBox(height: 16),
-            _buildLogoutButton(),
+            _buildLogoutButton(context),
             const SizedBox(height: 32),
           ],
         ),
@@ -171,13 +173,27 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
     );
   }
 
-  Widget _buildLogoutButton() {
-    return AppSelectionRow(
-      leadingIcon: AppAssets.icons.icLogout, // TODO: Cần icLogout trong Assets
-      title: 'Đăng xuất',
-      trailingIcon: AppAssets.icons.icArrowRightNone,
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      onTap: () => interactor.doLogout(),
+  Widget _buildLogoutButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: AppButton(
+        text: 'Đăng xuất',
+        style: TMLabsButtonStyle.outline,
+        onPressed: () async {
+          final res = await FlashDialogHelper.show<bool>(
+            context: context,
+            title: 'Xác nhận',
+            content: 'Bạn có chắc chắn muốn đăng xuất?',
+            actions: [
+              FlashDialogAction(label: 'Hủy', value: false, color: TMLabsColor.grey),
+              FlashDialogAction(label: 'Đăng xuất', value: true, color: TMLabsColor.error),
+            ],
+          );
+          if (res == true) {
+            interactor.doLogout();
+          }
+        },
+      ),
     );
   }
 }

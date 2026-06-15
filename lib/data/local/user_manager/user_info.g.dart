@@ -31,7 +31,7 @@ UserInfo _$UserInfoFromJson(Map<String, dynamic> json) => UserInfo(
   level: json['level'] == null
       ? null
       : UserLevel.fromJson(json['level'] as Map<String, dynamic>),
-  brokerageEnabled: json['brokerageEnabled'] as bool,
+  brokerageEnabled: json['brokerageEnabled'] as bool?,
 );
 
 Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{

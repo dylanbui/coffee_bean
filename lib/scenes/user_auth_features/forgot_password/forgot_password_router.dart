@@ -20,13 +20,13 @@ class ForgotPasswordRouter extends DbNoteRouter {
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
     if (toRoute is ForgotPasswordCompleteRoute) {
-      // When the completion route is received, navigate to SetPassword.
-      // SetPasswordBuilder setPasswordBuilder = SetPasswordBuilder();
-      // In RIBs architecture, building a module returns its Router.
-      // We then push the Router's viewController (the Widget).
-      // final nextRouter = setPasswordBuilder.build();
-      // Use the navigator inherited from DbNoteRouter
-      // parentRouter?.push(nextRouter.viewController);
+      // Khi nhận được route hoàn tất nhập phone/code, chuyển sang màn hình đặt mật khẩu mới
+      final mobile = parameters?['mobile'] as String? ?? '';
+      final code = parameters?['code'] as String? ?? '';
+
+      final setPasswordRouter = SetPasswordBuilder(mobile: mobile, code: code).build();
+      setPasswordRouter.parentRouter = parentRouter;
+      parentRouter?.push(setPasswordRouter.viewController);
     }
     else {
       parentRouter?.navigate(toRoute, fromContext: fromContext, routeName: routeName, parameters: parameters);

@@ -7,7 +7,7 @@ class AuthLoginResponse {
   final int userId;
   final String accessToken;
   final String refreshToken;
-  final String expiresTime;
+  final int expiresTime;
   final String? openid;
 
   AuthLoginResponse({

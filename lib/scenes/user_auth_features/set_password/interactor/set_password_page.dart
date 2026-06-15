@@ -7,6 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:coffee_bean/scenes/user_auth_features/set_password/interactor/set_password_event_state.dart';
 import 'package:coffee_bean/scenes/user_auth_features/set_password/interactor/set_password_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
@@ -38,15 +39,26 @@ class _SetPasswordPageState extends AppCubitState<SetPasswordPage, SetPasswordIn
   String? getTitle() => "Set Password";
 
   @override
+  PreferredSizeWidget? getAppBar(BuildContext context) {
+    return CoffeeAppBar(
+      title: getTitle(),
+      hideBackButton: true,
+    );
+  }
+
+  @override
   Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
-    return Scaffold(
-      backgroundColor: TMLabsColor.white,
-      appBar: appBar,
-      resizeToAvoidBottomInset: false,
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: body,
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: TMLabsColor.white,
+        appBar: appBar,
+        resizeToAvoidBottomInset: false,
+        body: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: body,
+        ),
       ),
     );
   }
@@ -62,15 +74,12 @@ class _SetPasswordPageState extends AppCubitState<SetPasswordPage, SetPasswordIn
   // region UI Builders
 
   void _onStateListener(BuildContext context, SetPasswordState state) {
-    if (state is SetPasswordInProgress) {
-      showLoading(); // Removed to use button loading
-    } else {
+    if (state is SetPasswordSuccess) {
       hideLoading();
-      if (state is SetPasswordSuccess) {
-        // Handle success
-      } else if (state is SetPasswordError) {
-        _showError(state.message);
-      }
+      // Handle success
+    } else if (state is SetPasswordError) {
+      hideLoading();
+      _showError(state.message);
     }
   }
 
