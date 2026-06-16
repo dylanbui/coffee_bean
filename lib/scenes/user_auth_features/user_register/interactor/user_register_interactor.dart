@@ -36,7 +36,7 @@ class UserRegisterInteractor extends CubitInteractor<UserRegisterRouter, UserReg
   }
 
   void sendSmsCode(String phoneNumber) async {
-    final result = await _authRepo.sendSmsCode(phoneNumber, 1);
+    final result = await _authRepo.sendSmsCode(phoneNumber, SmsScene.smsLogin);
     result.toResult().when(
       success: (isSent) {
         if (!isSent) {

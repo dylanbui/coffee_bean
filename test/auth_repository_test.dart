@@ -65,7 +65,7 @@ void main() {
     debugPrint("\n🚀 --- STARTING WORKFLOW TEST --- 🚀");
 
     debugPrint("\n👉 STEP 1: SEND SMS CODE");
-    final res1 = await authRepository.sendSmsCode(mobile, 1);
+    final res1 = await authRepository.sendSmsCode(mobile, SmsScene.smsLogin);
     debugPrint("Result Step 1: Success = ${res1.toResult().isSuccess}, Error = ${res1.toResult().errorOrNull?.message}");
     
     debugPrint("\n👉 STEP 2: SMS LOGIN");

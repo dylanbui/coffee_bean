@@ -1,19 +1,35 @@
 import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
-import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/scenes/user_auth_features/forgot_password/forgot_password_builder.dart';
+import 'package:coffee_bean/scenes/user_auth_features/set_password/set_password_builder.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/user_login_builder.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/user_register_builder.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_toast_helper.dart';
 import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 
 // --- START STEP ENUM ---
 enum AuthStartStep { login, register }
 
+// --- AUTH RESULT (Sealed Class) ---
+sealed class AuthResult {}
+
+class LoginSuccess extends AuthResult {
+  final UserSession session;
+  LoginSuccess(this.session);
+}
+
+class RegisterSuccess extends AuthResult {
+  final UserSession session;
+  RegisterSuccess(this.session);
+}
+
+class ResetPasswordSuccess extends AuthResult {}
+
 // --- LISTENER ---
 abstract interface class UserAuthFlowListener {
-  void onAuthFlowSuccess(UserSession userData);
+  void onAuthFlowCompleted(AuthResult result);
   void onAuthFlowCancelled(DbError error);
 }
 
@@ -64,44 +80,40 @@ class UserAuthFlow extends DbNoteFlow<UserAuthFlowListener> {
     }
     
     else if (toRoute is LoginSuccessRoute) {
-      final session = parameters?['userSession'] as UserSession?;
-      final info = parameters?['userInfo'] as UserInfo?;
+      final session = UserManager().currentUser;
+      final info = UserManager().userInfo;
       
       if (session != null && info != null) {
-        handleAuthSuccess(session, info);
+        listener?.onAuthFlowCompleted(LoginSuccess(session));
+        finish();
       } else {
         listener?.onAuthFlowCancelled(DbError(101, "Auth Data (Session/Info) not found !!"));
         finish();
       }
     }
 
-    else if (toRoute is UserRegisterCompleteRoute) {
-      if (UserManager().currentUser != null && UserManager().userInfo != null) {
-        handleAuthSuccess(UserManager().currentUser!, UserManager().userInfo!);
+    else if (toRoute is SetPasswordRegistrationDoneRoute) {
+      final session = UserManager().currentUser;
+      final info = UserManager().userInfo;
+
+      if (session != null && info != null) {
+        // _syncAuthData(session, info);
+        // Lưu đồng thời cả 2 để đảm bảo đồng bộ dữ liệu local
+        // UserManager().saveSession(session);
+        // UserManager().saveUserInfo(info);
+        listener?.onAuthFlowCompleted(RegisterSuccess(session));
+        finish();
       } else {
         listener?.onAuthFlowCancelled(DbError(101, "Auth Data (Session/Info) not found !!"));
         finish();
       }
-
-      if (UserManager().isLogin) {
-        // Registration flow - User is already logged in from Step 2
-        // Fetch UserInfo to complete the profile
-        // final userRepo = UserRepository();
-        // final result = await userRepo.getUserInfo();
-        // result.toResult().when(
-        //   success: (info) {
-        //     handleAuthSuccess(UserManager().currentUser!, info);
-        //   },
-        //   failure: (error) {
-        //     // If failed to fetch info, still might want to proceed or show error
-        //     // navigator.popToRoot(); // Go back to login if critical
-        //   },
-        // );
-      } else {
-        // Forgot Password flow - Just go back to login
-        // navigator.popToRoot();
-        // Maybe show a success message via toast
-      }
+    }
+    else if (toRoute is SetPasswordResetDoneRoute) {
+      // if (fromContext != null) {
+      //   FlashToastHelper.success(fromContext, "Đặt lại mật khẩu thành công. Vui lòng đăng nhập lại.");
+      // }
+      listener?.onAuthFlowCompleted(ResetPasswordSuccess());
+      finish();
     }
   }
 
@@ -111,16 +123,9 @@ class UserAuthFlow extends DbNoteFlow<UserAuthFlowListener> {
     finish();
   }
 
-  void handleAuthSuccess(UserSession session, UserInfo info) {
-    // Lưu đồng thời cả 2 để đảm bảo đồng bộ
-    UserManager().saveSession(session);
-    UserManager().saveUserInfo(info);
-    
-    // iLog("AuthFlow: Đã lưu Session và Profile đồng bộ cho ${info.nickname}");
-
-    listener?.onAuthFlowSuccess(session);
-
-    // Tự động giải phóng stack và quay về màn hình trước khi bắt đầu Flow
-    finish();
-  }
+  // void _syncAuthData(UserSession session, UserInfo info) {
+  //   // Lưu đồng thời cả 2 để đảm bảo đồng bộ dữ liệu local
+  //   UserManager().saveSession(session);
+  //   UserManager().saveUserInfo(info);
+  // }
 }

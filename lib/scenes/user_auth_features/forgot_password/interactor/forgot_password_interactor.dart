@@ -33,8 +33,8 @@ class ForgotPasswordInteractor extends CubitInteractor<ForgotPasswordRouter, For
 
   void sendSmsCode(String phoneNumber) async {
     emit(ForgotPasswordInProgress());
-    // Scene 2 for Reset Password
-    final result = await _authRepo.sendSmsCode(phoneNumber, 2); 
+    // Scene 4 for Forgot Password (user-reset-password)
+    final result = await _authRepo.sendSmsCode(phoneNumber, SmsScene.resetPassword);
     
     result.toResult().when(
       success: (isSent) {

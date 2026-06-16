@@ -109,17 +109,19 @@ mixin _OrderConfirmationPaymentMixin on CubitInteractor<OrderConfirmationRoutabl
 mixin _OrderConfirmationLoginMixin on CubitInteractor<OrderConfirmationRoutable, OrderConfirmationState>
     implements UserAuthFlowListener {
   @override
-  void onAuthFlowSuccess(UserSession userData) {
-    // Kích hoạt thông báo thành công qua Key
-    emit(state.copyWith(
-      uiStatus: state.uiStatus.copyWith(successMessageKey: "LOGIN_SUCCESS"),
-    ));
-    // Reset Key ngay lập tức
-    emit(state.copyWith(
-      uiStatus: state.uiStatus.copyWith(successMessageKey: null),
-    ));
+  void onAuthFlowCompleted(AuthResult result) {
+    if (result case LoginSuccess(:final session) || RegisterSuccess(:final session)) {
+      // Kích hoạt thông báo thành công qua Key
+      emit(state.copyWith(
+        uiStatus: state.uiStatus.copyWith(successMessageKey: "LOGIN_SUCCESS"),
+      ));
+      // Reset Key ngay lập tức
+      emit(state.copyWith(
+        uiStatus: state.uiStatus.copyWith(successMessageKey: null),
+      ));
 
-    locator<DbEventBus>().fire(UserLoginSuccessEvent(userData));
+      locator<DbEventBus>().fire(UserLoginSuccessEvent(session));
+    }
   }
 
   @override

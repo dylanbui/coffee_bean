@@ -46,7 +46,11 @@ class UserRegisterRouter extends DbNoteRouter {
       final mobile = parameters?['mobile'] as String? ?? '';
       final code = parameters?['code'] as String? ?? '';
 
-      final setPasswordRouter = SetPasswordBuilder(mobile: mobile, code: code).build();
+      final setPasswordRouter = SetPasswordBuilder(
+        mobile: mobile,
+        code: code,
+        mode: SetPasswordMode.registration,
+      ).build();
       setPasswordRouter.parentRouter = parentRouter;
       parentRouter?.push(setPasswordRouter.viewController);
 

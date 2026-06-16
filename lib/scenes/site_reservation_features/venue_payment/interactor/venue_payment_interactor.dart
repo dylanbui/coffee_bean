@@ -80,15 +80,17 @@ mixin _VenuePaymentPaymentMixin on CubitInteractor<VenuePaymentRoutable, VenuePa
 mixin _VenuePaymentLoginMixin on CubitInteractor<VenuePaymentRoutable, VenuePaymentState>
     implements UserAuthFlowListener {
   @override
-  void onAuthFlowSuccess(UserSession userData) {
-    emit(state.copyWith(
-      uiStatus: state.uiStatus.copyWith(successMessageKey: "LOGIN_SUCCESS"),
-    ));
-    emit(state.copyWith(
-      uiStatus: state.uiStatus.copyWith(successMessageKey: null),
-    ));
+  void onAuthFlowCompleted(AuthResult result) {
+    if (result case LoginSuccess(:final session) || RegisterSuccess(:final session)) {
+      emit(state.copyWith(
+        uiStatus: state.uiStatus.copyWith(successMessageKey: "LOGIN_SUCCESS"),
+      ));
+      emit(state.copyWith(
+        uiStatus: state.uiStatus.copyWith(successMessageKey: null),
+      ));
 
-    locator<DbEventBus>().fire(UserLoginSuccessEvent(userData));
+      locator<DbEventBus>().fire(UserLoginSuccessEvent(session));
+    }
   }
 
   @override

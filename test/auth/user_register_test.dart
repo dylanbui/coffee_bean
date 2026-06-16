@@ -87,7 +87,7 @@ void main() {
 
       // STEP 1: Send SMS Code
       debugPrint("\n👉 STEP 1: SEND SMS CODE");
-      final sendSmsRes = await authRepository.sendSmsCode(mobile, 1);
+      final sendSmsRes = await authRepository.sendSmsCode(mobile, SmsScene.smsLogin);
       expect(sendSmsRes.toResult().isSuccess, true, reason: "Send SMS should succeed");
       debugPrint("Result Step 1: SMS Sent successfully");
 
@@ -135,7 +135,7 @@ void main() {
 
       // STEP 1: Send SMS Code
       debugPrint("\n👉 STEP 1: SEND SMS CODE");
-      final sendSmsRes = await authRepository.sendSmsCode(mobile, 1);
+      final sendSmsRes = await authRepository.sendSmsCode(mobile, SmsScene.smsLogin);
       expect(sendSmsRes.toResult().isSuccess, true, reason: "Send SMS should succeed");
       debugPrint("Result Step 1: SMS Sent successfully");
 

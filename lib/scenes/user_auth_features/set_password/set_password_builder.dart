@@ -13,25 +13,39 @@ import 'package:coffee_bean/scenes/user_auth_features/set_password/interactor/se
 import 'package:coffee_bean/scenes/user_auth_features/set_password/interactor/set_password_page.dart';
 import 'package:flutter/material.dart';
 
+// --- MODE ---
+enum SetPasswordMode { registration, forgotPassword }
+
 // --- ROUTE ---
-class SetPasswordCompleteRoute implements DbNoteRoute {}
+class SetPasswordRegistrationDoneRoute implements DbNoteRoute {}
+class SetPasswordResetDoneRoute implements DbNoteRoute {}
 
 // --- BUILDER & ROUTER ---
 class SetPasswordBuilder extends DbNoteSimpleRouterBuilder {
   final String mobile;
   final String code;
+  final SetPasswordMode mode;
 
-  SetPasswordBuilder({required this.mobile, required this.code});
+  SetPasswordBuilder({
+    required this.mobile,
+    required this.code,
+    required this.mode,
+  });
 
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
-    // Day toan bo cho router cha xu ly
+    // Đẩy toàn bộ cho router cha xử lý
     parentRouter?.navigate(toRoute, fromContext: fromContext, routeName: routeName, parameters: parameters);
   }
 
   @override
   SetPasswordBuilder build() {
-    final interactor = SetPasswordInteractor(mobile: mobile, code: code, router: this);
+    final interactor = SetPasswordInteractor(
+      mobile: mobile,
+      code: code,
+      mode: mode,
+      router: this,
+    );
     final page = SetPasswordPage(interactor: interactor);
     attach(interactor, page);
     return this;

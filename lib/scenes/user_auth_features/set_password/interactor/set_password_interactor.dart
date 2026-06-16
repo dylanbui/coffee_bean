@@ -10,6 +10,7 @@
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/repository/auth_repository.dart';
 import 'package:coffee_bean/scenes/user_auth_features/set_password/interactor/set_password_event_state.dart';
+import 'package:coffee_bean/scenes/user_auth_features/set_password/set_password_builder.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:db_core/network/network_common.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
@@ -20,11 +21,13 @@ import 'package:coffee_bean/scenes/user_auth_features/user_register/user_registe
 class SetPasswordInteractor extends CubitInteractor<DbNoteRoutable, SetPasswordState> {
   final String mobile;
   final String code;
+  final SetPasswordMode mode;
   final _authRepo = AuthRepository();
 
   SetPasswordInteractor({
     required this.mobile,
     required this.code,
+    required this.mode,
     DbNoteRoutable? router,
   }) : super(SetPasswordInitial(), router: router);
 
@@ -43,7 +46,7 @@ class SetPasswordInteractor extends CubitInteractor<DbNoteRoutable, SetPasswordS
     
     ResultType<bool> result;
     
-    if (UserManager().isLogin) {
+    if (mode == SetPasswordMode.registration) {
       // Step 3 Registration (Logged in via smsLogin)
       result = await _authRepo.updatePassword(password);
     } else {
@@ -55,7 +58,11 @@ class SetPasswordInteractor extends CubitInteractor<DbNoteRoutable, SetPasswordS
       success: (isSuccess) {
         if (isSuccess) {
           emit(SetPasswordSuccess());
-          router?.navigate(UserRegisterCompleteRoute());
+          if (mode == SetPasswordMode.registration) {
+            router?.navigate(SetPasswordRegistrationDoneRoute());
+          } else {
+            router?.navigate(SetPasswordResetDoneRoute());
+          }
         } else {
           emit(SetPasswordError(message:  "Set password failed (Server returned false)"));
         }

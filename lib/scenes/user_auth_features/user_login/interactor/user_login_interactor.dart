@@ -77,12 +77,13 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
 
       iLog("Login Social thành công: ${userInfo.nickname}");
       
+      // Quan trọng: Lưu session và info vào UserManager
+      await UserManager().saveSession(userSession);
+      await UserManager().saveUserInfo(userInfo);
+
       emit(UserLoginSuccess(userSession));
-      // Gửi cả session và info cho Flow xử lý tập trung
-      router?.navigate(LoginSuccessRoute(), parameters: {
-        'userSession': userSession,
-        'userInfo': userInfo,
-      });
+      // Không cần truyền parameters nữa, Flow sẽ lấy từ UserManager
+      router?.navigate(LoginSuccessRoute());
 
     } catch (error) {
       eLog("Social Sign-In Error: $error");
@@ -97,44 +98,56 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
   void doLoginWithApple() => _handleSocialLogin(SocialLoginType.apple);
 
   void doLoginWithPw(String phoneNumber, String password) async {
-    try {
-      emit(UserLoginInProgress());
-      iLog("Login with Password: $phoneNumber");
+    emit(UserLoginInProgress());
+    iLog("Login with Password: $phoneNumber");
 
-      final loginData = (await _authRepo.login(phoneNumber, password)).getOrThrow();
+    final loginResult = (await _authRepo.login(phoneNumber, password)).toResult();
 
+    if (loginResult case DbFailure(:final error)) {
+      eLog("Login PW Error: ${error.message}");
+      emit(UserLoginFailure(error: error.message));
+      return;
+    }
+
+    if (loginResult case DbSuccess(data: final loginData)) {
       final userSession = UserSession(
         id: loginData.userId,
         accessToken: loginData.accessToken,
         refreshToken: loginData.refreshToken,
       );
-      
+
       // Quan trọng: Lưu session để TokenInterceptor có token gọi API Profile
       await UserManager().saveSession(userSession);
+      _fetchUserInfo(userSession);
 
       // Fetch Profile info sau khi login
-      final userInfo = (await _userRepo.getUserInfo()).getOrThrow();
-
-      iLog("Login PW thành công: ${userInfo.nickname}");
-      emit(UserLoginSuccess(userSession));
-      
-      router?.navigate(LoginSuccessRoute(), parameters: {
-        'userSession': userSession,
-        'userInfo': userInfo,
-      });
-    } catch (error) {
-      eLog("Login PW Error: $error");
-      emit(UserLoginFailure(error: error.toString()));
+      // final profileResult = (await _userRepo.getUserInfo()).toResult();
+      //
+      // if (profileResult case DbSuccess(data: final userInfo)) {
+      //   await UserManager().saveUserInfo(userInfo);
+      //   iLog("Login PW thành công: ${userInfo.nickname}");
+      //   emit(UserLoginSuccess(userSession));
+      //   router?.navigate(LoginSuccessRoute());
+      // } else if (profileResult case DbFailure(:final error)) {
+      //   eLog("Fetch Profile Error: ${error.message}");
+      //   emit(UserLoginFailure(error: error.message));
+      // }
     }
   }
 
   void doLoginWithSms(String phoneNumber, String sms) async {
-    try {
-      emit(UserLoginInProgress());
-      iLog("Login with SMS: $phoneNumber");
+    emit(UserLoginInProgress());
+    iLog("Login with SMS: $phoneNumber");
 
-      final loginData = (await _authRepo.smsLogin(phoneNumber, sms)).getOrThrow();
+    final loginResult = (await _authRepo.smsLogin(phoneNumber, sms)).toResult();
 
+    if (loginResult case DbFailure(:final error)) {
+      eLog("Login SMS Error: ${error.message}");
+      emit(UserLoginFailure(error: error.message));
+      return;
+    }
+
+    if (loginResult case DbSuccess(data: final loginData)) {
       final userSession = UserSession(
         id: loginData.userId,
         accessToken: loginData.accessToken,
@@ -143,27 +156,14 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
 
       // Quan trọng: Lưu session để TokenInterceptor có token gọi API Profile
       await UserManager().saveSession(userSession);
+      _fetchUserInfo(userSession);
 
-      // Fetch Profile info sau khi login
-      final userInfo = (await _userRepo.getUserInfo()).getOrThrow();
-
-      iLog("Login SMS thành công: ${userInfo.nickname}");
-      emit(UserLoginSuccess(userSession));
-      
-      router?.navigate(LoginSuccessRoute(), parameters: {
-        'userSession': userSession,
-        'userInfo': userInfo,
-      });
-    } catch (error) {
-      eLog("Login SMS Error: $error");
-      emit(UserLoginFailure(error: error.toString()));
     }
   }
 
   void sendSmsCode(String phoneNumber) async {
     iLog("Sending SMS Code to $phoneNumber");
-    // Scene 1 for Login
-    final result = await _authRepo.sendSmsCode(phoneNumber, 1);
+    final result = await _authRepo.sendSmsCode(phoneNumber, SmsScene.smsLogin);
     result.toResult().when(
       success: (isSent) {
         if (!isSent) {
@@ -187,6 +187,23 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
       (router!.parentRouter as UserAuthFlow).onCancel();
     } else {
       router?.pop();
+    }
+  }
+
+  void _fetchUserInfo(UserSession userSession) async {
+    // Fetch Profile info sau khi login
+    final profileResult = (await _userRepo.getUserInfo()).toResult();
+
+    if (profileResult case DbSuccess(data: final userInfo)) {
+      await UserManager().saveUserInfo(userInfo);
+      iLog("Login thành công: ${userInfo.nickname}");
+      emit(UserLoginSuccess(userSession));
+      router?.navigate(LoginSuccessRoute());
+    } else if (profileResult case DbFailure(:final error)) {
+      eLog("Fetch Profile Error: ${error.message}");
+      // OPTIONAL: Xóa session vừa lưu nếu không lấy được profile để tránh trạng thái lửng lơ
+      await UserManager().doLogoutAndClearAll();
+      emit(UserLoginFailure(error: error.message));
     }
   }
 }

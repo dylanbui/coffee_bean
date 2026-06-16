@@ -92,12 +92,18 @@ class AuthHelper implements UserAuthFlowListener {
   // --- Implementation of UserAuthFlowListener (Internal Proxy) ---
 
   @override
-  void onAuthFlowSuccess(UserSession userData) {
-    // Broadcast global login success event
-    locator<DbEventBus>().fire(UserLoginSuccessEvent(userData));
-
-    _listener?.onAuthSuccess(userData, true);
-    _listener = null; // Clear listener reference after completion
+  void onAuthFlowCompleted(AuthResult result) {
+    if (result case LoginSuccess(:final session) || RegisterSuccess(:final session)) {
+      // Broadcast global login success event
+      locator<DbEventBus>().fire(UserLoginSuccessEvent(session));
+      _listener?.onAuthSuccess(session, true);
+      _listener = null; // Clear listener reference after completion
+    } else if (result is ResetPasswordSuccess) {
+      // Đối với ResetPassword, Helper này có thể không cần trả về gì đặc biệt cho Listener ban đầu
+      // vì bối cảnh thường là người dùng tự ý đi đổi pass.
+      // Tuy nhiên để an toàn, có thể trả về Cancelled với một code đặc thù nếu cần.
+      _listener = null;
+    }
   }
 
   @override

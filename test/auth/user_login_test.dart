@@ -94,9 +94,8 @@ void main() {
 
     test('Test: Login with SMS -> Fetch Profile', () async {
       debugPrint("\n--- LOGIN WITH SMS TEST ---");
-
       // 1. Send SMS
-      final sendSmsRes = await authRepository.sendSmsCode(mobile, 1);
+      final sendSmsRes = await authRepository.sendSmsCode(mobile, SmsScene.smsLogin);
       expect(sendSmsRes.toResult().isSuccess, true, reason: "Send SMS should succeed");
       debugPrint("SMS Sent successfully");
 

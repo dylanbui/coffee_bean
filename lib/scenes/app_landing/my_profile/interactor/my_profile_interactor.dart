@@ -86,10 +86,14 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
 
 
   @override
-  void onAuthFlowSuccess(UserSession userData) {
-    debugPrint("Auth Flow Success - Reload Profile Data");
-    // Chỉ cần bắn event. Listener trong onDidBecomeActive sẽ tự động gọi checkLoginStatus()
-    locator<DbEventBus>().fire(UserLoginSuccessEvent(userData));
+  void onAuthFlowCompleted(AuthResult result) {
+    debugPrint("Auth Flow Completed: $result");
+    
+    // Chỉ cần xử lý khi có dữ liệu session mới
+    if (result case LoginSuccess(:final session) || RegisterSuccess(:final session)) {
+      debugPrint("Reload Profile Data for user: ${session.id}");
+      locator<DbEventBus>().fire(UserLoginSuccessEvent(session));
+    }
   }
 
   @override

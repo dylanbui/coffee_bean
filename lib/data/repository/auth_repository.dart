@@ -4,15 +4,25 @@ import 'package:db_core/network/network_common.dart';
 import 'package:coffee_bean/data/model/response/user/auth_login_response.dart';
 import 'package:coffee_bean/data/network/network_response.dart';
 
+enum SmsScene {
+  smsLogin(1), // SMS Login
+  updatePhoneNumber(2), // Change mobile number, after login
+  updatePassword(3), // Change password, after login
+  resetPassword(4); // Forgot password
+
+  final int value;
+  const SmsScene(this.value);
+}
+
 class AuthRepository extends BaseRepository {
   AuthRepository({super.client});
 
   /// 1. Send SMS Code
-  Future<ResultType<bool>> sendSmsCode(String mobile, int scene) async {
+  Future<ResultType<bool>> sendSmsCode(String mobile, SmsScene scene) async {
     return await networkClient
         .request('/app-api/member/auth/send-sms-code', 
             type: NetworkType.post, 
-            params: {'mobile': mobile, 'scene': scene},
+            params: {'mobile': mobile, 'scene': scene.value},
             isPublic: true)
         .mapResponse()
         .toValue<bool>();
