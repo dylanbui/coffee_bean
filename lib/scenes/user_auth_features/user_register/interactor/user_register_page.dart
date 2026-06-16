@@ -8,6 +8,7 @@
  */
 
 import 'dart:async';
+import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:db_core/utils/logger.dart';
 import 'package:db_core/utils/keyboard_visibility.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/interactor/user_register_event_state.dart';
@@ -62,6 +63,20 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
 
   @override
   String? getTitle() => "Register";
+
+  @override
+  PreferredSizeWidget? getAppBar(BuildContext context) {
+    final title = getTitle();
+    final isRoot = interactor.isRoot;
+
+    return CoffeeAppBar(
+      title: title,
+      style: CoffeeAppBarStyleConfig(
+        backIcon: isRoot ? Icons.close : Icons.arrow_back_ios_new,
+      ),
+      onBackTap: () => interactor.onBack(),
+    );
+  }
 
   @override
   Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
@@ -221,13 +236,15 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
   }
 
   Widget _buildFooterLinks() {
+    if (!interactor.canShowLogin) return const SizedBox.shrink();
+    
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text("Already have an account? ", style: TMLabsTextStyle.body),
         InkWell(
           onTap: () {
-            iLog("Tap: Go to Login");
+            interactor.router?.navigate(UserLoginRoute());
           },
           child: Text(
             "Go to Login",

@@ -54,13 +54,8 @@ class UserRegisterRouter extends DbNoteRouter {
       setPasswordRouter.parentRouter = parentRouter;
       parentRouter?.push(setPasswordRouter.viewController);
 
-    } else if (toRoute is UserLoginRoute) {
-      final userLoginRouter = UserLoginBuilder().build();
-      userLoginRouter.parentRouter = this;
-      parentRouter?.push(userLoginRouter.viewController);
-
     } else {
-      // Đẩy các route khác (UserLoginRoute, UserRegisterCompleteRoute) lên cho Flow xử lý
+      // Đẩy tất cả các route khác lên cho Flow xử lý (bao gồm UserLoginRoute)
       parentRouter?.navigate(toRoute, fromContext: fromContext, routeName: routeName, parameters: parameters);
     }
   }

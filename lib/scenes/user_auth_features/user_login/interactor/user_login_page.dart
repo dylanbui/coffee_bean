@@ -69,12 +69,12 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
   @override
   PreferredSizeWidget? getAppBar(BuildContext context) {
     final title = getTitle();
-    final isAuthFlow = interactor.router?.parentRouter is UserAuthFlow;
+    final isRoot = interactor.isRoot;
 
     return CoffeeAppBar(
       title: title,
       style: CoffeeAppBarStyleConfig(
-        backIcon: isAuthFlow ? Icons.close : Icons.arrow_back_ios_new,
+        backIcon: isRoot ? Icons.close : Icons.arrow_back_ios_new,
       ),
       onBackTap: () => interactor.onBack(),
     );
@@ -367,16 +367,19 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("No account? ", style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey)),
-            InkWell(
-              onTap: () => interactor.router?.navigate(UserRegisterRoute()),
-              child: Text("Register Now", style: TMLabsTextStyle.bodyBold),
-            ),
-          ],
-        ),
+        if (interactor.canShowRegister)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("No account? ", style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey)),
+              InkWell(
+                onTap: () => interactor.router?.navigate(UserRegisterRoute()),
+                child: Text("Register Now", style: TMLabsTextStyle.bodyBold),
+              ),
+            ],
+          )
+        else
+          const SizedBox.shrink(),
         if (!hideForgotPw)
           InkWell(
             onTap: () => interactor.router?.navigate(ForgotPasswordRoute()),

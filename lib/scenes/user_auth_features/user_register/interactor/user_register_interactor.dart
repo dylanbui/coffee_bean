@@ -11,6 +11,7 @@ import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/data/repository/auth_repository.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
+import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/interactor/user_register_event_state.dart';
 import 'package:db_core/network/network_common.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
@@ -25,14 +26,24 @@ class UserRegisterInteractor extends CubitInteractor<UserRegisterRouter, UserReg
 
   UserRegisterInteractor(UserRegisterRouter router) : super(UserRegisterInitial(), router: router);
 
+  bool get isRoot {
+    // Duyệt ngược lên để tìm UserAuthFlow, tránh lỗi nếu router bị bọc
+    var current = router?.parentRouter;
+    while (current != null) {
+      if (current is UserAuthFlow) {
+        return current.startStep == AuthStartStep.register;
+      }
+      current = current.parentRouter;
+    }
+    return true;
+  }
+
+  bool get canShowLogin => isRoot;
+
   @override
   void onDidBecomeActive() {
     super.onDidBecomeActive();
-    loadData();
-  }
-
-  Future loadData() async {
-    // emit(UserRegisterInProgress());
+    emit(UserRegisterStarted());
   }
 
   void sendSmsCode(String phoneNumber) async {
@@ -51,7 +62,7 @@ class UserRegisterInteractor extends CubitInteractor<UserRegisterRouter, UserReg
 
   void doRegister(String phoneNumber, String smsCode, String? invitationCode) async {
     emit(UserRegisterInProgress());
-    
+
     final loginRes = await _authRepo.smsLogin(phoneNumber, smsCode);
     final loginResult = loginRes.toResult();
 
@@ -62,11 +73,7 @@ class UserRegisterInteractor extends CubitInteractor<UserRegisterRouter, UserReg
 
     if (loginResult case DbSuccess(:final data)) {
       // 1. Lưu session sau khi login bằng SMS thành công
-      final session = UserSession(
-        id: data.userId,
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
-      );
+      final session = UserSession(id: data.userId, accessToken: data.accessToken, refreshToken: data.refreshToken);
       // Can luu session truoc de su dung accessToken cho cac API tiep theo
       await UserManager().saveSession(session);
 
@@ -74,7 +81,7 @@ class UserRegisterInteractor extends CubitInteractor<UserRegisterRouter, UserReg
       // accessToken se duoc TokenInterceptor tu dong lay tu UserManager cho request nay
       final profileRes = await _userRepo.getUserInfo();
       final profileResult = profileRes.toResult();
-      
+
       if (profileResult case DbSuccess(data: final userInfo)) {
         await UserManager().saveUserInfo(userInfo);
       } else {
@@ -85,10 +92,17 @@ class UserRegisterInteractor extends CubitInteractor<UserRegisterRouter, UserReg
       emit(UserRegisterSuccess());
 
       // 3. Chuyển sang màn hình đặt Password, truyền theo phone và code để reset pass ở bước sau
-      router?.navigate(UserSetPasswordRoute(), parameters: {
-        'mobile': phoneNumber,
-        'code': smsCode,
-      });
+      router?.navigate(UserSetPasswordRoute(), parameters: {'mobile': phoneNumber, 'code': smsCode});
     }
+  }
+
+  void onBack() {
+    if (isRoot) {
+      if (router?.parentRouter is UserAuthFlow) {
+        (router?.parentRouter as UserAuthFlow).onCancel();
+        return;
+      }
+    }
+    router?.parentRouter?.pop();
   }
 }

@@ -18,6 +18,8 @@ abstract class UserRegisterState extends BaseBlocState {}
 
 class UserRegisterInitial extends UserRegisterState {}
 
+class UserRegisterStarted extends UserRegisterState {}
+
 class UserRegisterInProgress extends UserRegisterState {}
 
 class UserRegisterSuccess extends UserRegisterState {}

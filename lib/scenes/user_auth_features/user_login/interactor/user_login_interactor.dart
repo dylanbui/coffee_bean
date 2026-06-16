@@ -28,9 +28,23 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
 
   UserLoginInteractor(UserLoginRouter router) : super(UserLoginInitial(), router: router);
 
+  bool get isRoot {
+    var current = router?.parentRouter;
+    while (current != null) {
+      if (current is UserAuthFlow) {
+        return current.startStep == AuthStartStep.login;
+      }
+      current = current.parentRouter;
+    }
+    return true;
+  }
+
+  bool get canShowRegister => isRoot;
+
   @override
-  void onDidBecomeActive() {
-    loadData();
+  Future<void> onDidBecomeActive() async {
+    await SocialAuthService.initialize();
+    emit(UserLoginStarted());
   }
 
   Future<void> _handleSocialLogin(SocialLoginType type) async {
@@ -119,19 +133,6 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
       // Quan trọng: Lưu session để TokenInterceptor có token gọi API Profile
       await UserManager().saveSession(userSession);
       _fetchUserInfo(userSession);
-
-      // Fetch Profile info sau khi login
-      // final profileResult = (await _userRepo.getUserInfo()).toResult();
-      //
-      // if (profileResult case DbSuccess(data: final userInfo)) {
-      //   await UserManager().saveUserInfo(userInfo);
-      //   iLog("Login PW thành công: ${userInfo.nickname}");
-      //   emit(UserLoginSuccess(userSession));
-      //   router?.navigate(LoginSuccessRoute());
-      // } else if (profileResult case DbFailure(:final error)) {
-      //   eLog("Fetch Profile Error: ${error.message}");
-      //   emit(UserLoginFailure(error: error.message));
-      // }
     }
   }
 
@@ -176,18 +177,15 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
     );
   }
 
-  Future loadData() async {
-    await SocialAuthService.initialize();
-    await Utils.delay(second: 1);
-    emit(UserLoginStarted());
-  }
 
   void onBack() {
-    if (router?.parentRouter is UserAuthFlow) {
-      (router!.parentRouter as UserAuthFlow).onCancel();
-    } else {
-      router?.pop();
+    if (isRoot) {
+      if (router?.parentRouter is UserAuthFlow) {
+        (router?.parentRouter as UserAuthFlow).onCancel();
+        return;
+      }
     }
+    router?.parentRouter?.pop();
   }
 
   void _fetchUserInfo(UserSession userSession) async {
