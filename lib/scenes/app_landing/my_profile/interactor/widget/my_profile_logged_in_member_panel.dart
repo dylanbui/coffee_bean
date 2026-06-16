@@ -4,11 +4,12 @@ import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/app_selection_row.dart';
-import 'package:db_core/utils/tap_effect.dart';
-import 'package:db_core/utils/app_button.dart';
+import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
+import 'package:coffee_bean/shared/service/upgrade_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class MyProfileLoggedInMemberPanel extends StatelessWidget {
   final MyProfileInteractor interactor;
@@ -22,41 +23,59 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
     
     return Container(
       color: TMLabsColor.bgMain,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: topPadding),
-            MemberCardWidget(
-              style: MemberCardStyle.diamond,
-              name: userInfo?.nickname ?? 'MEMBER',
-              id: userInfo?.id.toString() ?? '---',
-              voucherCount: '0', // TODO: Cần API voucher
-              points: userInfo?.point.toString() ?? '0',
-              rankName: userInfo?.level?.name ?? '---',
-              className: '---', // TODO: Cần API class
-              avatarUrl: userInfo?.avatar,
-              padding: const EdgeInsets.only(top: 24, left: 20, right: 20),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    children: [
+                      SizedBox(height: topPadding),
+                      MemberCardWidget(
+                        style: MemberCardStyle.diamond,
+                        name: userInfo?.nickname ?? 'MEMBER',
+                        id: userInfo?.id.toString() ?? '---',
+                        voucherCount: '0', // TODO: Cần API voucher
+                        points: userInfo?.point.toString() ?? '0',
+                        rankName: userInfo?.level?.name ?? '---',
+                        className: '---', // TODO: Cần API class
+                        avatarUrl: userInfo?.avatar,
+                        padding: const EdgeInsets.only(top: 24, left: 20, right: 20),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildActionBarButtons(),
+                      const SizedBox(height: 16),
+                      _buildActionsList(),
+                      const SizedBox(height: 16),
+                      AppSelectionRow(
+                        leadingIcon: AppAssets.icons.icStoreService,
+                        title: 'Dịch vụ tại cửa hàng',
+                        trailingIcon: AppAssets.icons.icArrowRightNone,
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        onTap: () {},
+                      ),
+                      const SizedBox(height: 16),
+                      _buildLogoutButton(context),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 32),
+                    child: _buildVersionInfo(),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 16),
-            _buildActionBarButtons(),
-            const SizedBox(height: 16),
-            _buildActionsList(),
-            const SizedBox(height: 16),
-            AppSelectionRow(
-              leadingIcon: AppAssets.icons.icStoreService,
-              title: 'Dịch vụ tại cửa hàng',
-              trailingIcon: AppAssets.icons.icArrowRightNone,
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              onTap: () {},
-            ),
-            const SizedBox(height: 16),
-            _buildLogoutButton(context),
-            const SizedBox(height: 32),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
+
+
 
   Widget _buildActionBarButtons() {
     return Container(
@@ -194,6 +213,38 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
           }
         },
       ),
+    );
+  }
+
+  Widget _buildVersionInfo() {
+    return Column(
+      children: [
+        // Nút check update giả lập
+        GestureDetector(
+          onTap: () {
+            // Giả lập việc bắn event để App.dart bắt được và hiện UpgradeWidget
+            locator<DbEventBus>().fire(UpgradeSimulateEvent());
+          },
+          child: Text(
+            "Kiểm tra cập nhật",
+            style: TMLabsTextStyle.caption.copyWith(
+              color: TMLabsColor.secondary,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        FutureBuilder<PackageInfo>(
+          future: PackageInfo.fromPlatform(),
+          builder: (context, snapshot) {
+            final version = snapshot.data?.version ?? "1.0.0";
+            return Text(
+              "Phiên bản $version",
+              style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),
+            );
+          },
+        ),
+      ],
     );
   }
 }

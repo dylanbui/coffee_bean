@@ -1,8 +1,10 @@
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:db_core/utils/app_button.dart';
+import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/my_profile_interactor.dart';
+import 'package:coffee_bean/shared/service/upgrade_service.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class MyProfileLoggedOutPanel extends StatelessWidget {
   final MyProfileInteractor interactor;
@@ -11,42 +13,90 @@ class MyProfileLoggedOutPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // 1. Header Profile
-          _buildHeader(),
-
-          // 2. Points & Rewards Card
-          _buildPointsCard(),
-
-          const SizedBox(height: 40),
-
-          // 3. Auth Buttons
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                AppButton(
-                  text: "Đăng nhập",
-                  style: TMLabsButtonStyle.primary,
-                  onPressed: () => interactor.router?.doLoginFlow(interactor),
+                Column(
+                  children: [
+                    // 1. Header Profile
+                    _buildHeader(),
+
+                    // 2. Points & Rewards Card
+                    _buildPointsCard(),
+
+                    const SizedBox(height: 40),
+
+                    // 3. Auth Buttons
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
+                        children: [
+                          AppButton(
+                            text: "Đăng nhập",
+                            style: TMLabsButtonStyle.primary,
+                            onPressed: () => interactor.router?.doLoginFlow(interactor),
+                          ),
+                          const SizedBox(height: 16),
+                          AppButton(
+                            text: "Đăng ký",
+                            style: TMLabsButtonStyle.outline,
+                            onPressed: () {
+                              // Navigate to register if available
+                              interactor.router?.doRegisterFlow(interactor);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                AppButton(
-                  text: "Đăng ký",
-                  style: TMLabsButtonStyle.outline,
-                  onPressed: () {
-                    // Navigate to register if available
-                    interactor.router?.doRegisterFlow(interactor);
-                  },
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: _buildVersionInfo(),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 40),
-        ],
-      ),
+        );
+      },
+    );
+  }
+
+  Widget _buildVersionInfo() {
+    return Column(
+      children: [
+        // Nút check update giả lập
+        GestureDetector(
+          onTap: () {
+            // Giả lập việc bắn event để App.dart bắt được và hiện UpgradeWidget
+            locator<DbEventBus>().fire(UpgradeSimulateEvent());
+          },
+          child: Text(
+            "Kiểm tra cập nhật",
+            style: TMLabsTextStyle.caption.copyWith(
+              color: TMLabsColor.secondary,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        FutureBuilder<PackageInfo>(
+          future: PackageInfo.fromPlatform(),
+          builder: (context, snapshot) {
+            final version = snapshot.data?.version ?? "1.0.0";
+            return Text(
+              "Phiên bản $version",
+              style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),
+            );
+          },
+        ),
+      ],
     );
   }
 

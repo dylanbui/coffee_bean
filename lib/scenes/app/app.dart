@@ -16,6 +16,8 @@ import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/flash_dialog_provider.dart';
 import 'package:coffee_bean/shared/ui/flash_toast_provider.dart';
 import 'package:coffee_bean/shared/widget/offline_widget.dart';
+import 'package:coffee_bean/shared/widget/upgrade_widget.dart';
+import 'package:coffee_bean/shared/service/upgrade_service.dart';
 import 'package:db_core/utils/network_checker.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:db_core/architecture_ribs/navigator.dart';
@@ -187,14 +189,16 @@ class App extends StatefulWidget {
   State<App> createState() => _AppState();
 }
 
-class _AppState extends State<App> {
+class _AppState extends State<App> with WidgetsBindingObserver {
   late final DbNetworkChecker _checker;
   bool _isOffline = false;
+  String? _newVersion;
   StreamSubscription? _sub;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _checker = DbNetworkChecker();
     _checker.start();
 
@@ -208,6 +212,31 @@ class _AppState extends State<App> {
         }
       }
     });
+
+    // Lắng nghe sự kiện giả lập update
+    locator<DbEventBus>().on<UpgradeSimulateEvent>().listen((event) {
+      _checkUpgrade(force: true);
+    });
+
+    _checkUpgrade();
+  }
+
+  Future<void> _checkUpgrade({bool force = false}) async {
+    final version = await UpgradeService.checkUpdate(force: force);
+    if (mounted) {
+      setState(() {
+        _newVersion = version;
+      });
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Nếu đang hiện thông báo update, check lại với force=true 
+      // để xử lý trường hợp giả lập đã bấm update xong.
+      _checkUpgrade(force: _newVersion != null);
+    }
   }
 
   void _refreshCurrentPage() {
@@ -222,6 +251,7 @@ class _AppState extends State<App> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _sub?.cancel();
     _checker.dispose();
     super.dispose();
@@ -240,6 +270,11 @@ class _AppState extends State<App> {
             if (child != null) child,
             if (_isOffline)
               OfflineWidget(onRetry: _refreshCurrentPage),
+            if (_newVersion != null)
+              UpgradeWidget(
+                newVersion: _newVersion!,
+                onUpdate: () => UpgradeService.openStore(),
+              ),
           ],
         );
       },
