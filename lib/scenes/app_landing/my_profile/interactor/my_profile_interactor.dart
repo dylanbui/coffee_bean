@@ -13,6 +13,7 @@ import 'package:db_core/utils/locator.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/my_profile_router.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
+import 'package:coffee_bean/shared/service/system_notify/system_notify_event.dart';
 import 'package:flutter/cupertino.dart';
 
 // States
@@ -103,10 +104,15 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
   void onAuthFlowCompleted(AuthResult result) {
     debugPrint("Auth Flow Completed: $result");
     
-    // Chỉ cần xử lý khi có dữ liệu session mới
-    if (result case LoginSuccess(:final session) || RegisterSuccess(:final session)) {
-      debugPrint("Reload Profile Data for user: ${session.id}");
-      locator<DbEventBus>().fire(UserLoginSuccessEvent(session));
+    switch (result) {
+      case LoginSuccess(:final session):
+        locator<DbEventBus>().fire(SystemSuccessNotifyEvent("Đăng nhập thành công!"));
+        locator<DbEventBus>().fire(UserLoginSuccessEvent(session));
+      case RegisterSuccess(:final session):
+        locator<DbEventBus>().fire(SystemSuccessNotifyEvent("Đăng ký tài khoản thành công!"));
+        locator<DbEventBus>().fire(UserLoginSuccessEvent(session));
+      case ResetPasswordSuccess():
+        locator<DbEventBus>().fire(SystemSuccessNotifyEvent("Đặt lại mật khẩu thành công! Bạn hãy đăng nhập lại"));
     }
   }
 
