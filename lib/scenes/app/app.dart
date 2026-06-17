@@ -52,76 +52,90 @@ Chuck chuck = Chuck(
 );
 
 Future<Widget> initializeApp() async {
-  /*
-  Specifies the set of orientations the application interface can be displayed in.
-  The orientation argument is a list of DeviceOrientation enum values. The empty list causes the application to defer to the operating system default.
-  * */
-  // Xu ly trong main.dart
-  // WidgetsFlutterBinding.ensureInitialized();
-  // SystemChrome.setPreferredOrientations([
-  //   DeviceOrientation.portraitUp,
-  //   DeviceOrientation.portraitDown,
-  // ]);
+  // --- PHASE 1: PARALLEL INITIALIZATION ---
+  // Maximize I/O efficiency by running independent tasks concurrently.
+  // The total wait time will be equal to the longest task in this group.
+  await Future.wait([
+    // 1. Firebase & Remote Config
+    _initFirebase(),
 
-  // Khởi tạo Firebase
-  try {
-    await Firebase.initializeApp();
-    // Cấu hình Remote Config cho việc upgrade app
-    await AppUpgradeService.setupRemoteConfig();
-  } catch (e) {
-    debugPrint("Firebase initialization failed: $e");
-  }
+    // 2. Load SharedPreferences (Required for UserManager initialization in the next phase)
+    DbSharedPreferences().loadPreferences(),
 
-  // Initialize locator and services, Always load AFTER Load share preferences
-  await _setupLocator();
+    // 3. Initialize Database (Await DB file opening in parallel with other I/O)
+    _initDatabase(),
 
-  // UserManager + SecureStorage
-  await _setupStoreManager();
+    // 4. Configure UI Utils, Cache, Toast & Dialog Styles
+    _setupUiUtils(),
+  ]);
 
-  // Initialize Network Service
+  // --- PHASE 2: SEQUENTIAL INITIALIZATION ---
+
+  // 1. Register Repositories and Lazy Services into the Locator
+  _registerLazyServices();
+
+  // 2. Initialize UserManager and handle initial Auth logic
+  await _setupUserManager();
+
+  // 3. Initialize Network Service (Requires UserManager for TokenInterceptor setup)
   await _setupNetwork();
 
-  // Check if we're running on Android
+  // Platform specific setup
   if (defaultTargetPlatform == TargetPlatform.android) {
     // AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
   }
 
-  // Remove the native splash screen when app is ready
+  // Remove the native splash screen once the entire system is ready
   FlutterNativeSplash.remove();
-
-  // Initialize Network Service
-  await _setupUiUtils();
 
   return App();
 }
 
-Future<void> _setupStoreManager() async {
-  // 1. Load share preferences data when start app
-  await DbSharedPreferences().loadPreferences();
-  // 2. Nạp dữ liệu từ SecureStorage lên RAM của UserManager ngay lập tức
+// region: Helper Initialization Methods
+
+Future<void> _initFirebase() async {
+  try {
+    await Firebase.initializeApp();
+    // Configure Remote Config for app upgrades
+    await AppUpgradeService.setupRemoteConfig();
+  } catch (e) {
+    debugPrint("Firebase initialization failed: $e");
+  }
+}
+
+Future<void> _initDatabase() async {
+  final dbService = DatabaseService();
+  await dbService.init();
+  // Check if the service is already registered to prevent "Object already registered" errors during Hot Reload.
+  if (!locator.isRegistered<DatabaseService>()) {
+    locator.registerSingleton<DatabaseService>(dbService);
+  }
+}
+
+Future<void> _setupUserManager() async {
+  // Load data from SecureStorage into UserManager RAM immediately
   await UserManager().init();
 
-
-  // TODO: 3. Demo, moi khi chay lai app se xoa sach du lieu
+  // TODO: 3. Demo logic - clear all data on every app restart (Development phase only)
   await UserManager().doLogoutAndClearAll();
 }
 
 Future<void> _setupNetwork() async {
-  // 1. Lấy cấu hình headers dùng chung (đã bao gồm tenant-id: 162)
+  // 1. Get common headers configuration (including tenant-id: 162)
   final commonHeaders = AppConfig().defaultHeaders;
 
-  // 2. Khởi tạo một NetworkClient "sạch" - CHỈ dùng để Refresh Token
-  // Client này không được chứa TokenInterceptor để tránh vòng lặp vô hạn (Infinite Loop)
+  // 2. Initialize a "clean" NetworkClient - ONLY used for Refresh Token
+  // This client MUST NOT contain TokenInterceptor to avoid infinite loops
   final refreshClient = NetworkClient(NetworkConfig(
     baseUrl: AppConfig().url,
     interceptors: [
       HeaderInterceptor(headers: commonHeaders),
-      // Có thể thêm Chuck ở đây nếu muốn theo dõi cả request refresh token
+      // Optionally add Chuck here to monitor refresh token requests
       chuck.dioInterceptor, 
     ],
   ));
   
-  // 3. Cấu hình TokenInterceptor
+  // 3. Configure TokenInterceptor
   final tokenInterceptor = TokenInterceptor(
     client: refreshClient, 
     refreshPath: "/app-api/member/auth/refresh-token", 
@@ -129,25 +143,26 @@ Future<void> _setupNetwork() async {
     onLogout: () => UserManager().doLogoutAndClearAll(),
   );
 
-  // 4. Khởi tạo NetworkServiceProvider CHÍNH cho toàn bộ App
+  // 4. Initialize the MAIN NetworkServiceProvider for the entire App
   NetworkServiceProvider.init(NetworkConfig(
     baseUrl: AppConfig().url,
     timeout: const Duration(seconds: 30),
     interceptors: [
-      HeaderInterceptor(headers: commonHeaders), // Đảm bảo mọi request đều có tenant-id
-      tokenInterceptor,                          // Quản lý Access Token
+      HeaderInterceptor(headers: commonHeaders), // Ensure every request has tenant-id
+      tokenInterceptor,                          // Manage Access Token
       chuck.dioInterceptor,                       // Logger/Inspector
     ],
   ));
 }
 
-Future<void> _setupLocator() async {
-  // Register Database Service
-  final dbService = DatabaseService();
-  await dbService.init();
-  locator.registerSingleton<DatabaseService>(dbService);
+void _registerLazyServices() {
+  // [IMPORTANT]: Check if a representative service is already registered and exit early.
+  // In Flutter, during "Hot Reload", the initializeApp function might be called again.
+  // GetIt (locator) does not allow duplicate registration of Singletons/LazySingletons of the same Type.
+  // Failing to check will cause the app to crash with an "Object already registered" error.
+  if (locator.isRegistered<DbEventBus>()) return;
 
-  // Register Broadcast Service same EventBus
+  // Register Broadcast Service (EventBus)
   locator.registerLazySingleton<DbEventBus>(() => DbEventBus());
   // Register DeepLink Service
   locator.registerLazySingleton<DeepLinkService>(() => DeepLinkService());
@@ -165,23 +180,26 @@ Future<void> _setupLocator() async {
 }
 
 Future<void> _setupUiUtils() async {
-  // Cache system
+  // Cache system configuration
   DbCachedImageConfig.init(
     fallbackAsset: AppAssets.images.imgNoImage,
-    // Nếu muốn cấu hình cache chuyên sâu hơn:
+    // Advanced cache configuration:
     cacheManager: CacheManager(
       Config(
         'coffee_bean_cache_key',
-        stalePeriod: const Duration(days: 30), // Lưu 30 ngày
-        maxNrOfCacheObjects: 200,             // Tối đa 200 ảnh
+        stalePeriod: const Duration(days: 30), // Retain for 30 days
+        maxNrOfCacheObjects: 200,             // Max 200 images
       ),
     ),
   );
 
-  // Khởi tạo Toast & Dialog Helper với Style của dự án Coffee Bean
+  // Initialize Toast & Dialog Style Providers for Coffee Bean project
   TMLabsToastStyleProvider.init();
   TMLabsDialogStyleProvider.init();
 }
+
+// endregion
+
 
 /// -------------------------
 /// MAIN APP

@@ -33,11 +33,14 @@ class DbLocator {
 
     // Logic đăng ký tập trung
     void _register<T>(_ServiceFactory<T> factory) {
-        if (_factories.containsKey(T) && !allowReassignment) {
+        if (isRegistered<T>() && !allowReassignment) {
             throw Exception("Service ${T.toString()} đã tồn tại. Bật 'allowReassignment' để ghi đè.");
         }
         _factories[T] = factory;
     }
+
+    // Check if a service is already registered
+    bool isRegistered<T>() => _factories.containsKey(T);
 
     // Đăng ký Singleton: Khởi tạo ngay
     void registerSingleton<T>(T service) => _register<T>(_ServiceFactory<T>(() => service, _ServiceType.singleton)..instance = service);
