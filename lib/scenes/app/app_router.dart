@@ -9,6 +9,7 @@ import 'package:coffee_bean/scenes/coupon_list/coupon_list_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/course_list_builder.dart';
 import 'package:coffee_bean/scenes/event_features/activity_list/activity_list_builder.dart';
 import 'package:coffee_bean/scenes/food_detail/food_detail_builder.dart';
+import 'package:coffee_bean/scenes/my_profile_features/update_profile/update_profile_builder.dart';
 import 'package:coffee_bean/scenes/order_confirmation/order_confirmation_builder.dart';
 import 'package:coffee_bean/scenes/point_features/daily_sign_in/daily_sign_in_builder.dart';
 import 'package:coffee_bean/scenes/point_features/point_task/point_task_builder.dart';
@@ -39,9 +40,13 @@ class AppRouter extends DbNoteRouter {
     // await _simulateLogin();
 
     // Load trang dau tien
-    MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
-    final router = mainTabbarBuilder.build();
-    navigator.pushSameRootPage(router.viewController);
+    // MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
+    // final router = mainTabbarBuilder.build();
+    // navigator.pushSameRootPage(router.viewController);
+
+    final builder = UpdateProfileBuilder();
+    navigator.pushSameRootPage(builder.build().viewController);
+
 
     // --- TẠO DỮ LIỆU MOCK ĐỂ TEST UI VENUE PAYMENT ---
     // final params = VenuePaymentParams(

@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'package:coffee_bean/shared/base/tap_to_unfocus_mixin.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
+import 'package:coffee_bean/shared/widget/asset_picker.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_statefull_widget.dart';
 import 'package:db_core/utils/app_button.dart';
@@ -60,11 +62,18 @@ class _UpdateProfilePageState extends CubitState<UpdateProfilePage, UpdateProfil
             context.showFlashError(state.error!);
           }
           
-          if (state.userInfo != null && !_initialized) {
-            _nicknameController.text = state.userInfo?.nickname ?? "";
-            _avatarController.text = state.userInfo?.avatar ?? "";
-            _sex = state.userInfo?.sex ?? 1;
-            _initialized = true;
+          if (state.userInfo != null) {
+            if (!_initialized) {
+              _nicknameController.text = state.userInfo?.nickname ?? "";
+              _avatarController.text = state.userInfo?.avatar ?? "";
+              _sex = state.userInfo?.sex ?? 1;
+              _initialized = true;
+            } else {
+              // Cập nhật lại avatar controller nếu state.userInfo thay đổi (sau khi update thành công)
+              if (state.userInfo?.avatar != null && state.userInfo?.avatar != _avatarController.text) {
+                _avatarController.text = state.userInfo!.avatar;
+              }
+            }
           }
         },
         builder: (context, state) {
@@ -77,7 +86,7 @@ class _UpdateProfilePageState extends CubitState<UpdateProfilePage, UpdateProfil
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _buildAvatar(state.userInfo?.avatar),
+                _buildAvatar(state.userInfo?.avatar, state.selectedAvatarFile),
                 const SizedBox(height: 16),
                 Text(state.userInfo?.nickname ?? "Nickname", style: TMLabsTextStyle.h2),
                 const SizedBox(height: 32),
@@ -114,20 +123,28 @@ class _UpdateProfilePageState extends CubitState<UpdateProfilePage, UpdateProfil
     );
   }
 
-  Widget _buildAvatar(String? avatarUrl) {
+  Widget _buildAvatar(String? avatarUrl, File? localFile) {
     return TapEffect(
-      onTap: () {
-        context.showFlashInfo("Tính năng chọn ảnh từ thư viện sẽ sớm được cập nhật");
-      },
+      onTap: _onPickAvatar,
       child: Stack(
         children: [
-          DbCachedImageWidget(
-            imageUrl: avatarUrl,
-            width: 150,
-            height: 150,
-            borderRadius: 75,
-            fit: BoxFit.cover,
-          ),
+          localFile != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(75),
+                  child: Image.file(
+                    localFile,
+                    width: 150,
+                    height: 150,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : DbCachedImageWidget(
+                  imageUrl: avatarUrl,
+                  width: 150,
+                  height: 150,
+                  borderRadius: 75,
+                  fit: BoxFit.cover,
+                ),
           Positioned(
             bottom: 0,
             right: 0,
@@ -143,6 +160,13 @@ class _UpdateProfilePageState extends CubitState<UpdateProfilePage, UpdateProfil
         ],
       ),
     );
+  }
+
+  void _onPickAvatar() async {
+    final file = await DbAssetPicker.pickSingleImage(context,crop: true);
+    if (file != null) {
+      interactor.onAvatarFileSelected(file);
+    }
   }
 
   Widget _buildTextField({

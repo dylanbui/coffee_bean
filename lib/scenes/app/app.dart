@@ -12,6 +12,7 @@ import 'dart:async';
 import 'package:chuck_interceptor/chuck_interceptor.dart';
 import 'package:coffee_bean/data/repository/activity_repository.dart';
 import 'package:coffee_bean/data/repository/auth_repository.dart';
+import 'package:coffee_bean/data/repository/upload_files_repository.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
@@ -175,6 +176,7 @@ void _registerLazyServices() {
   // Register Repositories
   locator.registerLazySingleton<AuthRepository>(() => AuthRepository());
   locator.registerLazySingleton<UserRepository>(() => UserRepository());
+  locator.registerLazySingleton<UploadFilesRepository>(() => UploadFilesRepository());
   locator.registerLazySingleton<PaymentDomainRepository>(() => PaymentDomainRepository());
   locator.registerLazySingleton<CommentRepository>(() => CommentRepository());
   locator.registerLazySingleton<ReservationRepository>(() => ReservationRepository());

@@ -85,6 +85,7 @@ dependencies:
   # Advanced asset picker (WeChat style)
   wechat_assets_picker: ^9.4.0
   wechat_camera_picker: ^4.3.1
+  image_cropper: ^12.2.1
   # QR and Barcode scanner
   mobile_scanner: ^6.0.0
   # Open URLs, send emails, make calls

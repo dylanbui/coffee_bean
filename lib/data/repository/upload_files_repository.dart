@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 
 /// Repository for handling file upload operations.
 class UploadFilesRepository {
-  final NetworkClient _networkClient = locator.get<NetworkClient>();
+  // final NetworkClient _networkClient = locator.get<NetworkClient>();
 
   /// Simulates uploading a file to a server.
   ///
