@@ -104,7 +104,13 @@ dependencies:
   # Cache manager used by cached_network_image (required for custom cache config)
   flutter_cache_manager: ^3.4.1
 
-  # --- Utils & Optimization ---
+  # --- Utilities & Optimization ---
+  # Firebase Core and Remote Config
+  firebase_core: ^4.10.0
+  firebase_remote_config: ^6.5.2
+#  firebase_core: ^3.10.1
+#  firebase_remote_config: ^6.0.0
+
   # Debounce and throttle utility
   easy_debounce: ^2.0.3
   # Annotations for JSON code generation

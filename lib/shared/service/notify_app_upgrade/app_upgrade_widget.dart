@@ -5,11 +5,11 @@ import 'package:db_core/utils/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class UpgradeWidget extends StatelessWidget {
+class AppUpgradeWidget extends StatelessWidget {
   final String newVersion;
   final VoidCallback onUpdate;
 
-  const UpgradeWidget({
+  const AppUpgradeWidget({
     super.key,
     required this.newVersion,
     required this.onUpdate,

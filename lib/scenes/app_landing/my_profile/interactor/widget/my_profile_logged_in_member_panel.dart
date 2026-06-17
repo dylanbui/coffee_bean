@@ -6,7 +6,7 @@ import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/app_selection_row.dart';
 import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
-import 'package:coffee_bean/shared/service/upgrade_service.dart';
+import 'package:coffee_bean/shared/service/notify_app_upgrade/app_upgrade_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -219,11 +219,11 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
   Widget _buildVersionInfo() {
     return Column(
       children: [
-        // Nút check update giả lập
+        const SizedBox(height: 20),
+        // Nút check update gọi thẳng Firebase Remote Config qua EventBus
         GestureDetector(
           onTap: () {
-            // Giả lập việc bắn event để App.dart bắt được và hiện UpgradeWidget
-            locator<DbEventBus>().fire(UpgradeSimulateEvent());
+            locator<DbEventBus>().fire(CheckAppUpgradeRequestEvent());
           },
           child: Text(
             "Kiểm tra cập nhật",
@@ -233,7 +233,7 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         FutureBuilder<PackageInfo>(
           future: PackageInfo.fromPlatform(),
           builder: (context, snapshot) {

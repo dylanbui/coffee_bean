@@ -14,7 +14,6 @@ import 'package:db_core/utils/keyboard_visibility.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/interactor/user_login_event_state.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/interactor/user_login_interactor.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/user_login_builder.dart';
-import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';

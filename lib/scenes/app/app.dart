@@ -15,9 +15,9 @@ import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/flash_dialog_provider.dart';
 import 'package:coffee_bean/shared/ui/flash_toast_provider.dart';
-import 'package:coffee_bean/shared/widget/offline_widget.dart';
-import 'package:coffee_bean/shared/widget/upgrade_widget.dart';
-import 'package:coffee_bean/shared/service/upgrade_service.dart';
+import 'package:coffee_bean/shared/service/notify_network_available/offline_widget.dart';
+import 'package:coffee_bean/shared/service/notify_app_upgrade/app_upgrade_widget.dart';
+import 'package:coffee_bean/shared/service/notify_app_upgrade/app_upgrade_service.dart';
 import 'package:db_core/utils/network_checker.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:db_core/architecture_ribs/navigator.dart';
@@ -35,6 +35,7 @@ import 'package:coffee_bean/data/repository/comment_repository.dart';
 import 'package:coffee_bean/data/repository/course_repository.dart';
 import 'package:coffee_bean/data/repository/reservation_repository.dart';
 import 'package:coffee_bean/data/repository/store_point_repository.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:db_core/utils/locator.dart';
@@ -43,6 +44,7 @@ import 'package:coffee_bean/data/local/live_service/likes_service.dart';
 import 'package:coffee_bean/scenes/app/interactor/deep_link_service.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 Chuck chuck = Chuck(
   showNotification: true,
@@ -60,6 +62,15 @@ Future<Widget> initializeApp() async {
   //   DeviceOrientation.portraitUp,
   //   DeviceOrientation.portraitDown,
   // ]);
+
+  // Khởi tạo Firebase
+  try {
+    await Firebase.initializeApp();
+    // Cấu hình Remote Config cho việc upgrade app
+    await AppUpgradeService.setupRemoteConfig();
+  } catch (e) {
+    debugPrint("Firebase initialization failed: $e");
+  }
 
   // Initialize locator and services, Always load AFTER Load share preferences
   await _setupLocator();
@@ -173,9 +184,8 @@ Future<void> _setupUiUtils() async {
 }
 
 /// -------------------------
-/// Main APP
+/// MAIN APP
 /// -------------------------
-
 
 class App extends StatefulWidget {
   final AppBuilder _appBuilder = AppBuilder();
@@ -189,71 +199,30 @@ class App extends StatefulWidget {
   State<App> createState() => _AppState();
 }
 
-class _AppState extends State<App> with WidgetsBindingObserver {
-  late final DbNetworkChecker _checker;
-  bool _isOffline = false;
-  String? _newVersion;
-  StreamSubscription? _sub;
+class _AppState extends State<App> with WidgetsBindingObserver, _AppNetworkMixin, _AppUpgradeMixin {
 
   @override
   void initState() {
     super.initState();
+    debugPrint("App: --- INIT STATE ---");
     WidgetsBinding.instance.addObserver(this);
-    _checker = DbNetworkChecker();
-    _checker.start();
-
-    _sub = _checker.stream.listen((status) {
-      if (status is DbNetworkStatusOffline) {
-        if (!_isOffline) setState(() => _isOffline = true);
-      } else {
-        if (_isOffline) {
-          setState(() => _isOffline = false);
-          _refreshCurrentPage();
-        }
-      }
-    });
-
-    // Lắng nghe sự kiện giả lập update
-    locator<DbEventBus>().on<UpgradeSimulateEvent>().listen((event) {
-      _checkUpgrade(force: true);
-    });
-
-    _checkUpgrade();
-  }
-
-  Future<void> _checkUpgrade({bool force = false}) async {
-    final version = await UpgradeService.checkUpdate(force: force);
-    if (mounted) {
-      setState(() {
-        _newVersion = version;
-      });
-    }
+    
+    _initNetworkLogic();
+    _initUpgradeLogic();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      // Nếu đang hiện thông báo update, check lại với force=true 
-      // để xử lý trường hợp giả lập đã bấm update xong.
       _checkUpgrade(force: _newVersion != null);
-    }
-  }
-
-  void _refreshCurrentPage() {
-    _checker.recheck();
-
-    final context = DbNavigator.globalNavigatorState.currentContext;
-    if (context != null) {
-      // Ví dụ: gọi Bloc hoặc interactor để refresh
-      // BlocProvider.of<ReservationListInteractor>(context).onRefresh();
     }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _sub?.cancel();
-    _checker.dispose();
+    _disposeNetworkLogic();
+    _disposeUpgradeLogic();
     super.dispose();
   }
 
@@ -271,9 +240,9 @@ class _AppState extends State<App> with WidgetsBindingObserver {
             if (_isOffline)
               OfflineWidget(onRetry: _refreshCurrentPage),
             if (_newVersion != null)
-              UpgradeWidget(
+              AppUpgradeWidget(
                 newVersion: _newVersion!,
-                onUpdate: () => UpgradeService.openStore(),
+                onUpdate: () => AppUpgradeService.openStore(),
               ),
           ],
         );
@@ -283,52 +252,98 @@ class _AppState extends State<App> with WidgetsBindingObserver {
   }
 }
 
-
-// RUN GOOD
-// class App extends StatelessWidget {
-//
-//   final AppBuilder _appBuilder = AppBuilder();
-//   late final _appRouter = _appBuilder.build();
-//
-//   App({super.key}) {
-//     // Run sync data
-//     _appBuilder.startApp();
-//   }
-//
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       // Connect GlobalKey from Router to Flutter Navigator
-//       navigatorKey: DbNavigator.globalNavigatorState,
-//       title: 'Coffee Bean',
-//       theme: ThemeData(primarySwatch: Colors.blue,),
-//       home: _appRouter.viewController,
-//     );
-//   }
-// }
+/// -------------------------
+/// MIXIN APP
+/// -------------------------
 
 
-//
-// class App {
-//
-//   late SessionUser currentUser;
-//
-//   // region Make Singleton Class
-//   // 1. Private constructor
-//   App._internal();
-//   // 2. Instance static
-//   static final App _instance = App._internal();
-//   // 3. Factory constructor
-//   factory App() {
-//     return _instance;
-//   }
-//   // endregion
-//
-//   // Start load on main()
-//   Future<void> startLoad() async {
-//     // Su dung load cac gia tri ban dau
-//     currentUser = SessionUser.fromSystem();
-//   }
-//
-// }
+// region: Network Checker
+
+mixin _AppNetworkMixin on State<App> {
+  late final DbNetworkChecker _networkChecker;
+  bool _isOffline = false;
+  late StreamSubscription _subNetworkChecker;
+
+  void _initNetworkLogic() {
+    _networkChecker = DbNetworkChecker();
+    _networkChecker.start();
+
+    _subNetworkChecker = _networkChecker.stream.listen((status) {
+      if (status is DbNetworkStatusOffline) {
+        if (!_isOffline) setState(() => _isOffline = true);
+      } else {
+        if (_isOffline) {
+          setState(() => _isOffline = false);
+          _refreshCurrentPage();
+        }
+      }
+    });
+  }
+
+  void _disposeNetworkLogic() {
+    _subNetworkChecker.cancel();
+    _networkChecker.dispose();
+  }
+
+  void _refreshCurrentPage() {
+    _networkChecker.recheck();
+    final context = DbNavigator.globalNavigatorState.currentContext;
+    if (context != null) {
+      // Ví dụ: gọi Bloc hoặc interactor để refresh
+      // BlocProvider.of<ReservationListInteractor>(context).onRefresh();
+    }
+  }
+}
+
+// endregion
+
+// region: App Update Remote Config
+
+mixin _AppUpgradeMixin on State<App> {
+  String? _newVersion;
+  late StreamSubscription<RemoteConfigUpdate> _remoteConfigSub;
+
+  void _initUpgradeLogic() {
+    // 1. Lắng nghe sự kiện yêu cầu check update từ UI (ví dụ từ trang Profile)
+    locator<DbEventBus>().on<CheckAppUpgradeRequestEvent>().listen((event) {
+      _checkUpgrade(force: true);
+    });
+
+    // 2. CHUẨN GOOGLE: Thực hiện fetchAndActivate lần đầu trước khi lắng nghe updates
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _checkUpgrade(force: true);
+
+      // 3. Sau khi đã có dữ liệu ban đầu, mới bắt đầu lắng nghe Real-time
+      final remoteConfig = FirebaseRemoteConfig.instance;
+      _remoteConfigSub = remoteConfig.onConfigUpdated.listen((event) async {
+        debugPrint("App: [REAL-TIME] Remote Config signal received! Updated keys: ${event.updatedKeys}");
+        try {
+          // Tín hiệu real-time đã tự động fetch dữ liệu, chỉ cần activate
+          await remoteConfig.activate();
+          if (event.updatedKeys.isEmpty || event.updatedKeys.contains('latest_app_version')) {
+            _checkUpgrade(force: false);
+          }
+        } catch (error) {
+          debugPrint('App: [REAL-TIME] Config update failed: $error');
+        }
+      }, onError: (error) {
+        debugPrint('App: [REAL-TIME] Stream error: $error');
+      });
+    });
+  }
+
+  void _disposeUpgradeLogic() {
+    _remoteConfigSub.cancel();
+  }
+
+  Future<void> _checkUpgrade({bool force = false}) async {
+    final version = await AppUpgradeService.checkUpdate(force: force);
+    if (mounted) {
+      setState(() {
+        _newVersion = version;
+      });
+    }
+  }
+}
+
+// endregion

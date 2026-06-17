@@ -15,6 +15,7 @@ import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/widget/password_field.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_toast_helper.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -77,7 +78,7 @@ class _SetPasswordPageState extends AppCubitState<SetPasswordPage, SetPasswordIn
   void _onStateListener(BuildContext context, SetPasswordState state) {
     if (state is SetPasswordSuccess) {
       hideLoading();
-      // Handle success
+      context.showFlashSuccess("Password set successfully!");
     } else if (state is SetPasswordError) {
       hideLoading();
       _showError(state.message);
@@ -104,7 +105,12 @@ class _SetPasswordPageState extends AppCubitState<SetPasswordPage, SetPasswordIn
                 const SizedBox(height: 40),
                 _buildInputs(),
                 const SizedBox(height: 40),
-                AppButton(text: "Set Password", isLoading: state is SetPasswordInProgress, onPressed: _handleSubmit),
+                AppButton(
+                  text: "Set Password",
+                  style: TMLabsButtonStyle.primary,
+                  isLoading: state is SetPasswordInProgress,
+                  onPressed: _handleSubmit,
+                ),
                 const Spacer(),
                 const SizedBox(height: 20),
               ],

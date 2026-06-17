@@ -9,14 +9,13 @@
 
 import 'dart:async';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
-import 'package:db_core/utils/logger.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:db_core/utils/keyboard_visibility.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/interactor/user_register_event_state.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/interactor/user_register_interactor.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/user_register_builder.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/shared/ui_control/coffee_app_bar_ext.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -159,18 +158,14 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
 
   void _onRegisterStateChanged(BuildContext context, UserRegisterState state) {
     if (state is UserRegisterSuccess) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Register Success!"), backgroundColor: Colors.green),
-      );
+      context.showFlashSuccess("Register Success!");
     } else if (state is UserRegisterError) {
       _showError(state.message);
     }
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
-    );
+    context.showFlashError(message);
   }
 
   Widget _buildLogo() {
