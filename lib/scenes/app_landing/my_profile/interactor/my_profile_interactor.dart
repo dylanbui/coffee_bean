@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:coffee_bean/data/local/user_manager/user_info.dart';
+import 'package:coffee_bean/data/local/user_manager/user_manager_events.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/data/repository/auth_repository.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_helper.dart';
@@ -48,6 +49,16 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
     collect(locator<DbEventBus>().on<UserAuthEvent>().listen((event) {
       checkLoginStatus();
     }));
+
+    // Lắng nghe sự kiện cập nhật thông tin cá nhân
+    collect(locator<DbEventBus>().on<UserInfoUpdatedEvent>().listen((event) {
+      emit(MyProfileLoaded(
+        isLoggedIn: state.isLoggedIn,
+        isCheckedIn: state.isCheckedIn,
+        session: state.session,
+        userInfo: event.userInfo,
+      ));
+    }));
   }
 
   Future<void> checkLoginStatus() async {
@@ -82,8 +93,11 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
     router?.doLogout();
   }
 
-// --- UserAuthFlowListener ---
+  void goToUpdateProfile() {
+    router?.editProfile();
+  }
 
+// --- UserAuthFlowListener ---
 
   @override
   void onAuthFlowCompleted(AuthResult result) {

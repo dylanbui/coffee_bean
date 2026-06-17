@@ -11,6 +11,8 @@ import 'dart:async';
 
 import 'package:chuck_interceptor/chuck_interceptor.dart';
 import 'package:coffee_bean/data/repository/activity_repository.dart';
+import 'package:coffee_bean/data/repository/auth_repository.dart';
+import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/flash_dialog_provider.dart';
@@ -117,7 +119,7 @@ Future<void> _setupUserManager() async {
   await UserManager().init();
 
   // TODO: 3. Demo logic - clear all data on every app restart (Development phase only)
-  await UserManager().doLogoutAndClearAll();
+  // await UserManager().doLogoutAndClearAll();
 }
 
 Future<void> _setupNetwork() async {
@@ -171,6 +173,8 @@ void _registerLazyServices() {
   locator.registerLazySingleton<LikesService>(() => LikesService());
 
   // Register Repositories
+  locator.registerLazySingleton<AuthRepository>(() => AuthRepository());
+  locator.registerLazySingleton<UserRepository>(() => UserRepository());
   locator.registerLazySingleton<PaymentDomainRepository>(() => PaymentDomainRepository());
   locator.registerLazySingleton<CommentRepository>(() => CommentRepository());
   locator.registerLazySingleton<ReservationRepository>(() => ReservationRepository());
@@ -254,12 +258,12 @@ class _AppState extends State<App> with WidgetsBindingObserver, _AppNetworkMixin
       builder: (context, child) {
         return Stack(
           children: [
-            if (child != null) child,
+            child!,
             if (_isOffline)
               OfflineWidget(onRetry: _refreshCurrentPage),
-            if (_newVersion != null)
+            if (_newVersion case final version?)
               AppUpgradeWidget(
-                newVersion: _newVersion!,
+                newVersion: version,
                 onUpdate: () => AppUpgradeService.openStore(),
               ),
           ],

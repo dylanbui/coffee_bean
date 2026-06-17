@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 /// Sự kiện yêu cầu kiểm tra cập nhật từ UI
 class CheckAppUpgradeRequestEvent extends DbBaseEvent {}
 
+// Document: https://firebase.google.com/docs/remote-config/flutter/get-started
 class AppUpgradeService {
   static const String _latestVersionKey = "latest_app_version";
 

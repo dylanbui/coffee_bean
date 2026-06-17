@@ -1,8 +1,9 @@
 import 'dart:convert';
-import 'package:db_core/utils/base_secure_storage.dart';
 import 'package:coffee_bean/data/local/user_manager/user_permission_mixin.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/data/local/user_manager/user_info.dart';
+import 'package:coffee_bean/data/local/user_manager/user_manager_events.dart';
+import 'package:db_core/db_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:coffee_bean/data/network/token_interceptor.dart';
 
@@ -69,7 +70,10 @@ class UserManager extends ChangeNotifier
   Future<void> saveUserInfo(UserInfo info) async {
     _userInfo = info;
     await BaseSecureStorage().write(_infoKey, jsonEncode(info.toJson()));
+    // notifyListeners để hỗ trợ các widget đang dùng Provider/Consumer
     notifyListeners();
+    // event toàn cục để các Interactor/Cubit có thể nhận biết
+    locator<DbEventBus>().fire(UserInfoUpdatedEvent(info));
   }
 
   Future<void> doLogoutAndClearAll() async {

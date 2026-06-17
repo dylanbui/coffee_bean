@@ -18,6 +18,20 @@ class UserLevel {
 
   factory UserLevel.fromJson(Map<String, dynamic> json) => _$UserLevelFromJson(json);
   Map<String, dynamic> toJson() => _$UserLevelToJson(this);
+
+  UserLevel copyWith({
+    int? id,
+    String? name,
+    int? level,
+    String? icon,
+  }) {
+    return UserLevel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      level: level ?? this.level,
+      icon: icon ?? this.icon,
+    );
+  }
 }
 
 @JsonSerializable()
@@ -46,4 +60,28 @@ class UserInfo {
 
   factory UserInfo.fromJson(Map<String, dynamic> json) => _$UserInfoFromJson(json);
   Map<String, dynamic> toJson() => _$UserInfoToJson(this);
+
+  UserInfo copyWith({
+    int? id,
+    String? nickname,
+    String? avatar,
+    String? mobile,
+    int? sex,
+    int? point,
+    int? experience,
+    UserLevel? level,
+    bool? brokerageEnabled,
+  }) {
+    return UserInfo(
+      id: id ?? this.id,
+      nickname: nickname ?? this.nickname,
+      avatar: avatar ?? this.avatar,
+      mobile: mobile ?? this.mobile,
+      sex: sex ?? this.sex,
+      point: point ?? this.point,
+      experience: experience ?? this.experience,
+      level: level ?? this.level,
+      brokerageEnabled: brokerageEnabled ?? this.brokerageEnabled,
+    );
+  }
 }

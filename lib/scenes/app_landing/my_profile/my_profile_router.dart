@@ -1,3 +1,5 @@
+import 'package:coffee_bean/scenes/my_profile_features/update_profile/update_profile_builder.dart';
+import 'package:db_core/architecture_ribs/navigator.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,22 +26,20 @@ class MyProfileRouter extends DbNoteRouter implements MyProfileRoutable {
 
   @override
   void doRegisterFlow(UserAuthFlowListener listener) {
-    // final builder = UserRegisterBuilder();
-    // navigator.push(builder.build().viewController);
     // Khởi chạy luồng Auth bắt đầu từ Login
     UserAuthFlow(startStep: AuthStartStep.register).start(this, listener);
   }
 
   @override
   void doLogout() {
-    // TODO: implement doLogout
+    // Route to other after logout
     debugPrint("doLogout");
   }
 
   @override
   void editProfile() {
-    // TODO: implement editProfile
-    debugPrint("editProfile");
+    final builder = UpdateProfileBuilder().build();
+    push(builder.viewController);
   }
 
 }

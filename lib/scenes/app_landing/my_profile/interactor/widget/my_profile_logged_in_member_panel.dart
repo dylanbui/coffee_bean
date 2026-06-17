@@ -63,7 +63,7 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 32),
+                    padding: const EdgeInsets.only(top:50, bottom: 10),
                     child: _buildVersionInfo(),
                   ),
                 ],
@@ -74,8 +74,6 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
       ),
     );
   }
-
-
 
   Widget _buildActionBarButtons() {
     return Container(

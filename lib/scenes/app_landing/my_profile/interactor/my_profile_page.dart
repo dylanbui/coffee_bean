@@ -44,7 +44,7 @@ class _MyProfilePageState extends AppCubitState<MyProfilePage, MyProfileInteract
               borderRadius: 20,
             ),
             leftIcon: AppIcon(AppAssets.icons.icMyFill, color: Colors.white, size: 20),
-            onPressed: () {},
+            onPressed: () => interactor.goToUpdateProfile(),
           ),
         ),
       ),
