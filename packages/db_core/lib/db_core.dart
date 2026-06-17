@@ -57,6 +57,8 @@ export 'utils/shared_preferences.dart';
 export 'utils/base_secure_storage.dart';
 export 'utils/keyboard_visibility.dart';
 export 'utils/loading_indicator_dialog.dart';
+export 'utils/asset_picker.dart';
+export 'utils/widget/cached_image_widget.dart';
 
 // Other root files
 export 'custom_app_bar.dart';
@@ -67,3 +69,7 @@ export 'commons_constants.dart';
 export 'package:page_transition/page_transition.dart';
 export 'package:flash/flash.dart';
 export 'package:equatable/equatable.dart';
+export 'package:permission_handler/permission_handler.dart';
+export 'package:wechat_assets_picker/wechat_assets_picker.dart';
+export 'package:wechat_camera_picker/wechat_camera_picker.dart';
+export 'package:image_cropper/image_cropper.dart';

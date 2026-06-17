@@ -996,7 +996,7 @@ packages:
     source: hosted
     version: "4.8.0"
   image_cropper:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: image_cropper
       sha256: "95782c9068ff09b95a5ece6a2b5fb31b18d8e544d79ebfa7bdafc08df39b3440"
@@ -1404,7 +1404,7 @@ packages:
     source: hosted
     version: "2.3.0"
   permission_handler:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: permission_handler
       sha256: bc917da36261b00137bbc8896bf1482169cd76f866282368948f032c8c1caae1
@@ -2081,7 +2081,7 @@ packages:
     source: hosted
     version: "2.4.0"
   wechat_assets_picker:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: wechat_assets_picker
       sha256: c307e50394c1e6dfcd5c4701e84efb549fce71444fedcf2e671c50d809b3e2a1
@@ -2089,7 +2089,7 @@ packages:
     source: hosted
     version: "9.8.0"
   wechat_camera_picker:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: wechat_camera_picker
       sha256: f406a53404fadb3fe4c9698cdcc3cafaad68f5aadcc5623510f3500e2b183967

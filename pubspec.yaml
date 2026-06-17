@@ -82,16 +82,10 @@ dependencies:
   sign_in_with_apple: ^8.0.0
   # Pick images and videos from gallery or camera
   image_picker: ^1.1.2
-  # Advanced asset picker (WeChat style)
-  wechat_assets_picker: ^9.4.0
-  wechat_camera_picker: ^4.3.1
-  image_cropper: ^12.2.1
   # QR and Barcode scanner
   mobile_scanner: ^6.0.0
   # Open URLs, send emails, make calls
   url_launcher: ^6.3.2
-  # Permission management for camera, location, etc.
-  permission_handler: ^12.0.1
   # Detailed device hardware information
   device_info_plus: ^11.1.1
   # User GPS location services

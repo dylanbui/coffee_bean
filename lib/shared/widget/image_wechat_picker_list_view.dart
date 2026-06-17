@@ -14,10 +14,7 @@ ImageWechatPickerListView(
 
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:wechat_assets_picker/wechat_assets_picker.dart';
-import 'package:wechat_camera_picker/wechat_camera_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:device_info_plus/device_info_plus.dart';
+import 'package:db_core/db_core.dart';
 
 class ImageWechatPickerListView extends StatelessWidget {
   final List<String> images;
@@ -70,100 +67,16 @@ class ImageWechatPickerListView extends StatelessWidget {
     final int remainCount = maxImages - images.length;
     if (remainCount <= 0) return;
 
-    // 1. Kiểm tra quyền trước khi mở Picker
-    bool hasPermission = await _requestGalleryPermission();
-    if (!hasPermission) {
-      if (context.mounted) _showPermissionDialog(context);
-      return;
-    }
-
-    // 2. Mở WeChat Asset Picker
-    final List<AssetEntity>? result = await AssetPicker.pickAssets(
+    // Sử dụng DbAssetPicker để xử lý toàn bộ logic: Quyền, Gallery, Camera, Localization
+    final List<String> newPaths = await DbAssetPicker.pickMultipleImages(
       context,
-      pickerConfig: AssetPickerConfig(
-        maxAssets: remainCount,
-        requestType: RequestType.image,
-        specialItemPosition: SpecialItemPosition.prepend,
-        specialItemBuilder: (
-          BuildContext context,
-          AssetPathEntity? path,
-          int length,
-        ) {
-          return GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () async {
-              // Kiểm tra quyền camera khi nhấn vào icon camera
-              if (await Permission.camera.request().isGranted) {
-                if (context.mounted) {
-                  final AssetEntity? result = await CameraPicker.pickFromCamera(context);
-                  if (result != null) {
-                    Navigator.of(context).pop([result]);
-                  }
-                }
-              }
-            },
-            child: const Center(
-              child: Icon(Icons.camera_alt, size: 28, color: Colors.grey),
-            ),
-          );
-        },
-      ),
+      maxAssets: remainCount,
     );
 
-    if (result != null && result.isNotEmpty) {
-      final List<String> paths = [];
-      for (final AssetEntity entity in result) {
-        final File? file = await entity.file;
-        if (file != null) {
-          paths.add(file.path);
-        }
-      }
-      onImagesPicked(paths);
+    if (newPaths.isNotEmpty) {
+      onImagesPicked(newPaths);
     }
   }
-
-  Future<bool> _requestGalleryPermission() async {
-    if (Platform.isIOS) return true;
-
-    if (Platform.isAndroid) {
-      final androidInfo = await DeviceInfoPlugin().androidInfo;
-      if (androidInfo.version.sdkInt >= 33) {
-        if (await Permission.photos.isGranted || await Permission.photos.isLimited) return true;
-        return (await Permission.photos.request()).isGranted;
-      } else {
-        if (await Permission.storage.isGranted) return true;
-        return (await Permission.storage.request()).isGranted;
-      }
-    }
-    return true;
-  }
-
-  void _showPermissionDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Cần cấp quyền"),
-        content: const Text("Vui lòng cấp quyền truy cập ảnh trong cài đặt để tiếp tục."),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Hủy")),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              openAppSettings();
-            },
-            child: const Text("Cài đặt"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Note: To handle camera click in the specialItemBuilder, 
-  // you usually need a custom delegate or handle it in the itemBuilder of the picker.
-  // The simple way to have a camera button that actually works inside the picker 
-  // is using the built-in CameraPicker integration if supported or custom delegate.
-  // For simplicity here, we'll use the standard pickAssets. 
-  // If you want the camera button INSIDE to work, we need more advanced config.
 
   Widget _buildImageItem(String path, int index) {
     return Container(

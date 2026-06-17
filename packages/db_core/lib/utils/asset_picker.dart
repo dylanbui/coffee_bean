@@ -6,6 +6,7 @@ import 'package:wechat_camera_picker/wechat_camera_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_cropper/image_cropper.dart';
 
+
 class DbAssetPicker {
   final RequestType requestType; // image, video, hoặc all
   final int maxAssets;
@@ -125,6 +126,33 @@ class DbAssetPicker {
     }
 
     return selectedFile;
+  }
+
+  /// Helper static method to pick multiple images and return paths.
+  static Future<List<String>> pickMultipleImages(
+    BuildContext context, {
+    int maxAssets = 9,
+    List<AssetEntity>? selectedAssets,
+  }) async {
+    final List<String> paths = [];
+
+    final picker = DbAssetPicker(
+      maxAssets: maxAssets,
+      selectedAssets: selectedAssets,
+      enableCamera: true,
+      onPicked: (assets) async {
+        for (final asset in assets) {
+          final file = await asset.file;
+          if (file != null) {
+            paths.add(file.path);
+          }
+        }
+      },
+    );
+
+    await picker.showPickAssets(context);
+
+    return paths;
   }
 
   static Future<File?> _cropImage(BuildContext context, File imageFile) async {

@@ -34,6 +34,13 @@ dependencies:
   flutter_secure_storage: ^10.0.0
 
   # --- UI & Navigation ---
+  # Advanced asset picker (WeChat style)
+  wechat_assets_picker: ^9.4.0
+  wechat_camera_picker: ^4.3.1
+  # Image cropping
+  image_cropper: ^12.2.1
+  # Permission management
+  permission_handler: ^12.0.1
   # Custom route transitions and animations between screens
   page_transition: ^2.2.1
   # Highly customizable image widget with cache and zoom support
