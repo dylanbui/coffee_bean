@@ -17,11 +17,13 @@ class UserSession {
   final int id;
   String? accessToken;
   String? refreshToken;
+  int? expiresTime;
 
   UserSession({
     required this.id,
     this.accessToken,
     this.refreshToken,
+    this.expiresTime,
   });
 
   factory UserSession.fromJson(Map<String, dynamic> json) => _$UserSessionFromJson(json);

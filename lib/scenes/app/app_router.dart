@@ -30,7 +30,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:db_core/utils/locator.dart';
 
-class AppRouter extends DbNoteRouter {
+abstract class AppRoutable implements DbNoteRoutable {
+  void gotoMainRoot();
+  void successSyncDataFormServer();
+}
+
+class AppRouter extends DbNoteRouter implements AppRoutable {
+
+  @override
   Future<void> successSyncDataFormServer() async {
 
     // Set default store id to match mock data
@@ -263,4 +270,11 @@ class AppRouter extends DbNoteRouter {
 
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {}
+
+  /// Điều hướng về màn hình chính (Main Root)
+  @override
+  void gotoMainRoot() {
+    final builder = MainTabbarBuilder();
+    navigator.pushSameRootPage(builder.build().viewController);
+  }
 }

@@ -135,32 +135,36 @@ class UtcUtils {
 
   // --- Token Refresh & Expiry Utilities ---
 
-  /// Checks if a time (UTC string from server) has expired compared to device time
-  /// [utcExpirationDate]: Expiration time from server (ISO 8601)
+  /// Checks if a time (Timestamp ms) has expired compared to device time
+  /// [expiration]: Expiration time from server (int milliseconds)
   /// [buffer]: Safety margin before actual expiration (e.g., refresh 5 minutes early)
-  static bool isExpired(String? utcExpirationDate, {Duration buffer = Duration.zero}) {
-    if (utcExpirationDate == null || utcExpirationDate.isEmpty) return true;
+  static bool isExpired(int expiration, {Duration buffer = Duration.zero}) {
     try {
-      final expiryDate = DateTime.parse(utcExpirationDate).toUtc();
+      final expiryDate = DateTime.fromMillisecondsSinceEpoch(expiration).toUtc();
       final now = DateTime.now().toUtc();
       // If "now + buffer" is after "expiryDate" -> considered expired
       return now.add(buffer).isAfter(expiryDate);
     } catch (_) {
-      return true; // Parse error defaults to expired for safety (trigger login/refresh)
+      return true; // Parse error defaults to expired for safety
     }
   }
 
   /// Calculates remaining seconds until expiration
-  static int secondsUntilExpiration(String? utcExpirationDate) {
-    if (utcExpirationDate == null || utcExpirationDate.isEmpty) return 0;
+  static int secondsUntilExpiration(int expiration) {
     try {
-      final expiryDate = DateTime.parse(utcExpirationDate).toUtc();
+      final expiryDate = DateTime.fromMillisecondsSinceEpoch(expiration).toUtc();
       final now = DateTime.now().toUtc();
       final difference = expiryDate.difference(now).inSeconds;
       return difference > 0 ? difference : 0;
     } catch (_) {
       return 0;
     }
+  }
+
+  /// Formats a timestamp (ms) to local timezone string
+  static String formatTimestamp(int timestamp, {AppDateTimeFormat format = AppDateTimeFormat.full}) {
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    return formatDateTime(dateTime, format: format);
   }
 }
 

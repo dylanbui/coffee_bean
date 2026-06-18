@@ -64,3 +64,9 @@ class SystemNotifyDialogEvent extends SystemNotifyEvent {
   SystemNotifyDialogEvent(String message, {super.type = SystemNotifyType.info, super.arguments})
       : super(messageKey: message, isToast: false);
 }
+
+/// Sự kiện thông báo phiên làm việc hết hạn
+class UserSessionExpiredEvent extends DbBaseEvent {
+  final String message;
+  UserSessionExpiredEvent({this.message = "Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại."});
+}

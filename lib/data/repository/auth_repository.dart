@@ -86,7 +86,7 @@ class AuthRepository extends BaseRepository {
     return await networkClient
         .request('/app-api/member/auth/refresh-token', 
             type: NetworkType.post, 
-            params: {'refreshToken': refreshToken},
+            queryParameters: {'refreshToken': refreshToken},
             isPublic: true)
         .mapResponseTo(AuthLoginResponse.fromJson)
         .toObject();

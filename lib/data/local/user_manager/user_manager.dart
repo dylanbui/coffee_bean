@@ -103,9 +103,12 @@ class UserManager extends ChangeNotifier
   }
 
   @override
-  Future<void> updateAccessToken(String newAccess) async {
+  Future<void> updateAccessToken(String newAccess, {int? expiresTime}) async {
     if (_currentUser != null && _currentUser!.id > 0) {
       _currentUser!.accessToken = newAccess;
+      if (expiresTime != null) {
+        _currentUser!.expiresTime = expiresTime;
+      }
       await BaseSecureStorage().write(_sessionKey, jsonEncode(_currentUser!.toJson()));
       notifyListeners();
     }
