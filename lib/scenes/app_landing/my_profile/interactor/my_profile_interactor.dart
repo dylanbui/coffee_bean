@@ -14,6 +14,7 @@ import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/my_profile_router.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
 import 'package:coffee_bean/shared/service/system_notify/system_notify_event.dart';
+import 'package:coffee_bean/shared/i18n/app_strings.dart';
 import 'package:flutter/cupertino.dart';
 
 // States
@@ -106,13 +107,13 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
     
     switch (result) {
       case LoginSuccess(:final session):
-        locator<DbEventBus>().fire(SystemSuccessNotifyEvent("Đăng nhập thành công!"));
+        locator<DbEventBus>().fire(SystemSuccessNotifyEvent(AppStrings.authLoginSuccess));
         locator<DbEventBus>().fire(UserLoginSuccessEvent(session));
       case RegisterSuccess(:final session):
-        locator<DbEventBus>().fire(SystemSuccessNotifyEvent("Đăng ký tài khoản thành công!"));
+        locator<DbEventBus>().fire(SystemSuccessNotifyEvent(AppStrings.authRegisterSuccess));
         locator<DbEventBus>().fire(UserLoginSuccessEvent(session));
       case ResetPasswordSuccess():
-        locator<DbEventBus>().fire(SystemSuccessNotifyEvent("Đặt lại mật khẩu thành công! Bạn hãy đăng nhập lại"));
+        locator<DbEventBus>().fire(SystemSuccessNotifyEvent(AppStrings.authResetPasswordSuccess));
     }
   }
 

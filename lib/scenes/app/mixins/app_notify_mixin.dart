@@ -7,6 +7,7 @@ import 'package:db_core/utils/flash_utils/flash_toast_helper.dart';
 import 'package:db_core/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:coffee_bean/shared/service/system_notify/system_notify_event.dart';
 import 'package:coffee_bean/shared/ui/flash_dialog_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 mixin AppNotifyMixin<T extends StatefulWidget> on State<T> {
   late StreamSubscription _subNotify;
@@ -63,8 +64,12 @@ mixin AppNotifyMixin<T extends StatefulWidget> on State<T> {
     final context = DbNavigator.globalNavigatorState.currentContext;
     if (context == null) return;
 
-    // TODO: Sau này tích hợp i18n tại đây dựa trên event.messageKey và event.arguments
-    final String displayMessage = event.messageKey;
+    final String displayMessageRaw = event.messageKey;
+
+    // Sử dụng .tr() từ easy_localization để dịch messageKey
+    final String displayMessage = displayMessageRaw.tr(
+      namedArgs: event.arguments?.map((k, v) => MapEntry(k, v.toString())),
+    );
 
     if (event.isToast) {
       final type = DbFlashToastType.values.byName(event.type.name);

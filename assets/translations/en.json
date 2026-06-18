@@ -1,0 +1,7 @@
+{
+  "auth": {
+    "login_success": "Login successful!",
+    "register_success": "Registration successful!",
+    "reset_password_success": "Reset password successful! Please login again"
+  }
+}

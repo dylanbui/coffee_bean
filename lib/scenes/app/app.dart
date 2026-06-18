@@ -49,6 +49,7 @@ import 'package:coffee_bean/scenes/app/interactor/deep_link_service.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 Chuck chuck = Chuck(
   showNotification: true,
@@ -71,6 +72,9 @@ Future<Widget> initializeApp() async {
 
     // 4. Configure UI Utils, Cache, Toast & Dialog Styles
     _setupUiUtils(),
+
+    // 5. Initialize Internationalization (i18n)
+    EasyLocalization.ensureInitialized(),
   ]);
 
   // --- PHASE 2: SEQUENTIAL INITIALIZATION ---
@@ -92,7 +96,12 @@ Future<Widget> initializeApp() async {
   // Remove the native splash screen once the entire system is ready
   FlutterNativeSplash.remove();
 
-  return App();
+  return EasyLocalization(
+    supportedLocales: const [Locale('vi'), Locale('en')],
+    path: 'assets/translations',
+    fallbackLocale: const Locale('vi'),
+    child: App(),
+  );
 }
 
 // region: Helper Initialization Methods

@@ -1,0 +1,7 @@
+{
+  "auth": {
+    "login_success": "Đăng nhập thành công!",
+    "register_success": "Đăng ký tài khoản thành công!",
+    "reset_password_success": "Đặt lại mật khẩu thành công! Bạn hãy đăng nhập lại"
+  }
+}
