@@ -232,10 +232,10 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
         children: [
           PhoneInputField(
             controller: _loginController.phonePwLogin,
-            countryCodes: const ["+86", "+84", "+1"],
+            countryCodes: const ["+84", "+86", "+65"],
             initialCountryCode: _loginController.countryCode1,
             errorText: _loginController.phonePwError,
-            hintText: "0988818597",
+            hintText: "0988123888",
             onChanged: (val) {
               _loginController.countryCode1 = val.countryCode;
               _loginController.isPhonePwValid = val.isValid;
@@ -436,9 +436,9 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
 }
 
 class LoginController {
-  final phonePwLogin = TextEditingController(text: "0988123457");
+  final phonePwLogin = TextEditingController(text: "0988123888");
   final passwordController = TextEditingController(text: "123456");
-  final phoneSmsLogin = TextEditingController(text: "0988123457");
+  final phoneSmsLogin = TextEditingController(text: "0988123888");
   final smsController = TextEditingController(text: "9999");
 
   String countryCode1 = "+84";

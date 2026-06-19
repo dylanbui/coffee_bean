@@ -59,6 +59,32 @@ class UserManager extends ChangeNotifier
     notifyListeners();
   }
 
+  // --- Daily Sign-In Local Management ---
+
+  String _getSignInKey() => "LAST_SIGNIN_DATE_USER_${_userInfo?.id}";
+
+  bool get hasSignedInToday {
+    if (_userInfo == null) return false;
+    final lastSignIn = DbSharedPreferences().get(_getSignInKey());
+    if (lastSignIn == null) return false;
+
+    try {
+      final lastDate = DateTime.parse(lastSignIn.toString());
+      final now = DateTime.now();
+      return lastDate.year == now.year && lastDate.month == now.month && lastDate.day == now.day;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<void> saveLastSignInDate() async {
+    if (_userInfo == null) return;
+    await DbSharedPreferences().set(_getSignInKey(), DateTime.now().toIso8601String());
+    notifyListeners();
+  }
+
+  // --- End Daily Sign-In ---
+
   /// Lưu thông tin phiên đăng nhập mới
   Future<void> saveSession(UserSession session) async {
     _currentUser = session;

@@ -51,12 +51,16 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
                       const SizedBox(height: 16),
                       _buildActionsList(),
                       const SizedBox(height: 16),
+                      _buildUserProfileActionsList(),
+                      const SizedBox(height: 16),
                       AppSelectionRow(
                         leadingIcon: AppAssets.icons.icStoreService,
                         title: 'Dịch vụ tại cửa hàng',
                         trailingIcon: AppAssets.icons.icArrowRightNone,
                         margin: const EdgeInsets.symmetric(horizontal: 20),
-                        onTap: () {},
+                        onTap: () {
+                          interactor.doMainAction("STORE_SERVICE");
+                        },
                       ),
                       const SizedBox(height: 16),
                       _buildLogoutButton(context),
@@ -87,18 +91,20 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildActionButton(AppAssets.icons.icDonHang, 'Đơn hàng'),
-          _buildActionButton(AppAssets.icons.icLichDatHen, 'Lịch đặt hẹn'),
-          _buildActionButton(AppAssets.icons.icDonKhoaHoc, 'Đơn khóa học'),
-          _buildActionButton(AppAssets.icons.icMyEvent, 'Sự kiện của tôi'),
+          _buildActionButton("ORDERS", AppAssets.icons.icDonHang, 'Đơn hàng'),
+          _buildActionButton("APPOINTMENTS", AppAssets.icons.icLichDatHen, 'Lịch đặt hẹn'),
+          _buildActionButton("COURSES", AppAssets.icons.icDonKhoaHoc, 'Đơn khóa học'),
+          _buildActionButton("MY_EVENTS", AppAssets.icons.icMyEvent, 'Sự kiện của tôi'),
         ],
       ),
     );
   }
 
-  Widget _buildActionButton(String icon, String label) {
+  Widget _buildActionButton(String key, String icon, String label) {
     return TapEffect(
-      onTap: () {}, // Cho phép hiệu ứng bấm
+      onTap: () {
+        interactor.doMainAction(key);
+      },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -131,21 +137,45 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: Column(
           children: [
-            _buildActionRow(AppAssets.icons.icKhoaHocNone, 'Khóa học'),
-            _buildActionRow(AppAssets.icons.icSaved, 'Đã lưu'),
-            _buildActionRow(AppAssets.icons.icInviteFriend, 'Mời bạn bè'),
-            _buildActionRow(AppAssets.icons.icCustomerSupport, 'CSKH'),
-            _buildActionRow(AppAssets.icons.icFeedback, 'Đóng góp ý kiến'),
-            _buildActionRow(AppAssets.icons.icSystem, 'Cài đặt'),
+            _buildActionRow("COURSES", AppAssets.icons.icKhoaHocNone, 'Khóa học'),
+            _buildActionRow("SAVED", AppAssets.icons.icSaved, 'Đã lưu'),
+            _buildActionRow("INVITE_FRIENDS", AppAssets.icons.icInviteFriend, 'Mời bạn bè'),
+            _buildActionRow("SUPPORT", AppAssets.icons.icCustomerSupport, 'CSKH'),
+            _buildActionRow("FEEDBACK", AppAssets.icons.icFeedback, 'Đóng góp ý kiến'),
+            _buildActionRow("SETTINGS", AppAssets.icons.icSystem, 'Cài đặt'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildActionRow(String icon, String title, {double height = 48, BorderRadius? borderRadius}) {
+  Widget _buildUserProfileActionsList() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))],
+      ),
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          children: [
+            _buildActionRow("CHANGE_MOBILE", AppAssets.icons.icSystem, 'Thay đổi số điện thoại'),
+            // _buildActionRow("CHANGE_MOBILE", AppAssets.icons.icSaved, 'Đã lưu'),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildActionRow(String actionKey, String icon, String title, {double height = 48, BorderRadius? borderRadius}) {
     return InkWell(
-      onTap: () {}, // Thêm hiệu ứng loang khi tap
+      onTap: () {
+        interactor.doMainAction(actionKey);
+      },
       borderRadius: borderRadius,
       child: Container(
         height: height,

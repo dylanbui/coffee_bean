@@ -28,7 +28,18 @@ class AuthRepository extends BaseRepository {
         .toValue<bool>();
   }
 
-  /// 2. SMS Login
+  /// 2. Validate SMS Code
+  Future<ResultType<bool>> validateSmsCode(String mobile, SmsScene scene, String code) async {
+    return await networkClient
+        .request('/app-api/member/auth/validate-sms-code', 
+            type: NetworkType.post, 
+            params: {'mobile': mobile, 'scene': scene.value, 'code': code},
+            isPublic: true)
+        .mapResponse()
+        .toValue<bool>();
+  }
+
+  /// 3. SMS Login
   Future<ResultType<AuthLoginResponse>> smsLogin(String mobile, String code) async {
     return await networkClient
         .request('/app-api/member/auth/sms-login', 

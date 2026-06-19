@@ -184,6 +184,12 @@ class TMLabsButtonStyle {
     textColor: TMLabsColor.primary,
     borderRadius: 25,
   );
+
+  static const disable = AppButtonStyleConfig(
+    backgroundColor: TMLabsColor.lightGrey,
+    textColor: Colors.white,
+    borderRadius: 25,
+  );
 }
 
 class TmLabAppBarStyle {

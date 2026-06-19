@@ -47,12 +47,12 @@ class AppRouter extends DbNoteRouter implements AppRoutable {
     // await _simulateLogin();
 
     // Load trang dau tien
-    // MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
-    // final router = mainTabbarBuilder.build();
-    // navigator.pushSameRootPage(router.viewController);
+    MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
+    final router = mainTabbarBuilder.build();
+    navigator.pushSameRootPage(router.viewController);
 
-    final builder = UpdateProfileBuilder();
-    navigator.pushSameRootPage(builder.build().viewController);
+    // final builder = UpdateProfileBuilder();
+    // navigator.pushSameRootPage(builder.build().viewController);
 
 
     // --- TẠO DỮ LIỆU MOCK ĐỂ TEST UI VENUE PAYMENT ---

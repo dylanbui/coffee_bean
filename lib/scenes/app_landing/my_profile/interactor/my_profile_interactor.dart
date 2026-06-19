@@ -4,8 +4,10 @@ import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager_events.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/data/repository/auth_repository.dart';
+import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_helper.dart';
 import 'package:db_core/commons_constants.dart';
+import 'package:db_core/network/network_utils.dart';
 import 'package:db_core/services/event_bus.dart';
 import 'package:db_core/state_management/lib_bloc/constants.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
@@ -15,7 +17,7 @@ import 'package:coffee_bean/scenes/app_landing/my_profile/my_profile_router.dart
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
 import 'package:coffee_bean/shared/service/system_notify/system_notify_event.dart';
 import 'package:coffee_bean/shared/i18n/app_strings.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 // States
 abstract class MyProfileState extends BaseBlocState {
@@ -39,6 +41,7 @@ class MyProfileLoaded extends MyProfileState {
 
 class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileState> implements UserAuthFlowListener {
   final _authRepo = AuthRepository();
+  final _userRepo = UserRepository();
 
   MyProfileInteractor(MyProfileRoutable router) : super(MyProfileInitial(), router: router);
 
@@ -66,20 +69,75 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
   Future<void> checkLoginStatus() async {
     emit(MyProfileLoaded(
       isLoggedIn: UserManager().isLogin,
-      isCheckedIn: state.isCheckedIn,
+      isCheckedIn: UserManager().hasSignedInToday,
       session: UserManager().currentUser,
       userInfo: UserManager().userInfo,
     ));
   }
 
-  void checkIn() {
-    // Toggle trạng thái: nếu đã check thì uncheck, nếu chưa thì check.
-    emit(MyProfileLoaded(
-      isLoggedIn: state.isLoggedIn,
-      isCheckedIn: !state.isCheckedIn,
-      session: state.session,
-      userInfo: state.userInfo,
-    ));
+
+  void doMainAction(String actionKey) {
+    switch (actionKey) {
+      case "ORDERS":
+        locator<DbEventBus>().fire(SystemInfoNotifyEvent("Bạn đã hoàn thành điểm danh hôm nay"));
+        // locator<DbEventBus>().fire(SystemSuccessNotifyEvent(AppStrings.authLoginSuccess));
+        break;
+      case "APPOINTMENTS":
+        router?.navigate(ReservationListRoute());
+        break;
+      case "COURSES":
+        router?.navigate(CourseListRoute());
+        break;
+      case "MY_EVENTS":
+        router?.navigate(ActivityListRoute());
+        break;
+      case "CHANGE_MOBILE":
+        router?.navigate(ChangeMobileRoute());
+        break;
+      default:
+        debugPrint("Action $actionKey chưa được thực hiện");
+    }
+  }
+
+
+  Future<void> doDailySignIn() async {
+    final result = (await _userRepo.createSignInRecord()).toResult();
+
+    if (result case DbSuccess()) {
+      // 1. Lưu trạng thái điểm danh vào Local Storage
+      await UserManager().saveLastSignInDate();
+      
+      // 2. Lấy lại userInfo mới để cập nhật điểm trên UI
+      final infoRes = (await _userRepo.getUserInfo()).toResult();
+      if (infoRes case DbSuccess(:final data)) {
+        await UserManager().saveUserInfo(data);
+      }
+      
+      // 3. Thông báo và cập nhật UI
+      locator<DbEventBus>().fire(SystemSuccessNotifyEvent("Điểm danh thành công!"));
+      emit(MyProfileLoaded(
+        isLoggedIn: state.isLoggedIn,
+        isCheckedIn: true,
+        session: state.session,
+        userInfo: UserManager().userInfo,
+      ));
+
+    } else if (result case DbFailure(:final error)) {
+      // Case B: Nếu server báo đã điểm danh rồi (Mã lỗi 1004010000 từ bài test)
+      if (error.code == 1004010000) {
+        await UserManager().saveLastSignInDate();
+        locator<DbEventBus>().fire(SystemInfoNotifyEvent("Bạn đã hoàn thành điểm danh hôm nay"));
+        emit(MyProfileLoaded(
+          isLoggedIn: state.isLoggedIn,
+          isCheckedIn: true,
+          session: state.session,
+          userInfo: state.userInfo,
+        ));
+      } else {
+        // Lỗi kỹ thuật khác (mạng, server sập) -> Không lưu local
+        locator<DbEventBus>().fire(SystemErrorNotifyEvent(error.message));
+      }
+    }
   }
 
   void doLogout() async {
@@ -96,7 +154,7 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
   }
 
   void goToUpdateProfile() {
-    router?.editProfile();
+    router?.navigate(EditProfileRoute());
   }
 
 // --- UserAuthFlowListener ---

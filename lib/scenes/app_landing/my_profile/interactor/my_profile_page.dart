@@ -1,13 +1,13 @@
+import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/widget/my_profile_logged_in_member_panel.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/widget/my_profile_logged_out_panel.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/my_profile_interactor.dart';
-import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/widget/my_profile_logged_in_member_panel.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui_control/app_action_check_in_button.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:db_core/utils/app_button.dart';
-import 'package:db_core/utils/tap_effect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -54,36 +54,9 @@ class _MyProfilePageState extends AppCubitState<MyProfilePage, MyProfileInteract
           builder: (context, state) {
             return Padding(
               padding: const EdgeInsets.only(right: 16),
-              child: TapEffect(
-                onTap: () => interactor.checkIn(),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        AppIcon(AppAssets.icons.icCheckboxBg, size: 36),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: AppIcon(
-                            AppAssets.icons.icCheckboxCircle,
-                            size: 16,
-                            color: state.isCheckedIn ? TMLabsColor.primary : const Color(0xFFCECCCD),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Điểm danh nhận điểm',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 8,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
+              child: AppActionCheckInButton(
+                isCheckedIn: state.isCheckedIn,
+                onTap: () => interactor.doDailySignIn(),
               ),
             );
           },

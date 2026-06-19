@@ -60,6 +60,7 @@ Future<Widget> initializeApp() async {
   // --- PHASE 1: PARALLEL INITIALIZATION ---
   // Maximize I/O efficiency by running independent tasks concurrently.
   // The total wait time will be equal to the longest task in this group.
+
   await Future.wait([
     // 1. Firebase & Remote Config
     _initFirebase(),
@@ -266,6 +267,10 @@ class _AppState extends State<App> with WidgetsBindingObserver, AppNetworkMixin,
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: DbNavigator.globalNavigatorState,
+      // --- localizations ---
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       title: 'Coffee Bean',
       theme: ThemeData(primarySwatch: Colors.blue),
       // Sử dụng builder để OfflineWidget che phủ TẤT CẢ mọi thứ (kể cả Dialog/Modal)

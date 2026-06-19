@@ -5,28 +5,35 @@ import 'package:db_core/network/network_client.dart';
 import 'package:db_core/network/network_common.dart';
 import 'package:coffee_bean/data/network/token_interceptor.dart';
 import 'package:coffee_bean/data/network/header_interceptor.dart';
+import 'package:coffee_bean/utils/utils_datetime.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class MockTokenProvider implements AuthTokenProvider {
   String? _token;
   String? _refresh;
+  int? _expires;
   
   @override
   Future<String?> getAccessToken() async => _token;
   @override
   Future<String?> getRefreshToken() async => _refresh;
   @override
-  Future<void> updateAccessToken(String newAccess) async => _token = newAccess;
+  Future<void> updateAccessToken(String newAccess, {int? expiresTime}) async {
+    _token = newAccess;
+    if (expiresTime != null) _expires = expiresTime;
+  }
   @override
   Future<void> clearAll() async {
     _token = null;
     _refresh = null;
+    _expires = null;
   }
   
-  void setTokens(String access, String refresh) {
+  void setTokens(String access, String refresh, {int? expires}) {
     _token = access;
     _refresh = refresh;
+    _expires = expires;
   }
 }
 
@@ -103,7 +110,9 @@ void main() {
       expect(session, isNotNull);
       debugPrint("Result Step 2: Login Success! UserID: \${session?.userId}");
       
-      tokenProvider.setTokens(session!.accessToken, session.refreshToken);
+      tokenProvider.setTokens(session!.accessToken, session.refreshToken, expires: session.expiresTime);
+      expect(session.expiresTime, isNotNull);
+      debugPrint("Token expires at: ${UtcUtils.formatTimestamp(session.expiresTime!)}");
 
       await wait();
       // -----------------------------------------------------

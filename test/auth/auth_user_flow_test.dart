@@ -5,6 +5,7 @@ import 'package:db_core/network/network_client.dart';
 import 'package:db_core/network/network_common.dart';
 import 'package:coffee_bean/data/network/token_interceptor.dart';
 import 'package:coffee_bean/data/network/header_interceptor.dart';
+import 'package:coffee_bean/utils/utils_datetime.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
@@ -12,23 +13,31 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 class TestTokenProvider implements AuthTokenProvider {
   String? _accessToken;
   String? _refreshToken;
+  int? _expiresTime;
 
   @override
   Future<String?> getAccessToken() async => _accessToken;
   @override
   Future<String?> getRefreshToken() async => _refreshToken;
   @override
-  Future<void> updateAccessToken(String newAccess) async => _accessToken = newAccess;
+  Future<void> updateAccessToken(String newAccess, {int? expiresTime}) async {
+    _accessToken = newAccess;
+    if (expiresTime != null) _expiresTime = expiresTime;
+  }
   @override
   Future<void> clearAll() async {
     _accessToken = null;
     _refreshToken = null;
+    _expiresTime = null;
   }
   
-  void setTokens(String access, String refresh) {
+  void setTokens(String access, String refresh, {int? expires}) {
     _accessToken = access;
     _refreshToken = refresh;
+    _expiresTime = expires;
   }
+
+  int? get expiresTime => _expiresTime;
 
   void expireAccessToken() => _accessToken = "INVALID_OR_EXPIRED_TOKEN";
 }
@@ -90,7 +99,8 @@ void main() {
     if (loginRes case DbSuccess(data: final authData)) {
       debugPrint("✅ Login thành công!");
       debugPrint("AccessToken: ${authData.accessToken.substring(0, 15)}...");
-      tokenProvider.setTokens(authData.accessToken, authData.refreshToken);
+      debugPrint("ExpiresAt: ${UtcUtils.formatTimestamp(authData.expiresTime ?? 0)}");
+      tokenProvider.setTokens(authData.accessToken, authData.refreshToken, expires: authData.expiresTime);
       
       // BƯỚC 2: Lấy thông tin User
       debugPrint("\n👉 STEP 2: GET USER INFO (GET /app-api/member/user/get)");
@@ -107,7 +117,8 @@ void main() {
       if (refreshRes case DbSuccess(data: final newAuth)) {
         debugPrint("✅ Chủ động Refresh thành công.");
         debugPrint("New AccessToken: ${newAuth.accessToken.substring(0, 15)}...");
-        tokenProvider.setTokens(newAuth.accessToken, newAuth.refreshToken);
+        debugPrint("New ExpiresAt: ${UtcUtils.formatTimestamp(newAuth.expiresTime ?? 0)}");
+        tokenProvider.setTokens(newAuth.accessToken, newAuth.refreshToken, expires: newAuth.expiresTime);
       } else if (refreshRes case DbFailure(:final error)) {
         debugPrint("❌ Chủ động Refresh thất bại: ${error.message}");
       }

@@ -4,21 +4,32 @@ import 'package:db_core/network/network_client.dart';
 import 'package:db_core/network/network_common.dart';
 import 'package:coffee_bean/data/network/token_interceptor.dart';
 import 'package:coffee_bean/data/network/header_interceptor.dart';
+import 'package:coffee_bean/utils/utils_datetime.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class MockTokenProvider implements AuthTokenProvider {
   String? _token;
+  int? _expires;
   @override
   Future<String?> getAccessToken() async => _token;
   @override
   Future<String?> getRefreshToken() async => "MOCK_REFRESH_TOKEN";
   @override
-  Future<void> updateAccessToken(String newAccess) async => _token = newAccess;
+  Future<void> updateAccessToken(String newAccess, {int? expiresTime}) async {
+    _token = newAccess;
+    if (expiresTime != null) _expires = expiresTime;
+  }
   @override
-  Future<void> clearAll() async => _token = null;
+  Future<void> clearAll() async {
+    _token = null;
+    _expires = null;
+  }
   
-  void setToken(String token) => _token = token;
+  void setToken(String token, {int? expires}) {
+    _token = token;
+    _expires = expires;
+  }
 
   bool get hasToken => _token != null;
 }
@@ -35,7 +46,7 @@ void main() {
       timeout: const Duration(seconds: 5),
       interceptors: [
         HeaderInterceptor(headers: {
-          "tenantId": "162",
+          "tenant-id": "162",
         }),
         TokenInterceptor(
           client: NetworkClient(NetworkConfig(baseUrl: "https://inter.tmlabs.ai")),
@@ -73,9 +84,11 @@ void main() {
     debugPrint("Result Step 2: Success = ${res2.toResult().isSuccess}, Error = ${res2.toResult().errorOrNull?.message}");
 
     if (res2.toResult().isSuccess) {
-      final token = res2.toResult().dataOrNull?.accessToken;
+      final data = res2.toResult().dataOrNull;
+      final token = data?.accessToken;
       debugPrint("Received Access Token: $token");
-      tokenProvider.setToken(token!);
+      debugPrint("Expires At: ${UtcUtils.formatTimestamp(data?.expiresTime ?? 0)}");
+      tokenProvider.setToken(token!, expires: data?.expiresTime);
     } else {
       debugPrint("Skipping Step 3 due to Login failure.");
     }
