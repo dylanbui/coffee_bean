@@ -1,6 +1,7 @@
 import 'package:coffee_bean/config/app_pref.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
+import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/data/model/response/trade/store_model.dart';
 import 'package:coffee_bean/data/model/payment_domain.dart';
@@ -39,7 +40,7 @@ class OrderConfirmationInteractor extends CubitInteractor<OrderConfirmationRouta
   }
 
   Future<void> _loadInitialData() async {
-    final store = UserManager().selectedStore;
+    final store = StoreManager().selectedStore;
     final cartItems = _cartService.currentItems;
 
     emit(state.copyWith(

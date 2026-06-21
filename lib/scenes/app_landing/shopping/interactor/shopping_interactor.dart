@@ -2,6 +2,7 @@ import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
+import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
 import 'package:coffee_bean/data/repository/product_repository.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/shopping_router.dart';
@@ -25,7 +26,7 @@ class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState
   Future<void> _loadData({bool refresh = false}) async {
     emit(state.copyWith(isLoading: true));
 
-    final storeId = UserManager().selectedStore?.id;
+    final storeId = StoreManager().selectedStore?.id;
 
     // 1. Sync Categories from API
     final resultCat = await _productRepo.getProductCategoryList(storeId);

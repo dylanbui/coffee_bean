@@ -16,6 +16,7 @@ import 'package:db_core/utils/locator.dart';
 import 'package:db_core/utils/logger.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
+import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
 import 'package:coffee_bean/data/model/db_location.dart';
 import 'package:coffee_bean/scenes/app/app_router.dart';
 import 'package:flutter/material.dart';
@@ -202,7 +203,7 @@ class AppInteractor extends CubitInteractor<AppRoutable, AppInteractorState> {
     await handleSessionWorkflow(force: true);
 
     // --- Phase 3: Default Store Check ---
-    if (UserManager().selectedStore == null) {
+    if (StoreManager().selectedStore == null) {
       dLog("AppInteractor: No store selected. Fetching default store...");
       
       double? lat;
@@ -226,7 +227,7 @@ class AppInteractor extends CubitInteractor<AppRoutable, AppInteractorState> {
       final location = (lat != null && lng != null) ? DbLocation(latitude: lat, longitude: lng) : null;
       final defaultStore = await locator<StoreRepository>().getDefaultStore(location: location);
       if (defaultStore != null) {
-        await UserManager().saveSelectedStore(defaultStore);
+        await StoreManager().saveSelectedStore(defaultStore);
         dLog("AppInteractor: Default store set to ${defaultStore.name}");
       }
     }

@@ -32,6 +32,7 @@ import 'package:db_core/services/event_bus.dart';
 import 'package:db_core/utils/shared_preferences.dart';
 import 'package:coffee_bean/config/app_config.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
+import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
 import 'package:coffee_bean/data/network/header_interceptor.dart';
 import 'package:coffee_bean/data/network/token_interceptor.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
@@ -88,7 +89,10 @@ Future<Widget> initializeApp() async {
   // 2. Initialize UserManager and handle initial Auth logic
   await _setupUserManager();
 
-  // 3. Initialize Network Service (Requires UserManager for TokenInterceptor setup)
+  // 3. Initialize StoreManager (Handles selected store for both Guest/User)
+  await StoreManager().init();
+
+  // 4. Initialize Network Service (Requires UserManager for TokenInterceptor setup)
   await _setupNetwork();
 
   // Platform specific setup

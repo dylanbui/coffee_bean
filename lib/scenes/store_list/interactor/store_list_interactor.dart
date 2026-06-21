@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math' show cos, sqrt, asin;
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
+import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
 import 'package:coffee_bean/data/model/db_location.dart';
 import 'package:coffee_bean/data/model/response/trade/store_model.dart';
 import 'package:coffee_bean/data/repository/store_repository.dart';
@@ -198,7 +199,7 @@ class StoreListInteractor extends CubitInteractor<StoreListRouter, StoreListStat
 
   void onStoreSelected(StoreDisplayModel model) {
     debugPrint("Store Selected == ${model.store.name}");
-    UserManager().saveSelectedStore(model.store);
+    StoreManager().saveSelectedStore(model.store);
     router?.pop(); // Return to previous screen
   }
 }
