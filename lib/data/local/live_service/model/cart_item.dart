@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:coffee_bean/data/model/product.dart';
+import 'package:db_core/commons_constants.dart';
 
 part 'cart_item.g.dart';
 
@@ -17,10 +18,10 @@ class CartItem {
 
   String get cartItemId => "${product.id}_${note ?? ''}";
 
-  double get totalPrice => (product.price ?? 0) * quantity;
+  double get totalPrice => (product.price * quantity) / 100.0;
 
-  factory CartItem.fromJson(Map<String, dynamic> json) => _$CartItemFromJson(json);
-  Map<String, dynamic> toJson() => _$CartItemToJson(this);
+  factory CartItem.fromJson(Dictionary json) => _$CartItemFromJson(json);
+  Dictionary toJson() => _$CartItemToJson(this);
   
   CartItem copyWith({
     Product? product,

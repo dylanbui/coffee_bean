@@ -36,9 +36,11 @@ import 'package:coffee_bean/data/network/header_interceptor.dart';
 import 'package:coffee_bean/data/network/token_interceptor.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/scenes/app/app_builder.dart';
+import 'package:coffee_bean/data/repository/product_repository.dart';
 import 'package:coffee_bean/data/repository/comment_repository.dart';
 import 'package:coffee_bean/data/repository/course_repository.dart';
 import 'package:coffee_bean/data/repository/reservation_repository.dart';
+import 'package:coffee_bean/data/repository/store_repository.dart';
 import 'package:coffee_bean/data/repository/store_point_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -194,6 +196,8 @@ void _registerLazyServices() {
   locator.registerLazySingleton<CourseRepository>(() => CourseRepository());
   locator.registerLazySingleton<ActivityRepository>(() => ActivityRepository());
   locator.registerLazySingleton<StorePointRepository>(() => StorePointRepository());
+  locator.registerLazySingleton<StoreRepository>(() => StoreRepository());
+  locator.registerLazySingleton<ProductRepository>(() => ProductRepository());
 }
 
 Future<void> _setupUiUtils() async {

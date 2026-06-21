@@ -1,4 +1,5 @@
 import 'package:coffee_bean/data/model/payment_domain.dart';
+import 'package:coffee_bean/data/model/response/trade/store_model.dart';
 import 'package:db_core/db_core.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 
@@ -38,7 +39,7 @@ class UIStatus extends Equatable {
 class OrderConfirmationState extends BaseBlocState {
   final OrderConfirmationStatus status;
   final String? orderNumber;
-  final TblStore? selectedStore;
+  final StoreModel? selectedStore;
   final List<TblCartItem> cartItems;
 
   final UIStatus uiStatus;
@@ -67,7 +68,7 @@ class OrderConfirmationState extends BaseBlocState {
   OrderConfirmationState copyWith({
     OrderConfirmationStatus? status,
     String? orderNumber,
-    TblStore? selectedStore,
+    StoreModel? selectedStore,
     List<TblCartItem>? cartItems,
     UIStatus? uiStatus,
     CheckoutPromotion? promotion,

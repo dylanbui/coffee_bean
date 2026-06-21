@@ -8,7 +8,9 @@ class TblCategory {
 
   @Index()
   int serverId = 0;
-  int parentServerId = 0;
+  
+  int parentId = 0;
+  int parentServerId = 0; // Compatibility
 
   @Index()
   String type = "FOOD"; // "FOOD", "COURSE", "RENTAL"
@@ -19,7 +21,12 @@ class TblCategory {
   @Index(caseSensitive: false)
   String searchName = "";
 
-  String? image;
+  String? picUrl;
+  String? image; // Compatibility
+  
+  @Index()
+  int? storeId; // Added for store-specific sync
+
   int sortOrder = 0;
   bool isActive = true;
 }

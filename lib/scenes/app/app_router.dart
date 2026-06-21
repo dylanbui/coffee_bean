@@ -122,88 +122,88 @@ class AppRouter extends DbNoteRouter implements AppRoutable {
     // navigator.pushSameRootPage(builder.build().viewController);
   }
 
-  Future<void> _simulateLogin() async {
-    final mockUser = UserSession(
-      id: 1,
-      accessToken: "mock_access_token",
-    );
-    await UserManager().saveSession(mockUser);
-  }
-
-  Future<void> dataTestOrderConfirmationBuilder() async {
-    final dbService = locator<DatabaseService>();
-    final cartService = locator<CartService>();
-
-    // Xóa dữ liệu cũ để đảm bảo môi trường test sạch
-    await dbService.isar.writeTxn(() async {
-      await dbService.isar.tblStores.clear();
-      await dbService.isar.tblCartItems.clear();
-
-      // 1. Tạo Store Mock (Lấy từ sample_store.json - ID 1)
-      final mockStore = TblStore()
-        ..serverId = 1
-        ..name = "Coffee Bean - Hàn Thuyên"
-        ..address = "27 Hàn Thuyên, P. Bến Nghé, Quận 1, TP. HCM"
-        ..phone = "028 3827 3001"
-        ..openingTime = "07:00"
-        ..closingTime = "22:00"
-        ..images = [
-          TblImage()..url = "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&q=80"..isPrimary = true
-        ];
-      await dbService.isar.tblStores.put(mockStore);
-    });
-
-
-    // 2. Tạo Cart Items Mock (Lấy từ sample_data.json)
-
-    // Món 1: Cà Phê Sữa Đá Sài Gòn (ID 2)
-    final food1 = TblFood()
-      ..serverId = 2
-      ..name = "Cà Phê Sữa Đá Sài Gòn"
-      ..price = 35000.0
-      ..images = [TblImage()..url = "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=800&q=80"..isPrimary = true];
-
-    final options1 = [
-      SelectedOption()..groupName = "Size"..optionName = "L"..extraPrice = 10000,
-      SelectedOption()..groupName = "Độ ngọt"..optionName = "50% Đường"..extraPrice = 0,
-    ];
-
-    // Món 2: Trà Sữa Trân Châu Đen (ID 11)
-    final food2 = TblFood()
-      ..serverId = 11
-      ..name = "Trà Sữa Trân Châu Đen"
-      ..price = 45000.0
-      ..images = [TblImage()..url = "https://images.unsplash.com/photo-1544333346-64e4fe18274b?w=800&q=80"..isPrimary = true];
-
-    final options2 = [
-      SelectedOption()..groupName = "Topping"..optionName = "Trân châu đen"..extraPrice = 5000,
-      SelectedOption()..groupName = "Topping"..optionName = "Kem cheese"..extraPrice = 10000,
-    ];
-
-    // Món 3: Cappuccino Art (ID 3)
-    final food3 = TblFood()
-      ..serverId = 3
-      ..name = "Cappuccino Art"
-      ..price = 45000.0
-      ..images = [TblImage()..url = "https://images.unsplash.com/photo-1534778101976-62847782c213?w=800&q=80"..isPrimary = true];
-
-    final options3 = [
-      SelectedOption()..groupName = "Size"..optionName = "M"..extraPrice = 0,
-    ];
-
-    // Món 4: Tiramisu Classic (ID 17)
-    final food4 = TblFood()
-      ..serverId = 17
-      ..name = "Tiramisu Classic"
-      ..price = 45000.0
-      ..images = [TblImage()..url = "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=800&q=80"..isPrimary = true];
-
-    // Thêm vào giỏ hàng thông qua CartService
-    await cartService.addToCart(food1, quantity: 1, options: options1);
-    await cartService.addToCart(food2, quantity: 2, options: options2);
-    await cartService.addToCart(food3, quantity: 1, options: options3);
-    await cartService.addToCart(food4, quantity: 3);
-  }
+  // Future<void> _simulateLogin() async {
+  //   final mockUser = UserSession(
+  //     id: 1,
+  //     accessToken: "mock_access_token",
+  //   );
+  //   await UserManager().saveSession(mockUser);
+  // }
+  //
+  // Future<void> dataTestOrderConfirmationBuilder() async {
+  //   final dbService = locator<DatabaseService>();
+  //   final cartService = locator<CartService>();
+  //
+  //   // Xóa dữ liệu cũ để đảm bảo môi trường test sạch
+  //   await dbService.isar.writeTxn(() async {
+  //     await dbService.isar.tblStores.clear();
+  //     await dbService.isar.tblCartItems.clear();
+  //
+  //     // 1. Tạo Store Mock (Lấy từ sample_store.json - ID 1)
+  //     final mockStore = TblStore()
+  //       ..serverId = 1
+  //       ..name = "Coffee Bean - Hàn Thuyên"
+  //       ..address = "27 Hàn Thuyên, P. Bến Nghé, Quận 1, TP. HCM"
+  //       ..phone = "028 3827 3001"
+  //       ..openingTime = "07:00"
+  //       ..closingTime = "22:00"
+  //       ..images = [
+  //         TblImage()..url = "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&q=80"..isPrimary = true
+  //       ];
+  //     await dbService.isar.tblStores.put(mockStore);
+  //   });
+  //
+  //
+  //   // 2. Tạo Cart Items Mock (Lấy từ sample_data.json)
+  //
+  //   // Món 1: Cà Phê Sữa Đá Sài Gòn (ID 2)
+  //   final food1 = TblFood()
+  //     ..serverId = 2
+  //     ..name = "Cà Phê Sữa Đá Sài Gòn"
+  //     ..price = 35000.0
+  //     ..images = [TblImage()..url = "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=800&q=80"..isPrimary = true];
+  //
+  //   final options1 = [
+  //     SelectedOption()..groupName = "Size"..optionName = "L"..extraPrice = 10000,
+  //     SelectedOption()..groupName = "Độ ngọt"..optionName = "50% Đường"..extraPrice = 0,
+  //   ];
+  //
+  //   // Món 2: Trà Sữa Trân Châu Đen (ID 11)
+  //   final food2 = TblFood()
+  //     ..serverId = 11
+  //     ..name = "Trà Sữa Trân Châu Đen"
+  //     ..price = 45000.0
+  //     ..images = [TblImage()..url = "https://images.unsplash.com/photo-1544333346-64e4fe18274b?w=800&q=80"..isPrimary = true];
+  //
+  //   final options2 = [
+  //     SelectedOption()..groupName = "Topping"..optionName = "Trân châu đen"..extraPrice = 5000,
+  //     SelectedOption()..groupName = "Topping"..optionName = "Kem cheese"..extraPrice = 10000,
+  //   ];
+  //
+  //   // Món 3: Cappuccino Art (ID 3)
+  //   final food3 = TblFood()
+  //     ..serverId = 3
+  //     ..name = "Cappuccino Art"
+  //     ..price = 45000.0
+  //     ..images = [TblImage()..url = "https://images.unsplash.com/photo-1534778101976-62847782c213?w=800&q=80"..isPrimary = true];
+  //
+  //   final options3 = [
+  //     SelectedOption()..groupName = "Size"..optionName = "M"..extraPrice = 0,
+  //   ];
+  //
+  //   // Món 4: Tiramisu Classic (ID 17)
+  //   final food4 = TblFood()
+  //     ..serverId = 17
+  //     ..name = "Tiramisu Classic"
+  //     ..price = 45000.0
+  //     ..images = [TblImage()..url = "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=800&q=80"..isPrimary = true];
+  //
+  //   // Thêm vào giỏ hàng thông qua CartService
+  //   await cartService.addToCart(food1, quantity: 1, options: options1);
+  //   await cartService.addToCart(food2, quantity: 2, options: options2);
+  //   await cartService.addToCart(food3, quantity: 1, options: options3);
+  //   await cartService.addToCart(food4, quantity: 3);
+  // }
 
 
   // Future<void> successSyncDataFormServer() async {

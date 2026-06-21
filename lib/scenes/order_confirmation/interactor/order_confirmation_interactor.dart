@@ -2,6 +2,7 @@ import 'package:coffee_bean/config/app_pref.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
+import 'package:coffee_bean/data/model/response/trade/store_model.dart';
 import 'package:coffee_bean/data/model/payment_domain.dart';
 import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
 import 'package:coffee_bean/scenes/coupon_list/interactor/coupon_list_interactor.dart';
@@ -38,15 +39,7 @@ class OrderConfirmationInteractor extends CubitInteractor<OrderConfirmationRouta
   }
 
   Future<void> _loadInitialData() async {
-    final selectedStoreId = AppPrefs().getSelectedStoreId();
-    TblStore? store;
-
-    if (selectedStoreId != null) {
-      store = await _dbService.isar.tblStores.filter().serverIdEqualTo(selectedStoreId).findFirst();
-    }
-
-    store ??= await _dbService.isar.tblStores.where().findFirst();
-
+    final store = UserManager().selectedStore;
     final cartItems = _cartService.currentItems;
 
     emit(state.copyWith(

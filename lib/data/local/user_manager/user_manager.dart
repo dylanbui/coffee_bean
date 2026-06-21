@@ -3,6 +3,7 @@ import 'package:coffee_bean/data/local/user_manager/user_permission_mixin.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager_events.dart';
+import 'package:coffee_bean/data/model/response/trade/store_model.dart';
 import 'package:db_core/db_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:coffee_bean/data/network/token_interceptor.dart';
@@ -18,13 +19,16 @@ class UserManager extends ChangeNotifier
   // Keys lưu trữ cố định dưới Storage
   static const String _sessionKey = "SESSION_USER";
   static const String _infoKey = "INFO_USER";
+  static const String _storeKey = "SELECTED_STORE";
 
   // 2. Dữ liệu lưu trên RAM (In-Memory Cache)
   UserSession? _currentUser;
   UserInfo? _userInfo;
+  StoreModel? _selectedStore;
 
   UserSession? get currentUser => _currentUser;
   UserInfo? get userInfo => _userInfo;
+  StoreModel? get selectedStore => _selectedStore;
 
   bool get isLogin => _currentUser != null && _currentUser!.isLogin;
 
@@ -32,6 +36,7 @@ class UserManager extends ChangeNotifier
   Future<void> init() async {
     final sessionData = await BaseSecureStorage().read(_sessionKey);
     final infoData = await BaseSecureStorage().read(_infoKey);
+    final storeData = await BaseSecureStorage().read(_storeKey);
 
     // Goi cac init trong cac class mixin
     await Future.wait([
@@ -53,6 +58,14 @@ class UserManager extends ChangeNotifier
         _userInfo = UserInfo.fromJson(jsonDecode(infoData));
       } catch (_) {
         _userInfo = null;
+      }
+    }
+
+    if (storeData != null) {
+      try {
+        _selectedStore = StoreModel.fromJson(jsonDecode(storeData));
+      } catch (_) {
+        _selectedStore = null;
       }
     }
 
@@ -100,6 +113,13 @@ class UserManager extends ChangeNotifier
     notifyListeners();
     // event toàn cục để các Interactor/Cubit có thể nhận biết
     locator<DbEventBus>().fire(UserInfoUpdatedEvent(info));
+  }
+
+  /// Lưu thông tin cửa hàng đã chọn
+  Future<void> saveSelectedStore(StoreModel store) async {
+    _selectedStore = store;
+    await BaseSecureStorage().write(_storeKey, jsonEncode(store.toJson()));
+    notifyListeners();
   }
 
   Future<void> doLogoutAndClearAll() async {

@@ -39,7 +39,7 @@ class OrderConfirmationHeader extends StatelessWidget {
                           const Icon(Icons.location_on, color: TMLabsColor.error, size: 20),
                           const SizedBox(width: 8),
                           Expanded(
-                            child: Text(store.address, style: TMLabsTextStyle.body.copyWith(fontSize: 13, height: 1.2)),
+                            child: Text(store.address ?? "", style: TMLabsTextStyle.body.copyWith(fontSize: 13, height: 1.2)),
                           ),
                         ],
                       ),

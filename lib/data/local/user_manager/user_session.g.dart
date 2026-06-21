@@ -10,6 +10,7 @@ UserSession _$UserSessionFromJson(Map<String, dynamic> json) => UserSession(
   id: (json['id'] as num).toInt(),
   accessToken: json['accessToken'] as String?,
   refreshToken: json['refreshToken'] as String?,
+  expiresTime: (json['expiresTime'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$UserSessionToJson(UserSession instance) =>
@@ -17,4 +18,5 @@ Map<String, dynamic> _$UserSessionToJson(UserSession instance) =>
       'id': instance.id,
       'accessToken': instance.accessToken,
       'refreshToken': instance.refreshToken,
+      'expiresTime': instance.expiresTime,
     };

@@ -1,10 +1,72 @@
 import 'package:coffee_bean_db/src/app_database.dart';
 import 'package:isar_community/isar.dart';
-import 'base_mixin.dart';
+import 'package:coffee_bean_db/src/services/base_mixin.dart';
 
 mixin ProductServiceMixin on BaseMixin {
   
-  // --- SYNC OPERATIONS ---
+  // --- NEW SYNC OPERATIONS (SPU & NEW CATEGORY) ---
+
+  Future<void> syncAppCategories(List<dynamic> jsonList, int? storeId) async {
+    final categories = jsonList.map((json) {
+      final name = json['name'] ?? '';
+      return TblCategory()
+        ..serverId = json['id']
+        ..parentId = json['parentId'] ?? 0
+        ..name = name
+        ..searchName = toNoSign(name)
+        ..picUrl = json['picUrl']
+        ..storeId = storeId
+        ..isActive = true;
+    }).toList();
+
+    await isar.writeTxn(() async {
+      // Nếu có storeId, chỉ xóa category của store đó
+      if (storeId != null) {
+        await isar.tblCategorys.filter().storeIdEqualTo(storeId).deleteAll();
+      } else {
+        await isar.tblCategorys.clear();
+      }
+      await isar.tblCategorys.putAll(categories);
+    });
+  }
+
+  Future<void> syncAppProducts(List<dynamic> jsonList, int? storeId) async {
+    final products = jsonList.map((json) {
+      final name = json['name'] ?? '';
+      return TblFood()
+        ..serverId = json['id']
+        ..storeId = storeId
+        ..catId = json['categoryId'] ?? 0
+        ..name = name
+        ..searchName = toNoSign(name)
+        ..introduction = json['introduction']
+        ..picUrl = json['picUrl']
+        ..sliderPicUrls = (json['sliderPicUrls'] as List?)?.map((e) => e.toString()).toList()
+        ..specType = json['specType'] ?? false
+        ..price = (json['price'] ?? 0) / 100.0 // API returns cents
+        ..marketPrice = (json['marketPrice'] ?? 0) / 100.0
+        ..stock = json['stock'] ?? 0
+        ..salesCount = json['salesCount'] ?? 0
+        ..deliveryTypes = (json['deliveryTypes'] as List?)?.map((e) => e as int).toList()
+        ..isActive = true;
+    }).toList();
+
+    await isar.writeTxn(() async {
+      if (storeId != null) {
+        await isar.tblFoods.filter().storeIdEqualTo(storeId).deleteAll();
+      } else {
+        await isar.tblFoods.clear();
+      }
+      await isar.tblFoods.putAll(products);
+    });
+  }
+
+  Future<List<TblFood>> getCachedProducts(int? storeId) async {
+    if (storeId == null) return [];
+    return await isar.tblFoods.filter().storeIdEqualTo(storeId).findAll();
+  }
+
+  // --- OLD SYNC OPERATIONS (KEEP FOR COMPATIBILITY IF NEEDED) ---
 
   Future<void> syncShoppingData({
     List<dynamic>? categoriesJson,

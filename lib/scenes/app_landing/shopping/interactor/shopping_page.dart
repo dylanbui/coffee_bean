@@ -103,7 +103,7 @@ class _ShoppingPageState extends AppCubitState<ShoppingPage, ShoppingInteractor,
       _categoryToIndexMap[i] = _flattenedItems.length;
       _flattenedItems.add(category); // Add Header
 
-      final products = state.productsByCategory[category.id] ?? [];
+      final products = state.productsByCategory[category.serverId] ?? []; // Fix: Use serverId
       _flattenedItems.addAll(products); // Add Products
     }
   }

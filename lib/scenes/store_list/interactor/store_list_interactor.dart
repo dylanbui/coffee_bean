@@ -1,18 +1,20 @@
 import 'dart:convert';
 import 'dart:math' show cos, sqrt, asin;
-import 'package:coffee_bean/config/app_pref.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
+import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
+import 'package:coffee_bean/data/model/db_location.dart';
+import 'package:coffee_bean/data/model/response/trade/store_model.dart';
+import 'package:coffee_bean/data/repository/store_repository.dart';
+import 'package:db_core/network/network_utils.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:db_core/utils/locator.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:coffee_bean/scenes/store_list/store_list_router.dart';
 import 'package:coffee_bean/scenes/store_list/interactor/store_list_event_state.dart';
 
 class StoreListInteractor extends CubitInteractor<StoreListRouter, StoreListState> {
-  final DatabaseService _dbService = locator<DatabaseService>();
+  final StoreRepository _storeRepository = locator<StoreRepository>();
 
   StoreListInteractor(StoreListRouter router) : super(const StoreListInitial(), router: router);
 
@@ -23,21 +25,7 @@ class StoreListInteractor extends CubitInteractor<StoreListRouter, StoreListStat
   }
 
   Future<void> _initData() async {
-    // 1. Sync data from local JSON if database is empty (Simulating first-time load)
-    final existingStores = await _dbService.getAllStores();
-    if (existingStores.isEmpty) {
-      try {
-        final String response = await rootBundle.loadString('assets/json/sample_store.json');
-        final data = await json.decode(response);
-        if (data['stores'] != null) {
-          await _dbService.syncStoreData(data['stores']);
-        }
-      } catch (e) {
-        debugPrint("Error syncing stores from JSON: $e");
-      }
-    }
-
-    // 2. Check location status
+    // Check location status and fetch stores
     await checkInitialLocationStatus();
   }
 
@@ -117,24 +105,38 @@ class StoreListInteractor extends CubitInteractor<StoreListRouter, StoreListStat
       }
     }
 
-    // Fetch from Isar
-    List<TblStore> dbStores;
-    if (searchKeyword.isEmpty) {
-      dbStores = await _dbService.getAllStores();
-    } else {
-      dbStores = await _dbService.searchStores(searchKeyword);
+    // Fetch from Repository
+    final location = position != null ? DbLocation(latitude: position.latitude, longitude: position.longitude) : null;
+    final result = (await _storeRepository.getPickUpStoreList(
+      location: location,
+    )).toResult();
+
+    List<StoreModel> apiStores = [];
+    if (result case DbSuccess(data: final list)) {
+      apiStores = list ?? [];
     }
 
-    // Map to Display Models with calculated distance
-    final displayStores = dbStores.map((s) {
-      String distanceStr = "15km"; // Du lieu demo
+    // Filter by query if needed
+    if (searchKeyword.isNotEmpty) {
+      apiStores = apiStores
+          .where((s) =>
+              s.name.toLowerCase().contains(searchKeyword.toLowerCase()) ||
+              (s.address?.toLowerCase().contains(searchKeyword.toLowerCase()) ?? false))
+          .toList();
+    }
 
+    // Map to Display Models with distance from server or calculated
+    final displayStores = apiStores.map((s) {
+      String distanceStr = "--";
 
-      if (position != null) {
-        double distanceValue = double.maxFinite;
-        final dist = _calculateDistance(position.latitude, position.longitude, s.latitude, s.longitude);
-        distanceValue = dist;
-        distanceStr = dist < 1 ? "${(dist * 1000).toInt()}m" : "${dist.toStringAsFixed(1)}km";
+      // Priority: 1. Server distance, 2. Local calculation
+      double? distValue = s.distance;
+      if (distValue == null && position != null) {
+        distValue = _calculateDistance(position.latitude, position.longitude, s.latitude, s.longitude);
+      }
+
+      if (distValue != null) {
+        distanceStr = distValue < 1 ? "${(distValue * 1000).toInt()}m" : "${distValue.toStringAsFixed(1)}km";
       }
 
       return StoreDisplayModel(
@@ -196,7 +198,7 @@ class StoreListInteractor extends CubitInteractor<StoreListRouter, StoreListStat
 
   void onStoreSelected(StoreDisplayModel model) {
     debugPrint("Store Selected == ${model.store.name}");
-    AppPrefs().setSelectedStoreId(model.store.serverId);
+    UserManager().saveSelectedStore(model.store);
     router?.pop(); // Return to previous screen
   }
 }

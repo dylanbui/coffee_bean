@@ -18,35 +18,64 @@ const TblFoodSchema = CollectionSchema(
   id: -4536437853415953909,
   properties: {
     r'catId': PropertySchema(id: 0, name: r'catId', type: IsarType.long),
-    r'description': PropertySchema(
+    r'deliveryTypes': PropertySchema(
       id: 1,
+      name: r'deliveryTypes',
+      type: IsarType.longList,
+    ),
+    r'description': PropertySchema(
+      id: 2,
       name: r'description',
       type: IsarType.string,
     ),
     r'images': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'images',
       type: IsarType.objectList,
 
       target: r'TblImage',
     ),
-    r'isActive': PropertySchema(id: 3, name: r'isActive', type: IsarType.bool),
-    r'name': PropertySchema(id: 4, name: r'name', type: IsarType.string),
-    r'price': PropertySchema(id: 5, name: r'price', type: IsarType.double),
-    r'properties': PropertySchema(
+    r'introduction': PropertySchema(
+      id: 4,
+      name: r'introduction',
+      type: IsarType.string,
+    ),
+    r'isActive': PropertySchema(id: 5, name: r'isActive', type: IsarType.bool),
+    r'marketPrice': PropertySchema(
       id: 6,
+      name: r'marketPrice',
+      type: IsarType.double,
+    ),
+    r'name': PropertySchema(id: 7, name: r'name', type: IsarType.string),
+    r'picUrl': PropertySchema(id: 8, name: r'picUrl', type: IsarType.string),
+    r'price': PropertySchema(id: 9, name: r'price', type: IsarType.double),
+    r'properties': PropertySchema(
+      id: 10,
       name: r'properties',
       type: IsarType.objectList,
 
       target: r'TblProductProperty',
     ),
+    r'salesCount': PropertySchema(
+      id: 11,
+      name: r'salesCount',
+      type: IsarType.long,
+    ),
     r'searchName': PropertySchema(
-      id: 7,
+      id: 12,
       name: r'searchName',
       type: IsarType.string,
     ),
-    r'serverId': PropertySchema(id: 8, name: r'serverId', type: IsarType.long),
-    r'sku': PropertySchema(id: 9, name: r'sku', type: IsarType.string),
+    r'serverId': PropertySchema(id: 13, name: r'serverId', type: IsarType.long),
+    r'sku': PropertySchema(id: 14, name: r'sku', type: IsarType.string),
+    r'sliderPicUrls': PropertySchema(
+      id: 15,
+      name: r'sliderPicUrls',
+      type: IsarType.stringList,
+    ),
+    r'specType': PropertySchema(id: 16, name: r'specType', type: IsarType.bool),
+    r'stock': PropertySchema(id: 17, name: r'stock', type: IsarType.long),
+    r'storeId': PropertySchema(id: 18, name: r'storeId', type: IsarType.long),
   },
 
   estimateSize: _tblFoodEstimateSize,
@@ -63,6 +92,19 @@ const TblFoodSchema = CollectionSchema(
       properties: [
         IndexPropertySchema(
           name: r'serverId',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+    r'storeId': IndexSchema(
+      id: 2730892149058446507,
+      name: r'storeId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'storeId',
           type: IndexType.value,
           caseSensitive: false,
         ),
@@ -123,9 +165,9 @@ const TblFoodSchema = CollectionSchema(
   },
   links: {},
   embeddedSchemas: {
-    r'TblImage': TblImageSchema,
     r'TblProductProperty': TblProductPropertySchema,
     r'TblProductOption': TblProductOptionSchema,
+    r'TblImage': TblImageSchema,
   },
 
   getId: _tblFoodGetId,
@@ -140,6 +182,12 @@ int _tblFoodEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.deliveryTypes;
+    if (value != null) {
+      bytesCount += 3 + value.length * 8;
+    }
+  }
   {
     final value = object.description;
     if (value != null) {
@@ -159,7 +207,19 @@ int _tblFoodEstimateSize(
       }
     }
   }
+  {
+    final value = object.introduction;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.name.length * 3;
+  {
+    final value = object.picUrl;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   {
     final list = object.properties;
     if (list != null) {
@@ -184,6 +244,18 @@ int _tblFoodEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  {
+    final list = object.sliderPicUrls;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += value.length * 3;
+        }
+      }
+    }
+  }
   return bytesCount;
 }
 
@@ -194,25 +266,34 @@ void _tblFoodSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeLong(offsets[0], object.catId);
-  writer.writeString(offsets[1], object.description);
+  writer.writeLongList(offsets[1], object.deliveryTypes);
+  writer.writeString(offsets[2], object.description);
   writer.writeObjectList<TblImage>(
-    offsets[2],
+    offsets[3],
     allOffsets,
     TblImageSchema.serialize,
     object.images,
   );
-  writer.writeBool(offsets[3], object.isActive);
-  writer.writeString(offsets[4], object.name);
-  writer.writeDouble(offsets[5], object.price);
+  writer.writeString(offsets[4], object.introduction);
+  writer.writeBool(offsets[5], object.isActive);
+  writer.writeDouble(offsets[6], object.marketPrice);
+  writer.writeString(offsets[7], object.name);
+  writer.writeString(offsets[8], object.picUrl);
+  writer.writeDouble(offsets[9], object.price);
   writer.writeObjectList<TblProductProperty>(
-    offsets[6],
+    offsets[10],
     allOffsets,
     TblProductPropertySchema.serialize,
     object.properties,
   );
-  writer.writeString(offsets[7], object.searchName);
-  writer.writeLong(offsets[8], object.serverId);
-  writer.writeString(offsets[9], object.sku);
+  writer.writeLong(offsets[11], object.salesCount);
+  writer.writeString(offsets[12], object.searchName);
+  writer.writeLong(offsets[13], object.serverId);
+  writer.writeString(offsets[14], object.sku);
+  writer.writeStringList(offsets[15], object.sliderPicUrls);
+  writer.writeBool(offsets[16], object.specType);
+  writer.writeLong(offsets[17], object.stock);
+  writer.writeLong(offsets[18], object.storeId);
 }
 
 TblFood _tblFoodDeserialize(
@@ -223,26 +304,35 @@ TblFood _tblFoodDeserialize(
 ) {
   final object = TblFood();
   object.catId = reader.readLong(offsets[0]);
-  object.description = reader.readStringOrNull(offsets[1]);
+  object.deliveryTypes = reader.readLongList(offsets[1]);
+  object.description = reader.readStringOrNull(offsets[2]);
   object.id = id;
   object.images = reader.readObjectList<TblImage>(
-    offsets[2],
+    offsets[3],
     TblImageSchema.deserialize,
     allOffsets,
     TblImage(),
   );
-  object.isActive = reader.readBool(offsets[3]);
-  object.name = reader.readString(offsets[4]);
-  object.price = reader.readDouble(offsets[5]);
+  object.introduction = reader.readStringOrNull(offsets[4]);
+  object.isActive = reader.readBool(offsets[5]);
+  object.marketPrice = reader.readDouble(offsets[6]);
+  object.name = reader.readString(offsets[7]);
+  object.picUrl = reader.readStringOrNull(offsets[8]);
+  object.price = reader.readDouble(offsets[9]);
   object.properties = reader.readObjectList<TblProductProperty>(
-    offsets[6],
+    offsets[10],
     TblProductPropertySchema.deserialize,
     allOffsets,
     TblProductProperty(),
   );
-  object.searchName = reader.readString(offsets[7]);
-  object.serverId = reader.readLong(offsets[8]);
-  object.sku = reader.readStringOrNull(offsets[9]);
+  object.salesCount = reader.readLong(offsets[11]);
+  object.searchName = reader.readString(offsets[12]);
+  object.serverId = reader.readLong(offsets[13]);
+  object.sku = reader.readStringOrNull(offsets[14]);
+  object.sliderPicUrls = reader.readStringList(offsets[15]);
+  object.specType = reader.readBool(offsets[16]);
+  object.stock = reader.readLong(offsets[17]);
+  object.storeId = reader.readLongOrNull(offsets[18]);
   return object;
 }
 
@@ -256,8 +346,10 @@ P _tblFoodDeserializeProp<P>(
     case 0:
       return (reader.readLong(offset)) as P;
     case 1:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongList(offset)) as P;
     case 2:
+      return (reader.readStringOrNull(offset)) as P;
+    case 3:
       return (reader.readObjectList<TblImage>(
             offset,
             TblImageSchema.deserialize,
@@ -265,13 +357,19 @@ P _tblFoodDeserializeProp<P>(
             TblImage(),
           ))
           as P;
-    case 3:
-      return (reader.readBool(offset)) as P;
     case 4:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 5:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 6:
+      return (reader.readDouble(offset)) as P;
+    case 7:
+      return (reader.readString(offset)) as P;
+    case 8:
+      return (reader.readStringOrNull(offset)) as P;
+    case 9:
+      return (reader.readDouble(offset)) as P;
+    case 10:
       return (reader.readObjectList<TblProductProperty>(
             offset,
             TblProductPropertySchema.deserialize,
@@ -279,12 +377,22 @@ P _tblFoodDeserializeProp<P>(
             TblProductProperty(),
           ))
           as P;
-    case 7:
-      return (reader.readString(offset)) as P;
-    case 8:
+    case 11:
       return (reader.readLong(offset)) as P;
-    case 9:
+    case 12:
+      return (reader.readString(offset)) as P;
+    case 13:
+      return (reader.readLong(offset)) as P;
+    case 14:
       return (reader.readStringOrNull(offset)) as P;
+    case 15:
+      return (reader.readStringList(offset)) as P;
+    case 16:
+      return (reader.readBool(offset)) as P;
+    case 17:
+      return (reader.readLong(offset)) as P;
+    case 18:
+      return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -370,6 +478,14 @@ extension TblFoodQueryWhereSort on QueryBuilder<TblFood, TblFood, QWhere> {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         const IndexWhereClause.any(indexName: r'serverId'),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterWhere> anyStoreId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'storeId'),
       );
     });
   }
@@ -567,6 +683,132 @@ extension TblFoodQueryWhere on QueryBuilder<TblFood, TblFood, QWhereClause> {
           lower: [lowerServerId],
           includeLower: includeLower,
           upper: [upperServerId],
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterWhereClause> storeIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'storeId', value: [null]),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterWhereClause> storeIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'storeId',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterWhereClause> storeIdEqualTo(
+    int? storeId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'storeId', value: [storeId]),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterWhereClause> storeIdNotEqualTo(
+    int? storeId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'storeId',
+                lower: [],
+                upper: [storeId],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'storeId',
+                lower: [storeId],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'storeId',
+                lower: [storeId],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'storeId',
+                lower: [],
+                upper: [storeId],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterWhereClause> storeIdGreaterThan(
+    int? storeId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'storeId',
+          lower: [storeId],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterWhereClause> storeIdLessThan(
+    int? storeId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'storeId',
+          lower: [],
+          upper: [storeId],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterWhereClause> storeIdBetween(
+    int? lowerStoreId,
+    int? upperStoreId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'storeId',
+          lower: [lowerStoreId],
+          includeLower: includeLower,
+          upper: [upperStoreId],
           includeUpper: includeUpper,
         ),
       );
@@ -1109,6 +1351,130 @@ extension TblFoodQueryFilter
     });
   }
 
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> deliveryTypesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'deliveryTypes'),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  deliveryTypesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'deliveryTypes'),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  deliveryTypesElementEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'deliveryTypes', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  deliveryTypesElementGreaterThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'deliveryTypes',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  deliveryTypesElementLessThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'deliveryTypes',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  deliveryTypesElementBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'deliveryTypes',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  deliveryTypesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'deliveryTypes', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> deliveryTypesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'deliveryTypes', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  deliveryTypesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'deliveryTypes', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  deliveryTypesLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'deliveryTypes', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  deliveryTypesLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'deliveryTypes', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  deliveryTypesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'deliveryTypes',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
   QueryBuilder<TblFood, TblFood, QAfterFilterCondition> descriptionIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -1400,12 +1766,250 @@ extension TblFoodQueryFilter
     });
   }
 
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> introductionIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'introduction'),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  introductionIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'introduction'),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> introductionEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'introduction',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> introductionGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'introduction',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> introductionLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'introduction',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> introductionBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'introduction',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> introductionStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'introduction',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> introductionEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'introduction',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> introductionContains(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'introduction',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> introductionMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'introduction',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> introductionIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'introduction', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  introductionIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'introduction', value: ''),
+      );
+    });
+  }
+
   QueryBuilder<TblFood, TblFood, QAfterFilterCondition> isActiveEqualTo(
     bool value,
   ) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.equalTo(property: r'isActive', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> marketPriceEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'marketPrice',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> marketPriceGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'marketPrice',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> marketPriceLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'marketPrice',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> marketPriceBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'marketPrice',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+
+          epsilon: epsilon,
+        ),
       );
     });
   }
@@ -1556,6 +2160,168 @@ extension TblFoodQueryFilter
     });
   }
 
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> picUrlIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'picUrl'),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> picUrlIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'picUrl'),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> picUrlEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> picUrlGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> picUrlLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> picUrlBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'picUrl',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> picUrlStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> picUrlEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> picUrlContains(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> picUrlMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'picUrl',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> picUrlIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'picUrl', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> picUrlIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'picUrl', value: ''),
+      );
+    });
+  }
+
   QueryBuilder<TblFood, TblFood, QAfterFilterCondition> priceEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -1693,6 +2459,65 @@ extension TblFoodQueryFilter
         includeLower,
         upper,
         includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> salesCountEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'salesCount', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> salesCountGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'salesCount',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> salesCountLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'salesCount',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> salesCountBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'salesCount',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
       );
     });
   }
@@ -2063,6 +2888,360 @@ extension TblFoodQueryFilter
       );
     });
   }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> sliderPicUrlsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'sliderPicUrls'),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  sliderPicUrlsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'sliderPicUrls'),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  sliderPicUrlsElementEqualTo(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'sliderPicUrls',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  sliderPicUrlsElementGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'sliderPicUrls',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  sliderPicUrlsElementLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'sliderPicUrls',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  sliderPicUrlsElementBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'sliderPicUrls',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  sliderPicUrlsElementStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'sliderPicUrls',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  sliderPicUrlsElementEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'sliderPicUrls',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  sliderPicUrlsElementContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'sliderPicUrls',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  sliderPicUrlsElementMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'sliderPicUrls',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  sliderPicUrlsElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'sliderPicUrls', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  sliderPicUrlsElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'sliderPicUrls', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  sliderPicUrlsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'sliderPicUrls', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> sliderPicUrlsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'sliderPicUrls', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  sliderPicUrlsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'sliderPicUrls', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  sliderPicUrlsLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'sliderPicUrls', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  sliderPicUrlsLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'sliderPicUrls', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition>
+  sliderPicUrlsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'sliderPicUrls',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> specTypeEqualTo(
+    bool value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'specType', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> stockEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'stock', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> stockGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'stock',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> stockLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'stock',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> stockBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'stock',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> storeIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'storeId'),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> storeIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'storeId'),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> storeIdEqualTo(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'storeId', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> storeIdGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'storeId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> storeIdLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'storeId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterFilterCondition> storeIdBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'storeId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
 }
 
 extension TblFoodQueryObject
@@ -2112,6 +3291,18 @@ extension TblFoodQuerySortBy on QueryBuilder<TblFood, TblFood, QSortBy> {
     });
   }
 
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByIntroduction() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'introduction', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByIntroductionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'introduction', Sort.desc);
+    });
+  }
+
   QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByIsActive() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isActive', Sort.asc);
@@ -2121,6 +3312,18 @@ extension TblFoodQuerySortBy on QueryBuilder<TblFood, TblFood, QSortBy> {
   QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByIsActiveDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isActive', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByMarketPrice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'marketPrice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByMarketPriceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'marketPrice', Sort.desc);
     });
   }
 
@@ -2136,6 +3339,18 @@ extension TblFoodQuerySortBy on QueryBuilder<TblFood, TblFood, QSortBy> {
     });
   }
 
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByPicUrl() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'picUrl', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByPicUrlDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'picUrl', Sort.desc);
+    });
+  }
+
   QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByPrice() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'price', Sort.asc);
@@ -2145,6 +3360,18 @@ extension TblFoodQuerySortBy on QueryBuilder<TblFood, TblFood, QSortBy> {
   QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByPriceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'price', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortBySalesCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'salesCount', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortBySalesCountDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'salesCount', Sort.desc);
     });
   }
 
@@ -2181,6 +3408,42 @@ extension TblFoodQuerySortBy on QueryBuilder<TblFood, TblFood, QSortBy> {
   QueryBuilder<TblFood, TblFood, QAfterSortBy> sortBySkuDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sku', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortBySpecType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'specType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortBySpecTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'specType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByStock() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stock', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByStockDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stock', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByStoreId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'storeId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> sortByStoreIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'storeId', Sort.desc);
     });
   }
 }
@@ -2223,6 +3486,18 @@ extension TblFoodQuerySortThenBy
     });
   }
 
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByIntroduction() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'introduction', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByIntroductionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'introduction', Sort.desc);
+    });
+  }
+
   QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByIsActive() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isActive', Sort.asc);
@@ -2232,6 +3507,18 @@ extension TblFoodQuerySortThenBy
   QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByIsActiveDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isActive', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByMarketPrice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'marketPrice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByMarketPriceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'marketPrice', Sort.desc);
     });
   }
 
@@ -2247,6 +3534,18 @@ extension TblFoodQuerySortThenBy
     });
   }
 
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByPicUrl() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'picUrl', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByPicUrlDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'picUrl', Sort.desc);
+    });
+  }
+
   QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByPrice() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'price', Sort.asc);
@@ -2256,6 +3555,18 @@ extension TblFoodQuerySortThenBy
   QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByPriceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'price', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenBySalesCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'salesCount', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenBySalesCountDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'salesCount', Sort.desc);
     });
   }
 
@@ -2294,6 +3605,42 @@ extension TblFoodQuerySortThenBy
       return query.addSortBy(r'sku', Sort.desc);
     });
   }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenBySpecType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'specType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenBySpecTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'specType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByStock() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stock', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByStockDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stock', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByStoreId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'storeId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QAfterSortBy> thenByStoreIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'storeId', Sort.desc);
+    });
+  }
 }
 
 extension TblFoodQueryWhereDistinct
@@ -2301,6 +3648,12 @@ extension TblFoodQueryWhereDistinct
   QueryBuilder<TblFood, TblFood, QDistinct> distinctByCatId() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'catId');
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QDistinct> distinctByDeliveryTypes() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'deliveryTypes');
     });
   }
 
@@ -2312,9 +3665,23 @@ extension TblFoodQueryWhereDistinct
     });
   }
 
+  QueryBuilder<TblFood, TblFood, QDistinct> distinctByIntroduction({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'introduction', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<TblFood, TblFood, QDistinct> distinctByIsActive() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isActive');
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QDistinct> distinctByMarketPrice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'marketPrice');
     });
   }
 
@@ -2326,9 +3693,23 @@ extension TblFoodQueryWhereDistinct
     });
   }
 
+  QueryBuilder<TblFood, TblFood, QDistinct> distinctByPicUrl({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'picUrl', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<TblFood, TblFood, QDistinct> distinctByPrice() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'price');
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QDistinct> distinctBySalesCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'salesCount');
     });
   }
 
@@ -2353,6 +3734,30 @@ extension TblFoodQueryWhereDistinct
       return query.addDistinctBy(r'sku', caseSensitive: caseSensitive);
     });
   }
+
+  QueryBuilder<TblFood, TblFood, QDistinct> distinctBySliderPicUrls() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'sliderPicUrls');
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QDistinct> distinctBySpecType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'specType');
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QDistinct> distinctByStock() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'stock');
+    });
+  }
+
+  QueryBuilder<TblFood, TblFood, QDistinct> distinctByStoreId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'storeId');
+    });
+  }
 }
 
 extension TblFoodQueryProperty
@@ -2369,6 +3774,12 @@ extension TblFoodQueryProperty
     });
   }
 
+  QueryBuilder<TblFood, List<int>?, QQueryOperations> deliveryTypesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'deliveryTypes');
+    });
+  }
+
   QueryBuilder<TblFood, String?, QQueryOperations> descriptionProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'description');
@@ -2381,15 +3792,33 @@ extension TblFoodQueryProperty
     });
   }
 
+  QueryBuilder<TblFood, String?, QQueryOperations> introductionProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'introduction');
+    });
+  }
+
   QueryBuilder<TblFood, bool, QQueryOperations> isActiveProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isActive');
     });
   }
 
+  QueryBuilder<TblFood, double, QQueryOperations> marketPriceProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'marketPrice');
+    });
+  }
+
   QueryBuilder<TblFood, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<TblFood, String?, QQueryOperations> picUrlProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'picUrl');
     });
   }
 
@@ -2403,6 +3832,12 @@ extension TblFoodQueryProperty
   propertiesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'properties');
+    });
+  }
+
+  QueryBuilder<TblFood, int, QQueryOperations> salesCountProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'salesCount');
     });
   }
 
@@ -2421,6 +3856,31 @@ extension TblFoodQueryProperty
   QueryBuilder<TblFood, String?, QQueryOperations> skuProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sku');
+    });
+  }
+
+  QueryBuilder<TblFood, List<String>?, QQueryOperations>
+  sliderPicUrlsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'sliderPicUrls');
+    });
+  }
+
+  QueryBuilder<TblFood, bool, QQueryOperations> specTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'specType');
+    });
+  }
+
+  QueryBuilder<TblFood, int, QQueryOperations> stockProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'stock');
+    });
+  }
+
+  QueryBuilder<TblFood, int?, QQueryOperations> storeIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'storeId');
     });
   }
 }
@@ -2451,21 +3911,22 @@ const TblActivitySchema = CollectionSchema(
     ),
     r'isActive': PropertySchema(id: 3, name: r'isActive', type: IsarType.bool),
     r'name': PropertySchema(id: 4, name: r'name', type: IsarType.string),
-    r'price': PropertySchema(id: 5, name: r'price', type: IsarType.double),
+    r'picUrl': PropertySchema(id: 5, name: r'picUrl', type: IsarType.string),
+    r'price': PropertySchema(id: 6, name: r'price', type: IsarType.double),
     r'properties': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'properties',
       type: IsarType.objectList,
 
       target: r'TblProductProperty',
     ),
     r'searchName': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'searchName',
       type: IsarType.string,
     ),
-    r'serverId': PropertySchema(id: 8, name: r'serverId', type: IsarType.long),
-    r'sku': PropertySchema(id: 9, name: r'sku', type: IsarType.string),
+    r'serverId': PropertySchema(id: 9, name: r'serverId', type: IsarType.long),
+    r'sku': PropertySchema(id: 10, name: r'sku', type: IsarType.string),
   },
 
   estimateSize: _tblActivityEstimateSize,
@@ -2500,19 +3961,6 @@ const TblActivitySchema = CollectionSchema(
         ),
       ],
     ),
-    r'catIds': IndexSchema(
-      id: 2864043476753028885,
-      name: r'catIds',
-      unique: false,
-      replace: false,
-      properties: [
-        IndexPropertySchema(
-          name: r'catIds',
-          type: IndexType.hash,
-          caseSensitive: false,
-        ),
-      ],
-    ),
     r'name': IndexSchema(
       id: 879695947855722453,
       name: r'name',
@@ -2542,9 +3990,9 @@ const TblActivitySchema = CollectionSchema(
   },
   links: {},
   embeddedSchemas: {
-    r'TblImage': TblImageSchema,
     r'TblProductProperty': TblProductPropertySchema,
     r'TblProductOption': TblProductOptionSchema,
+    r'TblImage': TblImageSchema,
   },
 
   getId: _tblActivityGetId,
@@ -2585,6 +4033,12 @@ int _tblActivityEstimateSize(
     }
   }
   bytesCount += 3 + object.name.length * 3;
+  {
+    final value = object.picUrl;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   {
     final list = object.properties;
     if (list != null) {
@@ -2628,16 +4082,17 @@ void _tblActivitySerialize(
   );
   writer.writeBool(offsets[3], object.isActive);
   writer.writeString(offsets[4], object.name);
-  writer.writeDouble(offsets[5], object.price);
+  writer.writeString(offsets[5], object.picUrl);
+  writer.writeDouble(offsets[6], object.price);
   writer.writeObjectList<TblProductProperty>(
-    offsets[6],
+    offsets[7],
     allOffsets,
     TblProductPropertySchema.serialize,
     object.properties,
   );
-  writer.writeString(offsets[7], object.searchName);
-  writer.writeLong(offsets[8], object.serverId);
-  writer.writeString(offsets[9], object.sku);
+  writer.writeString(offsets[8], object.searchName);
+  writer.writeLong(offsets[9], object.serverId);
+  writer.writeString(offsets[10], object.sku);
 }
 
 TblActivity _tblActivityDeserialize(
@@ -2658,16 +4113,17 @@ TblActivity _tblActivityDeserialize(
   );
   object.isActive = reader.readBool(offsets[3]);
   object.name = reader.readString(offsets[4]);
-  object.price = reader.readDouble(offsets[5]);
+  object.picUrl = reader.readStringOrNull(offsets[5]);
+  object.price = reader.readDouble(offsets[6]);
   object.properties = reader.readObjectList<TblProductProperty>(
-    offsets[6],
+    offsets[7],
     TblProductPropertySchema.deserialize,
     allOffsets,
     TblProductProperty(),
   );
-  object.searchName = reader.readString(offsets[7]);
-  object.serverId = reader.readLong(offsets[8]);
-  object.sku = reader.readStringOrNull(offsets[9]);
+  object.searchName = reader.readString(offsets[8]);
+  object.serverId = reader.readLong(offsets[9]);
+  object.sku = reader.readStringOrNull(offsets[10]);
   return object;
 }
 
@@ -2695,8 +4151,10 @@ P _tblActivityDeserializeProp<P>(
     case 4:
       return (reader.readString(offset)) as P;
     case 5:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 6:
+      return (reader.readDouble(offset)) as P;
+    case 7:
       return (reader.readObjectList<TblProductProperty>(
             offset,
             TblProductPropertySchema.deserialize,
@@ -2704,11 +4162,11 @@ P _tblActivityDeserializeProp<P>(
             TblProductProperty(),
           ))
           as P;
-    case 7:
-      return (reader.readString(offset)) as P;
     case 8:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 9:
+      return (reader.readLong(offset)) as P;
+    case 10:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -3066,81 +4524,6 @@ extension TblActivityQueryWhere
                 indexName: r'sku',
                 lower: [],
                 upper: [sku],
-                includeUpper: false,
-              ),
-            );
-      }
-    });
-  }
-
-  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> catIdsIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.equalTo(indexName: r'catIds', value: [null]),
-      );
-    });
-  }
-
-  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> catIdsIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.between(
-          indexName: r'catIds',
-          lower: [null],
-          includeLower: false,
-          upper: [],
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> catIdsEqualTo(
-    List<int>? catIds,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.equalTo(indexName: r'catIds', value: [catIds]),
-      );
-    });
-  }
-
-  QueryBuilder<TblActivity, TblActivity, QAfterWhereClause> catIdsNotEqualTo(
-    List<int>? catIds,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'catIds',
-                lower: [],
-                upper: [catIds],
-                includeUpper: false,
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'catIds',
-                lower: [catIds],
-                includeLower: false,
-                upper: [],
-              ),
-            );
-      } else {
-        return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'catIds',
-                lower: [catIds],
-                includeLower: false,
-                upper: [],
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'catIds',
-                lower: [],
-                upper: [catIds],
                 includeUpper: false,
               ),
             );
@@ -4023,6 +5406,170 @@ extension TblActivityQueryFilter
     });
   }
 
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> picUrlIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'picUrl'),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  picUrlIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'picUrl'),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> picUrlEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  picUrlGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> picUrlLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> picUrlBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'picUrl',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  picUrlStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> picUrlEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> picUrlContains(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> picUrlMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'picUrl',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  picUrlIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'picUrl', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition>
+  picUrlIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'picUrl', value: ''),
+      );
+    });
+  }
+
   QueryBuilder<TblActivity, TblActivity, QAfterFilterCondition> priceEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -4588,6 +6135,18 @@ extension TblActivityQuerySortBy
     });
   }
 
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortByPicUrl() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'picUrl', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortByPicUrlDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'picUrl', Sort.desc);
+    });
+  }
+
   QueryBuilder<TblActivity, TblActivity, QAfterSortBy> sortByPrice() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'price', Sort.asc);
@@ -4687,6 +6246,18 @@ extension TblActivityQuerySortThenBy
     });
   }
 
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenByPicUrl() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'picUrl', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenByPicUrlDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'picUrl', Sort.desc);
+    });
+  }
+
   QueryBuilder<TblActivity, TblActivity, QAfterSortBy> thenByPrice() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'price', Sort.asc);
@@ -4766,6 +6337,14 @@ extension TblActivityQueryWhereDistinct
     });
   }
 
+  QueryBuilder<TblActivity, TblActivity, QDistinct> distinctByPicUrl({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'picUrl', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<TblActivity, TblActivity, QDistinct> distinctByPrice() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'price');
@@ -4834,6 +6413,12 @@ extension TblActivityQueryProperty
     });
   }
 
+  QueryBuilder<TblActivity, String?, QQueryOperations> picUrlProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'picUrl');
+    });
+  }
+
   QueryBuilder<TblActivity, double, QQueryOperations> priceProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'price');
@@ -4897,23 +6482,24 @@ const TblCourseSchema = CollectionSchema(
     ),
     r'isActive': PropertySchema(id: 4, name: r'isActive', type: IsarType.bool),
     r'name': PropertySchema(id: 5, name: r'name', type: IsarType.string),
-    r'price': PropertySchema(id: 6, name: r'price', type: IsarType.double),
+    r'picUrl': PropertySchema(id: 6, name: r'picUrl', type: IsarType.string),
+    r'price': PropertySchema(id: 7, name: r'price', type: IsarType.double),
     r'properties': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'properties',
       type: IsarType.objectList,
 
       target: r'TblProductProperty',
     ),
     r'searchName': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'searchName',
       type: IsarType.string,
     ),
-    r'serverId': PropertySchema(id: 9, name: r'serverId', type: IsarType.long),
-    r'sku': PropertySchema(id: 10, name: r'sku', type: IsarType.string),
+    r'serverId': PropertySchema(id: 10, name: r'serverId', type: IsarType.long),
+    r'sku': PropertySchema(id: 11, name: r'sku', type: IsarType.string),
     r'videoUrl': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'videoUrl',
       type: IsarType.string,
     ),
@@ -4951,19 +6537,6 @@ const TblCourseSchema = CollectionSchema(
         ),
       ],
     ),
-    r'catIds': IndexSchema(
-      id: 2864043476753028885,
-      name: r'catIds',
-      unique: false,
-      replace: false,
-      properties: [
-        IndexPropertySchema(
-          name: r'catIds',
-          type: IndexType.hash,
-          caseSensitive: false,
-        ),
-      ],
-    ),
     r'name': IndexSchema(
       id: 879695947855722453,
       name: r'name',
@@ -4993,9 +6566,9 @@ const TblCourseSchema = CollectionSchema(
   },
   links: {},
   embeddedSchemas: {
-    r'TblImage': TblImageSchema,
     r'TblProductProperty': TblProductPropertySchema,
     r'TblProductOption': TblProductOptionSchema,
+    r'TblImage': TblImageSchema,
   },
 
   getId: _tblCourseGetId,
@@ -5042,6 +6615,12 @@ int _tblCourseEstimateSize(
     }
   }
   bytesCount += 3 + object.name.length * 3;
+  {
+    final value = object.picUrl;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   {
     final list = object.properties;
     if (list != null) {
@@ -5092,17 +6671,18 @@ void _tblCourseSerialize(
   writer.writeString(offsets[3], object.instructor);
   writer.writeBool(offsets[4], object.isActive);
   writer.writeString(offsets[5], object.name);
-  writer.writeDouble(offsets[6], object.price);
+  writer.writeString(offsets[6], object.picUrl);
+  writer.writeDouble(offsets[7], object.price);
   writer.writeObjectList<TblProductProperty>(
-    offsets[7],
+    offsets[8],
     allOffsets,
     TblProductPropertySchema.serialize,
     object.properties,
   );
-  writer.writeString(offsets[8], object.searchName);
-  writer.writeLong(offsets[9], object.serverId);
-  writer.writeString(offsets[10], object.sku);
-  writer.writeString(offsets[11], object.videoUrl);
+  writer.writeString(offsets[9], object.searchName);
+  writer.writeLong(offsets[10], object.serverId);
+  writer.writeString(offsets[11], object.sku);
+  writer.writeString(offsets[12], object.videoUrl);
 }
 
 TblCourse _tblCourseDeserialize(
@@ -5124,17 +6704,18 @@ TblCourse _tblCourseDeserialize(
   object.instructor = reader.readStringOrNull(offsets[3]);
   object.isActive = reader.readBool(offsets[4]);
   object.name = reader.readString(offsets[5]);
-  object.price = reader.readDouble(offsets[6]);
+  object.picUrl = reader.readStringOrNull(offsets[6]);
+  object.price = reader.readDouble(offsets[7]);
   object.properties = reader.readObjectList<TblProductProperty>(
-    offsets[7],
+    offsets[8],
     TblProductPropertySchema.deserialize,
     allOffsets,
     TblProductProperty(),
   );
-  object.searchName = reader.readString(offsets[8]);
-  object.serverId = reader.readLong(offsets[9]);
-  object.sku = reader.readStringOrNull(offsets[10]);
-  object.videoUrl = reader.readStringOrNull(offsets[11]);
+  object.searchName = reader.readString(offsets[9]);
+  object.serverId = reader.readLong(offsets[10]);
+  object.sku = reader.readStringOrNull(offsets[11]);
+  object.videoUrl = reader.readStringOrNull(offsets[12]);
   return object;
 }
 
@@ -5164,8 +6745,10 @@ P _tblCourseDeserializeProp<P>(
     case 5:
       return (reader.readString(offset)) as P;
     case 6:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 7:
+      return (reader.readDouble(offset)) as P;
+    case 8:
       return (reader.readObjectList<TblProductProperty>(
             offset,
             TblProductPropertySchema.deserialize,
@@ -5173,13 +6756,13 @@ P _tblCourseDeserializeProp<P>(
             TblProductProperty(),
           ))
           as P;
-    case 8:
-      return (reader.readString(offset)) as P;
     case 9:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 10:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 11:
+      return (reader.readStringOrNull(offset)) as P;
+    case 12:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -5531,81 +7114,6 @@ extension TblCourseQueryWhere
                 indexName: r'sku',
                 lower: [],
                 upper: [sku],
-                includeUpper: false,
-              ),
-            );
-      }
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterWhereClause> catIdsIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.equalTo(indexName: r'catIds', value: [null]),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterWhereClause> catIdsIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.between(
-          indexName: r'catIds',
-          lower: [null],
-          includeLower: false,
-          upper: [],
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterWhereClause> catIdsEqualTo(
-    List<int>? catIds,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.equalTo(indexName: r'catIds', value: [catIds]),
-      );
-    });
-  }
-
-  QueryBuilder<TblCourse, TblCourse, QAfterWhereClause> catIdsNotEqualTo(
-    List<int>? catIds,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'catIds',
-                lower: [],
-                upper: [catIds],
-                includeUpper: false,
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'catIds',
-                lower: [catIds],
-                includeLower: false,
-                upper: [],
-              ),
-            );
-      } else {
-        return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'catIds',
-                lower: [catIds],
-                includeLower: false,
-                upper: [],
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'catIds',
-                lower: [],
-                upper: [catIds],
                 includeUpper: false,
               ),
             );
@@ -6653,6 +8161,168 @@ extension TblCourseQueryFilter
     });
   }
 
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> picUrlIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'picUrl'),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> picUrlIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'picUrl'),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> picUrlEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> picUrlGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> picUrlLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> picUrlBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'picUrl',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> picUrlStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> picUrlEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> picUrlContains(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'picUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> picUrlMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'picUrl',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> picUrlIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'picUrl', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> picUrlIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'picUrl', value: ''),
+      );
+    });
+  }
+
   QueryBuilder<TblCourse, TblCourse, QAfterFilterCondition> priceEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -7401,6 +9071,18 @@ extension TblCourseQuerySortBy on QueryBuilder<TblCourse, TblCourse, QSortBy> {
     });
   }
 
+  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> sortByPicUrl() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'picUrl', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> sortByPicUrlDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'picUrl', Sort.desc);
+    });
+  }
+
   QueryBuilder<TblCourse, TblCourse, QAfterSortBy> sortByPrice() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'price', Sort.asc);
@@ -7524,6 +9206,18 @@ extension TblCourseQuerySortThenBy
     });
   }
 
+  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> thenByPicUrl() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'picUrl', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblCourse, TblCourse, QAfterSortBy> thenByPicUrlDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'picUrl', Sort.desc);
+    });
+  }
+
   QueryBuilder<TblCourse, TblCourse, QAfterSortBy> thenByPrice() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'price', Sort.asc);
@@ -7623,6 +9317,14 @@ extension TblCourseQueryWhereDistinct
     });
   }
 
+  QueryBuilder<TblCourse, TblCourse, QDistinct> distinctByPicUrl({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'picUrl', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<TblCourse, TblCourse, QDistinct> distinctByPrice() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'price');
@@ -7701,6 +9403,12 @@ extension TblCourseQueryProperty
   QueryBuilder<TblCourse, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<TblCourse, String?, QQueryOperations> picUrlProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'picUrl');
     });
   }
 

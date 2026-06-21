@@ -165,7 +165,7 @@ class _StoreListPageState extends AppCubitState<StoreListPage, StoreListInteract
 
     return TapEffect(
       enableSound: false,
-      // onTap: () => interactor.onStoreSelected(model),
+      onTap: () => interactor.onStoreSelected(model),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         constraints: const BoxConstraints(minHeight: 140),
@@ -229,7 +229,7 @@ class _StoreListPageState extends AppCubitState<StoreListPage, StoreListInteract
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
-                                  store.address,
+                                  store.address ?? "",
                                   style: TMLabsTextStyle.title.copyWith(color: TMLabsColor.white, height: 1.2),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,

@@ -69,6 +69,9 @@ class TblFood {
   int serverId = 0;
 
   @Index()
+  int? storeId; // For cache by store
+
+  @Index()
   String? sku;
 
   @Index()
@@ -80,20 +83,31 @@ class TblFood {
   @Index(type: IndexType.value, caseSensitive: false)
   String searchName = "";
 
-  List<TblImage>? images;
-
-  @ignore
-  String? get mainImage {
-    if (images == null || images!.isEmpty) return null;
-    return images!.firstWhere((img) => img.isPrimary, orElse: () => images!.first).url;
-  }
-
+  String? introduction;
+  String? picUrl;
+  List<String>? sliderPicUrls;
+  bool specType = false;
   double price = 0.0;
+  double marketPrice = 0.0;
+  int stock = 0;
+  int salesCount = 0;
+  List<int>? deliveryTypes;
+
   String? description;
   bool isActive = true;
 
   List<TblProductProperty>? properties;
-  
+
+  // Compatibility fields
+  List<TblImage>? images;
+
+  @ignore
+  String? get mainImage {
+    if (picUrl != null && picUrl!.isNotEmpty) return picUrl;
+    if (images == null || images!.isEmpty) return null;
+    return images!.firstWhere((img) => img.isPrimary, orElse: () => images!.first).url;
+  }
+
   @ignore
   List<SelectedOption> get defaultSelectedOptions {
     final list = <SelectedOption>[];
@@ -127,12 +141,7 @@ class TblFood {
   }
 
   @override
-  String toString() {
-    return 'TblFood{name: $name, images: ${images?.length ?? 0}, properties: ${properties?.length ?? 0}\n'
-           '  Properties: ${properties?.map((p) => p.toString()).join('\n    ')}\n'
-           '}';
-  }
-
+  String toString() => 'TblFood{name: $name, price: $price}';
 }
 
 @collection
@@ -145,28 +154,29 @@ class TblActivity {
   @Index()
   String? sku;
 
-  @Index()
-  List<int>? catIds; // Danh sách các Category ID (n-n)
-
   @Index(type: IndexType.value, caseSensitive: false)
   String name = "";
 
   @Index(type: IndexType.value, caseSensitive: false)
   String searchName = "";
 
+  String? picUrl;
+  double price = 0.0;
+  String? description;
+  bool isActive = true;
+  List<int>? catIds;
+
+  List<TblProductProperty>? properties;
+
+  // Compatibility fields
   List<TblImage>? images;
 
   @ignore
   String? get mainImage {
+    if (picUrl != null && picUrl!.isNotEmpty) return picUrl;
     if (images == null || images!.isEmpty) return null;
     return images!.firstWhere((img) => img.isPrimary, orElse: () => images!.first).url;
   }
-
-  double price = 0.0;
-  String? description;
-  bool isActive = true;
-
-  List<TblProductProperty>? properties;
 }
 
 @collection
@@ -179,68 +189,29 @@ class TblCourse {
   @Index()
   String? sku;
 
-  @Index()
-  List<int>? catIds; // Danh sách các Category ID (n-n)
-
   @Index(type: IndexType.value, caseSensitive: false)
   String name = "";
 
   @Index(type: IndexType.value, caseSensitive: false)
   String searchName = "";
 
+  String? picUrl;
+  double price = 0.0;
+  String? description;
+  bool isActive = true;
+  String? instructor;
+  String? videoUrl;
+  List<int>? catIds;
+
+  List<TblProductProperty>? properties;
+
+  // Compatibility fields
   List<TblImage>? images;
 
   @ignore
   String? get mainImage {
+    if (picUrl != null && picUrl!.isNotEmpty) return picUrl;
     if (images == null || images!.isEmpty) return null;
     return images!.firstWhere((img) => img.isPrimary, orElse: () => images!.first).url;
-  }
-
-  double price = 0.0;
-  String? description;
-  bool isActive = true;
-
-  String? instructor;
-  String? videoUrl;
-
-  List<TblProductProperty>? properties;
-
-  @ignore
-  List<SelectedOption> get defaultSelectedOptions {
-    final list = <SelectedOption>[];
-    if (properties == null) return list;
-    for (var prop in properties!) {
-      final options = prop.options;
-      if (options != null && options.isNotEmpty) {
-        final opt = options.firstWhere((o) => o.isAvailable, orElse: () => options.first);
-        list.add(SelectedOption()
-          ..optionServerId = opt.serverId
-          ..groupName = prop.groupName
-          ..optionName = opt.name
-          ..extraPrice = opt.extraPrice);
-      }
-    }
-    return list;
-  }
-
-  @ignore
-  Map<int, TblProductOption> get defaultOptionsMap {
-    final map = <int, TblProductOption>{};
-    if (properties == null) return map;
-    for (var prop in properties!) {
-      final options = prop.options;
-      if (options != null && options.isNotEmpty) {
-        final opt = options.firstWhere((o) => o.isAvailable, orElse: () => options.first);
-        map[prop.serverId] = opt;
-      }
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return 'TblCourse{name: $name, images: ${images?.length ?? 0}, properties: ${properties?.length ?? 0}\n'
-           '  Properties: ${properties?.map((p) => p.toString()).join('\n    ')}\n'
-           '}';
   }
 }

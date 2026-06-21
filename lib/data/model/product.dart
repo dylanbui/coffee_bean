@@ -1,53 +1,143 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:coffee_bean/data/model/category.dart';
 
 part 'product.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Product extends Equatable {
   final int id;
-  final String? title;
-  final String? slug;
-  final double? price;
-  final String? description;
-  final Category? category;
-  final List<String>? images;
+  final String name;
+  final String introduction;
+  final int categoryId;
+  final String picUrl;
+  final List<String> sliderPicUrls;
+  final bool specType;
+  final int price;
+  final int marketPrice;
+  final int stock;
+  final int salesCount;
+  final List<int> deliveryTypes;
 
   const Product({
-    this.id = 0,
-    this.title,
-    this.slug,
-    this.price,
-    this.description,
-    this.category,
-    this.images,
+    required this.id,
+    required this.name,
+    required this.introduction,
+    required this.categoryId,
+    required this.picUrl,
+    required this.sliderPicUrls,
+    required this.specType,
+    required this.price,
+    required this.marketPrice,
+    required this.stock,
+    required this.salesCount,
+    required this.deliveryTypes,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
 
   Map<String, dynamic> toJson() => _$ProductToJson(this);
 
-  Product copyWith({
-    int? id,
-    String? title,
-    String? slug,
-    double? price,
-    String? description,
-    Category? category,
-    List<String>? images,
-  }) {
-    return Product(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      slug: slug ?? this.slug,
-      price: price ?? this.price,
-      description: description ?? this.description,
-      category: category ?? this.category,
-      images: images ?? this.images,
-    );
-  }
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+        introduction,
+        categoryId,
+        picUrl,
+        sliderPicUrls,
+        specType,
+        price,
+        marketPrice,
+        stock,
+        salesCount,
+        deliveryTypes,
+      ];
+}
+
+@JsonSerializable(explicitToJson: true)
+class ProductPageResult {
+  final int total;
+  final List<Product> list;
+
+  ProductPageResult({required this.total, required this.list});
+
+  factory ProductPageResult.fromJson(Map<String, dynamic> json) => _$ProductPageResultFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProductPageResultToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class ProductDetail extends Product {
+  final String description;
+  final List<Sku> skus;
+
+  const ProductDetail({
+    required super.id,
+    required super.name,
+    required super.introduction,
+    required super.categoryId,
+    required super.picUrl,
+    required super.sliderPicUrls,
+    required super.specType,
+    required super.price,
+    required super.marketPrice,
+    required super.stock,
+    required super.salesCount,
+    required super.deliveryTypes,
+    required this.description,
+    required this.skus,
+  });
+
+  factory ProductDetail.fromJson(Map<String, dynamic> json) => _$ProductDetailFromJson(json);
 
   @override
-  List<Object?> get props => [id, title, slug, price, description, category, images];
+  Map<String, dynamic> toJson() => _$ProductDetailToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class Sku {
+  final int id;
+  final List<SkuProperty> properties;
+  final int price;
+  final int marketPrice;
+  final int vipPrice;
+  final String picUrl;
+  final int stock;
+  final double weight;
+  final double volume;
+
+  Sku({
+    required this.id,
+    required this.properties,
+    required this.price,
+    required this.marketPrice,
+    required this.vipPrice,
+    required this.picUrl,
+    required this.stock,
+    required this.weight,
+    required this.volume,
+  });
+
+  factory Sku.fromJson(Map<String, dynamic> json) => _$SkuFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SkuToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class SkuProperty {
+  final int propertyId;
+  final String propertyName;
+  final int valueId;
+  final String valueName;
+
+  SkuProperty({
+    required this.propertyId,
+    required this.propertyName,
+    required this.valueId,
+    required this.valueName,
+  });
+
+  factory SkuProperty.fromJson(Map<String, dynamic> json) => _$SkuPropertyFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SkuPropertyToJson(this);
 }

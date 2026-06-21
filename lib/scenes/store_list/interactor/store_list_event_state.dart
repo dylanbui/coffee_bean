@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
+import 'package:coffee_bean/data/model/response/trade/store_model.dart';
 
 class StoreDisplayModel {
-  final TblStore store;
+  final StoreModel store;
   final String distance;
   final bool isOpen;
 

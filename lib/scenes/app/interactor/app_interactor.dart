@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:coffee_bean/data/repository/auth_repository.dart';
+import 'package:coffee_bean/data/repository/store_repository.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/shared/service/system_notify/system_notify_event.dart';
 import 'package:coffee_bean/utils/utils_datetime.dart';
@@ -15,9 +16,12 @@ import 'package:db_core/utils/locator.dart';
 import 'package:db_core/utils/logger.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
+import 'package:coffee_bean/data/model/db_location.dart';
 import 'package:coffee_bean/scenes/app/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 /// The State for the AppInteractor.
 abstract class AppInteractorState extends BaseBlocState {}
@@ -197,8 +201,38 @@ class AppInteractor extends CubitInteractor<AppRoutable, AppInteractorState> {
     // Sử dụng luồng điều phối mới thay vì gọi trực tiếp verifySession
     await handleSessionWorkflow(force: true);
 
+    // --- Phase 3: Default Store Check ---
+    if (UserManager().selectedStore == null) {
+      dLog("AppInteractor: No store selected. Fetching default store...");
+      
+      double? lat;
+      double? lng;
+
+      // Thử lấy GPS nếu đã được cấp quyền (Không chủ động xin quyền ở splash screen để tránh làm phiền user)
+      try {
+        final status = await Permission.location.status;
+        if (status.isGranted) {
+          final position = await Geolocator.getLastKnownPosition();
+          if (position != null) {
+            lat = position.latitude;
+            lng = position.longitude;
+            dLog("AppInteractor: Found GPS for default store: $lat, $lng");
+          }
+        }
+      } catch (e) {
+        dLog("AppInteractor: Error getting last known position: $e");
+      }
+
+      final location = (lat != null && lng != null) ? DbLocation(latitude: lat, longitude: lng) : null;
+      final defaultStore = await locator<StoreRepository>().getDefaultStore(location: location);
+      if (defaultStore != null) {
+        await UserManager().saveSelectedStore(defaultStore);
+        dLog("AppInteractor: Default store set to ${defaultStore.name}");
+      }
+    }
+
     // Giả lập xử lý load bootstrap
-    await Future.delayed(const Duration(milliseconds: 500));
+    //await Future.delayed(const Duration(milliseconds: 500));
     router?.successSyncDataFormServer();
   }
 }

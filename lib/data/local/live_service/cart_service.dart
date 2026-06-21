@@ -74,9 +74,9 @@ class CartService implements DbLocatorDisposable {
     } else if (product is Product) {
       serverId = product.id;
       productType = ProductType.food; // Default mapping
-      name = product.title ?? "";
-      image = product.images?.firstOrNull;
-      price = product.price ?? 0.0;
+      name = product.name;
+      image = product.picUrl;
+      price = product.price / 100.0; // API returns cents
     } else {
       eLog("Unsupported product type for addToCart: ${product.runtimeType}");
       return;

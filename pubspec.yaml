@@ -48,6 +48,8 @@ dependencies:
   # --- Logic & Architecture ---
   # State management framework
   flutter_bloc: 9.1.1
+  # Base class for value-based equality comparison
+  equatable: ^2.0.8
   # Dependency Injection and simple state management
   provider: ^6.1.5+1
   # Type-safe HTTP client generator
@@ -124,7 +126,10 @@ dependencies:
   uuid: ^4.5.2
 
 dev_dependencies:
+  mocktail: ^1.0.5
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
   # --- Code Generation Tools ---
