@@ -1,33 +1,27 @@
-import 'dart:convert';
-import 'package:db_core/commons_constants.dart';
-import 'package:flutter/services.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
-import 'package:db_core/utils/locator.dart';
+import 'package:coffee_bean/data/model/response/product/product_comment_response.dart';
+import 'package:coffee_bean/data/network/network_response.dart';
+import 'package:coffee_bean/data/network/page_result.dart';
+import 'package:db_core/network/base_repository.dart';
 
-class CommentRepository {
-  final DatabaseService _dbService = locator<DatabaseService>();
+class CommentRepository extends BaseRepository {
+  CommentRepository({super.client});
 
-  /// Lấy danh sách comment cho sản phẩm (Food hoặc Course)
-  /// Hỗ trợ cơ chế Cache-Aside: 
-  /// 1. Nếu cache hợp lệ -> Lấy từ Isar
-  /// 2. Nếu cache hết hạn -> Giả lập gọi API (đọc file JSON) -> Lưu Isar -> Trả về kết quả
-  Future<List<TblComment>> getComments({
-    required int productId,
-    required String type,
-    int offset = 0,
-    int limit = 10,
+  /// Lấy danh sách bình luận (phân trang) từ API
+  /// Sử dụng ResultPageType alias giúp code ngắn gọn
+  Future<ResultPageType<ProductComment>> getCommentPage({
+    required int spuId,
+    int type = 0, // 0: all, 1: positive, 2: medium, 3: negative
+    int pageNo = 1,
+    int pageSize = 10,
   }) async {
-    return await _dbService.getCommentsWithProduct(
-      productId: productId,
-      type: type,
-      offset: offset,
-      limit: limit,
-      remoteFetcher: () async {
-        // Giả lập gọi API bằng cách đọc file JSON local
-        final String response = await rootBundle.loadString('assets/json/sample_comment.json');
-        final List<dynamic> data = json.decode(response);
-        return data;
-      },
-    );
+    return await networkClient
+        .request('/app-api/product/comment/page', params: {
+          'spuId': spuId,
+          'type': type,
+          'pageNo': pageNo,
+          'pageSize': pageSize,
+        })
+        .mapResponseTo((json) => PageResult.fromJson(json, (j) => ProductComment.fromJson(j as Map<String, dynamic>)))
+        .toObject();
   }
 }

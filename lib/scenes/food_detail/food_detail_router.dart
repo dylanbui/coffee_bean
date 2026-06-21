@@ -1,10 +1,9 @@
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
-import 'package:coffee_bean/scenes/comment_list/comment_list_router.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:flutter/material.dart';
 
 abstract class FoodDetailRoutable implements DbNoteRoutable {
-  void gotoCommentList(int productId, String type);
+  void gotoCommentList(int productId, int type);
 }
 
 class FoodDetailRouter extends DbNoteRouter implements FoodDetailRoutable {
@@ -19,7 +18,7 @@ class FoodDetailRouter extends DbNoteRouter implements FoodDetailRoutable {
   }
 
   @override
-  void gotoCommentList(int productId, String type) {
+  void gotoCommentList(int productId, int type) {
     final builder = CommentListBuilder(productId: productId, type: type);
     final router = builder.build();
     navigator.push(router.viewController);

@@ -9,7 +9,7 @@ class CommentListSmallInteractor extends CubitInteractor<CommentListRoutable, Co
   final CommentRepository _commentRepository = locator<CommentRepository>();
   final int limitComments;
   final int productId;
-  final String type;
+  final int type;
 
   CommentListSmallInteractor(
     CommentListRoutable router, {
@@ -31,19 +31,25 @@ class CommentListSmallInteractor extends CubitInteractor<CommentListRoutable, Co
     if (state.isLoading) return;
     emit(state.copyWith(isLoading: true));
 
-    try {
-      final comments = await _commentRepository.getComments(productId: productId, type: type, limit: limitComments);
-      emit(state.copyWith(comments: comments, isLoading: false));
-    } catch (e) {
+    final res = await _commentRepository.getCommentPage(
+      spuId: productId,
+      type: type,
+      pageNo: 1,
+      pageSize: limitComments,
+    );
+
+    final result = res.toResult();
+    if (result case DbSuccess(:final data)) {
+      emit(state.copyWith(
+        comments: data.list,
+        isLoading: false,
+      ));
+    } else {
       emit(state.copyWith(isLoading: false));
     }
   }
 
   void onViewAll() {
-    print("DEBUG: CommentListSmallInteractor.onViewAll clicked");
-    if (controller.listener == null) {
-      print("DEBUG: ERROR - controller.listener is NULL!");
-    }
     controller.listener?.onNavigateToAllComments(productId, type);
   }
 }

@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 // Use for plugin CommentListSmall
 abstract interface class CommentListSmallListener {
   // Bao cho parent class
-  void onNavigateToAllComments(int productId, String type);
+  void onNavigateToAllComments(int productId, int type);
 }
 
 class CommentListSmallController extends DbPluginController<CommentListSmallInteractor, CommentListSmallListener> {
@@ -27,14 +27,14 @@ abstract interface class CommentListBuildable implements DbNoteBuildable {
 
 class CommentListBuilder extends DbNoteBuilder<CommentListRouter> implements CommentListBuildable {
   final int productId;
-  final String type;
+  final int type;
 
   CommentListBuilder({required this.productId, required this.type});
 
   @override
   CommentListRouter build() {
     final router = CommentListRouter();
-    final interactor = CommentListInteractor(router, productId, type, limit: 10);
+    final interactor = CommentListInteractor(router, productId, type, pageSize: 10);
     final page = CommentListPage(interactor: interactor);
     router.attach(interactor, page);
 

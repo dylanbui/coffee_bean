@@ -154,7 +154,7 @@ class FoodDetailInteractor extends CubitInteractor<FoodDetailRoutable, FoodDetai
   }
 
   @override
-  void onNavigateToAllComments(int productId, String type) {
+  void onNavigateToAllComments(int productId, int type) {
     // Thêm log để kiểm tra xem event đã lên tới Cha chưa
     print("DEBUG: FoodDetailInteractor.onNavigateToAllComments called for product: $productId");
     router?.gotoCommentList(productId, type);

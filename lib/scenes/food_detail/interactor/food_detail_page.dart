@@ -62,7 +62,7 @@ class _FoodDetailPageState extends AppCubitState<FoodDetailPage, FoodDetailInter
     // Sử dụng instance bền vững từ interactor thay vì tạo mới mỗi lần build
     _commentPlugin ??= CommentListBuilder(
       productId: state.product!.serverId,
-      type: "FOOD",
+      type: 0, // 0: All reviews
     ).buildPlugin(2, interactor.commentController);
 
     return Stack(

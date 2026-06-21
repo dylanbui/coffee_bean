@@ -1,7 +1,8 @@
+import 'package:coffee_bean/data/model/response/product/product_comment_response.dart';
+import 'package:coffee_bean/scenes/comment_list/shared/comment_reply_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/avatar_widget.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:db_core/utils/tap_effect.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
@@ -10,14 +11,17 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 
 class CommentItemWidget extends StatelessWidget {
-  final TblComment comment;
+  final ProductComment comment;
 
   const CommentItemWidget({super.key, required this.comment});
 
   @override
   Widget build(BuildContext context) {
-    final List<String> images = comment.images ?? [];
-    final String formattedDate = DateFormat('yyyy/MM/dd').format(comment.createdAt);
+    final List<String> images = comment.picUrls;
+    // Sử dụng createTime từ API, nếu null thì dùng date hiện tại (hoặc logic khác)
+    final String formattedDate = comment.createTime != null 
+        ? DateFormat('yyyy/MM/dd').format(comment.createTime!) 
+        : "";
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 25),
@@ -27,7 +31,7 @@ class CommentItemWidget extends StatelessWidget {
           Row(
             children: [
               AvatarWidget(
-                imageUrl: comment.avatar,
+                imageUrl: comment.userAvatar,
                 size: 40,
                 backgroundColor: TMLabsColor.primary,
               ),
@@ -37,18 +41,19 @@ class CommentItemWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      comment.userName,
+                      comment.userNickname,
                       style: TMLabsTextStyle.bodyBold,
                     ),
-                    Text(
-                      formattedDate,
-                      style: TMLabsTextStyle.caption,
-                    ),
+                    if (formattedDate.isNotEmpty)
+                      Text(
+                        formattedDate,
+                        style: TMLabsTextStyle.caption,
+                      ),
                   ],
                 ),
               ),
               RatingBarIndicator(
-                rating: comment.rating,
+                rating: comment.scores.toDouble(),
                 itemBuilder: (context, index) => const Icon(
                   Icons.star,
                   color: Colors.orange,
@@ -94,6 +99,9 @@ class CommentItemWidget extends StatelessWidget {
                 ),
               ),
           ],
+          
+          if (comment.replyStatus)
+            CommentReplyWidget(comment: comment),
         ],
       ),
     );

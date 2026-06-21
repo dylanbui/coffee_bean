@@ -1,15 +1,14 @@
 import 'package:coffee_bean/data/repository/comment_repository.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_router.dart';
 import 'package:coffee_bean/scenes/comment_list/interactor/comment_list_event_state.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:db_core/utils/locator.dart';
+import 'package:coffee_bean/data/model/response/product/product_comment_response.dart';
+import 'package:db_core/db_core.dart';
 
 class CommentListInteractor extends CubitInteractor<CommentListRoutable, CommentListState> {
   final CommentRepository _commentRepository = locator<CommentRepository>();
 
-  CommentListInteractor(CommentListRoutable router, int productId, String type, {int limit = 10})
-      : super(CommentListState(productId: productId, type: type, limit: limit), router: router);
+  CommentListInteractor(CommentListRoutable router, int productId, int type, {int pageSize = 10})
+      : super(CommentListState(productId: productId, type: type, pageSize: pageSize), router: router);
 
   @override
   void onDidBecomeActive() {
@@ -19,52 +18,59 @@ class CommentListInteractor extends CubitInteractor<CommentListRoutable, Comment
 
   Future<void> loadComments() async {
     if (state.isLoading) return;
-    emit(state.copyWith(isLoading: true));
+    emit(state.copyWith(isLoading: true, pageNo: 1));
 
-    try {
-      final comments = await _commentRepository.getComments(
-        productId: state.productId,
-        type: state.type,
-        offset: 0,
-        limit: state.limit,
-      );
+    final res = await _commentRepository.getCommentPage(
+      spuId: state.productId,
+      type: state.type,
+      pageNo: 1,
+      pageSize: state.pageSize,
+    );
+
+    final result = res.toResult();
+    if (result case DbSuccess(:final data)) {
+      final comments = data.list;
       emit(state.copyWith(
         comments: comments,
         isLoading: false,
-        hasMore: comments.length >= state.limit,
+        hasMore: data.list.length >= state.pageSize,
+        pageNo: 1,
       ));
-    } catch (e) {
+    } else {
       emit(state.copyWith(isLoading: false));
     }
   }
 
   Future<void> loadMore() async {
     if (state.isLoadMore || !state.hasMore) return;
+    
+    final nextPage = state.pageNo + 1;
     emit(state.copyWith(isLoadMore: true));
 
-    try {
-      final moreComments = await _commentRepository.getComments(
-        productId: state.productId,
-        type: state.type,
-        offset: state.comments.length,
-        limit: state.limit,
-      );
-      
-      final updatedComments = List<TblComment>.from(state.comments)..addAll(moreComments);
+    final res = await _commentRepository.getCommentPage(
+      spuId: state.productId,
+      type: state.type,
+      pageNo: nextPage,
+      pageSize: state.pageSize,
+    );
+
+    final result = res.toResult();
+    if (result case DbSuccess(:final data)) {
+      final moreComments = data.list;
+      final updatedComments = List<ProductComment>.from(state.comments)..addAll(moreComments);
       
       emit(state.copyWith(
         comments: updatedComments,
         isLoadMore: false,
-        hasMore: moreComments.length >= state.limit,
+        hasMore: moreComments.length >= state.pageSize,
+        pageNo: nextPage,
       ));
-    } catch (e) {
+    } else {
       emit(state.copyWith(isLoadMore: false));
     }
   }
 
   void onViewAll() {
-    // Gửi tín hiệu điều hướng về parent thông qua router
-    // Bạn có thể định nghĩa 1 Route cụ thể hoặc dùng navigate
     router?.onViewAllComments(state.productId, state.type);
   }
 
