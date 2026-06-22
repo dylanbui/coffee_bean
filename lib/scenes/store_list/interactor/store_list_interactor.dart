@@ -2,15 +2,10 @@ import 'dart:convert';
 import 'dart:math' show cos, sqrt, asin;
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
-import 'package:coffee_bean/data/model/db_location.dart';
 import 'package:coffee_bean/data/model/response/trade/store_model.dart';
 import 'package:coffee_bean/data/repository/store_repository.dart';
-import 'package:db_core/network/network_utils.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:db_core/utils/locator.dart';
+import 'package:db_core/db_core.dart';
 import 'package:flutter/foundation.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:coffee_bean/scenes/store_list/store_list_router.dart';
 import 'package:coffee_bean/scenes/store_list/interactor/store_list_event_state.dart';
 

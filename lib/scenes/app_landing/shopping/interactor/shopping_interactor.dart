@@ -1,9 +1,9 @@
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
-import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
 import 'package:coffee_bean/data/repository/product_repository.dart';
+import 'package:coffee_bean/data/model/product.dart';
+import 'package:coffee_bean/data/model/category.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/shopping_router.dart';
 import 'package:db_core/utils/locator.dart';
@@ -12,7 +12,6 @@ import 'package:db_core/network/network_common.dart';
 
 class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState> {
   final CartService _cartService = locator<CartService>();
-  final DatabaseService _dbService = locator<DatabaseService>();
   final ProductRepository _productRepo = locator<ProductRepository>();
 
   ShoppingInteractor(ShoppingRoutable router) : super(ShoppingState(), router: router);
@@ -28,47 +27,34 @@ class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState
 
     final storeId = StoreManager().selectedStore?.id;
 
-    // 1. Sync Categories from API
-    final resultCat = await _productRepo.getProductCategoryList(storeId);
+    // 1. Fetch Categories from API
+    final resultCat = (await _productRepo.getProductCategoryList(storeId)).toResult();
+    List<Category> categories = [];
     if (resultCat case DbSuccess(:final data)) {
-      await _dbService.syncAppCategories(data.map((e) => e.toJson()).toList(), storeId);
+      categories = data;
     }
 
-    // 2. Load/Cache Products
-    List<TblFood> foods = [];
-    if (!refresh) {
-      foods = await _dbService.getCachedProducts(storeId);
+    // 2. Fetch Products (SPU) from API
+    final resultSpu = (await _productRepo.getProductSpuPage(
+      storeId: storeId,
+      pageSize: 200, // Load enough for shopping display
+    )).toResult();
+    
+    List<Product> products = [];
+    if (resultSpu case DbSuccess(:final data)) {
+      products = data.list;
     }
 
-    if (refresh || foods.isEmpty) {
-      // Fetch products (SPU) for the store
-      final resultSpu = await _productRepo.getProductSpuPage(
-        storeId: storeId, 
-        pageSize: 100, // Load enough for shopping display
-      );
-      
-      if (resultSpu case DbSuccess(:final data)) {
-        await _dbService.syncAppProducts(data.list.map((e) => e.toJson()).toList(), storeId);
-        foods = await _dbService.getCachedProducts(storeId);
-      }
-    }
-
-    // 3. Get Categories from DB for display
-    final categories = await _dbService.isar.tblCategorys
-        .filter()
-        .storeIdEqualTo(storeId)
-        .findAll();
-
-    // 4. Group Products by Category ID
-    final productsByCategory = <int, List<TblFood>>{};
+    // 3. Group Products by Category ID
+    final productsByCategory = <int, List<Product>>{};
     for (var cat in categories) {
-      productsByCategory[cat.serverId] = foods.where((f) => f.catId == cat.serverId).toList();
+      productsByCategory[cat.id] = products.where((p) => p.categoryId == cat.id).toList();
     }
 
     emit(state.copyWith(
       categories: categories,
       productsByCategory: productsByCategory,
-      allProducts: foods,
+      allProducts: products,
       isLoading: false,
     ));
   }
@@ -81,23 +67,29 @@ class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState
     if (query.isEmpty) {
       emit(state.copyWith(isSearching: false, searchQuery: '', filteredProducts: []));
     } else {
-      final searchKey = Utils.toNoSign(query);
+      final searchKey = Utils.toNoSign(query).toLowerCase();
       
-      final results = await _dbService.isar.tblFoods.filter()
-          .nameContains(query, caseSensitive: false)
-          .or()
-          .searchNameContains(searchKey, caseSensitive: false)
-          .findAll();
+      final results = state.allProducts.where((p) {
+        final nameMatch = p.name.toLowerCase().contains(query.toLowerCase());
+        final searchNameMatch = Utils.toNoSign(p.name).toLowerCase().contains(searchKey);
+        return nameMatch || searchNameMatch;
+      }).toList();
           
       emit(state.copyWith(isSearching: true, searchQuery: query, filteredProducts: results));
     }
   }
 
-  void addToCart(TblFood product) {
-    _cartService.addToCart(product, options: product.defaultSelectedOptions);
+  void addToCart(Product product) {
+    // Note: Product from API doesn't have defaultSelectedOptions directly in the SPU list model.
+    // If it has specs (specType == true), we should probably route to detail instead of direct add.
+    if (product.specType) {
+      routeToProductDetail(product);
+    } else {
+      _cartService.addToCart(product);
+    }
   }
 
-  void routeToProductDetail(TblFood product) {
+  void routeToProductDetail(Product product) {
     router?.navigate(FoodDetailRoute(product));
   }
 

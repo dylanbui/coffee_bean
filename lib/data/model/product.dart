@@ -1,11 +1,14 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:coffee_bean/data/local/app_setting_manager/app_setting_manager.dart';
+import 'package:coffee_bean/utils/currency_utils.dart';
 
 part 'product.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Product extends Equatable {
   final int id;
+// ... (giữ nguyên các field cũ)
   final String name;
   final String introduction;
   final int categoryId;
@@ -140,4 +143,17 @@ class SkuProperty {
   factory SkuProperty.fromJson(Map<String, dynamic> json) => _$SkuPropertyFromJson(json);
 
   Map<String, dynamic> toJson() => _$SkuPropertyToJson(this);
+}
+
+extension ProductDisplayExtension on Product {
+  String formattedPrice({Currency? currency}) {
+    // Nếu không truyền tham số, tự động lấy cấu hình Global từ AppSettingManager
+    final targetCurrency = currency ?? AppSettingManager.currentCurrency;
+    return targetCurrency.format(price);
+  }
+
+  String formattedMarketPrice({Currency? currency}) {
+    final targetCurrency = currency ?? AppSettingManager.currentCurrency;
+    return targetCurrency.format(marketPrice);
+  }
 }

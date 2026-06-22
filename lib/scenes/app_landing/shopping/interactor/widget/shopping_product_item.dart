@@ -1,5 +1,6 @@
 import 'package:db_core/utils/tap_effect.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
+import 'package:coffee_bean/data/model/product.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
@@ -10,7 +11,7 @@ import 'package:coffee_bean/shared/ui/app_style.dart';
 
 
 class ShoppingProductItem extends StatelessWidget {
-  final TblFood product;
+  final Product product;
   final ShoppingInteractor interactor;
   final double height;
 
@@ -40,7 +41,7 @@ class ShoppingProductItem extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: DbCachedImageWidget(
-                    imageUrl: product.mainImage ?? "",
+                    imageUrl: product.picUrl,
                     width: 90,
                     height: 90,
                     fit: BoxFit.cover,
@@ -60,7 +61,7 @@ class ShoppingProductItem extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        NumberToVietnamese.formatNumber(product.price),
+                        product.formattedPrice(),
                         style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
                       ),
                     ],
@@ -78,7 +79,7 @@ class ShoppingProductItem extends StatelessWidget {
                   final cartItems = snapshot.data ?? [];
                   // Tính tổng số lượng của sản phẩm này trong giỏ hàng (không phân biệt options)
                   final quantity = cartItems
-                      .where((item) => item.serverId == product.serverId && item.type == "FOOD")
+                      .where((item) => item.serverId == product.id && item.type == "FOOD")
                       .fold<int>(0, (sum, item) => sum + item.quantity);
 
                   return TapEffect(

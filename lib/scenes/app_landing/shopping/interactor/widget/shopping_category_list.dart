@@ -1,12 +1,12 @@
 import 'package:coffee_bean/config/constants.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
+import 'package:coffee_bean/data/model/category.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class ShoppingCategoryList extends StatelessWidget {
-  final List<TblCategory> categories;
+  final List<Category> categories;
   final int selectedIndex;
   final ItemScrollController itemScrollController;
   final Function(int) onCategoryTap;
@@ -26,7 +26,7 @@ class ShoppingCategoryList extends StatelessWidget {
       color: Colors.white, // Parent background can be white
       child: ScrollablePositionedList.builder(
         itemScrollController: itemScrollController,
-        padding: const EdgeInsets.symmetric(vertical: 0),
+        padding: const EdgeInsets.only(bottom: 100),
         itemCount: categories.length,
         itemBuilder: (context, index) {
           final category = categories[index];
@@ -48,7 +48,7 @@ class ShoppingCategoryList extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   AppIcon(
-                    CategoryIcons.getIcon(category.serverId),
+                    CategoryIcons.getIcon(category.id),
                     // Active: #8D95A0, Deactive: #CECCCD (TMLabsColor.lightGrey)
                     color: isSelected ? TMLabsColor.grey : TMLabsColor.lightGrey,
                     size: 32,

@@ -1,5 +1,6 @@
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
+import 'package:coffee_bean/data/model/product.dart';
+import 'package:coffee_bean/data/model/category.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/shopping_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/shopping/interactor/widget/shopping_category_list.dart';
@@ -103,7 +104,7 @@ class _ShoppingPageState extends AppCubitState<ShoppingPage, ShoppingInteractor,
       _categoryToIndexMap[i] = _flattenedItems.length;
       _flattenedItems.add(category); // Add Header
 
-      final products = state.productsByCategory[category.serverId] ?? []; // Fix: Use serverId
+      final products = state.productsByCategory[category.id] ?? [];
       _flattenedItems.addAll(products); // Add Products
     }
   }
@@ -134,8 +135,13 @@ class _ShoppingPageState extends AppCubitState<ShoppingPage, ShoppingInteractor,
                     p.categories != c.categories ||
                     p.productsByCategory != c.productsByCategory ||
                     p.isSearching != c.isSearching ||
-                    p.filteredProducts != c.filteredProducts,
+                    p.filteredProducts != c.filteredProducts ||
+                    p.isLoading != c.isLoading,
                 builder: (context, state) {
+                  if (state.isLoading && state.categories.isEmpty) {
+                    return getLoadingView();
+                  }
+
                   if (state.isSearching) {
                     return _buildSearchResults(state);
                   }
@@ -178,7 +184,7 @@ class _ShoppingPageState extends AppCubitState<ShoppingPage, ShoppingInteractor,
             itemBuilder: (context, index) {
               final item = _flattenedItems[index];
 
-              if (item is TblCategory) {
+              if (item is Category) {
                 return Container(
                   height: _headerHeight,
                   alignment: Alignment.centerLeft,
@@ -189,7 +195,7 @@ class _ShoppingPageState extends AppCubitState<ShoppingPage, ShoppingInteractor,
                 );
               }
 
-              if (item is TblFood) {
+              if (item is Product) {
                 return Padding(
                   padding: EdgeInsets.only(bottom: _spacing),
                   child: ShoppingProductItem(product: item, interactor: interactor, height: _itemHeight),

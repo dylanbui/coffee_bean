@@ -1,28 +1,16 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:coffee_bean/data/repository/auth_repository.dart';
 import 'package:coffee_bean/data/repository/store_repository.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/shared/service/system_notify/system_notify_event.dart';
 import 'package:coffee_bean/utils/utils_datetime.dart';
-import 'package:db_core/architecture_ribs/note_interactor.dart';
-import 'package:db_core/network/network_utils.dart';
-import 'package:db_core/services/event_bus.dart';
-import 'package:db_core/services/lifecycle_event.dart';
-import 'package:db_core/state_management/lib_bloc/constants.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:db_core/utils/locator.dart';
-import 'package:db_core/utils/logger.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
-import 'package:coffee_bean/data/model/db_location.dart';
 import 'package:coffee_bean/scenes/app/app_router.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:coffee_bean/data/local/app_setting_manager/app_setting_manager.dart';
+import 'package:db_core/db_core.dart';
 
 /// The State for the AppInteractor.
 abstract class AppInteractorState extends BaseBlocState {}
@@ -55,6 +43,12 @@ class AppInteractor extends CubitInteractor<AppRoutable, AppInteractorState> {
         dLog("AppInteractor: App resumed, verifying session...");
         handleSessionWorkflow();
       }
+    }));
+
+    // Listen to app settings changes (Language/Currency)
+    collect(locator<DbEventBus>().on<AppSettingChangedEvent>().listen((event) {
+      dLog("AppInteractor: Settings changed, rebooting to Main Root...");
+      router?.gotoMainRoot();
     }));
   }
 
