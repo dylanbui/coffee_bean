@@ -1,3 +1,5 @@
+import 'package:geolocator/geolocator.dart';
+
 class DbLocation {
   final double latitude;
   final double longitude;
@@ -24,5 +26,11 @@ class DbLocation {
       latitude: map['latitude'] as double,
       longitude: map['longitude'] as double,
     );
+  }
+}
+
+extension PositionExtension on Position {
+  DbLocation toDbLocation() {
+    return DbLocation(latitude: latitude, longitude: longitude);
   }
 }
