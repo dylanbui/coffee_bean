@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 enum Currency {
   vnd(symbol: 'đ', divisor: 100, decimalDigits: 0, symbolAtEnd: true, locale: 'vi_VN'),
   usd(symbol: '\$', divisor: 100, decimalDigits: 2, symbolAtEnd: false, locale: 'en_US'),
-  jpy(symbol: '¥', divisor: 1, decimalDigits: 0, symbolAtEnd: false, locale: 'ja_JP');
+  cny(symbol: '¥', divisor: 100, decimalDigits: 2, symbolAtEnd: false, locale: 'zh_CN');
 
   final String symbol;
   final int divisor; // Tỉ lệ quy đổi từ đơn vị nhỏ nhất của API

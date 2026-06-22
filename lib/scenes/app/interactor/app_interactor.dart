@@ -11,6 +11,7 @@ import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
 import 'package:coffee_bean/scenes/app/app_router.dart';
 import 'package:coffee_bean/data/local/app_setting_manager/app_setting_manager.dart';
 import 'package:db_core/db_core.dart';
+import 'package:flutter/cupertino.dart';
 
 /// The State for the AppInteractor.
 abstract class AppInteractorState extends BaseBlocState {}
@@ -27,15 +28,18 @@ class AppInteractor extends CubitInteractor<AppRoutable, AppInteractorState> {
   bool _isCheckingSession = false;
   final Duration _sessionCheckInterval = const Duration(minutes: 5);
 
-  AppInteractor({required AppRoutable router}) : super(AppInteractorInitial(), router: router);
+  AppInteractor({required AppRoutable router}) : super(AppInteractorInitial(), router: router) {
+    dLog("AppInteractor: Instance created - HashCode: $hashCode");
+  }
 
   // ===========================================================================
   // SECTION: Lifecycle & Events
   // ===========================================================================
 
-  @override
-  void onDidBecomeActive() {
-    super.onDidBecomeActive();
+  /// Initialize global system-wide event listeners.
+  /// Called manually from AppBuilder.startApp() because SplashPage is a StatelessWidget.
+  void initializeSystemEvents() {
+    dLog("AppInteractor: Initializing System Events (EventBus listeners)...");
     
     // Listen to app lifecycle events via EventBus
     collect(locator<DbEventBus>().on<AppLifecycleChangedEvent>().listen((event) {
@@ -47,7 +51,7 @@ class AppInteractor extends CubitInteractor<AppRoutable, AppInteractorState> {
 
     // Listen to app settings changes (Language/Currency)
     collect(locator<DbEventBus>().on<AppSettingChangedEvent>().listen((event) {
-      dLog("AppInteractor: Settings changed, rebooting to Main Root...");
+      dLog("AppInteractor: Received AppSettingChangedEvent! Rebooting to Main Root...");
       router?.gotoMainRoot();
     }));
   }

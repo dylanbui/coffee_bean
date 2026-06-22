@@ -1,6 +1,7 @@
 import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:coffee_bean/utils/language_utils.dart';
 import 'package:db_core/db_core.dart';
+import 'package:flutter/cupertino.dart';
 
 /// Sự kiện bắn đi khi có thay đổi cài đặt hệ thống
 class AppSettingChangedEvent extends DbBaseEvent {}
@@ -42,19 +43,27 @@ class AppSettingManager {
     bool isChanged = false;
 
     if (lang != null && lang != currentLanguage) {
+      dLog("AppSettingManager: Changing language to ${lang.code}");
       currentLanguage = lang;
       await DbSharedPreferences().set(_langKey, lang.code);
       isChanged = true;
     }
 
     if (currency != null && currency != currentCurrency) {
+      dLog("AppSettingManager: Changing currency to ${currency.name}");
       currentCurrency = currency;
       await DbSharedPreferences().set(_currencyKey, currency.name);
       isChanged = true;
     }
 
     if (isChanged) {
+      dLog("AppSettingManager: Firing AppSettingChangedEvent");
+      debugPrint("AppSettingManager: Firing AppSettingChangedEvent");
       // Bắn event qua EventBus để AppInteractor xử lý reboot
+      locator<DbEventBus>().fire(AppSettingChangedEvent());
+    } else {
+      dLog("AppSettingManager: No changes detected, but forcing reload for UI consistency");
+      debugPrint("AppSettingManager: No changes detected, but forcing reload for UI consistency");
       locator<DbEventBus>().fire(AppSettingChangedEvent());
     }
   }

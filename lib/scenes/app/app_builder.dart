@@ -37,8 +37,10 @@ class AppBuilder extends DbNoteBuilder<AppRouter> implements SplashPageListener 
   }
 
   void startApp() async {
-    // Khoi tao cac gia tri bat dau tai trang.
-    // Day se la ham load du lieu
+    // 1. Khởi tạo các listeners hệ thống ngay từ đầu
+    _interactor.initializeSystemEvents();
+    
+    // 2. Chạy logic bootstrap tải dữ liệu/session
     _interactor.bootstrap();
   }
 

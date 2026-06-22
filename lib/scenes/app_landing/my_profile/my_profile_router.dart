@@ -1,3 +1,4 @@
+import 'package:coffee_bean/scenes/app_setting/app_setting_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/course_list_builder.dart';
 import 'package:coffee_bean/scenes/event_features/activity_list/activity_list_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/change_mobile/change_mobile_builder.dart';
@@ -12,6 +13,7 @@ class ChangeMobileRoute implements DbNoteRoute {}
 class ReservationListRoute implements DbNoteRoute {}
 class CourseListRoute implements DbNoteRoute {}
 class ActivityListRoute implements DbNoteRoute {}
+class AppSettingRoute implements DbNoteRoute {}
 
 
 abstract class MyProfileRoutable implements DbNoteRoutable {
@@ -42,6 +44,10 @@ class MyProfileRouter extends DbNoteRouter implements MyProfileRoutable {
 
     } else if (toRoute is ActivityListRoute) {
       final builder = ActivityListBuilder().build();
+      push(builder.viewController);
+      
+    } else if (toRoute is AppSettingRoute) {
+      final builder = AppSettingBuilder().build();
       push(builder.viewController);
     }
 

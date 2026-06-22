@@ -274,7 +274,9 @@ class AppRouter extends DbNoteRouter implements AppRoutable {
   /// Điều hướng về màn hình chính (Main Root)
   @override
   void gotoMainRoot() {
-    final builder = MainTabbarBuilder();
-    navigator.pushSameRootPage(builder.build().viewController);
+    MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
+    final router = mainTabbarBuilder.build();
+    navigator.pushSameRootPage(router.viewController);
+
   }
 }

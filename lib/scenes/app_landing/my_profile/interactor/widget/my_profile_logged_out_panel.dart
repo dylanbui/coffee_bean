@@ -51,6 +51,9 @@ class MyProfileLoggedOutPanel extends StatelessWidget {
                               interactor.router?.doRegisterFlow(interactor);
                             },
                           ),
+                          const SizedBox(height: 24),
+                          // Thêm nút Cài đặt cho khách
+                          _buildSettingRow(interactor),
                         ],
                       ),
                     ),
@@ -65,6 +68,48 @@ class MyProfileLoggedOutPanel extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildSettingRow(MyProfileInteractor interactor) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => interactor.doMainAction("SETTINGS"),
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                const Icon(Icons.settings_outlined, color: TMLabsColor.secondary),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    "Cài đặt ứng dụng",
+                    style: TMLabsTextStyle.body.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: TMLabsColor.primary,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
