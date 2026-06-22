@@ -1,19 +1,19 @@
-import 'package:coffee_bean/scenes/food_detail/interactor/food_detail_event_state.dart';
-import 'package:coffee_bean/scenes/food_detail/interactor/food_detail_interactor.dart';
+import 'package:coffee_bean/data/model/product.dart';
+import 'package:coffee_bean/scenes/product_detail/interactor/product_detail_event_state.dart';
+import 'package:coffee_bean/scenes/product_detail/interactor/product_detail_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
-import 'package:coffee_bean/utils/number_to_vietnamese.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class FoodDetailSuggestedSection extends StatelessWidget {
-  final FoodDetailInteractor interactor;
+class ProductDetailSuggestedSection extends StatelessWidget {
+  final ProductDetailInteractor interactor;
 
-  const FoodDetailSuggestedSection({super.key, required this.interactor});
+  const ProductDetailSuggestedSection({super.key, required this.interactor});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FoodDetailInteractor, FoodDetailState>(
+    return BlocBuilder<ProductDetailInteractor, ProductDetailState>(
       buildWhen: (p, c) => p.suggestedProducts != c.suggestedProducts,
       builder: (context, state) {
         if (state.suggestedProducts.isEmpty) return const SizedBox.shrink();
@@ -24,7 +24,7 @@ class FoodDetailSuggestedSection extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                "Món gợi ý",
+                "Sản phẩm gợi ý",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
@@ -46,7 +46,7 @@ class FoodDetailSuggestedSection extends StatelessWidget {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: DbCachedImageWidget(
-                            imageUrl: item.mainImage ?? "",
+                            imageUrl: item.picUrl,
                             height: 120,
                             width: 130,
                             fit: BoxFit.cover,
@@ -60,7 +60,7 @@ class FoodDetailSuggestedSection extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          NumberToVietnamese.formatNumber(item.price),
+                          item.formattedPrice(),
                           style: const TextStyle(color: TMLabsColor.grey, fontSize: 11),
                         ),
                       ],

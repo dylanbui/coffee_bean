@@ -1,5 +1,5 @@
-import 'package:coffee_bean/scenes/food_detail/interactor/food_detail_event_state.dart';
-import 'package:coffee_bean/scenes/food_detail/interactor/food_detail_interactor.dart';
+import 'package:coffee_bean/scenes/product_detail/interactor/product_detail_event_state.dart';
+import 'package:coffee_bean/scenes/product_detail/interactor/product_detail_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:coffee_bean/utils/utils.dart';
@@ -7,16 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class FoodDetailHeader extends StatefulWidget {
-  final FoodDetailInteractor interactor;
+class ProductDetailHeader extends StatefulWidget {
+  final ProductDetailInteractor interactor;
 
-  const FoodDetailHeader({super.key, required this.interactor});
+  const ProductDetailHeader({super.key, required this.interactor});
 
   @override
-  State<FoodDetailHeader> createState() => _FoodDetailHeaderState();
+  State<ProductDetailHeader> createState() => _ProductDetailHeaderState();
 }
 
-class _FoodDetailHeaderState extends State<FoodDetailHeader> {
+class _ProductDetailHeaderState extends State<ProductDetailHeader> {
   final PageController _pageController = PageController();
   int _currentImageIndex = 0;
 
@@ -28,10 +28,10 @@ class _FoodDetailHeaderState extends State<FoodDetailHeader> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FoodDetailInteractor, FoodDetailState>(
-      buildWhen: (p, c) => p.product?.images != c.product?.images,
+    return BlocBuilder<ProductDetailInteractor, ProductDetailState>(
+      buildWhen: (p, c) => p.product?.sliderPicUrls != c.product?.sliderPicUrls,
       builder: (context, state) {
-        final images = state.product?.images ?? [];
+        final images = state.product?.sliderPicUrls ?? [];
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: const SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
@@ -46,7 +46,7 @@ class _FoodDetailHeaderState extends State<FoodDetailHeader> {
                   onPageChanged: (index) => setState(() => _currentImageIndex = index),
                   itemCount: images.isEmpty ? 1 : images.length,
                   itemBuilder: (context, index) {
-                    final imageUrl = images.isEmpty ? "" : images[index].url ?? "";
+                    final imageUrl = images.isEmpty ? (state.product?.picUrl ?? "") : images[index];
                     return Stack(
                       fit: StackFit.expand,
                       children: [

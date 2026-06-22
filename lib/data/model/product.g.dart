@@ -12,16 +12,17 @@ Product _$ProductFromJson(Map<String, dynamic> json) => Product(
   introduction: json['introduction'] as String,
   categoryId: (json['categoryId'] as num).toInt(),
   picUrl: json['picUrl'] as String,
-  sliderPicUrls: (json['sliderPicUrls'] as List<dynamic>)
-      .map((e) => e as String)
-      .toList(),
+  sliderPicUrls: (json['sliderPicUrls'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
+      [],
   specType: json['specType'] as bool,
   price: (json['price'] as num).toInt(),
   marketPrice: (json['marketPrice'] as num).toInt(),
   stock: (json['stock'] as num).toInt(),
   salesCount: (json['salesCount'] as num).toInt(),
-  deliveryTypes: (json['deliveryTypes'] as List<dynamic>)
-      .map((e) => (e as num).toInt())
+  deliveryTypes: (json['deliveryTypes'] as List<dynamic>?)
+      ?.map((e) => (e as num).toInt())
       .toList(),
 );
 
@@ -61,16 +62,17 @@ ProductDetail _$ProductDetailFromJson(Map<String, dynamic> json) =>
       introduction: json['introduction'] as String,
       categoryId: (json['categoryId'] as num).toInt(),
       picUrl: json['picUrl'] as String,
-      sliderPicUrls: (json['sliderPicUrls'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
+      sliderPicUrls: (json['sliderPicUrls'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
       specType: json['specType'] as bool,
       price: (json['price'] as num).toInt(),
       marketPrice: (json['marketPrice'] as num).toInt(),
       stock: (json['stock'] as num).toInt(),
       salesCount: (json['salesCount'] as num).toInt(),
-      deliveryTypes: (json['deliveryTypes'] as List<dynamic>)
-          .map((e) => (e as num).toInt())
+      deliveryTypes: (json['deliveryTypes'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
           .toList(),
       description: json['description'] as String,
       skus: (json['skus'] as List<dynamic>)
@@ -103,11 +105,11 @@ Sku _$SkuFromJson(Map<String, dynamic> json) => Sku(
       .toList(),
   price: (json['price'] as num).toInt(),
   marketPrice: (json['marketPrice'] as num).toInt(),
-  vipPrice: (json['vipPrice'] as num).toInt(),
+  vipPrice: (json['vipPrice'] as num?)?.toInt(),
   picUrl: json['picUrl'] as String,
   stock: (json['stock'] as num).toInt(),
-  weight: (json['weight'] as num).toDouble(),
-  volume: (json['volume'] as num).toDouble(),
+  weight: (json['weight'] as num?)?.toDouble(),
+  volume: (json['volume'] as num?)?.toDouble(),
 );
 
 Map<String, dynamic> _$SkuToJson(Sku instance) => <String, dynamic>{

@@ -90,7 +90,7 @@ class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState
   }
 
   void routeToProductDetail(Product product) {
-    router?.navigate(FoodDetailRoute(product));
+    router?.navigate(ProductDetailRoute(product));
   }
 
   void checkout() {

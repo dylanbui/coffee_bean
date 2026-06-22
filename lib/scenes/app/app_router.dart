@@ -8,7 +8,7 @@ import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/scenes/coupon_list/coupon_list_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/course_list_builder.dart';
 import 'package:coffee_bean/scenes/event_features/activity_list/activity_list_builder.dart';
-import 'package:coffee_bean/scenes/food_detail/food_detail_builder.dart';
+import 'package:coffee_bean/scenes/product_detail/product_detail_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/update_profile/update_profile_builder.dart';
 import 'package:coffee_bean/scenes/order_confirmation/order_confirmation_builder.dart';
 import 'package:coffee_bean/scenes/point_features/daily_sign_in/daily_sign_in_builder.dart';

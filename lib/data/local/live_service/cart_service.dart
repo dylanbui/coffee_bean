@@ -142,6 +142,12 @@ class CartService implements DbLocatorDisposable {
       image = product.mainImage;
       sku = product.sku;
       price = product.price;
+    } else if (product is Product) {
+      serverId = product.id;
+      productType = ProductType.food;
+      name = product.name;
+      image = product.picUrl;
+      price = product.price / 100.0;
     } else return;
 
     final isar = _dbService.isar;
@@ -194,6 +200,9 @@ class CartService implements DbLocatorDisposable {
     } else if (product is TblCourse) {
       serverId = product.serverId;
       type = ProductType.course.name;
+    } else if (product is Product) {
+      serverId = product.id;
+      type = ProductType.food.name;
     } else return 0;
 
     final existing = _items.where((item) =>

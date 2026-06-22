@@ -19,7 +19,7 @@ class Product extends Equatable {
   final int marketPrice;
   final int stock;
   final int salesCount;
-  final List<int> deliveryTypes;
+  final List<int>? deliveryTypes;
 
   const Product({
     required this.id,
@@ -33,7 +33,7 @@ class Product extends Equatable {
     required this.marketPrice,
     required this.stock,
     required this.salesCount,
-    required this.deliveryTypes,
+    this.deliveryTypes,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
@@ -86,7 +86,7 @@ class ProductDetail extends Product {
     required super.marketPrice,
     required super.stock,
     required super.salesCount,
-    required super.deliveryTypes,
+    super.deliveryTypes,
     required this.description,
     required this.skus,
   });
@@ -103,22 +103,22 @@ class Sku {
   final List<SkuProperty> properties;
   final int price;
   final int marketPrice;
-  final int vipPrice;
+  final int? vipPrice;
   final String picUrl;
   final int stock;
-  final double weight;
-  final double volume;
+  final double? weight;
+  final double? volume;
 
   Sku({
     required this.id,
     required this.properties,
     required this.price,
     required this.marketPrice,
-    required this.vipPrice,
+    this.vipPrice,
     required this.picUrl,
     required this.stock,
-    required this.weight,
-    required this.volume,
+    this.weight,
+    this.volume,
   });
 
   factory Sku.fromJson(Map<String, dynamic> json) => _$SkuFromJson(json);

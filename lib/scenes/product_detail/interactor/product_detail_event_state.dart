@@ -1,15 +1,15 @@
 import 'package:db_core/state_management/lib_bloc/constants.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
+import 'package:coffee_bean/data/model/product.dart';
 
-class FoodDetailState extends BaseBlocState {
-  final TblFood? product;
+class ProductDetailState extends BaseBlocState {
+  final ProductDetail? product;
   final int quantity;
-  final List<TblFood> suggestedProducts;
-  final Map<int, TblProductOption> selectedOptions; // groupId -> selectedOption
+  final List<Product> suggestedProducts;
+  final Map<int, dynamic> selectedOptions;
   final bool isLoading;
   final bool isAddingToCart;
 
-  FoodDetailState({
+  ProductDetailState({
     this.product,
     this.quantity = 1,
     this.suggestedProducts = const [],
@@ -18,15 +18,15 @@ class FoodDetailState extends BaseBlocState {
     this.isAddingToCart = false,
   });
 
-  FoodDetailState copyWith({
-    TblFood? product,
+  ProductDetailState copyWith({
+    ProductDetail? product,
     int? quantity,
-    List<TblFood>? suggestedProducts,
-    Map<int, TblProductOption>? selectedOptions,
+    List<Product>? suggestedProducts,
+    Map<int, dynamic>? selectedOptions,
     bool? isLoading,
     bool? isAddingToCart,
   }) {
-    return FoodDetailState(
+    return ProductDetailState(
       product: product ?? this.product,
       quantity: quantity ?? this.quantity,
       suggestedProducts: suggestedProducts ?? this.suggestedProducts,
@@ -38,11 +38,7 @@ class FoodDetailState extends BaseBlocState {
 
   double get totalPrice {
     if (product == null) return 0;
-    double extra = 0;
-    selectedOptions.forEach((key, value) {
-      extra += value.extraPrice;
-    });
-    return (product!.price + extra) * quantity;
+    return (product!.price.toDouble()) * quantity;
   }
 
   @override

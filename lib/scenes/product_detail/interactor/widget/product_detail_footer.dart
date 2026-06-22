@@ -1,5 +1,5 @@
-import 'package:coffee_bean/scenes/food_detail/interactor/food_detail_event_state.dart';
-import 'package:coffee_bean/scenes/food_detail/interactor/food_detail_interactor.dart';
+import 'package:coffee_bean/scenes/product_detail/interactor/product_detail_event_state.dart';
+import 'package:coffee_bean/scenes/product_detail/interactor/product_detail_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/utils/number_to_vietnamese.dart';
@@ -8,14 +8,14 @@ import 'package:db_core/utils/tap_effect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class FoodDetailFooter extends StatelessWidget {
-  final FoodDetailInteractor interactor;
+class ProductDetailFooter extends StatelessWidget {
+  final ProductDetailInteractor interactor;
 
-  const FoodDetailFooter({super.key, required this.interactor});
+  const ProductDetailFooter({super.key, required this.interactor});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FoodDetailInteractor, FoodDetailState>(
+    return BlocBuilder<ProductDetailInteractor, ProductDetailState>(
       builder: (context, state) {
         return Positioned(
           bottom: 0,
@@ -71,7 +71,7 @@ class FoodDetailFooter extends StatelessWidget {
     );
   }
 
-  Widget _buildStepping(FoodDetailState state) {
+  Widget _buildStepping(ProductDetailState state) {
     return Row(
       children: [
         TapEffect(

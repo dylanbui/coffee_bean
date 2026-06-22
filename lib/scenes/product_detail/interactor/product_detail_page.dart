@@ -1,11 +1,11 @@
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
-import 'package:coffee_bean/scenes/food_detail/interactor/food_detail_event_state.dart';
-import 'package:coffee_bean/scenes/food_detail/interactor/food_detail_interactor.dart';
-import 'package:coffee_bean/scenes/food_detail/interactor/widget/food_detail_content.dart';
-import 'package:coffee_bean/scenes/food_detail/interactor/widget/food_detail_footer.dart';
-import 'package:coffee_bean/scenes/food_detail/interactor/widget/food_detail_header.dart';
-import 'package:coffee_bean/scenes/food_detail/interactor/widget/food_detail_suggested_section.dart';
+import 'package:coffee_bean/scenes/product_detail/interactor/product_detail_event_state.dart';
+import 'package:coffee_bean/scenes/product_detail/interactor/product_detail_interactor.dart';
+import 'package:coffee_bean/scenes/product_detail/interactor/widget/product_detail_content.dart';
+import 'package:coffee_bean/scenes/product_detail/interactor/widget/product_detail_footer.dart';
+import 'package:coffee_bean/scenes/product_detail/interactor/widget/product_detail_header.dart';
+import 'package:coffee_bean/scenes/product_detail/interactor/widget/product_detail_suggested_section.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:db_core/utils/fade_switcher.dart';
@@ -13,22 +13,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 //ignore: must_be_immutable
-class FoodDetailPage extends AppCubitStateFulWidget<FoodDetailInteractor, FoodDetailState> {
-  FoodDetailPage({super.key, required super.interactor});
+class ProductDetailPage extends AppCubitStateFulWidget<ProductDetailInteractor, ProductDetailState> {
+  ProductDetailPage({super.key, required super.interactor});
 
   @override
-  State<FoodDetailPage> createState() => _FoodDetailPageState();
+  State<ProductDetailPage> createState() => _ProductDetailPageState();
 }
 
-class _FoodDetailPageState extends AppCubitState<FoodDetailPage, FoodDetailInteractor, FoodDetailState> {
+class _ProductDetailPageState extends AppCubitState<ProductDetailPage, ProductDetailInteractor, ProductDetailState> {
   Widget? _commentPlugin;
 
   @override
-  String? getTitle() => null; // Hide AppBar
+  String? getTitle() => null;
 
   @override
   Widget getBody(BuildContext context) {
-    return BlocBuilder<FoodDetailInteractor, FoodDetailState>(
+    return BlocBuilder<ProductDetailInteractor, ProductDetailState>(
       builder: (context, state) {
         return FadeSwitcher.binary(
           duration: const Duration(milliseconds: 300),
@@ -40,7 +40,7 @@ class _FoodDetailPageState extends AppCubitState<FoodDetailPage, FoodDetailInter
     );
   }
 
-  Widget _buildMainContent(FoodDetailState state) {
+  Widget _buildMainContent(ProductDetailState state) {
     if (state.product == null) {
       return Center(
         child: Column(
@@ -48,7 +48,7 @@ class _FoodDetailPageState extends AppCubitState<FoodDetailPage, FoodDetailInter
           children: [
             const Icon(Icons.search_off, size: 80, color: Colors.grey),
             const SizedBox(height: 16),
-            const Text("Không tìm thấy thông tin món ăn", style: TMLabsTextStyle.h2),
+            const Text("Không tìm thấy thông tin sản phẩm", style: TMLabsTextStyle.h2),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => interactor.goBack(),
@@ -59,10 +59,9 @@ class _FoodDetailPageState extends AppCubitState<FoodDetailPage, FoodDetailInter
       );
     }
 
-    // Sử dụng instance bền vững từ interactor thay vì tạo mới mỗi lần build
     _commentPlugin ??= CommentListBuilder(
-      productId: state.product!.serverId,
-      type: 0, // 0: All reviews
+      productId: state.product!.id,
+      type: 0,
     ).buildPlugin(2, interactor.commentController);
 
     return Stack(
@@ -72,15 +71,14 @@ class _FoodDetailPageState extends AppCubitState<FoodDetailPage, FoodDetailInter
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              FoodDetailHeader(interactor: interactor),
-              FoodDetailContent(interactor: interactor),
-              FoodDetailSuggestedSection(interactor: interactor),
-              // Nhúng trực tiếp instance Plugin
+              ProductDetailHeader(interactor: interactor),
+              ProductDetailContent(interactor: interactor),
+              ProductDetailSuggestedSection(interactor: interactor),
               _commentPlugin!,
             ],
           ),
         ),
-        FoodDetailFooter(interactor: interactor),
+        ProductDetailFooter(interactor: interactor),
       ],
     );
   }

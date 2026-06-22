@@ -4,6 +4,7 @@ import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:db_core/utils/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class DefaultStyle {
   static const textSmall = TextStyle(
@@ -162,6 +163,19 @@ class TMLabsTextStyle {
     fontSize: 10,
     fontWeight: FontWeight.w600,
   );
+
+  static Map<String, Style> get htmlStyle => {
+        "body": Style(
+          fontSize: FontSize(14.0),
+          color: TMLabsColor.grey,
+          margin: Margins.zero,
+          padding: HtmlPaddings.zero,
+          fontFamily: _fontFamily,
+        ),
+        "p": Style(
+          margin: Margins.only(bottom: 8),
+        ),
+      };
 }
 
 class TMLabsButtonStyle {
