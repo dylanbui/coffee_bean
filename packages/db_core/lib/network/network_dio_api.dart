@@ -191,7 +191,7 @@ class NetworkDioApi {
           // Cac loi tra ve tu server
           return (null, NetworkError(int.parse(networkResponse.code), networkResponse.message));
         }
-        return (UploadResult.fromJson(networkResponse.data), null);
+        return (UploadResult.fromMap(networkResponse.data), null);
       }
 
       // return ve loi mac dinh

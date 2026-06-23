@@ -5,7 +5,6 @@ import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
-import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:group_button/group_button.dart';

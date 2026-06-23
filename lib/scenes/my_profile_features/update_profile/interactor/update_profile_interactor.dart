@@ -1,15 +1,16 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
-import 'package:coffee_bean/data/repository/upload_files_repository.dart';
+import 'package:coffee_bean/data/repository/infra_repository.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/scenes/my_profile_features/update_profile/update_profile_builder.dart';
+import 'package:coffee_bean/utils/image_utils.dart';
 import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/scenes/my_profile_features/update_profile/interactor/update_profile_event_state.dart';
 
 class UpdateProfileInteractor extends CubitInteractor<UpdateProfileRoutable, UpdateProfileState> {
   final UserRepository _userRepository = locator<UserRepository>();
-  final UploadFilesRepository _uploadFilesRepository = locator<UploadFilesRepository>();
+  final InfraRepository _infraRepository = locator<InfraRepository>();
 
   UpdateProfileInteractor(UpdateProfileRoutable router) : super(UpdateProfileInitial(), router: router);
 
@@ -23,8 +24,10 @@ class UpdateProfileInteractor extends CubitInteractor<UpdateProfileRoutable, Upd
     emit(state.copyWith(userInfo: userInfo));
   }
 
-  void onAvatarFileSelected(File file) {
-    emit(state.copyWith(selectedAvatarFile: file));
+  Future<void> onAvatarFileSelected(File file) async {
+    // Nén ảnh ngay khi chọn
+    final compressedFile = await ImageUtils.compressAvatar(file);
+    emit(state.copyWith(selectedAvatarFile: compressedFile ?? file));
   }
 
   Future<void> updateProfile({
@@ -36,16 +39,19 @@ class UpdateProfileInteractor extends CubitInteractor<UpdateProfileRoutable, Upd
 
     String finalAvatarUrl = avatar;
 
-    // TODO: Tam thoi khong dung code upload nay, cho update sau
     // Nếu có file mới chọn, thực hiện upload trước
-    // if (state.selectedAvatarFile != null) {
-    //   final (uploadedUrl, error) = await _uploadFilesRepository.uploadFile(state.selectedAvatarFile!.path);
-    //   if (error != null) {
-    //     emit(state.copyWith(isLoading: false, error: "Upload ảnh thất bại: ${error.message}"));
-    //     return;
-    //   }
-    //   finalAvatarUrl = uploadedUrl ?? avatar;
-    // }
+    if (state.selectedAvatarFile != null) {
+      final uploadResult = (await _infraRepository.uploadFile(state.selectedAvatarFile!)).toResult();
+      
+      if (uploadResult case DbFailure(:final error)) {
+        emit(state.copyWith(isLoading: false, error: "Upload ảnh thất bại: ${error.message}"));
+        return;
+      }
+      
+      if (uploadResult case DbSuccess(:final data)) {
+        finalAvatarUrl = data;
+      }
+    }
 
     final result = (await _userRepository.updateUserInfo(
       nickname: nickname,
