@@ -1,5 +1,4 @@
-import 'package:coffee_bean/shared/ui/app_colors.dart';
-import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:db_core/utils/common_style.dart';
 import 'package:flutter/material.dart';
 
 class DbSelectionRow extends StatelessWidget {
@@ -12,6 +11,11 @@ class DbSelectionRow extends StatelessWidget {
   final double height;
   final EdgeInsetsGeometry? margin;
   final BorderRadius? borderRadius;
+  final bool showShadow;
+  final Color? backgroundColor;
+  final TextStyle? titleStyle;
+  final TextStyle? valueStyle;
+  final TextStyle? trailingTextStyle;
 
   const DbSelectionRow({
     super.key,
@@ -21,9 +25,14 @@ class DbSelectionRow extends StatelessWidget {
     this.leading,
     this.trailing,
     this.onTap,
-    this.height = 56,
+    this.height = 52,
     this.margin,
     this.borderRadius,
+    this.showShadow = true,
+    this.backgroundColor,
+    this.titleStyle,
+    this.valueStyle,
+    this.trailingTextStyle,
   });
 
   @override
@@ -34,16 +43,18 @@ class DbSelectionRow extends StatelessWidget {
       margin: margin ?? const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         borderRadius: effectiveBorderRadius,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          )
-        ],
+        boxShadow: showShadow
+            ? [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                )
+              ]
+            : null,
       ),
       child: Material(
-        color: Colors.white,
+        color: backgroundColor ?? Colors.white,
         borderRadius: effectiveBorderRadius,
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -60,10 +71,11 @@ class DbSelectionRow extends StatelessWidget {
                 Expanded(
                   child: Text(
                     title,
-                    style: TMLabsTextStyle.body.copyWith(
-                      fontWeight: leading != null ? FontWeight.w500 : FontWeight.bold,
-                      color: TMLabsColor.primary,
-                    ),
+                    style: titleStyle ??
+                        DbCommonStyle.defaultTextStyle.copyWith(
+                          fontWeight: leading != null ? FontWeight.w500 : FontWeight.bold,
+                          color: DbCommonStyle.primaryColor,
+                        ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -72,17 +84,18 @@ class DbSelectionRow extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     value!,
-                    style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.primary),
+                    style: valueStyle ?? DbCommonStyle.defaultTextStyle.copyWith(color: DbCommonStyle.primaryColor),
                   ),
                 ],
                 if (trailingText != null) ...[
                   const SizedBox(width: 8),
                   Text(
                     trailingText!,
-                    style: TMLabsTextStyle.body.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: trailingText!.startsWith('-') ? Colors.red : TMLabsColor.primary,
-                    ),
+                    style: trailingTextStyle ??
+                        DbCommonStyle.defaultTextStyle.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: trailingText!.startsWith('-') ? DbCommonStyle.errorColor : DbCommonStyle.primaryColor,
+                        ),
                   ),
                 ],
                 if (trailing != null) ...[

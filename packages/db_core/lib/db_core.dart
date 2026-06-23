@@ -58,6 +58,8 @@ export 'utils/keyboard_visibility.dart';
 export 'utils/loading_indicator_dialog.dart';
 export 'utils/asset_picker.dart';
 export 'utils/widget/cached_image_widget.dart';
+export 'utils/ui_control/selection_row.dart';
+export 'utils/ui_control/selection_table.dart';
 
 // Other root files
 export 'custom_app_bar.dart';

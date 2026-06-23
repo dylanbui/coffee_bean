@@ -4,12 +4,10 @@ import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/widget/memb
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/shared/ui_control/app_selection_row.dart';
 import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:coffee_bean/shared/service/notify_app_upgrade/app_upgrade_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class MyProfileLoggedInMemberPanel extends StatelessWidget {
@@ -54,16 +52,37 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
                       const SizedBox(height: 16),
                       _buildUserProfileActionsList(),
                       const SizedBox(height: 16),
-                      AppSelectionRow(
-                        leadingIcon: AppAssets.icons.icStoreService,
+
+                      DbSelectionRow(
+                        leading: SizedBox(
+                          width: 24,
+                          child: Center(
+                            child: AppIcon(AppAssets.icons.icStoreService, size: 20, color: TMLabsColor.secondary),
+                          ),
+                        ),
                         title: 'Dịch vụ tại cửa hàng',
-                        trailingIcon: AppAssets.icons.icArrowRightNone,
+                        titleStyle: TMLabsTextStyle.body.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: TMLabsColor.primary,
+                        ),
+                        trailing: SizedBox(
+                          width: 14,
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: AppIcon(AppAssets.icons.icArrowRightNone, size: 14, color: TMLabsColor.deepNavy.withValues(alpha: 0.8)),
+                          ),
+                        ),
                         margin: const EdgeInsets.symmetric(horizontal: 20),
                         onTap: () {
                           interactor.doMainAction("STORE_SERVICE");
                         },
                       ),
+
+
+                      
                       const SizedBox(height: 16),
+
+
                       _buildLogoutButton(context),
                     ],
                   ),
@@ -118,6 +137,7 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
               color: TMLabsColor.secondary,
             ),
           ),
+          SizedBox(height: 5,),
           Text(label, style: TMLabsTextStyle.small.copyWith(fontSize: 10, color: TMLabsColor.primary)),
         ],
       ),
@@ -125,96 +145,51 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
   }
 
   Widget _buildActionsList() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))],
-      ),
-      child: Material(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          children: [
-            _buildActionRow("COURSES", AppAssets.icons.icKhoaHocNone, 'Khóa học'),
-            _buildActionRow("SAVED", AppAssets.icons.icSaved, 'Đã lưu'),
-            _buildActionRow("INVITE_FRIENDS", AppAssets.icons.icInviteFriend, 'Mời bạn bè'),
-            _buildActionRow("SUPPORT", AppAssets.icons.icCustomerSupport, 'CSKH'),
-            _buildActionRow("FEEDBACK", AppAssets.icons.icFeedback, 'Đóng góp ý kiến'),
-            _buildActionRow("SETTINGS", AppAssets.icons.icSystem, 'Cài đặt'),
-          ],
-        ),
-      ),
+    return DbSelectionTable(
+      children: [
+        _buildDbSelectionRow("COURSES", AppAssets.icons.icKhoaHocNone, 'Khóa học'),
+        _buildDbSelectionRow("SAVED", AppAssets.icons.icSaved, 'Đã lưu'),
+        _buildDbSelectionRow("INVITE_FRIENDS", AppAssets.icons.icInviteFriend, 'Mời bạn bè'),
+        _buildDbSelectionRow("SUPPORT", AppAssets.icons.icCustomerSupport, 'CSKH'),
+        _buildDbSelectionRow("FEEDBACK", AppAssets.icons.icFeedback, 'Đóng góp ý kiến'),
+        _buildDbSelectionRow("SETTINGS", AppAssets.icons.icSystem, 'Cài đặt'),
+      ],
     );
   }
 
   Widget _buildUserProfileActionsList() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))],
-      ),
-      child: Material(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          children: [
-            _buildActionRow("CHANGE_MOBILE", AppAssets.icons.icSystem, 'Thay đổi số điện thoại'),
-            // _buildActionRow("CHANGE_MOBILE", AppAssets.icons.icSaved, 'Đã lưu'),
-          ],
-        ),
-      ),
+    return DbSelectionTable(
+      children: [
+        _buildDbSelectionRow("CHANGE_MOBILE", AppAssets.icons.icSystem, 'Thay đổi số điện thoại'),
+        // _buildDbSelectionRow("CHANGE_MOBILE", AppAssets.icons.icSaved, 'Đã lưu'),
+      ],
     );
   }
 
-
-  Widget _buildActionRow(String actionKey, String icon, String title, {double height = 48, BorderRadius? borderRadius}) {
-    return InkWell(
-      onTap: () {
-        interactor.doMainAction(actionKey);
-      },
-      borderRadius: borderRadius,
-      child: Container(
-        height: height,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 24,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: AppIcon(
-                  icon,
-                  size: 20,
-                  color: TMLabsColor.secondary,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                title,
-                style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.primary, fontWeight: FontWeight.w500),
-              ),
-            ),
-            const SizedBox(width: 8),
-            SizedBox(
-              width: 14,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: AppIcon(
-                  AppAssets.icons.icArrowRightNone,
-                  size: 18,
-                  color: TMLabsColor.deepNavy.withValues(alpha: 0.8),
-                ),
-              ),
-            ),
-          ],
+  Widget _buildDbSelectionRow(String actionKey, String icon, String title) {
+    return DbSelectionRow(
+      title: title,
+      titleStyle: TMLabsTextStyle.body.copyWith(
+        fontWeight: FontWeight.w500,
+        color: TMLabsColor.primary,
+      ),
+      leading: SizedBox(
+        width: 24,
+        child: Center(
+          child: AppIcon(icon, size: 20, color: TMLabsColor.secondary),
         ),
       ),
+      trailing: SizedBox(
+        width: 14,
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: AppIcon(AppAssets.icons.icArrowRightNone, size: 14, color: TMLabsColor.deepNavy.withValues(alpha: 0.8)),
+        ),
+      ),
+      onTap: () => interactor.doMainAction(actionKey),
+      margin: EdgeInsets.zero,
+      borderRadius: BorderRadius.zero,
+      showShadow: false,
     );
   }
 

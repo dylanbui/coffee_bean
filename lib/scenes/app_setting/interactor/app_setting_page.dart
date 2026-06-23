@@ -1,10 +1,8 @@
 import 'package:coffee_bean/scenes/app_setting/interactor/app_setting_event_state.dart';
 import 'package:coffee_bean/scenes/app_setting/interactor/app_setting_interactor.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
-import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/shared/ui_control/db_selection_row.dart';
 import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:coffee_bean/utils/language_utils.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
@@ -90,6 +88,10 @@ class _AppSettingPageState extends AppCubitState<AppSettingPage, AppSettingInter
         return DbSelectionRow(
           key: ValueKey('lang_${lang.code}'),
           title: lang.name,
+          titleStyle: TMLabsTextStyle.body.copyWith(
+            fontWeight: FontWeight.w500,
+            color: TMLabsColor.primary,
+          ),
           // Sử dụng Emoji thay cho SVG
           leading: Text(lang.emoji, style: const TextStyle(fontSize: 24)),
           trailing: selected ? const Icon(Icons.check_circle, color: TMLabsColor.primary, size: 22) : null,
@@ -114,6 +116,10 @@ class _AppSettingPageState extends AppCubitState<AppSettingPage, AppSettingInter
         final currency = Currency.values[index];
         return DbSelectionRow(
           title: "${currency.name.toUpperCase()} (${currency.symbol})",
+          titleStyle: TMLabsTextStyle.body.copyWith(
+            fontWeight: FontWeight.w500,
+            color: TMLabsColor.primary,
+          ),
           // Sử dụng Emoji lá cờ đại diện cho quốc gia của đồng tiền
           leading: Text(currency.emoji, style: const TextStyle(fontSize: 24)),
           trailing: selected ? const Icon(Icons.check_circle, color: TMLabsColor.primary, size: 22) : null,
