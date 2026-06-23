@@ -1,3 +1,5 @@
+import 'package:coffee_bean/scenes/store_list/store_list_constant.dart';
+import 'package:db_core/services/event_bus.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
@@ -20,6 +22,10 @@ class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState
   void onDidBecomeActive() {
     super.onDidBecomeActive();
     _loadData();
+
+    collect(locator<DbEventBus>().on<StoreChangedEvent>().listen((event) {
+      _loadData(refresh: true);
+    }));
   }
 
   Future<void> _loadData({bool refresh = false}) async {
@@ -56,6 +62,10 @@ class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState
       productsByCategory: productsByCategory,
       allProducts: products,
       isLoading: false,
+      isSearching: false,
+      searchQuery: '',
+      filteredProducts: [],
+      selectedCategoryIndex: 0,
     ));
   }
 
@@ -97,6 +107,10 @@ class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState
     if (_cartService.currentItems.isNotEmpty) {
       router?.navigate(OrderConfirmationRoute());
     }
+  }
+
+  void openStoreList() {
+    router?.navigate(StoreListRoute());
   }
 
   CartService get cartService => _cartService;

@@ -144,12 +144,18 @@ class AppIcon extends StatelessWidget {
   final dynamic icon;
   final Color? color;
   final double? size;
+  final double? width;
+  final double? height;
+  final BoxFit? fit;
 
-  const AppIcon(this.icon, {super.key, this.color, this.size});
+  const AppIcon(this.icon, {super.key, this.color, this.size, this.width, this.height, this.fit});
 
   @override
   Widget build(BuildContext context) {
     if (icon == null) return const SizedBox.shrink();
+
+    final double? w = size ?? width;
+    final double? h = size ?? height;
 
     if (icon is IconData) {
       return Icon(icon as IconData, color: color, size: size);
@@ -160,12 +166,13 @@ class AppIcon extends StatelessWidget {
       if (iconPath.endsWith('.svg')) {
         return SvgPicture.asset(
           iconPath,
-          width: size,
-          height: size,
+          width: w,
+          height: h,
+          fit: fit ?? BoxFit.contain,
           colorFilter: color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
         );
       }
-      return Image.asset(iconPath, width: size, height: size, color: color);
+      return Image.asset(iconPath, width: w, height: h, color: color, fit: fit);
     }
 
     return const SizedBox.shrink();

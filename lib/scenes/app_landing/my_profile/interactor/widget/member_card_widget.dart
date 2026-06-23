@@ -1,9 +1,9 @@
+import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:db_core/utils/app_label.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class MemberCardStyle {
   final String bgAsset;
@@ -75,6 +75,25 @@ class MemberCardStyle {
         primaryColor: Colors.white,
         labelColor: Colors.red.shade900, // Màu đỏ VIP
       );
+
+  static MemberCardStyle fromRank(MemberRank rank) {
+    switch (rank) {
+      case MemberRank.bronze:
+        return bronze;
+      case MemberRank.silver:
+        return silver;
+      case MemberRank.gold:
+        return gold;
+      case MemberRank.platinum:
+        return platinum;
+      case MemberRank.emerald:
+        return emerald;
+      case MemberRank.diamond:
+        return diamond;
+      case MemberRank.vip:
+        return vip;
+    }
+  }
 }
 
 class MemberCardWidget extends StatelessWidget {
@@ -111,7 +130,7 @@ class MemberCardWidget extends StatelessWidget {
         child: Stack(
           children: [
             // Background - dùng Positioned.fill để tự khớp theo size của nội dung
-            Positioned.fill(child: SvgPicture.asset(style.bgAsset, fit: BoxFit.fill)),
+            Positioned.fill(child: AppIcon(style.bgAsset, fit: BoxFit.fill)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Column(
@@ -209,7 +228,7 @@ class MemberCardWidget extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
-        Positioned.fill(child: SvgPicture.asset(bgAsset, fit: BoxFit.fill)),
+        Positioned.fill(child: AppIcon(bgAsset, fit: BoxFit.fill)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           child: Text(

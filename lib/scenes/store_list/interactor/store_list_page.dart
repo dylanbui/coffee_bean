@@ -1,4 +1,6 @@
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
+import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
@@ -26,6 +28,34 @@ class StoreListPage extends AppCubitStateFulWidget<StoreListInteractor, StoreLis
 class _StoreListPageState extends AppCubitState<StoreListPage, StoreListInteractor, StoreListState> {
   @override
   String? getTitle() => "Chọn cửa hàng";
+
+  void _onStoreCardTap(StoreDisplayModel model) async {
+    final newStore = model.store;
+    final currentStore = StoreManager().selectedStore;
+
+    if (currentStore?.id == newStore.id) {
+      interactor.router?.pop();
+      return;
+    }
+
+    bool proceed = true;
+    if (interactor.cartService.currentItems.isNotEmpty) {
+      proceed = await FlashDialogHelper.show<bool>(
+            context: context,
+            title: "Đổi cửa hàng?",
+            content: "Giỏ hàng của bạn tại cửa hàng cũ sẽ bị xóa. Bạn có muốn tiếp tục?",
+            actions: [
+              FlashDialogAction(label: "Hủy", value: false, color: Colors.grey),
+              FlashDialogAction(label: "Đồng ý", value: true, color: TMLabsColor.navy),
+            ],
+          ) ??
+          false;
+    }
+
+    if (proceed) {
+      interactor.performChangeStore(newStore);
+    }
+  }
 
   @override
   PreferredSizeWidget? getAppBar(BuildContext context) {
@@ -165,7 +195,7 @@ class _StoreListPageState extends AppCubitState<StoreListPage, StoreListInteract
 
     return TapEffect(
       enableSound: false,
-      onTap: () => interactor.onStoreSelected(model),
+      onTap: () => _onStoreCardTap(model),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         constraints: const BoxConstraints(minHeight: 140),

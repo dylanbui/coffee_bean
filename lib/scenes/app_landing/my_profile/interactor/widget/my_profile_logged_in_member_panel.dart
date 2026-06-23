@@ -1,3 +1,4 @@
+import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/my_profile_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/my_profile/interactor/widget/member_card_widget.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
@@ -36,7 +37,7 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
                     children: [
                       SizedBox(height: topPadding),
                       MemberCardWidget(
-                        style: MemberCardStyle.diamond,
+                        style: MemberCardStyle.fromRank(userInfo?.memberRank ?? MemberRank.bronze),
                         name: userInfo?.nickname ?? 'MEMBER',
                         id: userInfo?.id.toString() ?? '---',
                         voucherCount: '0', // TODO: Cần API voucher
@@ -111,11 +112,10 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(color: TMLabsColor.bgLight, shape: BoxShape.circle),
-            child: SvgPicture.asset(
+            child: AppIcon(
               icon,
-              width: 20,
-              height: 20,
-              colorFilter: const ColorFilter.mode(TMLabsColor.secondary, BlendMode.srcIn),
+              size: 20,
+              color: TMLabsColor.secondary,
             ),
           ),
           Text(label, style: TMLabsTextStyle.small.copyWith(fontSize: 10, color: TMLabsColor.primary)),
@@ -186,11 +186,10 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
               width: 24,
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: SvgPicture.asset(
+                child: AppIcon(
                   icon,
-                  width: 20,
-                  height: 20,
-                  colorFilter: const ColorFilter.mode(TMLabsColor.secondary, BlendMode.srcIn),
+                  size: 20,
+                  color: TMLabsColor.secondary,
                 ),
               ),
             ),
@@ -206,11 +205,10 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
               width: 14,
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: SvgPicture.asset(
+                child: AppIcon(
                   AppAssets.icons.icArrowRightNone,
-                  width: 18,
-                  height: 18,
-                  colorFilter: ColorFilter.mode(TMLabsColor.deepNavy.withValues(alpha: 0.8), BlendMode.srcIn),
+                  size: 18,
+                  color: TMLabsColor.deepNavy.withValues(alpha: 0.8),
                 ),
               ),
             ),

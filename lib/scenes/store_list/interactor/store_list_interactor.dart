@@ -1,16 +1,20 @@
 import 'dart:convert';
 import 'dart:math' show cos, sqrt, asin;
-import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
+import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
 import 'package:coffee_bean/data/model/response/trade/store_model.dart';
 import 'package:coffee_bean/data/repository/store_repository.dart';
+import 'package:coffee_bean/scenes/store_list/store_list_builder.dart';
+import 'package:coffee_bean/scenes/store_list/store_list_constant.dart';
 import 'package:db_core/db_core.dart';
 import 'package:flutter/foundation.dart';
-import 'package:coffee_bean/scenes/store_list/store_list_router.dart';
 import 'package:coffee_bean/scenes/store_list/interactor/store_list_event_state.dart';
 
-class StoreListInteractor extends CubitInteractor<StoreListRouter, StoreListState> {
+class StoreListInteractor extends CubitInteractor<StoreListRoutable, StoreListState> {
   final StoreRepository _storeRepository = locator<StoreRepository>();
+  final CartService _cartService = locator<CartService>();
+
+  CartService get cartService => _cartService;
 
   StoreListInteractor(StoreListRouter router) : super(const StoreListInitial(), router: router);
 
@@ -109,7 +113,7 @@ class StoreListInteractor extends CubitInteractor<StoreListRouter, StoreListStat
 
     List<StoreModel> apiStores = [];
     if (result case DbSuccess(data: final list)) {
-      apiStores = list ?? [];
+      apiStores = list;
     }
 
     // Filter by query if needed
@@ -192,9 +196,11 @@ class StoreListInteractor extends CubitInteractor<StoreListRouter, StoreListStat
     fetchStores(query: query);
   }
 
-  void onStoreSelected(StoreDisplayModel model) {
-    debugPrint("Store Selected == ${model.store.name}");
-    StoreManager().saveSelectedStore(model.store);
-    router?.pop(); // Return to previous screen
+  Future<void> performChangeStore(StoreModel store) async {
+    await _cartService.clearCart();
+    await StoreManager().saveSelectedStore(store);
+    locator<DbEventBus>().fire(StoreChangedEvent(store));
+    router?.pop();
   }
+
 }

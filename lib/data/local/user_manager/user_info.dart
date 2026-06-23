@@ -2,6 +2,26 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'user_info.g.dart';
 
+enum MemberRank {
+  bronze(1),
+  silver(2),
+  gold(3),
+  platinum(4),
+  emerald(5),
+  diamond(6),
+  vip(7);
+
+  final int value;
+  const MemberRank(this.value);
+
+  static MemberRank fromLevel(int level) {
+    return MemberRank.values.firstWhere(
+      (e) => e.value == level,
+      orElse: () => MemberRank.bronze,
+    );
+  }
+}
+
 @JsonSerializable()
 class UserLevel {
   final int id;
@@ -45,6 +65,8 @@ class UserInfo {
   final int experience;
   final UserLevel? level;
   final bool? brokerageEnabled; // Allow true/false/null
+
+  MemberRank get memberRank => MemberRank.fromLevel(level?.level ?? 1);
 
   UserInfo({
     required this.id,
