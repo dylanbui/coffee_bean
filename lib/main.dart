@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:coffee_bean/scenes/app/app.dart';
 import 'package:coffee_bean/config/app_config.dart';
+import 'package:coffee_bean/utils/image_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -30,6 +32,9 @@ void main() async {
   // Core.init(Environment.DEV);
   // Load global variable
   AppConfig().init(Environment.dev);
+
+  // Chủ động dọn dẹp file ảnh tạm cũ khi khởi động app
+  unawaited(ImageUtils.cleanTemporaryFiles());
 
   Widget app = await initializeApp();
   runApp(app);
