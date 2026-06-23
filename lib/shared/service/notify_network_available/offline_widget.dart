@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:coffee_bean/shared/ui/app_assets.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:db_core/utils/app_button.dart';
 
 class OfflineWidget extends StatelessWidget {
   final VoidCallback onRetry;
@@ -8,26 +12,36 @@ class OfflineWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned.fill(
-      child: AnimatedOpacity(
-        opacity: 1.0,
-        duration: const Duration(milliseconds: 300),
-        child: Container(
-          color: Colors.black.withValues(alpha: 0.7),
+      child: Material( // Thêm Material để bỏ gạch chân (text underline)
+        color: TMLabsColor.bgMain,
+        child: AnimatedOpacity(
+          opacity: 1.0,
+          duration: const Duration(milliseconds: 300),
           child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.wifi_off, size: 64, color: Colors.white),
-                const SizedBox(height: 16),
-                const Text("Không có kết nối mạng",
-                    style: TextStyle(color: Colors.white, fontSize: 18)),
-                const SizedBox(height: 8),
-                const Text("Vui lòng kiểm tra lại kết nối Internet",
-                    style: TextStyle(color: Colors.white70)),
+                const Icon(
+                  Icons.wifi_off,
+                  size: 80,
+                  color: TMLabsColor.primary,
+                ),
                 const SizedBox(height: 24),
-                ElevatedButton(
+                Text(
+                  "Không có kết nối mạng",
+                  style: TMLabsTextStyle.h2,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  "Vui lòng kiểm tra lại kết nối Internet",
+                  style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
+                ),
+                const SizedBox(height: 32),
+                AppButton(
+                  text: "Thử lại",
+                  width: 200,
+                  style: TMLabsButtonStyle.primary,
                   onPressed: onRetry,
-                  child: const Text("Thử lại"),
                 ),
               ],
             ),
