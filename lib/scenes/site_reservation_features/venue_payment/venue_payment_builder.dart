@@ -1,5 +1,5 @@
-import 'package:coffee_bean/scenes/coupon_list/coupon_list_builder.dart';
-import 'package:coffee_bean/scenes/coupon_list/interactor/coupon_list_interactor.dart';
+import 'package:coffee_bean/scenes/my_profile_features/coupon_list/coupon_list_builder.dart';
+import 'package:coffee_bean/scenes/my_profile_features/coupon_list/interactor/coupon_list_interactor.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_payment/interactor/venue_payment_event_state.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_payment/interactor/venue_payment_interactor.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_payment/interactor/venue_payment_page.dart';

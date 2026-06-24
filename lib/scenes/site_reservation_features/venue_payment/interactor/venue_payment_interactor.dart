@@ -1,7 +1,7 @@
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
-import 'package:coffee_bean/scenes/coupon_list/interactor/coupon_list_interactor.dart';
+import 'package:coffee_bean/scenes/my_profile_features/coupon_list/interactor/coupon_list_interactor.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_payment/interactor/venue_payment_event_state.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_payment/venue_payment_builder.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
