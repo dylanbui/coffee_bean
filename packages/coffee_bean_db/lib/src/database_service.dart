@@ -23,6 +23,7 @@ class DatabaseService with
   Future<void> init() async {
     final dir = await getApplicationDocumentsDirectory();
     isar = await Isar.open([
+      TblCacheSchema,
       TblCategorySchema,
       TblFoodSchema,
       TblCourseSchema,
@@ -41,6 +42,7 @@ class DatabaseService with
   /// Xóa sạch dữ liệu khi đổi Store
   Future<void> clearAllDataForNewStore() async {
     await isar.writeTxn(() async {
+      await isar.tblCaches.clear();
       await isar.tblCategorys.clear();
       await isar.tblFoods.clear();
       await isar.tblCourses.clear();

@@ -20,6 +20,10 @@ export 'network/network_response.dart';
 export 'network/network_upload_response.dart';
 export 'network/network_utils.dart';
 
+// Cache
+export 'cache/cache_config.dart';
+export 'cache/cache_provider.dart';
+
 // Services
 export 'services/event_bus.dart';
 export 'services/lifecycle_event.dart';

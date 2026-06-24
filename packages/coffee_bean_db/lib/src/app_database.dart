@@ -5,3 +5,4 @@ export 'models/store.dart';
 export 'models/comment.dart';
 export 'models/reservation.dart';
 export 'models/store_point.dart';
+export 'models/cache_table.dart';

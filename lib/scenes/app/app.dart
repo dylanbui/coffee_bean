@@ -25,6 +25,7 @@ import 'package:coffee_bean/shared/service/notify_app_upgrade/app_upgrade_servic
 import 'package:coffee_bean/scenes/app/mixins/app_network_mixin.dart';
 import 'package:coffee_bean/scenes/app/mixins/app_upgrade_mixin.dart';
 import 'package:coffee_bean/scenes/app/mixins/app_notify_mixin.dart';
+import 'package:coffee_bean/utils/app_cache.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:db_core/architecture_ribs/navigator.dart';
 import 'package:db_core/network/network_client.dart';
@@ -38,6 +39,7 @@ import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
 import 'package:coffee_bean/data/network/header_interceptor.dart';
 import 'package:coffee_bean/data/network/token_interceptor.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
+import 'package:db_core/cache/cache_provider.dart';
 import 'package:coffee_bean/scenes/app/app_builder.dart';
 import 'package:coffee_bean/data/repository/product_repository.dart';
 import 'package:coffee_bean/data/repository/comment_repository.dart';
@@ -195,6 +197,11 @@ void _registerLazyServices() {
   locator.registerLazySingleton<CartService>(() => CartService());
   locator.registerLazySingleton<LikesService>(() => LikesService());
 
+  // Đăng ký AppCache sử dụng Isar từ DatabaseService
+  if (!locator.isRegistered<DbCacheProvider>()) {
+    final dbService = locator<DatabaseService>();
+    locator.registerSingleton<DbCacheProvider>(AppCache(dbService.isar));
+  }
   // Register Repositories
   locator.registerLazySingleton<AuthRepository>(() => AuthRepository());
   locator.registerLazySingleton<UserRepository>(() => UserRepository());

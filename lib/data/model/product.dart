@@ -1,3 +1,4 @@
+import 'package:coffee_bean/data/model/category.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:coffee_bean/data/local/settings_app_manager/settings_app_manager.dart';
@@ -143,6 +144,40 @@ class SkuProperty {
   factory SkuProperty.fromJson(Map<String, dynamic> json) => _$SkuPropertyFromJson(json);
 
   Map<String, dynamic> toJson() => _$SkuPropertyToJson(this);
+}
+
+class ShoppingData {
+  final List<Category> categories;
+  final List<Product> allProducts;
+  final Map<int, List<Product>> productsByCategory;
+
+  ShoppingData({
+    required this.categories,
+    required this.allProducts,
+    required this.productsByCategory,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'categories': categories.map((e) => e.toJson()).toList(),
+        'allProducts': allProducts.map((e) => e.toJson()).toList(),
+        'productsByCategory': productsByCategory.map((key, value) => MapEntry(key.toString(), value.map((e) => e.toJson()).toList())),
+      };
+
+  factory ShoppingData.fromJson(Map<String, dynamic> json) {
+    final categories = (json['categories'] as List).map((e) => Category.fromJson(e)).toList();
+    final allProducts = (json['allProducts'] as List).map((e) => Product.fromJson(e)).toList();
+    final rawGrouped = json['productsByCategory'] as Map<String, dynamic>;
+    final productsByCategory = rawGrouped.map((key, value) => MapEntry(
+          int.parse(key),
+          (value as List).map((e) => Product.fromJson(e)).toList(),
+        ));
+
+    return ShoppingData(
+      categories: categories,
+      allProducts: allProducts,
+      productsByCategory: productsByCategory,
+    );
+  }
 }
 
 extension ProductDisplayExtension on Product {

@@ -1,6 +1,6 @@
 import 'package:coffee_bean_db/src/app_database.dart';
 import 'package:isar_community/isar.dart';
-import 'base_mixin.dart';
+import 'package:coffee_bean_db/src/services/base_mixin.dart';
 
 mixin StoreServiceMixin on BaseMixin {
   Future<List<TblStore>> getAllStores() => isar.tblStores.filter().isActiveEqualTo(true).findAll();
