@@ -4,12 +4,12 @@ import 'package:db_core/db_core.dart';
 import 'package:flutter/cupertino.dart';
 
 /// Sự kiện bắn đi khi có thay đổi cài đặt hệ thống
-class AppSettingChangedEvent extends DbBaseEvent {}
+class SettingsAppChangedEvent extends DbBaseEvent {}
 
-class AppSettingManager {
-  static final AppSettingManager _instance = AppSettingManager._internal();
-  factory AppSettingManager() => _instance;
-  AppSettingManager._internal();
+class SettingsAppManager {
+  static final SettingsAppManager _instance = SettingsAppManager._internal();
+  factory SettingsAppManager() => _instance;
+  SettingsAppManager._internal();
 
   static const String _langKey = "APP_LANGUAGE";
   static const String _currencyKey = "APP_CURRENCY";
@@ -43,28 +43,28 @@ class AppSettingManager {
     bool isChanged = false;
 
     if (lang != null && lang != currentLanguage) {
-      dLog("AppSettingManager: Changing language to ${lang.code}");
+      dLog("SettingsAppManager: Changing language to ${lang.code}");
       currentLanguage = lang;
       await DbSharedPreferences().set(_langKey, lang.code);
       isChanged = true;
     }
 
     if (currency != null && currency != currentCurrency) {
-      dLog("AppSettingManager: Changing currency to ${currency.name}");
+      dLog("SettingsAppManager: Changing currency to ${currency.name}");
       currentCurrency = currency;
       await DbSharedPreferences().set(_currencyKey, currency.name);
       isChanged = true;
     }
 
     if (isChanged) {
-      dLog("AppSettingManager: Firing AppSettingChangedEvent");
-      debugPrint("AppSettingManager: Firing AppSettingChangedEvent");
+      dLog("SettingsAppManager: Firing SettingsAppChangedEvent");
+      debugPrint("SettingsAppManager: Firing SettingsAppChangedEvent");
       // Bắn event qua EventBus để AppInteractor xử lý reboot
-      locator<DbEventBus>().fire(AppSettingChangedEvent());
+      locator<DbEventBus>().fire(SettingsAppChangedEvent());
     } else {
-      dLog("AppSettingManager: No changes detected, but forcing reload for UI consistency");
-      debugPrint("AppSettingManager: No changes detected, but forcing reload for UI consistency");
-      locator<DbEventBus>().fire(AppSettingChangedEvent());
+      dLog("SettingsAppManager: No changes detected, but forcing reload for UI consistency");
+      debugPrint("SettingsAppManager: No changes detected, but forcing reload for UI consistency");
+      locator<DbEventBus>().fire(SettingsAppChangedEvent());
     }
   }
 }

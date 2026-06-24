@@ -1,5 +1,5 @@
-import 'package:coffee_bean/scenes/app_setting/interactor/app_setting_event_state.dart';
-import 'package:coffee_bean/scenes/app_setting/interactor/app_setting_interactor.dart';
+import 'package:coffee_bean/scenes/settings_app/interactor/settings_app_event_state.dart';
+import 'package:coffee_bean/scenes/settings_app/interactor/settings_app_interactor.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
@@ -12,20 +12,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:group_button/group_button.dart';
 
-class AppSettingPage extends AppCubitStateFulWidget<AppSettingInteractor, AppSettingState> {
-  AppSettingPage({super.key, required super.interactor});
+class SettingsAppPage extends AppCubitStateFulWidget<SettingsAppInteractor, SettingsAppState> {
+  SettingsAppPage({super.key, required super.interactor});
 
   @override
-  State<AppSettingPage> createState() => _AppSettingPageState();
+  State<SettingsAppPage> createState() => _SettingsAppPageState();
 }
 
-class _AppSettingPageState extends AppCubitState<AppSettingPage, AppSettingInteractor, AppSettingState> {
+class _SettingsAppPageState extends AppCubitState<SettingsAppPage, SettingsAppInteractor, SettingsAppState> {
   @override
   String? getTitle() => "Cài đặt ứng dụng";
 
   @override
   Widget getBody(BuildContext context) {
-    return BlocBuilder<AppSettingInteractor, AppSettingState>(
+    return BlocBuilder<SettingsAppInteractor, SettingsAppState>(
       builder: (context, state) {
         return Column(
           children: [
@@ -73,7 +73,7 @@ class _AppSettingPageState extends AppCubitState<AppSettingPage, AppSettingInter
     );
   }
 
-  Widget _buildLanguageGroup(AppSettingState state) {
+  Widget _buildLanguageGroup(SettingsAppState state) {
     return GroupButton<Language>(
       buttons: Language.values,
       options: const GroupButtonOptions(
@@ -102,7 +102,7 @@ class _AppSettingPageState extends AppCubitState<AppSettingPage, AppSettingInter
     );
   }
 
-  Widget _buildCurrencyGroup(AppSettingState state) {
+  Widget _buildCurrencyGroup(SettingsAppState state) {
     return GroupButton<Currency>(
       buttons: Currency.values,
       options: const GroupButtonOptions(
@@ -130,7 +130,7 @@ class _AppSettingPageState extends AppCubitState<AppSettingPage, AppSettingInter
     );
   }
 
-  Widget _buildFooter(AppSettingState state) {
+  Widget _buildFooter(SettingsAppState state) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

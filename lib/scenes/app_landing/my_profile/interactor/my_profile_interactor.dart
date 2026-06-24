@@ -95,7 +95,7 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
         router?.navigate(ChangeMobileRoute());
         break;
       case "SETTINGS":
-        router?.navigate(AppSettingRoute());
+        router?.navigate(SettingsAppRoute());
         break;
       default:
         debugPrint("Action $actionKey chưa được thực hiện");

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:coffee_bean/data/local/app_setting_manager/app_setting_manager.dart';
+import 'package:coffee_bean/data/local/settings_app_manager/settings_app_manager.dart';
 import 'package:coffee_bean/utils/currency_utils.dart';
 
 part 'product.g.dart';
@@ -147,13 +147,13 @@ class SkuProperty {
 
 extension ProductDisplayExtension on Product {
   String formattedPrice({Currency? currency}) {
-    // Nếu không truyền tham số, tự động lấy cấu hình Global từ AppSettingManager
-    final targetCurrency = currency ?? AppSettingManager.currentCurrency;
+    // Nếu không truyền tham số, tự động lấy cấu hình Global từ SettingsAppManager
+    final targetCurrency = currency ?? SettingsAppManager.currentCurrency;
     return targetCurrency.format(price);
   }
 
   String formattedMarketPrice({Currency? currency}) {
-    final targetCurrency = currency ?? AppSettingManager.currentCurrency;
+    final targetCurrency = currency ?? SettingsAppManager.currentCurrency;
     return targetCurrency.format(marketPrice);
   }
 }

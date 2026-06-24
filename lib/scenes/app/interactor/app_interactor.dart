@@ -9,7 +9,7 @@ import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
 import 'package:coffee_bean/scenes/app/app_router.dart';
-import 'package:coffee_bean/data/local/app_setting_manager/app_setting_manager.dart';
+import 'package:coffee_bean/data/local/settings_app_manager/settings_app_manager.dart';
 import 'package:db_core/db_core.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -50,8 +50,8 @@ class AppInteractor extends CubitInteractor<AppRoutable, AppInteractorState> {
     }));
 
     // Listen to app settings changes (Language/Currency)
-    collect(locator<DbEventBus>().on<AppSettingChangedEvent>().listen((event) {
-      dLog("AppInteractor: Received AppSettingChangedEvent! Rebooting to Main Root...");
+    collect(locator<DbEventBus>().on<SettingsAppChangedEvent>().listen((event) {
+      dLog("AppInteractor: Received SettingsAppChangedEvent! Rebooting to Main Root...");
       router?.gotoMainRoot();
     }));
   }

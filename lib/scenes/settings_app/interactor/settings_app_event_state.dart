@@ -3,23 +3,23 @@ import 'package:coffee_bean/utils/language_utils.dart';
 import 'package:db_core/db_core.dart';
 import 'package:equatable/equatable.dart';
 
-abstract class AppSettingState extends BaseBlocState with EquatableMixin {
+abstract class SettingsAppState extends BaseBlocState with EquatableMixin {
   final Language selectedLanguage;
   final Currency selectedCurrency;
   final bool isSubmitting;
 
-  AppSettingState({
+  SettingsAppState({
     required this.selectedLanguage,
     required this.selectedCurrency,
     this.isSubmitting = false,
   });
 
-  AppSettingState copyWith({
+  SettingsAppState copyWith({
     Language? selectedLanguage,
     Currency? selectedCurrency,
     bool? isSubmitting,
   }) {
-    return AppSettingInitial(
+    return SettingsAppInitial(
       selectedLanguage: selectedLanguage ?? this.selectedLanguage,
       selectedCurrency: selectedCurrency ?? this.selectedCurrency,
       isSubmitting: isSubmitting ?? this.isSubmitting,
@@ -30,8 +30,8 @@ abstract class AppSettingState extends BaseBlocState with EquatableMixin {
   List<Object?> get props => [selectedLanguage, selectedCurrency, isSubmitting];
 }
 
-class AppSettingInitial extends AppSettingState {
-  AppSettingInitial({
+class SettingsAppInitial extends SettingsAppState {
+  SettingsAppInitial({
     required super.selectedLanguage,
     required super.selectedCurrency,
     super.isSubmitting,
