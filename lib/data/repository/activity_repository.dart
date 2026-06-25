@@ -93,4 +93,8 @@ class ActivityRepository {
 
     return _dbService.searchActivities(query: query, catId: catId);
   }
+
+  Future<TblActivity?> getActivityById(int activityId) async {
+    return _dbService.isar.tblActivitys.filter().serverIdEqualTo(activityId).findFirst();
+  }
 }

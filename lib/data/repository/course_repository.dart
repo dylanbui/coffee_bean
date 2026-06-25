@@ -95,4 +95,8 @@ class CourseRepository {
 
     return _dbService.searchCourses(query: query, catId: catId);
   }
+
+  Future<TblCourse?> getCourseById(int courseId) async {
+    return _dbService.isar.tblCourses.filter().serverIdEqualTo(courseId).findFirst();
+  }
 }

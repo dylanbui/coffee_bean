@@ -66,4 +66,7 @@ class CourseListInteractor extends CubitInteractor<CourseListRoutable, CourseLis
 
     emit(state.copyWith(courses: items, isLoading: false));
   }
+  // void onCourseTapped(TblCourse course) {
+  //   router?.navigate(CourseDetailRoute(course.serverId));
+  // }
 }

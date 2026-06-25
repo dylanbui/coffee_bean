@@ -8,6 +8,7 @@
 //
 // Copyright (c) 2026. All rights reserved.
 // **************************************************************************
+import 'package:coffee_bean/scenes/course_features/course_list/course_list_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/interactor/course_list_event_state.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/interactor/course_list_interactor.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/interactor/widget/course_category_picker.dart';
@@ -119,9 +120,7 @@ class _CourseListPageState extends AppCubitState<CourseListPage, CourseListInter
 
   Widget _buildCourseItem(BuildContext context, TblCourse item) {
     return TapEffect(
-      onTap: () {
-        // Navigate to details or show info
-      },
+      onTap: () => interactor.router?.navigate(CourseDetailRoute(item.serverId)),
       child: Container(
         height: 120,
         padding: const EdgeInsets.all(12),

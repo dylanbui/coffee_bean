@@ -118,9 +118,7 @@ class _ActivityListPageState extends AppCubitState<ActivityListPage, ActivityLis
 
   Widget _buildActivityItem(BuildContext context, TblActivity item) {
     return TapEffect(
-      onTap: () {
-        // Navigate to details
-      },
+      onTap: () => interactor.onActivitySelected(item),
       child: Container(
         height: 154,
         decoration: BoxDecoration(

@@ -1,10 +1,10 @@
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
+import 'package:coffee_bean/scenes/shopping_features/product_detail/product_detail_builder.dart';
 import 'package:db_core/network/network_utils.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/data/repository/product_repository.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/scenes/shopping_features/product_detail/interactor/product_detail_event_state.dart';
-import 'package:coffee_bean/scenes/shopping_features/product_detail/product_detail_router.dart';
 import 'package:db_core/utils/toast.dart';
 import 'package:db_core/utils/locator.dart';
 import 'package:coffee_bean/data/tracking/tracking_service.dart';

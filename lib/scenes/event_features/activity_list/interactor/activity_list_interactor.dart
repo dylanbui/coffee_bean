@@ -71,32 +71,7 @@ class ActivityListInteractor extends CubitInteractor<ActivityListRoutable, Activ
     emit(state.copyWith(activities: items, isLoading: false));
   }
 
-
-
-  // Future<void> _fetchActivities() async {
-  //   emit(state.copyWith(isLoading: true));
-  //   try {
-  //     final activities = await _activityRepository.getActivities(
-  //       query: state.searchQuery,
-  //       catId: state.selectedCategory?.serverId,
-  //     );
-  //     emit(state.copyWith(activities: activities, isLoading: false));
-  //   } catch (e) {
-  //     emit(state.copyWith(isLoading: false));
-  //   }
-  // }
-  //
-  // void onSearchChanged(String query) {
-  //   emit(state.copyWith(searchQuery: query));
-  //   _fetchActivities();
-  // }
-  //
-  // void onCategorySelected(TblCategory? category) {
-  //   if (category == null) {
-  //     emit(state.copyWith(clearCategory: true));
-  //   } else {
-  //     emit(state.copyWith(selectedCategory: category));
-  //   }
-  //   _fetchActivities();
-  // }
+  void onActivitySelected(TblActivity activity) {
+    router?.gotoActivityDetail(activity.serverId);
+  }
 }
