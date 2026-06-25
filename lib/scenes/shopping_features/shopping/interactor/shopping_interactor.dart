@@ -7,6 +7,7 @@ import 'package:coffee_bean/data/model/product.dart';
 import 'package:coffee_bean/scenes/shopping_features/shopping/interactor/shopping_event_state.dart';
 import 'package:coffee_bean/scenes/shopping_features/shopping/shopping_router.dart';
 import 'package:coffee_bean/utils/utils.dart';
+import 'package:coffee_bean/data/tracking/tracking_service.dart';
 
 class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState> {
   final CartService _cartService = locator<CartService>();
@@ -101,6 +102,15 @@ class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState
   ----------------------------------------------- */
 
   void selectCategory(int index) {
+    if (index >= 0 && index < state.categories.length) {
+      final category = state.categories[index];
+      // [TRACKING]: Log category selection for behavioral analysis
+      appTracking.logEvent('category_select', parameters: {
+        'category_id': category.id,
+        'category_name': category.name,
+        'index': index,
+      });
+    }
     emit(state.copyWith(selectedCategoryIndex: index));
   }
 
@@ -131,6 +141,14 @@ class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState
   }
 
   void routeToProductDetail(Product product) {
+    // [TRACKING]: Log product click from the list
+    appTracking.productAction(
+      productId: product.id.toString(),
+      action: EventAction.click,
+      parameters: {
+        'product_name': product.name,
+      },
+    );
     router?.navigate(ProductDetailRoute(product));
   }
 

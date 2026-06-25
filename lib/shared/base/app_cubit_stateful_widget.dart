@@ -7,6 +7,7 @@ import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/shared/base/keyboard_unfocus_mixin.dart';
 import 'package:coffee_bean/shared/base/tap_to_unfocus_mixin.dart';
+import 'package:coffee_bean/data/tracking/tracking_service.dart';
 
 /// AppCubitStateFulWidget: Base class for pages in the Coffee Bean project.
 /// It bridges the core RIBs logic with the project's specific UI requirements.
@@ -24,6 +25,12 @@ abstract class AppCubitState<T extends AppCubitStateFulWidget<B, S>, B extends C
     super.initState();
     // Log the current screen name for debugging
     iLog('🚀 Pushed into Screen: ${widget.runtimeType}');
+
+    // Auto-track screen view: Use title if available, otherwise use class name
+    appTracking.uiScreen(
+      screenName: getTitle() ?? widget.runtimeType.toString(),
+      action: EventAction.open,
+    );
   }
 
   /// Provides the title for the default CoffeeAppBar.

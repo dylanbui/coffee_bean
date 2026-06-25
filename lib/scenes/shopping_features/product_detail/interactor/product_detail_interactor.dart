@@ -7,6 +7,7 @@ import 'package:coffee_bean/scenes/shopping_features/product_detail/interactor/p
 import 'package:coffee_bean/scenes/shopping_features/product_detail/product_detail_router.dart';
 import 'package:db_core/utils/toast.dart';
 import 'package:db_core/utils/locator.dart';
+import 'package:coffee_bean/data/tracking/tracking_service.dart';
 import 'dart:math';
 
 class ProductDetailInteractor extends CubitInteractor<ProductDetailRoutable, ProductDetailState> implements CommentListSmallListener {
@@ -35,6 +36,16 @@ class ProductDetailInteractor extends CubitInteractor<ProductDetailRoutable, Pro
     final result = (await _productRepository.getProductSpuDetail(productId)).toResult();
 
     if (result case DbSuccess(data: final product)) {
+      // [TRACKING]: Log product view detail
+      appTracking.productAction(
+        productId: product.id.toString(),
+        action: EventAction.view,
+        parameters: {
+          'product_name': product.name,
+          'category_id': product.categoryId,
+        },
+      );
+
       final cartQty = _cartService.getQuantity(product, null);
       emit(state.copyWith(
         product: product, 

@@ -8,6 +8,7 @@
  */
 
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:chuck_interceptor/chuck_interceptor.dart';
 import 'package:coffee_bean/data/repository/activity_repository.dart';
@@ -55,7 +56,12 @@ import 'package:coffee_bean/data/local/live_service/likes_service.dart';
 import 'package:coffee_bean/scenes/app/interactor/deep_link_service.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:coffee_bean/data/tracking/tracking_service.dart';
+import 'package:coffee_bean/data/tracking/tracking_context.dart';
+import 'package:coffee_bean/data/tracking/firebase_tracking_impl.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 Chuck chuck = Chuck(
@@ -123,6 +129,23 @@ Future<Widget> initializeApp() async {
 Future<void> _initFirebase() async {
   try {
     await Firebase.initializeApp();
+
+    // Initialize Tracking Metadata (Session, Version, Device, Region)
+    final packageInfo = await PackageInfo.fromPlatform();
+    TrackingContext.init(
+      version: packageInfo.version,
+      type: defaultTargetPlatform.name,
+      reg: AppConfig().defaultHeaders['tenant-id'] == '162' ? 'VN' : 'Global',
+    );
+    
+    // Pass all uncaught "fatal" errors from the framework to Crashlytics
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+
     // Configure Remote Config for app upgrades
     await AppUpgradeService.setupRemoteConfig();
   } catch (e) {
@@ -215,6 +238,9 @@ void _registerLazyServices() {
   locator.registerLazySingleton<StorePointRepository>(() => StorePointRepository());
   locator.registerLazySingleton<StoreRepository>(() => StoreRepository());
   locator.registerLazySingleton<ProductRepository>(() => ProductRepository());
+
+  // Register Tracking Service
+  locator.registerLazySingleton<TrackingService>(() => FirebaseTrackingImpl());
 }
 
 Future<void> _setupUiUtils() async {
