@@ -65,7 +65,9 @@
 		<key>UIStatusBarHidden</key>
 		<false/>
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>Cho phép ứng dụng truy cập thư viện ảnh để gửi báo cáo.</string>
+		<string>Cho phép ứng dụng truy cập thư viện ảnh để lưu poster sự kiện.</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>Cho phép ứng dụng lưu poster sự kiện vào thư viện ảnh của bạn.</string>
 		<key>NSCameraUsageDescription</key>
 		<string>Cho phép ứng dụng sử dụng camera để chụp ảnh báo cáo.</string>
 		<key>NSMicrophoneUsageDescription</key>

@@ -4,10 +4,9 @@ import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_sliver_app_bar.dart';
+import 'package:coffee_bean/shared/ui_control/share_action/share_poster_dialog.dart';
 import 'package:coffee_bean/utils/number_to_vietnamese.dart';
-import 'package:db_core/utils/app_button.dart';
-import 'package:db_core/utils/tap_effect.dart';
-import 'package:db_core/utils/widget/cached_image_widget.dart';
+import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -36,6 +35,16 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
     if (collapsed != _isCollapsed) {
       setState(() => _isCollapsed = collapsed);
     }
+  }
+
+  void _showShareDialog(ActivityDetailState state) {
+    SharePosterDialog.show(
+      context: context,
+      imageUrl: state.images.isNotEmpty ? state.images.first : "",
+      title: state.title,
+      shareLink: "https://tmlabs.coffee/event/${interactor.activityId}",
+      shareText: "Tham gia cùng tôi tại sự kiện: ${state.title}",
+    );
   }
 
   @override
@@ -88,7 +97,7 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
         Padding(
           padding: const EdgeInsets.only(right: 16),
           child: TapEffect(
-            onTap: interactor.onShareTap,
+            onTap: () => _showShareDialog(state),
             child: Icon(
               Icons.share_outlined,
               color: _isCollapsed ? TMLabsColor.primary : Colors.white,
@@ -352,7 +361,7 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "$priceStr",
+                priceStr,
                 style: TMLabsTextStyle.h2.copyWith(color: TMLabsColor.primary, fontWeight: FontWeight.w900),
               ),
               Text(
