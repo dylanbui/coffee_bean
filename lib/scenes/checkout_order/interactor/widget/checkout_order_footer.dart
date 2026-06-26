@@ -1,9 +1,9 @@
+import 'package:coffee_bean/data/local/settings_app_manager/settings_app_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/scenes/checkout_order/interactor/checkout_order_event_state.dart';
 import 'package:coffee_bean/scenes/checkout_order/interactor/checkout_order_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
-import 'package:coffee_bean/utils/number_to_vietnamese.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,7 +35,7 @@ class CheckoutOrderFooter extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    NumberToVietnamese.formatNumber(displayAmount),
+                    SettingsAppManager.currentCurrency.format(displayAmount),
                     style: TMLabsTextStyle.h2.copyWith(fontWeight: FontWeight.w900),
                   ),
                   if (isLoggedIn && state.totalDiscount > 0)

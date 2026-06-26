@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 // https://github.com/lipis/flag-icons/tree/main/flags/4x3
 
 enum Currency {
-  vnd(symbol: 'đ', divisor: 100, decimalDigits: 0, symbolAtEnd: true, locale: 'vi_VN', emoji: '🇻🇳'),
+  vnd(symbol: 'đ', divisor: 1, decimalDigits: 0, symbolAtEnd: true, locale: 'vi_VN', emoji: '🇻🇳'),
   usd(symbol: '\$', divisor: 100, decimalDigits: 2, symbolAtEnd: false, locale: 'en_US', emoji: '🇺🇸'),
   cny(symbol: '¥', divisor: 100, decimalDigits: 2, symbolAtEnd: false, locale: 'zh_CN', emoji: '🇨🇳');
 

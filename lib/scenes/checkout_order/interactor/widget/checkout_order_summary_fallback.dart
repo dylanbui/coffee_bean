@@ -1,3 +1,4 @@
+import 'package:coffee_bean/data/local/settings_app_manager/settings_app_manager.dart';
 import 'package:coffee_bean/scenes/checkout_order/checkout_order_common.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
@@ -60,7 +61,7 @@ class CheckoutOrderSummaryFallback extends StatelessWidget {
             children: [
               Text("Số tiền gốc", style: TMLabsTextStyle.body),
               Text(
-                "${contract.baseAmount.toInt()} đ",
+                SettingsAppManager.currentCurrency.format(contract.baseAmount),
                 style: TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.bold),
               ),
             ],
