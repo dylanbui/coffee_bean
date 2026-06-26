@@ -1,5 +1,6 @@
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
+import 'package:coffee_bean/data/local/user_manager/user_service.dart';
 import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
 import 'package:coffee_bean/scenes/my_profile_features/coupon_list/interactor/coupon_list_interactor.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_payment/interactor/venue_payment_event_state.dart';
@@ -66,7 +67,7 @@ mixin _VenuePaymentPaymentMixin on CubitInteractor<VenuePaymentRoutable, VenuePa
     await Future.delayed(const Duration(seconds: 2));
 
     // Cập nhật lại số lượng coupon sau khi thanh toán thành công
-    await UserManager().refreshCounters();
+    await UserService().refreshCounters();
 
     emit(state.copyWith(
       status: VenuePaymentStatus.success,

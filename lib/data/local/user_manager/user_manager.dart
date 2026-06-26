@@ -6,8 +6,6 @@ import 'package:coffee_bean/data/local/user_manager/user_manager_events.dart';
 import 'package:db_core/db_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:coffee_bean/data/network/token_interceptor.dart';
-import 'package:coffee_bean/data/repository/user_repository.dart';
-import 'package:coffee_bean/data/repository/promotion_repository.dart';
 
 class UserManager extends ChangeNotifier
     with UserPermissionMixin
@@ -146,46 +144,4 @@ class UserManager extends ChangeNotifier
   Future<void> clearAll() async {
     await doLogoutAndClearAll();
   }
-}
-
-extension UserManagerRefresh on UserManager {
-
-  /// Hàm làm mới toàn bộ thông tin User (Profile + Counters)
-  Future<void> refreshFullUserInfo() async {
-    // Chỉ chạy nếu đã đăng nhập
-    if (!isLogin) return;
-
-    // Thực hiện gọi song song các API
-    final results = await Future.wait([
-      locator<UserRepository>().getUserInfo(),
-      locator<PromotionRepository>().getUnusedCouponCount(),
-    ]);
-
-    final userResult = (results[0] as ResultType<UserInfo>).toResult();
-    final couponResult = (results[1] as ResultType<int>).toResult();
-
-    if (userResult case DbSuccess(data: final info)) {
-      int? currentCouponCount = _userInfo?.unusedCouponCount;
-
-      // Cập nhật count nếu API Coupon thành công
-      if (couponResult case DbSuccess(data: final count)) {
-        currentCouponCount = count;
-      }
-
-      // Gộp dữ liệu và lưu
-      final updatedInfo = info.copyWith(unusedCouponCount: currentCouponCount);
-      await saveUserInfo(updatedInfo);
-    }
-  }
-
-  /// Chỉ làm mới các thông số số lượng (dùng sau khi Checkout)
-  Future<void> refreshCounters() async {
-    if (!isLogin || _userInfo == null) return;
-
-    final result = (await locator<PromotionRepository>().getUnusedCouponCount()).toResult();
-    if (result case DbSuccess(data: final count)) {
-      await saveUserInfo(_userInfo!.copyWith(unusedCouponCount: count));
-    }
-  }
-
 }

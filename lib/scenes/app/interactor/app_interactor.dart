@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:coffee_bean/data/local/user_manager/user_service.dart';
 import 'package:coffee_bean/data/repository/auth_repository.dart';
 import 'package:coffee_bean/data/repository/store_repository.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
+import 'package:coffee_bean/scenes/user_auth_features/user_auth_helper.dart';
 import 'package:coffee_bean/shared/service/system_notify/system_notify_event.dart';
 import 'package:coffee_bean/utils/utils_datetime.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
@@ -11,7 +13,6 @@ import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
 import 'package:coffee_bean/scenes/app/app_router.dart';
 import 'package:coffee_bean/data/local/settings_app_manager/settings_app_manager.dart';
 import 'package:db_core/db_core.dart';
-import 'package:flutter/cupertino.dart';
 
 /// The State for the AppInteractor.
 abstract class AppInteractorState extends BaseBlocState {}
@@ -52,6 +53,12 @@ class AppInteractor extends CubitInteractor<AppRoutable, AppInteractorState> {
     // Listen to app settings changes (Language/Currency)
     collect(locator<DbEventBus>().on<SettingsAppChangedEvent>().listen((event) {
       dLog("AppInteractor: Received SettingsAppChangedEvent! Rebooting to Main Root...");
+      router?.gotoMainRoot();
+    }));
+
+    // Logout User
+    collect(locator<DbEventBus>().on<UserLogoutEvent>().listen((event) {
+      dLog("AppInteractor: Received UserLogoutEvent! Rebooting to Main Root...");
       router?.gotoMainRoot();
     }));
   }
@@ -126,7 +133,7 @@ class AppInteractor extends CubitInteractor<AppRoutable, AppInteractorState> {
   Future<void> _verifySession() async {
     // Sử dụng hàm refreshFullUserInfo để lấy cả Profile và các thông số counters (Coupon count, etc.)
     try {
-      await UserManager().refreshFullUserInfo();
+      await UserService().refreshFullUserInfo();
       dLog("AppInteractor: User profile and counters updated successfully.");
     } catch (e) {
       dLog("AppInteractor: Failed to refresh user info: $e");
@@ -136,7 +143,7 @@ class AppInteractor extends CubitInteractor<AppRoutable, AppInteractorState> {
 
   /// Clean logout and navigation
   Future<void> _performLogout() async {
-    await UserManager().doLogoutAndClearAll();
+    await UserService().logout();
     locator<DbEventBus>().fire(UserSessionExpiredEvent());
     router?.gotoMainRoot();
   }

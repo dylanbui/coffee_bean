@@ -77,13 +77,7 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
                           interactor.doMainAction("STORE_SERVICE");
                         },
                       ),
-
-
-                      
                       const SizedBox(height: 16),
-
-
-                      _buildLogoutButton(context),
                     ],
                   ),
                   Padding(
@@ -191,30 +185,6 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
       margin: EdgeInsets.zero,
       borderRadius: BorderRadius.zero,
       showShadow: false,
-    );
-  }
-
-  Widget _buildLogoutButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: AppButton(
-        text: 'Đăng xuất',
-        style: TMLabsButtonStyle.outline,
-        onPressed: () async {
-          final res = await FlashDialogHelper.show<bool>(
-            context: context,
-            title: 'Xác nhận',
-            content: 'Bạn có chắc chắn muốn đăng xuất?',
-            actions: [
-              FlashDialogAction(label: 'Hủy', value: false, color: TMLabsColor.grey),
-              FlashDialogAction(label: 'Đăng xuất', value: true, color: TMLabsColor.error),
-            ],
-          );
-          if (res == true) {
-            interactor.doLogout();
-          }
-        },
-      ),
     );
   }
 

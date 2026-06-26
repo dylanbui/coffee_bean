@@ -10,7 +10,9 @@
 import 'package:coffee_bean/scenes/user_auth_features/user_agreement/interactor/user_agreement_event_state.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_agreement/interactor/user_agreement_interactor.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,12 +31,17 @@ class _UserAgreementPageState extends AppCubitState<UserAgreementPage, UserAgree
   String? getTitle() => "User Agreement";
 
   @override
+  CoffeeAppBarStyleConfig getAppBarStyle() => TmLabAppBarStyle.whiteStyle;
+
+  @override
   Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: appBar,
-      resizeToAvoidBottomInset: false,
-      body: body,
+    return wrapTapToUnfocus(
+      Scaffold(
+        backgroundColor: TMLabsColor.white,
+        appBar: appBar,
+        resizeToAvoidBottomInset: false,
+        body: body,
+      ),
     );
   }
 
@@ -73,7 +80,7 @@ class _UserAgreementPageState extends AppCubitState<UserAgreementPage, UserAgree
       // Handle success
     } else if (state is UserAgreementError) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+        SnackBar(content: Text(state.message), backgroundColor: TMLabsColor.error),
       );
     }
   }

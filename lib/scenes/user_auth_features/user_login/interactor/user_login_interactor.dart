@@ -12,6 +12,7 @@ import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/data/repository/auth_repository.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
+import 'package:coffee_bean/data/local/user_manager/user_service.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/interactor/user_login_event_state.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/shared/social_auth_service.dart';
@@ -24,7 +25,6 @@ import 'package:db_core/utils/logger.dart';
 // Interactor
 class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginState> {
   final _authRepo = AuthRepository();
-  final _userRepo = UserRepository();
 
   UserLoginInteractor(UserLoginRouter router) : super(UserLoginInitial(), router: router);
 
@@ -191,7 +191,7 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
   void _fetchUserInfo(UserSession userSession) async {
     // Fetch Profile info và counters sau khi login
     try {
-      await UserManager().refreshFullUserInfo();
+      await UserService().refreshFullUserInfo();
       final userInfo = UserManager().userInfo;
       
       if (userInfo != null) {
@@ -204,7 +204,7 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
     } catch (e) {
       eLog("Fetch Profile Error: $e");
       // OPTIONAL: Xóa session vừa lưu nếu không lấy được profile để tránh trạng thái lửng lơ
-      await UserManager().doLogoutAndClearAll();
+      await UserService().logout();
       emit(UserLoginFailure(error: e.toString()));
     }
   }

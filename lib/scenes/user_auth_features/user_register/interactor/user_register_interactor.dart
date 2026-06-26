@@ -11,6 +11,7 @@ import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/data/repository/auth_repository.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
+import 'package:coffee_bean/data/local/user_manager/user_service.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/interactor/user_register_event_state.dart';
 import 'package:db_core/network/network_common.dart';
@@ -80,7 +81,7 @@ class UserRegisterInteractor extends CubitInteractor<UserRegisterRouter, UserReg
       // 2. Lấy thông tin Profile và counters, lưu vào UserManager
       // accessToken se duoc TokenInterceptor tu dong lay tu UserManager cho request nay
       try {
-        await UserManager().refreshFullUserInfo();
+        await UserService().refreshFullUserInfo();
       } catch (e) {
         // Co the log loi hoac thong bao neu can, nhung van cho phep tiep tuc sang step Set Password
         debugPrint("Fetch profile and counters error: $e");

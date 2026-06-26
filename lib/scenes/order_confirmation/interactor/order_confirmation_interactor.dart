@@ -3,6 +3,7 @@ import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
+import 'package:coffee_bean/data/local/user_manager/user_service.dart';
 import 'package:coffee_bean/data/model/response/trade/store_model.dart';
 import 'package:coffee_bean/data/model/payment_domain.dart';
 import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
@@ -88,7 +89,7 @@ mixin _OrderConfirmationPaymentMixin on CubitInteractor<OrderConfirmationRoutabl
     await cartService.clearCart();
 
     // Cập nhật lại số lượng coupon sau khi thanh toán thành công
-    await UserManager().refreshCounters();
+    await UserService().refreshCounters();
 
     emit(state.copyWith(
       status: OrderConfirmationStatus.success,

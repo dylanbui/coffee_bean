@@ -38,6 +38,10 @@ class SettingsAppManager {
     }
   }
 
+  String getLocaleName() {
+      return "${currentLanguage.name} - ${currentCurrency.name.toUpperCase()}";
+  }
+
   /// Cập nhật Settings
   Future<void> updateSettings({Language? lang, Currency? currency}) async {
     bool isChanged = false;

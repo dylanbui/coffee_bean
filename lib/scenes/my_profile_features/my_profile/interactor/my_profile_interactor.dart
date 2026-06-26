@@ -146,18 +146,18 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
     }
   }
 
-  void doLogout() async {
-    // Gọi API logout của server
-    await _authRepo.logout();
-    
-    // Xóa sạch dữ liệu local
-    await UserManager().doLogoutAndClearAll();
-    
-    // Bắn event logout cho toàn hệ thống
-    locator<DbEventBus>().fire(UserLogoutEvent());
-
-    router?.doLogout();
-  }
+  // void doLogout() async {
+  //   // Gọi API logout của server
+  //   await _authRepo.logout();
+  //
+  //   // Xóa sạch dữ liệu local
+  //   await UserManager().doLogoutAndClearAll();
+  //
+  //   // Bắn event logout cho toàn hệ thống
+  //   locator<DbEventBus>().fire(UserLogoutEvent());
+  //
+  //   router?.doLogout();
+  // }
 
   void goToUpdateProfile() {
     router?.navigate(EditProfileRoute());

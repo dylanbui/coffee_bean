@@ -26,9 +26,7 @@ class PrivacyPolicyBuilder extends DbNoteSimpleRouterBuilder {
   PrivacyPolicyBuilder build() {
     final interactor = PrivacyPolicyInteractor(router: this);
     final page = PrivacyPolicyPage(interactor: interactor);
-
     attach(interactor, page);
-
     return this;
   }
 

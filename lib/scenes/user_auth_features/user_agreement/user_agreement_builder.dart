@@ -26,9 +26,7 @@ class UserAgreementBuilder extends DbNoteSimpleRouterBuilder {
   UserAgreementBuilder build() {
     final interactor = UserAgreementInteractor(router: this);
     final page = UserAgreementPage(interactor: interactor);
-
     attach(interactor, page);
-
     return this;
   }
 

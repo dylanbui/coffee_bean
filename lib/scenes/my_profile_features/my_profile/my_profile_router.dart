@@ -1,4 +1,4 @@
-import 'package:coffee_bean/scenes/settings_app/settings_app_builder.dart';
+import 'package:coffee_bean/scenes/setting_features/settings_app/settings_app_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/course_list_builder.dart';
 import 'package:coffee_bean/scenes/event_features/activity_list/activity_list_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/change_mobile/change_mobile_builder.dart';
@@ -21,7 +21,6 @@ class CouponListRoute implements DbNoteRoute {}
 abstract class MyProfileRoutable implements DbNoteRoutable {
   void doLoginFlow(UserAuthFlowListener listener);
   void doRegisterFlow(UserAuthFlowListener listener);
-  void doLogout();
 }
 
 class MyProfileRouter extends DbNoteRouter implements MyProfileRoutable {
@@ -69,12 +68,6 @@ class MyProfileRouter extends DbNoteRouter implements MyProfileRoutable {
   void doRegisterFlow(UserAuthFlowListener listener) {
     // Khởi chạy luồng Auth bắt đầu từ Login
     UserAuthFlow(startStep: AuthStartStep.register).start(this, listener);
-  }
-
-  @override
-  void doLogout() {
-    // Route to other after logout
-    debugPrint("doLogout");
   }
 
 
