@@ -13,9 +13,7 @@ class CouponListBuilder extends DbNoteBuilder<CouponListRouter> {
     final router = CouponListRouter();
     final interactor = CouponListInteractor(router, listener: listener);
     final page = CouponListPage(interactor: interactor);
-
     router.attach(interactor, page);
-
     return router;
   }
 }

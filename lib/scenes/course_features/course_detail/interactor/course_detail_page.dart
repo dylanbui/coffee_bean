@@ -5,6 +5,7 @@ import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_sliver_app_bar.dart';
+import 'package:coffee_bean/shared/ui_control/share_action/share_poster_dialog.dart';
 import 'package:coffee_bean/utils/number_to_vietnamese.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:db_core/utils/app_label.dart';
@@ -39,6 +40,16 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
     if (collapsed != _isCollapsed) {
       setState(() => _isCollapsed = collapsed);
     }
+  }
+
+  void _showShareDialog(CourseDetailState state) {
+    SharePosterDialog.show(
+      context: context,
+      imageUrl: state.images.isNotEmpty ? state.images.first : "",
+      title: state.courseTitle,
+      shareLink: "https://tmlabs.coffee/course/${interactor.courseId}",
+      shareText: "Tham gia cùng tôi tại khóa học: ${state.courseTitle}",
+    );
   }
 
   @override
@@ -87,8 +98,20 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
         centerTitle: true,
         foregroundColor: _isCollapsed ? TMLabsColor.primary : Colors.white,
       ),
-      onBackTap: interactor.router?.pop,
+      onBackTap: () {
+        interactor.router?.pop();
+      },
       actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: TapEffect(
+            onTap: () => _showShareDialog(state),
+            child: Icon(
+              Icons.share_outlined,
+              color: _isCollapsed ? TMLabsColor.primary : Colors.white,
+            ),
+          ),
+        ),
         Padding(
           padding: const EdgeInsets.only(right: 16),
           child: TapEffect(
@@ -334,7 +357,7 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "$totalPriceđ",
+            totalPrice,
             style: TMLabsTextStyle.h2.copyWith(color: TMLabsColor.primary, fontWeight: FontWeight.w900),
           ),
           AppButton(

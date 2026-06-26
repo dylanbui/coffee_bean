@@ -138,8 +138,7 @@ class CouponListInteractor extends CubitInteractor<CouponListRoutable, CouponLis
 
   void selectNoCoupon() {
     if (state is! CouponListLoaded) return;
-    // final updatedCoupons = state.coupons.map((c) => c.copyWith(isSelected: false)).toList();
-    // emit(CouponListLoaded(coupons: updatedCoupons, isNoCouponSelected: true));
+    listener?.onNoCouponSelected();
     router?.pop();
   }
 

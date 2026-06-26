@@ -92,7 +92,9 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
         centerTitle: true,
         foregroundColor: _isCollapsed ? TMLabsColor.primary : Colors.white,
       ),
-      onBackTap: interactor.onNavigateBack,
+      onBackTap: () {
+        interactor.router?.pop();
+      },
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16),
@@ -371,7 +373,7 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
             ],
           ),
           AppButton(
-            text: "THANH TOÁN",
+            text: "ĐĂNG KÝ NGAY",
             style: TMLabsButtonStyle.primary,
             width: 164,
             height: 30,

@@ -1,10 +1,12 @@
+import 'package:coffee_bean/scenes/checkout_order/checkout_order_builder.dart';
+import 'package:coffee_bean/scenes/checkout_order/checkout_order_common.dart';
 import 'package:coffee_bean/scenes/event_features/activity_detail/interactor/activity_detail_interactor.dart';
 import 'package:coffee_bean/scenes/event_features/activity_detail/interactor/activity_detail_page.dart';
 import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 
 abstract class ActivityDetailRoutable implements DbNoteRoutable {
-  void shareActivity();
+  void openCheckout(CheckoutItemContract item);
 }
 
 class ActivityDetailRouter extends DbNoteRouter implements ActivityDetailRoutable {
@@ -12,8 +14,9 @@ class ActivityDetailRouter extends DbNoteRouter implements ActivityDetailRoutabl
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {}
 
   @override
-  void shareActivity() {
-    // Implement share logic
+  void openCheckout(CheckoutItemContract item) {
+    final builder = CheckoutOrderBuilder(checkoutItem: item);
+    push(builder.build().viewController);
   }
 }
 

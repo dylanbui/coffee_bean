@@ -5,6 +5,8 @@ import 'package:coffee_bean/config/app_pref.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
+import 'package:coffee_bean/scenes/checkout_order/checkout_order_common.dart';
+import 'package:coffee_bean/scenes/checkout_order/checkout_order_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/coupon_list/coupon_list_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/course_list_builder.dart';
 import 'package:coffee_bean/scenes/event_features/activity_list/activity_list_builder.dart';
@@ -25,10 +27,12 @@ import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_builder.d
 import 'package:coffee_bean/scenes/shopping_features/shopping/shopping_builder.dart';
 import 'package:coffee_bean/scenes/store_list/store_list_builder.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/user_login_builder.dart';
+import 'package:db_core/commons_constants.dart';
 import 'package:db_core/utils/logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:db_core/utils/locator.dart';
+import 'package:flutter/material.dart';
 
 abstract class AppRoutable implements DbNoteRoutable {
   void gotoMainRoot();
@@ -45,6 +49,9 @@ class AppRouter extends DbNoteRouter implements AppRoutable {
 
     // --- GIẢ LẬP ĐĂNG NHẬP (Bật/Tắt dòng dưới để test Guest/Member) ---
     // await _simulateLogin();
+
+    // --- TEST UI CHECKOUT ORDER ---
+    // await _testCheckoutOrder();
 
     // Load trang dau tien
     MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
@@ -120,6 +127,12 @@ class AppRouter extends DbNoteRouter implements AppRoutable {
 
     // final builder = ShoppingBuilder();
     // navigator.pushSameRootPage(builder.build().viewController);
+  }
+
+  Future<void> _testCheckoutOrder() async {
+    final mockItem = MockVenueCheckoutItem();
+    final builder = CheckoutOrderBuilder(checkoutItem: mockItem);
+    navigator.pushSameRootPage(builder.build().viewController);
   }
 
   // Future<void> _simulateLogin() async {
@@ -277,6 +290,53 @@ class AppRouter extends DbNoteRouter implements AppRoutable {
     MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
     final router = mainTabbarBuilder.build();
     navigator.pushSameRootPage(router.viewController);
+
+  }
+}
+
+// --- MOCK DATA FOR TESTING CHECKOUT ORDER ---
+
+class MockVenueCheckoutItem implements CheckoutItemContract {
+  @override
+  String get title => "Sân Pickleball - TMLabs";
+
+  @override
+  String get subTitle => "Hẻm 27 Nguyễn Cửu Vân, P.17, Q. Bình Thạnh, TP.HCM";
+
+  @override
+  String? get imageUrl => "https://images.unsplash.com/photo-1599423088114-f81d83764835?q=80&w=2670&auto=format&fit=crop";
+
+  @override
+  double get baseAmount => 500000;
+
+  @override
+  String get category => "VENUE";
+
+  @override
+  Dictionary get extraData => {
+        "booking_id": "BK999",
+        "court_name": "Sân VIP 1",
+        "time_slot": "18:00 - 20:00",
+      };
+
+  @override
+  Widget? buildSummaryWidget(BuildContext context) {
+    // Trả về null để kiểm tra giao diện Fallback tự động của module Checkout
+    return null;
+
+    // Nếu muốn test UI cụ thể, hãy uncomment đoạn dưới:
+
+    // return Container(
+    //   padding: const EdgeInsets.all(16),
+    //   color: Colors.blue.withValues(alpha: 0.1),
+    //   child: Column(
+    //     children: [
+    //       Text("CUSTOM WIDGET SUMMARY", style: TextStyle(fontWeight: FontWeight.bold)),
+    //       Text("Đã chọn sân: Sân VIP 1"),
+    //       Text("Thời gian: 18:00 - 20:00"),
+    //     ],
+    //   ),
+    // );
 
   }
 }

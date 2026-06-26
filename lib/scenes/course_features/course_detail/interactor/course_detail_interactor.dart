@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:coffee_bean/data/repository/course_repository.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
+import 'package:coffee_bean/scenes/course_features/course_detail/course_checkout_item.dart';
 import 'package:coffee_bean/scenes/course_features/course_detail/course_detail_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_detail/interactor/course_detail_event_state.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
@@ -57,11 +58,18 @@ class CourseDetailInteractor extends CubitInteractor<CourseDetailRoutable, Cours
   }
 
   void onBuyTap() {
-    // DbToast.show("Đang tiến hành mua khóa học...");
+    final checkoutItem = CourseCheckoutItem(
+      courseId: courseId,
+      courseTitle: state.courseTitle,
+      instructorName: state.instructorName,
+      courseImageUrl: state.images.isNotEmpty ? state.images.first : null,
+      coursePrice: state.totalAmount,
+    );
+    router?.openCheckout(checkoutItem);
   }
 
   void onInstructorDetailTap() {
-    // DbToast.show("Xem chi tiết giảng viên");
+    DbToast.show("Xem chi tiết giảng viên");
   }
 
   @override

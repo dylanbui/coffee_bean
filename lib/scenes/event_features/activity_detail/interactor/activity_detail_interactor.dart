@@ -1,4 +1,5 @@
 import 'package:coffee_bean/data/repository/activity_repository.dart';
+import 'package:coffee_bean/scenes/event_features/activity_detail/activity_checkout_item.dart';
 import 'package:coffee_bean/scenes/event_features/activity_detail/activity_detail_builder.dart';
 import 'package:coffee_bean/scenes/event_features/activity_detail/interactor/activity_detail_event_state.dart';
 import 'package:db_core/db_core.dart';
@@ -38,19 +39,18 @@ class ActivityDetailInteractor extends CubitInteractor<ActivityDetailRoutable, A
     }
   }
 
-  void onShareTap() {
-    router?.shareActivity();
-  }
-
-  void onNavigateBack() {
-    router?.pop();
-  }
-
   void onDirectionTap() {
     DbToast.show("Đang mở bản đồ...");
   }
 
   void onPaymentTap() {
-    DbToast.show("Đang chuyển đến trang thanh toán...");
+    final checkoutItem = ActivityCheckoutItem(
+      activityId: activityId,
+      activityTitle: state.title,
+      activityAddress: state.address,
+      activityImageUrl: state.images.isNotEmpty ? state.images.first : null,
+      activityPrice: state.price,
+    );
+    router?.openCheckout(checkoutItem);
   }
 }
