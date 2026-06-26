@@ -100,7 +100,7 @@ class MemberCardWidget extends StatelessWidget {
   final MemberCardStyle style;
   final String name;
   final String id;
-  final String voucherCount;
+  final String couponCount;
   final String points;
   final String? avatarUrl;
   final String rankName;
@@ -112,7 +112,7 @@ class MemberCardWidget extends StatelessWidget {
     required this.style,
     required this.name,
     required this.id,
-    required this.voucherCount,
+    required this.couponCount,
     required this.points,
     this.avatarUrl,
     required this.rankName,
@@ -193,11 +193,11 @@ class MemberCardWidget extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 5),
-                  // Voucher & Points
+                  // Coupon & Points
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      _buildInfoItem('Voucher', voucherCount, 'Sử dụng ngay'),
+                      _buildInfoItem('Mã giảm giá', couponCount, 'Sử dụng ngay'),
                       const SizedBox(width: 50),
                       _buildInfoItem('Điểm tích lũy', points, null),
                     ],

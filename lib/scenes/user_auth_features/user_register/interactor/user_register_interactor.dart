@@ -77,16 +77,13 @@ class UserRegisterInteractor extends CubitInteractor<UserRegisterRouter, UserReg
       // Can luu session truoc de su dung accessToken cho cac API tiep theo
       await UserManager().saveSession(session);
 
-      // 2. Lấy thông tin Profile và lưu vào UserManager
+      // 2. Lấy thông tin Profile và counters, lưu vào UserManager
       // accessToken se duoc TokenInterceptor tu dong lay tu UserManager cho request nay
-      final profileRes = await _userRepo.getUserInfo();
-      final profileResult = profileRes.toResult();
-
-      if (profileResult case DbSuccess(data: final userInfo)) {
-        await UserManager().saveUserInfo(userInfo);
-      } else {
+      try {
+        await UserManager().refreshFullUserInfo();
+      } catch (e) {
         // Co the log loi hoac thong bao neu can, nhung van cho phep tiep tuc sang step Set Password
-        debugPrint("Fetch profile error: ${profileResult.errorOrNull?.message}");
+        debugPrint("Fetch profile and counters error: $e");
       }
 
       emit(UserRegisterSuccess());

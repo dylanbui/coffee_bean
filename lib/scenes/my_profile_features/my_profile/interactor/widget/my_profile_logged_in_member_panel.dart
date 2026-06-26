@@ -38,7 +38,7 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
                         style: MemberCardStyle.fromRank(userInfo?.memberRank ?? MemberRank.bronze),
                         name: userInfo?.nickname ?? 'MEMBER',
                         id: userInfo?.id.toString() ?? '---',
-                        voucherCount: '0', // TODO: Cần API voucher
+                        couponCount: userInfo?.unusedCouponCount?.toString() ?? '0',
                         points: userInfo?.point.toString() ?? '0',
                         rankName: userInfo?.level?.name ?? '---',
                         className: '---', // TODO: Cần API class

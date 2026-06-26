@@ -87,6 +87,9 @@ mixin _OrderConfirmationPaymentMixin on CubitInteractor<OrderConfirmationRoutabl
     final cartService = locator<CartService>();
     await cartService.clearCart();
 
+    // Cập nhật lại số lượng coupon sau khi thanh toán thành công
+    await UserManager().refreshCounters();
+
     emit(state.copyWith(
       status: OrderConfirmationStatus.success,
       orderNumber: '#CB${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}',

@@ -124,19 +124,13 @@ class AppInteractor extends CubitInteractor<AppRoutable, AppInteractorState> {
 
   /// Fetches profile from API and updates local storage.
   Future<void> _verifySession() async {
-    final result = (await _userRepository.getUserInfo()).toResult();
-
-    if (result case DbFailure(:final error)) {
-      // 401/403 means refresh failed in network layer
-      if (error.code == 401 || error.code == 403) {
-        throw error;
-      }
-      return;
-    }
-
-    if (result case DbSuccess(:final data)) {
-      await UserManager().saveUserInfo(data);
-      dLog("AppInteractor: User profile updated successfully.");
+    // Sử dụng hàm refreshFullUserInfo để lấy cả Profile và các thông số counters (Coupon count, etc.)
+    try {
+      await UserManager().refreshFullUserInfo();
+      dLog("AppInteractor: User profile and counters updated successfully.");
+    } catch (e) {
+      dLog("AppInteractor: Failed to refresh user info: $e");
+      // Nếu lỗi là 401/403 thì để Interceptor hoặc các tầng khác xử lý Logout nếu cần
     }
   }
 

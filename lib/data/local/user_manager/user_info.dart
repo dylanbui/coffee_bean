@@ -65,6 +65,7 @@ class UserInfo {
   final int experience;
   final UserLevel? level;
   final bool? brokerageEnabled; // Allow true/false/null
+  final int? unusedCouponCount;
 
   MemberRank get memberRank => MemberRank.fromLevel(level?.level ?? 1);
 
@@ -78,6 +79,7 @@ class UserInfo {
     required this.experience,
     this.level,
     this.brokerageEnabled,
+    this.unusedCouponCount,
   }) : avatar = avatar.isEmpty ? "https://i.pravatar.cc/150?img=19" : avatar;
 
   factory UserInfo.fromJson(Map<String, dynamic> json) => _$UserInfoFromJson(json);
@@ -93,6 +95,7 @@ class UserInfo {
     int? experience,
     UserLevel? level,
     bool? brokerageEnabled,
+    int? unusedCouponCount,
   }) {
     return UserInfo(
       id: id ?? this.id,
@@ -104,6 +107,7 @@ class UserInfo {
       experience: experience ?? this.experience,
       level: level ?? this.level,
       brokerageEnabled: brokerageEnabled ?? this.brokerageEnabled,
+      unusedCouponCount: unusedCouponCount ?? this.unusedCouponCount,
     );
   }
 }

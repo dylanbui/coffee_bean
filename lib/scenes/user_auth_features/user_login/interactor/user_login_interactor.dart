@@ -189,19 +189,23 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
   }
 
   void _fetchUserInfo(UserSession userSession) async {
-    // Fetch Profile info sau khi login
-    final profileResult = (await _userRepo.getUserInfo()).toResult();
-
-    if (profileResult case DbSuccess(data: final userInfo)) {
-      await UserManager().saveUserInfo(userInfo);
-      iLog("Login thành công: ${userInfo.nickname}");
-      emit(UserLoginSuccess(userSession));
-      router?.navigate(LoginSuccessRoute());
-    } else if (profileResult case DbFailure(:final error)) {
-      eLog("Fetch Profile Error: ${error.message}");
+    // Fetch Profile info và counters sau khi login
+    try {
+      await UserManager().refreshFullUserInfo();
+      final userInfo = UserManager().userInfo;
+      
+      if (userInfo != null) {
+        iLog("Login thành công: ${userInfo.nickname}");
+        emit(UserLoginSuccess(userSession));
+        router?.navigate(LoginSuccessRoute());
+      } else {
+        throw Exception("UserInfo is null after refresh");
+      }
+    } catch (e) {
+      eLog("Fetch Profile Error: $e");
       // OPTIONAL: Xóa session vừa lưu nếu không lấy được profile để tránh trạng thái lửng lơ
       await UserManager().doLogoutAndClearAll();
-      emit(UserLoginFailure(error: error.message));
+      emit(UserLoginFailure(error: e.toString()));
     }
   }
 }

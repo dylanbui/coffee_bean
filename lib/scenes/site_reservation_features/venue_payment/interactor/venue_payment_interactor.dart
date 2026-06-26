@@ -65,6 +65,9 @@ mixin _VenuePaymentPaymentMixin on CubitInteractor<VenuePaymentRoutable, VenuePa
     // Giả lập call API thanh toán
     await Future.delayed(const Duration(seconds: 2));
 
+    // Cập nhật lại số lượng coupon sau khi thanh toán thành công
+    await UserManager().refreshCounters();
+
     emit(state.copyWith(
       status: VenuePaymentStatus.success,
     ));

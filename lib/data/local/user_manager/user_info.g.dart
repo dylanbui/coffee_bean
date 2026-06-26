@@ -32,6 +32,7 @@ UserInfo _$UserInfoFromJson(Map<String, dynamic> json) => UserInfo(
       ? null
       : UserLevel.fromJson(json['level'] as Map<String, dynamic>),
   brokerageEnabled: json['brokerageEnabled'] as bool?,
+  unusedCouponCount: (json['unusedCouponCount'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
@@ -44,4 +45,5 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
   'experience': instance.experience,
   'level': instance.level,
   'brokerageEnabled': instance.brokerageEnabled,
+  'unusedCouponCount': instance.unusedCouponCount,
 };

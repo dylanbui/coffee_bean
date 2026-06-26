@@ -12,10 +12,9 @@ Product _$ProductFromJson(Map<String, dynamic> json) => Product(
   introduction: json['introduction'] as String,
   categoryId: (json['categoryId'] as num).toInt(),
   picUrl: json['picUrl'] as String,
-  sliderPicUrls: (json['sliderPicUrls'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList() ??
-      [],
+  sliderPicUrls: (json['sliderPicUrls'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
   specType: json['specType'] as bool,
   price: (json['price'] as num).toInt(),
   marketPrice: (json['marketPrice'] as num).toInt(),
@@ -62,10 +61,9 @@ ProductDetail _$ProductDetailFromJson(Map<String, dynamic> json) =>
       introduction: json['introduction'] as String,
       categoryId: (json['categoryId'] as num).toInt(),
       picUrl: json['picUrl'] as String,
-      sliderPicUrls: (json['sliderPicUrls'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
+      sliderPicUrls: (json['sliderPicUrls'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       specType: json['specType'] as bool,
       price: (json['price'] as num).toInt(),
       marketPrice: (json['marketPrice'] as num).toInt(),
