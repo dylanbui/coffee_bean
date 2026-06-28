@@ -45,6 +45,9 @@ class CheckoutOrderState extends BaseBlocState {
   final double usedPoints;
   final double pointConversionRate; 
 
+  final double optionsAmount;
+  final bool isOrderButtonEnabled;
+
   CheckoutOrderState({
     this.status = CheckoutOrderStatus.confirming,
     this.orderNumber,
@@ -54,21 +57,23 @@ class CheckoutOrderState extends BaseBlocState {
     this.preferences = const CheckoutPreferences(),
     this.userPoints = 0,
     this.usedPoints = 0,
-    this.pointConversionRate = 1000, 
+    this.pointConversionRate = 1000,
+    this.optionsAmount = 0,
+    this.isOrderButtonEnabled = true,
   });
 
   // Getters & Logic (Clone từ order_confirmation nhưng dùng baseAmount)
   double get baseAmount => checkoutItem?.baseAmount ?? 0;
-  
+
   double get potentialPointDiscount {
-    final maxPointsNeeded = baseAmount / pointConversionRate;
+    final maxPointsNeeded = (baseAmount + optionsAmount) / pointConversionRate;
     final pointsToUse = userPoints > maxPointsNeeded ? maxPointsNeeded : userPoints;
     return pointsToUse * pointConversionRate;
   }
 
   double get pointDiscount => usedPoints * pointConversionRate;
   double get totalDiscount => promotion.couponDiscount + pointDiscount;
-  double get finalAmount => (baseAmount - totalDiscount).clamp(0, double.infinity);
+  double get finalAmount => (baseAmount + optionsAmount - totalDiscount).clamp(0, double.infinity);
 
   bool get isLoading => uiStatus.isLoading;
   String get processingMessage => uiStatus.processingMessage;
@@ -84,6 +89,8 @@ class CheckoutOrderState extends BaseBlocState {
     double? userPoints,
     double? usedPoints,
     double? pointConversionRate,
+    double? optionsAmount,
+    bool? isOrderButtonEnabled,
   }) {
     return CheckoutOrderState(
       status: status ?? this.status,
@@ -95,6 +102,8 @@ class CheckoutOrderState extends BaseBlocState {
       userPoints: userPoints ?? this.userPoints,
       usedPoints: usedPoints ?? this.usedPoints,
       pointConversionRate: pointConversionRate ?? this.pointConversionRate,
+      optionsAmount: optionsAmount ?? this.optionsAmount,
+      isOrderButtonEnabled: isOrderButtonEnabled ?? this.isOrderButtonEnabled,
     );
   }
 
@@ -109,5 +118,7 @@ class CheckoutOrderState extends BaseBlocState {
         userPoints,
         usedPoints,
         pointConversionRate,
+        optionsAmount,
+        isOrderButtonEnabled,
       ];
 }

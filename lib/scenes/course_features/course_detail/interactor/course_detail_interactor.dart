@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/repository/course_repository.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_detail/course_checkout_item.dart';
@@ -58,12 +59,15 @@ class CourseDetailInteractor extends CubitInteractor<CourseDetailRoutable, Cours
   }
 
   void onBuyTap() {
+    final user = UserManager().userInfo;
     final checkoutItem = CourseCheckoutItem(
       courseId: courseId,
       courseTitle: state.courseTitle,
       instructorName: state.instructorName,
       courseImageUrl: state.images.isNotEmpty ? state.images.first : null,
       coursePrice: state.totalAmount,
+      initialNickname: user?.nickname ?? "",
+      initialPhone: user?.mobile ?? "",
     );
     router?.openCheckout(checkoutItem);
   }

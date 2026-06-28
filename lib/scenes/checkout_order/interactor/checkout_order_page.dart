@@ -84,6 +84,8 @@ class _CheckoutOrderPageState extends AppCubitState<CheckoutOrderPage, CheckoutO
                 _buildSummarySection(context, state),
                 const SizedBox(height: 12),
                 CheckoutOrderContentPrices(interactor: interactor),
+                const SizedBox(height: 12),
+                _buildOptionsSection(context, state),
               ],
             ),
           ),
@@ -108,5 +110,19 @@ class _CheckoutOrderPageState extends AppCubitState<CheckoutOrderPage, CheckoutO
     }
 
     return CheckoutOrderSummaryFallback(contract: contract);
+  }
+
+  Widget _buildOptionsSection(BuildContext context, CheckoutOrderState state) {
+    final contract = state.checkoutItem;
+    if (contract == null) return const SizedBox();
+
+    final optionsWidget = contract.buildOptionsWidget(context);
+    if (optionsWidget == null) return const SizedBox();
+
+    return Container(
+      color: Colors.white,
+      width: double.infinity,
+      child: optionsWidget,
+    );
   }
 }

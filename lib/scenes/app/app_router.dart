@@ -296,7 +296,7 @@ class AppRouter extends DbNoteRouter implements AppRoutable {
 
 // --- MOCK DATA FOR TESTING CHECKOUT ORDER ---
 
-class MockVenueCheckoutItem implements CheckoutItemContract {
+class MockVenueCheckoutItem extends CheckoutItemContract {
   @override
   String get title => "Sân Pickleball - TMLabs";
 

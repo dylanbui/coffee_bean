@@ -26,6 +26,15 @@ class CheckoutOrderInteractor extends CubitInteractor<CheckoutOrderRoutable, Che
     super.onDidBecomeActive();
     _loadInitialData();
 
+    // Lắng nghe thay đổi giá từ options
+    checkoutItem.totalOptionsAmountNotifier.addListener(_onPriceOptionsChanged);
+    // Lắng nghe trạng thái hợp lệ từ options
+    checkoutItem.isValidNotifier.addListener(_onValidationOptionsChanged);
+
+    // Lấy giá trị ban đầu
+    _onPriceOptionsChanged();
+    _onValidationOptionsChanged();
+
     // Lắng nghe sự kiện login thành công để reload UI giống order_confirmation
     collect(
       locator<DbEventBus>().on<UserLoginSuccessEvent>().listen((event) {
@@ -33,6 +42,22 @@ class CheckoutOrderInteractor extends CubitInteractor<CheckoutOrderRoutable, Che
         emit(state.copyWith());
       }),
     );
+  }
+
+  @override
+  void onWillResignActive() {
+    checkoutItem.totalOptionsAmountNotifier.removeListener(_onPriceOptionsChanged);
+    checkoutItem.isValidNotifier.removeListener(_onValidationOptionsChanged);
+    checkoutItem.dispose();
+    super.onWillResignActive();
+  }
+
+  void _onPriceOptionsChanged() {
+    emit(state.copyWith(optionsAmount: checkoutItem.totalOptionsAmountNotifier.value));
+  }
+
+  void _onValidationOptionsChanged() {
+    emit(state.copyWith(isOrderButtonEnabled: checkoutItem.isValidNotifier.value));
   }
 
   Future<void> _loadInitialData() async {

@@ -49,7 +49,7 @@ class CheckoutOrderFooter extends StatelessWidget {
                   text: "THANH TOÁN",
                   style: TMLabsButtonStyle.primary,
                   isLoading: state.status == CheckoutOrderStatus.processing,
-                  onPressed: () => _onPaymentPressed(context),
+                  onPressed: state.isOrderButtonEnabled ? () => _onPaymentPressed(context) : null,
                 ),
               ),
             ],
