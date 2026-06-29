@@ -6,7 +6,7 @@ class PromotionRepository extends BaseRepository {
   PromotionRepository({super.client});
 
   /// Lấy số lượng coupon chưa sử dụng
-  Future<ResultType<int>> getUnusedCouponCount() async {
+  Future<DbResult<int>> getUnusedCouponCount() async {
     return await networkClient
         .request('/app-api/promotion/coupon/get-unused-count', type: NetworkType.get)
         .mapResponse()

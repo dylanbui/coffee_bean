@@ -36,7 +36,7 @@ class ForgotPasswordInteractor extends CubitInteractor<ForgotPasswordRouter, For
     // Scene 4 for Forgot Password (user-reset-password)
     final result = await _authRepo.sendSmsCode(phoneNumber, SmsScene.resetPassword);
     
-    result.toResult().when(
+    result.when(
       success: (isSent) {
         if (isSent) {
           emit(ForgotPasswordSendCodeDone());

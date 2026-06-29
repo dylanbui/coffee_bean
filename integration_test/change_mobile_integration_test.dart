@@ -42,7 +42,7 @@ void main() {
       final authRepo = locator<AuthRepository>();
       final userRepo = locator<UserRepository>();
 
-      final loginResult = (await authRepo.login(testPhone, testPassword)).toResult();
+      final loginResult = await authRepo.login(testPhone, testPassword);
 
       if (loginResult case DbSuccess(data: final loginData)) {
         final session = UserSession(
@@ -54,7 +54,7 @@ void main() {
         await UserManager().saveSession(session);
         
         // Nạp Profile để sync trạng thái hoàn chỉnh
-        final profileResult = (await userRepo.getUserInfo()).toResult();
+        final profileResult = await userRepo.getUserInfo();
         if (profileResult case DbSuccess(data: final userInfo)) {
           await UserManager().saveUserInfo(userInfo);
           debugPrint("--- [SYSTEM] PROGRAMMATIC LOGIN SUCCESS. STARTING UI... ---");

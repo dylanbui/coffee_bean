@@ -28,8 +28,8 @@ class ProductDetailGetDataSuccess extends ProductDetailState {
   List<Object?> get props => [item];
 }
 
-class ProductDetailGetDataError<T extends BaseError> extends ProductDetailState {
-  final T error;
+class ProductDetailGetDataError extends ProductDetailState {
+  final DbError error;
 
   ProductDetailGetDataError(this.error);
 

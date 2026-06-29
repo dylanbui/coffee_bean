@@ -80,9 +80,9 @@ void main() {
 
       // 1. Login
       final loginRes = await authRepository.login(mobile, password);
-      expect(loginRes.toResult().isSuccess, true, reason: "Login with password should succeed");
+      expect(loginRes.isSuccess, true, reason: "Login with password should succeed");
       
-      final session = loginRes.toResult().dataOrNull;
+      final session = loginRes.dataOrNull;
       expect(session, isNotNull);
       debugPrint("Login Success! UserID: ${session?.userId}");
 
@@ -93,9 +93,9 @@ void main() {
 
       // 3. Fetch Profile
       final profileRes = await userRepository.getUserInfo();
-      expect(profileRes.toResult().isSuccess, true, reason: "Fetch profile after login should succeed");
+      expect(profileRes.isSuccess, true, reason: "Fetch profile after login should succeed");
       
-      final userInfo = profileRes.toResult().dataOrNull;
+      final userInfo = profileRes.dataOrNull;
       expect(userInfo, isNotNull);
       expect(userInfo?.id, session.userId);
       debugPrint("Profile Fetched: ${userInfo?.nickname}, Mobile: ${userInfo?.mobile}");
@@ -105,14 +105,14 @@ void main() {
       debugPrint("\n--- LOGIN WITH SMS TEST ---");
       // 1. Send SMS
       final sendSmsRes = await authRepository.sendSmsCode(mobile, SmsScene.smsLogin);
-      expect(sendSmsRes.toResult().isSuccess, true, reason: "Send SMS should succeed");
+      expect(sendSmsRes.isSuccess, true, reason: "Send SMS should succeed");
       debugPrint("SMS Sent successfully");
 
       // 2. Login with SMS
       final loginRes = await authRepository.smsLogin(mobile, smsCode);
-      expect(loginRes.toResult().isSuccess, true, reason: "Login with SMS should succeed");
+      expect(loginRes.isSuccess, true, reason: "Login with SMS should succeed");
       
-      final session = loginRes.toResult().dataOrNull;
+      final session = loginRes.dataOrNull;
       expect(session, isNotNull);
       debugPrint("SMS Login Success! UserID: ${session?.userId}");
 
@@ -123,9 +123,9 @@ void main() {
 
       // 4. Fetch Profile
       final profileRes = await userRepository.getUserInfo();
-      expect(profileRes.toResult().isSuccess, true, reason: "Fetch profile after SMS login should succeed");
+      expect(profileRes.isSuccess, true, reason: "Fetch profile after SMS login should succeed");
       
-      final userInfo = profileRes.toResult().dataOrNull;
+      final userInfo = profileRes.dataOrNull;
       expect(userInfo, isNotNull);
       expect(userInfo?.id, session.userId);
       debugPrint("Profile Fetched: ${userInfo?.nickname}, Mobile: ${userInfo?.mobile}");

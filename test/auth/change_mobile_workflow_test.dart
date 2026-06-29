@@ -68,8 +68,7 @@ void main() {
 
     // 0. LOGIN
     debugPrint("\n👉 STEP 0: LOGIN WITH CURRENT PHONE");
-    final loginRes = await authRepository.login(currentPhone, password);
-    final loginResult = loginRes.toResult();
+    final loginResult = await authRepository.login(currentPhone, password);
     if (loginResult case DbSuccess(:final data)) {
       debugPrint("Login Success! Token: ${data.accessToken}");
       tokenProvider.setToken(data.accessToken);
@@ -79,23 +78,21 @@ void main() {
 
     // 1. TEST SEND SMS (SCENE 2)
     debugPrint("\n👉 STEP 1a: SEND SMS (SCENE 2) FOR CURRENT PHONE - SHOULD FAIL");
-    final res1a = await authRepository.sendSmsCode(currentPhone, SmsScene.updatePhoneNumber);
-    final result1a = res1a.toResult();
+    final result1a = await authRepository.sendSmsCode(currentPhone, SmsScene.updatePhoneNumber);
     expect(result1a.isFailure, true, reason: "Should fail for current phone");
     debugPrint("✅ Correctly received error: ${result1a.errorOrNull?.message}");
 
     debugPrint("\n👉 STEP 1b: SEND SMS (SCENE 2) FOR NEW PHONE - SHOULD SUCCESS");
     final res1b = await authRepository.sendSmsCode(newPhone, SmsScene.updatePhoneNumber);
-    expect(res1b.toResult().isSuccess, true, reason: "Send SMS for new phone failed");
+    expect(res1b.isSuccess, true, reason: "Send SMS for new phone failed");
     debugPrint("✅ Send SMS for new phone success!");
 
     // 2. UPDATE MOBILE
     debugPrint("\n👉 STEP 2: UPDATE MOBILE (WITHOUT OLD CODE)");
-    final updateRes = await userRepository.updateMobile(
+    final updateResult = await userRepository.updateMobile(
       mobile: newPhone,
       code: fixedCode,
     );
-    final updateResult = updateRes.toResult();
 
     if (updateResult case DbSuccess(:final data)) {
       debugPrint("✅ Update Success: $data");
@@ -106,8 +103,7 @@ void main() {
 
     // 3. RE-LOGIN
     debugPrint("\n👉 STEP 3: RE-LOGIN WITH NEW PHONE");
-    final reLoginRes = await authRepository.login(newPhone, password);
-    final reLoginResult = reLoginRes.toResult();
+    final reLoginResult = await authRepository.login(newPhone, password);
 
     if (reLoginResult case DbSuccess(:final data)) {
       debugPrint("✅ Re-login Success with NEW PHONE! Token: ${data.accessToken}");

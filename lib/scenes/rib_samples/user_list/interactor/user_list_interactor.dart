@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:db_core/commons_constants.dart';
-import 'package:db_core/state_management/lib_bloc/bloc_interactor.dart';
-import 'package:db_core/state_management/lib_bloc/constants.dart';
+import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_list/interactor/user_list_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_list/user_list_router.dart';
@@ -23,12 +21,12 @@ class UserListInteractor extends BlocInteractor<UserListRoutable, BaseBlocEvent,
 
   Future<void> _onFetchData(UserListFetchDataEvent event, Emitter<BaseBlocState> emit) async {
     emit(UserListInProgress());
-    final (users, error) = await _userRepository.fetchUsers();
+    final result = await _userRepository.fetchUsers();
 
-    if (users != null) {
+    if (result case DbSuccess(data: final users)) {
       emit(UserListGetDataSuccess(users));
-    } else {
-      emit(UserListGetDataError(error ?? BaseError(333, 'An unknown error occurred')));
+    } else if (result case DbFailure(:final error)) {
+      emit(UserListGetDataError(error));
     }
   }
 }

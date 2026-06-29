@@ -2,7 +2,6 @@ import 'package:db_core/commons_constants.dart';
 import 'package:db_core/network/base_repository.dart';
 import 'package:db_core/network/network_upload_response.dart';
 import 'package:coffee_bean/data/model/file_upload_response.dart';
-import 'package:dio/dio.dart';
 
 class FileRepository extends BaseRepository {
   

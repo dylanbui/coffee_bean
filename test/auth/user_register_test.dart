@@ -95,7 +95,7 @@ void main() {
       // STEP 1: Send SMS Code
       debugPrint("\n👉 STEP 1: SEND SMS CODE");
       final sendSmsRes = await authRepository.sendSmsCode(mobile, SmsScene.smsLogin);
-      expect(sendSmsRes.toResult().isSuccess, true, reason: "Send SMS should succeed");
+      expect(sendSmsRes.isSuccess, true, reason: "Send SMS should succeed");
       debugPrint("Result Step 1: SMS Sent successfully");
 
       await wait();
@@ -104,11 +104,11 @@ void main() {
       // STEP 2: SMS Login (Auto-registers if new user)
       debugPrint("\n👉 STEP 2: SMS LOGIN (Auto-register)");
       final loginRes = await authRepository.smsLogin(mobile, smsCode);
-      expect(loginRes.toResult().isSuccess, true, reason: "SMS Login should succeed");
+      expect(loginRes.isSuccess, true, reason: "SMS Login should succeed");
       
-      final session = loginRes.toResult().dataOrNull;
+      final session = loginRes.dataOrNull;
       expect(session, isNotNull);
-      debugPrint("Result Step 2: Login Success! UserID: \${session?.userId}");
+      debugPrint("Result Step 2: Login Success! UserID: ${session?.userId}");
       
       tokenProvider.setTokens(session!.accessToken, session.refreshToken, expires: session.expiresTime);
       expect(session.expiresTime, isNotNull);
@@ -120,7 +120,7 @@ void main() {
       // STEP 3: Set Password
       debugPrint("\n👉 STEP 3: SET PASSWORD");
       final setPwdRes = await authRepository.updatePassword(newPassword);
-      expect(setPwdRes.toResult().isSuccess, true, reason: "Set password should succeed");
+      expect(setPwdRes.isSuccess, true, reason: "Set password should succeed");
       debugPrint("Result Step 3: Password set successfully");
 
       await wait();
@@ -129,12 +129,12 @@ void main() {
       // STEP 4: Verify by fetching profile
       debugPrint("\n👉 STEP 4: FETCH PROFILE");
       final profileRes = await userRepository.getUserInfo();
-      expect(profileRes.toResult().isSuccess, true, reason: "Fetch profile should succeed");
+      expect(profileRes.isSuccess, true, reason: "Fetch profile should succeed");
       
-      final userInfo = profileRes.toResult().dataOrNull;
+      final userInfo = profileRes.dataOrNull;
       expect(userInfo, isNotNull);
       expect(userInfo?.id, session.userId);
-      debugPrint("Result Step 4: Profile Fetched! Nickname: \${userInfo?.nickname}");
+      debugPrint("Result Step 4: Profile Fetched! Nickname: ${userInfo?.nickname}");
 
       debugPrint("\n🏁 --- REGISTRATION WORKFLOW TEST FINISHED --- 🏁");
     });
@@ -145,18 +145,17 @@ void main() {
       // STEP 1: Send SMS Code
       debugPrint("\n👉 STEP 1: SEND SMS CODE");
       final sendSmsRes = await authRepository.sendSmsCode(mobile, SmsScene.smsLogin);
-      expect(sendSmsRes.toResult().isSuccess, true, reason: "Send SMS should succeed");
+      expect(sendSmsRes.isSuccess, true, reason: "Send SMS should succeed");
       debugPrint("Result Step 1: SMS Sent successfully");
 
       await wait();
 
       // STEP 2: SMS Login with Wrong Code
-      debugPrint("\n👉 STEP 2: SMS LOGIN WITH WRONG CODE (\${wrongSmsCode})");
-      final loginRes = await authRepository.smsLogin(mobile, wrongSmsCode);
+      debugPrint("\n👉 STEP 2: SMS LOGIN WITH WRONG CODE (${wrongSmsCode})");
+      final result = await authRepository.smsLogin(mobile, wrongSmsCode);
       
-      final result = loginRes.toResult();
       expect(result.isFailure, true, reason: "SMS Login should fail with wrong code");
-      debugPrint("Result Step 2: Expected failure occurred. Error: \${result.errorOrNull?.message}");
+      debugPrint("Result Step 2: Expected failure occurred. Error: ${result.errorOrNull?.message}");
 
       debugPrint("\n🏁 --- WRONG OTP TEST FINISHED --- 🏁");
     });

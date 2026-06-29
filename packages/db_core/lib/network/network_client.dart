@@ -158,12 +158,7 @@ class NetworkClient {
   // T only is : List, Map<String, dynamic>
   // Dung cho tat ca cac truong hop can call server Json
   // Simple call for https://jsonplaceholder.typicode.com/posts?_start=0&_limit=5
-  Future<T?> simpleCall<T>(String url, {NetworkType type = NetworkType.get, Dictionary? requestData}) async {
-    // Check kieu nya bi sai, tam thoi dong lai
-    // if (T is! List || T is! Map<String, dynamic>) {
-    //   // return const Tuple(null, DbError(500, "Cast error: T only is : List, Map<String, dynamic>")));
-    //   throw Exception("Cast error: T only is : List, Map<String, dynamic>");
-    // }
+  Future<DbResult<T>> simpleCall<T>(String url, {NetworkType type = NetworkType.get, Dictionary? requestData}) async {
     try {
       Response<T> result;
       if (type == NetworkType.post) {
@@ -171,9 +166,15 @@ class NetworkClient {
       } else {
         result = await _dio.get<T>(url);
       }
-      return result.data;
-    } on DioException {
-      return null;
+
+      if (result.data == null) {
+        return DbFailure(NetworkError(404, "Data is null"));
+      }
+      return DbSuccess(result.data as T);
+    } on DioException catch (ex) {
+      return DbFailure(NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
+    } catch (e) {
+      return DbFailure(NetworkError(500, e.toString()));
     }
   }
 

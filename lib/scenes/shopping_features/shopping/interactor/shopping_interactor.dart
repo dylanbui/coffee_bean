@@ -65,17 +65,17 @@ class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState
     final storeId = StoreManager().selectedStore?.id;
 
     // 1. Fetch Categories từ API
-    final resultCat = (await _productRepo.getProductCategoryList(storeId)).toResult();
+    final resultCat = await _productRepo.getProductCategoryList(storeId);
     List<Category> categories = [];
     if (resultCat case DbSuccess(:final data)) {
       categories = data;
     }
 
     // 2. Fetch Products (SPU) từ API
-    final resultSpu = (await _productRepo.getProductSpuPage(
+    final resultSpu = await _productRepo.getProductSpuPage(
       storeId: storeId,
       pageSize: 200,
-    )).toResult();
+    );
     
     List<Product> products = [];
     if (resultSpu case DbSuccess(:final data)) {

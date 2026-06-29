@@ -27,7 +27,7 @@ class AppAgreementInteractor extends CubitInteractor<AppAgreementRoutable, AppAg
 
   Future<void> loadData() async {
     emit(AppAgreementInProgress());
-    final result = (await locator<InfraRepository>().getAgreementDictionary(type)).toResult();
+    final result = await locator<InfraRepository>().getAgreementDictionary(type);
     if (result case DbSuccess(:final data)) {
       emit(AppAgreementSuccess(data: data));
     } else if (result case DbFailure(:final error)) {

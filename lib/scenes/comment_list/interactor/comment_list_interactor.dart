@@ -20,14 +20,13 @@ class CommentListInteractor extends CubitInteractor<CommentListRoutable, Comment
     if (state.isLoading) return;
     emit(state.copyWith(isLoading: true, pageNo: 1));
 
-    final res = await _commentRepository.getCommentPage(
+    final result = await _commentRepository.getCommentPage(
       spuId: state.productId,
       type: state.type,
       pageNo: 1,
       pageSize: state.pageSize,
     );
 
-    final result = res.toResult();
     if (result case DbSuccess(:final data)) {
       final comments = data.list;
       emit(state.copyWith(
@@ -47,14 +46,13 @@ class CommentListInteractor extends CubitInteractor<CommentListRoutable, Comment
     final nextPage = state.pageNo + 1;
     emit(state.copyWith(isLoadMore: true));
 
-    final res = await _commentRepository.getCommentPage(
+    final result = await _commentRepository.getCommentPage(
       spuId: state.productId,
       type: state.type,
       pageNo: nextPage,
       pageSize: state.pageSize,
     );
 
-    final result = res.toResult();
     if (result case DbSuccess(:final data)) {
       final moreComments = data.list;
       final updatedComments = List<ProductComment>.from(state.comments)..addAll(moreComments);

@@ -31,14 +31,13 @@ class CommentListSmallInteractor extends CubitInteractor<CommentListRoutable, Co
     if (state.isLoading) return;
     emit(state.copyWith(isLoading: true));
 
-    final res = await _commentRepository.getCommentPage(
+    final result = await _commentRepository.getCommentPage(
       spuId: productId,
       type: type,
       pageNo: 1,
       pageSize: limitComments,
     );
 
-    final result = res.toResult();
     if (result case DbSuccess(:final data)) {
       emit(state.copyWith(
         comments: data.list,

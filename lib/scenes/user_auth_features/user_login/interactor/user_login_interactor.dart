@@ -115,7 +115,7 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
     emit(UserLoginInProgress());
     iLog("Login with Password: $phoneNumber");
 
-    final loginResult = (await _authRepo.login(phoneNumber, password)).toResult();
+    final loginResult = await _authRepo.login(phoneNumber, password);
 
     if (loginResult case DbFailure(:final error)) {
       eLog("Login PW Error: ${error.message}");
@@ -140,7 +140,7 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
     emit(UserLoginInProgress());
     iLog("Login with SMS: $phoneNumber");
 
-    final loginResult = (await _authRepo.smsLogin(phoneNumber, sms)).toResult();
+    final loginResult = await _authRepo.smsLogin(phoneNumber, sms);
 
     if (loginResult case DbFailure(:final error)) {
       eLog("Login SMS Error: ${error.message}");
@@ -165,7 +165,7 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
   void sendSmsCode(String phoneNumber) async {
     iLog("Sending SMS Code to $phoneNumber");
     final result = await _authRepo.sendSmsCode(phoneNumber, SmsScene.smsLogin);
-    result.toResult().when(
+    result.when(
       success: (isSent) {
         if (!isSent) {
           emit(UserLoginFailure(error: "Send SMS Failed"));

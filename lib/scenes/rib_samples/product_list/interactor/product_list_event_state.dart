@@ -58,8 +58,8 @@ class ProductListGetDataSuccess extends ProductListState {
   List<Object?> get props => [items, hasReachedMax, totalItems, currentPage];
 }
 
-class ProductListGetDataError<T extends BaseError> extends ProductListState {
-  final T error;
+class ProductListGetDataError extends ProductListState {
+  final DbError error;
 
   ProductListGetDataError(this.error);
 

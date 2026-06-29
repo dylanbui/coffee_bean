@@ -3,7 +3,7 @@ import 'package:db_core/utils/logger.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_detail/interactor/product_detail_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_detail/interactor/product_detail_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
+import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/shared/widget/error_view.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:flutter/material.dart';

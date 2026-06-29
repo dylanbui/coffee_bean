@@ -20,7 +20,7 @@ class ChangeMobileInteractor extends CubitInteractor<ChangeMobileRoutable, Chang
 
   Future<void> sendSmsCode(String mobile) async {
     emit(state.copyWith(isLoading: true, error: null));
-    final result = (await _authRepository.sendSmsCode(mobile, SmsScene.updatePhoneNumber)).toResult();
+    final result = await _authRepository.sendSmsCode(mobile, SmsScene.updatePhoneNumber);
     
     if (result case DbSuccess()) {
       emit(state.copyWith(isLoading: false));
@@ -33,10 +33,10 @@ class ChangeMobileInteractor extends CubitInteractor<ChangeMobileRoutable, Chang
     emit(state.copyWith(isLoading: true, error: null));
     
     // Đã bỏ qua oldCode vì backend hiện tại không bắt buộc
-    final result = (await _userRepository.updateMobile(
+    final result = await _userRepository.updateMobile(
       mobile: newMobile,
       code: newCode,
-    )).toResult();
+    );
 
     if (result case DbSuccess(:final data)) {
       if (data) {

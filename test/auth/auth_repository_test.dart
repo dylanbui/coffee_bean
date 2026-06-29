@@ -77,14 +77,14 @@ void main() {
 
     debugPrint("\n👉 STEP 1: SEND SMS CODE");
     final res1 = await authRepository.sendSmsCode(mobile, SmsScene.smsLogin);
-    debugPrint("Result Step 1: Success = ${res1.toResult().isSuccess}, Error = ${res1.toResult().errorOrNull?.message}");
+    debugPrint("Result Step 1: Success = ${res1.isSuccess}, Error = ${res1.errorOrNull?.message}");
     
     debugPrint("\n👉 STEP 2: SMS LOGIN");
     final res2 = await authRepository.smsLogin(mobile, code);
-    debugPrint("Result Step 2: Success = ${res2.toResult().isSuccess}, Error = ${res2.toResult().errorOrNull?.message}");
+    debugPrint("Result Step 2: Success = ${res2.isSuccess}, Error = ${res2.errorOrNull?.message}");
 
-    if (res2.toResult().isSuccess) {
-      final data = res2.toResult().dataOrNull;
+    if (res2.isSuccess) {
+      final data = res2.dataOrNull;
       final token = data?.accessToken;
       debugPrint("Received Access Token: $token");
       debugPrint("Expires At: ${UtcUtils.formatTimestamp(data?.expiresTime ?? 0)}");
@@ -96,7 +96,7 @@ void main() {
     debugPrint("\n👉 STEP 3: RESET PASSWORD");
     if (tokenProvider.hasToken) {
       final res3 = await authRepository.resetPassword(mobile, code, newPassword);
-      debugPrint("Result Step 3: Success = ${res3.toResult().isSuccess}, Error = ${res3.toResult().errorOrNull?.message}");
+      debugPrint("Result Step 3: Success = ${res3.isSuccess}, Error = ${res3.errorOrNull?.message}");
     }
     
     debugPrint("\n🏁 --- WORKFLOW TEST FINISHED --- 🏁");

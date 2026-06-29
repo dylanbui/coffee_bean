@@ -1,6 +1,4 @@
-import 'package:db_core/commons_constants.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:db_core/utils/locator.dart';
+import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/data/repository/upload_files_repository.dart';
 import 'package:coffee_bean/scenes/rib_samples/upload_files/interactor/upload_files_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/upload_files/upload_files_router.dart';
@@ -14,7 +12,7 @@ class UploadFilesInteractor extends CubitInteractor<UploadFilesRoutable, UploadF
   Future<void> uploadFile(String filePath) async {
     emit(const UploadFilesInProgress());
 
-    final (message, error) = await _uploadRepository.uploadFile(
+    final result = await _uploadRepository.uploadFile(
       filePath,
       onSendProgress: (sent, total) {
         if (total != -1) {
@@ -24,10 +22,10 @@ class UploadFilesInteractor extends CubitInteractor<UploadFilesRoutable, UploadF
       },
     );
 
-    if (message != null) {
+    if (result case DbSuccess(data: final message)) {
       emit(UploadFilesSuccess(message));
-    } else {
-      emit(UploadFilesError(error ?? const BaseError(500, "Unknown upload error")));
+    } else if (result case DbFailure(:final error)) {
+      emit(UploadFilesError(error));
     }
   }
 

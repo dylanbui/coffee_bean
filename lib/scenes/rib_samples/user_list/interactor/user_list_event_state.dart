@@ -25,7 +25,7 @@ class UserListGetDataSuccess extends BaseBlocState {
 
 /// State representing an error during data fetch.
 class UserListGetDataError extends BaseBlocState {
-  final BaseError error;
+  final DbError error;
   UserListGetDataError(this.error);
   @override
   List<Object> get props => [error];

@@ -7,8 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:db_core/commons_constants.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/data/repository/product_repository.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_detail/interactor/product_detail_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_detail/product_detail_router.dart';
@@ -29,11 +28,12 @@ class ProductDetailInteractor extends CubitInteractor<ProductDetailRoutable, Pro
   Future loadData() async {
     emit(ProductDetailInProgress());
 
-    final (product, error) = await _productRepository.getProductDetail(productId);
-    if (product != null) {
+    final result = await _productRepository.getProductSpuDetail(productId);
+    
+    if (result case DbSuccess(data: final product)) {
       emit(ProductDetailGetDataSuccess(product));
-    } else {
-      emit(ProductDetailGetDataError(error ?? const BaseError(404, "Lỗi không load được dữ liệu")));
+    } else if (result case DbFailure(:final error)) {
+      emit(ProductDetailGetDataError(error));
     }
   }
 }

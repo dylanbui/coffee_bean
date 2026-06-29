@@ -24,37 +24,37 @@ class ProductRepository extends BaseRepository {
       getProductSpuPage(storeId: storeId, pageSize: 200),
     ]);
 
-    // Chuyển đổi từ ResultType (Record) sang DbResult (Sealed Class) để pattern matching đồng nhất
-    final resCat = (results[0] as ResultType<List<Category>>).toResult();
-    final resSpu = (results[1] as ResultType<ProductPageResult>).toResult();
+    final resCat = results[0] as DbResult<List<Category>>;
+    final resSpu = results[1] as DbResult<ProductPageResult>;
 
-    if (resCat is DbSuccess<List<Category>> && resSpu is DbSuccess<ProductPageResult>) {
-      final categories = resCat.data;
-      final products = resSpu.data.list;
+    if (resCat case DbSuccess(data: final categories)) {
+      if (resSpu case DbSuccess(data: final spuData)) {
+        final products = spuData.list;
 
-      // 3. Xử lý Grouping
-      final productsByCategory = <int, List<Product>>{};
-      for (var cat in categories) {
-        productsByCategory[cat.id] = products.where((p) => p.categoryId == cat.id).toList();
-      }
+        // 3. Xử lý Grouping
+        final productsByCategory = <int, List<Product>>{};
+        for (var cat in categories) {
+          productsByCategory[cat.id] = products.where((p) => p.categoryId == cat.id).toList();
+        }
 
-      final shoppingData = ShoppingData(
-        categories: categories,
-        allProducts: products,
-        productsByCategory: productsByCategory,
-      );
-
-      // 4. Lưu Cache
-      if (cacheConfig != null) {
-        await cache.set(
-          cacheConfig.key,
-          shoppingData.toJson(),
-          ttl: cacheConfig.duration,
-          group: cacheConfig.group,
+        final shoppingData = ShoppingData(
+          categories: categories,
+          allProducts: products,
+          productsByCategory: productsByCategory,
         );
-      }
 
-      return DbSuccess(shoppingData);
+        // 4. Lưu Cache
+        if (cacheConfig != null) {
+          await cache.set(
+            cacheConfig.key,
+            shoppingData.toJson(),
+            ttl: cacheConfig.duration,
+            group: cacheConfig.group,
+          );
+        }
+
+        return DbSuccess(shoppingData);
+      }
     }
 
     // Ưu tiên trả về lỗi từ API nếu có
@@ -63,7 +63,7 @@ class ProductRepository extends BaseRepository {
   }
 
   /// Lấy danh sách Product Categories theo storeId
-  Future<ResultType<List<Category>>> getProductCategoryList(int? storeId) async {
+  Future<DbResult<List<Category>>> getProductCategoryList(int? storeId) async {
     return await networkClient
         .request('/app-api/product/category/list', params: {'storeId': storeId})
         .mapResponseTo(Category.fromJson)
@@ -71,7 +71,7 @@ class ProductRepository extends BaseRepository {
   }
 
   /// Lấy danh sách sản phẩm (SPU) phân trang
-  Future<ResultType<ProductPageResult>> getProductSpuPage({
+  Future<DbResult<ProductPageResult>> getProductSpuPage({
     int? storeId,
     int? categoryId,
     String? keyword,
@@ -92,7 +92,7 @@ class ProductRepository extends BaseRepository {
   }
 
   /// Lấy chi tiết sản phẩm (SPU Detail bao gồm SKUs)
-  Future<ResultType<ProductDetail>> getProductSpuDetail(int id) async {
+  Future<DbResult<ProductDetail>> getProductSpuDetail(int id) async {
     return await networkClient
         .request('/app-api/product/spu/get-detail', params: {'id': id})
         .mapResponseTo(ProductDetail.fromJson)
@@ -100,7 +100,7 @@ class ProductRepository extends BaseRepository {
   }
 
   /// Tìm kiếm sản phẩm theo danh sách ID
-  Future<ResultType<List<Product>>> getProductSpuListByIds(List<int> ids) async {
+  Future<DbResult<List<Product>>> getProductSpuListByIds(List<int> ids) async {
     return await networkClient
         .request('/app-api/product/spu/list-by-ids', params: {'ids': ids.join(',')})
         .mapResponseTo(Product.fromJson)

@@ -41,7 +41,7 @@ class UpdateProfileInteractor extends CubitInteractor<UpdateProfileRoutable, Upd
 
     // Nếu có file mới chọn, thực hiện upload trước
     if (state.selectedAvatarFile != null) {
-      final uploadResult = (await _infraRepository.uploadFile(state.selectedAvatarFile!)).toResult();
+      final uploadResult = await _infraRepository.uploadFile(state.selectedAvatarFile!);
       
       if (uploadResult case DbFailure(:final error)) {
         emit(state.copyWith(isLoading: false, error: "Upload ảnh thất bại: ${error.message}"));
@@ -53,11 +53,11 @@ class UpdateProfileInteractor extends CubitInteractor<UpdateProfileRoutable, Upd
       }
     }
 
-    final result = (await _userRepository.updateUserInfo(
+    final result = await _userRepository.updateUserInfo(
       nickname: nickname,
       avatar: finalAvatarUrl,
       sex: sex,
-    )).toResult();
+    );
 
     if (result case DbFailure(:final error)) {
       emit(state.copyWith(

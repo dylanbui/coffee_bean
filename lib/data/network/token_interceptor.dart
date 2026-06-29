@@ -136,11 +136,11 @@ class TokenInterceptor extends QueuedInterceptorsWrapper {
           .mapResponseTo(AuthLoginResponse.fromJson)
           .toObject();
 
-      if (result.data != null) {
+      if (result case DbSuccess(data: final loginData)) {
         // Cập nhật Access Token mới và thời gian hết hạn vào bộ nhớ của App
         await tokenProvider.updateAccessToken(
-          result.data!.accessToken, 
-          expiresTime: result.data!.expiresTime
+          loginData.accessToken, 
+          expiresTime: loginData.expiresTime
         );
         return true;
       } else {

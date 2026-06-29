@@ -9,7 +9,7 @@ import 'package:coffee_bean/data/model/product.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_list/interactor/product_list_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/product_list/interactor/product_list_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/shared/widget/cached_image_widget.dart';
+import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/shared/widget/empty_view.dart';
 import 'package:coffee_bean/shared/widget/error_view.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';

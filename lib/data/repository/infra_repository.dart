@@ -14,14 +14,14 @@ class InfraRepository extends BaseRepository {
   /// 1=NOTICE, 2=ANNOUNCEMENT, 3=AGREEMENT, 4=PRIVACY_POLICY
   /// API: GET /app-api/system/notice/get-agreement
   /// Cache for 3 hours
-  Future<ResultType<Dictionary>> getAgreementDictionary(int type) async {
+  Future<DbResult<Dictionary>> getAgreementDictionary(int type) async {
     final cacheKey = 'agreement_$type';
     final cacheProvider = locator<DbCacheProvider>();
 
     // 1. Try to get from Cache
     final Dictionary? cachedData = await cacheProvider.get<Dictionary>(cacheKey);
     if (cachedData != null) {
-      return (data: cachedData, error: null);
+      return DbSuccess(cachedData);
     }
 
     // 2. If no cache, call API
@@ -34,7 +34,7 @@ class InfraRepository extends BaseRepository {
         .toObject();
 
     // 3. Save to Cache if success
-    if (result.data case final Dictionary data?) {
+    if (result case DbSuccess(data: final Dictionary data)) {
       await cacheProvider.set(
         cacheKey,
         data,
@@ -47,7 +47,7 @@ class InfraRepository extends BaseRepository {
 
   /// Upload file to server
   /// API: POST /app-api/infra/file/upload
-  Future<ResultType<String>> uploadFile(File file, {String directory = 'avatar'}) async {
+  Future<DbResult<String>> uploadFile(File file, {String directory = 'avatar'}) async {
     final uploadData = UploadData(
       fieldName: 'file',
       filePath: file.path,

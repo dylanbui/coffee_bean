@@ -107,14 +107,14 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
 
 
   Future<void> doDailySignIn() async {
-    final result = (await _userRepo.createSignInRecord()).toResult();
+    final result = await _userRepo.createSignInRecord();
 
     if (result case DbSuccess()) {
       // 1. Lưu trạng thái điểm danh vào Local Storage
       await UserManager().saveLastSignInDate();
       
       // 2. Lấy lại userInfo mới để cập nhật điểm trên UI
-      final infoRes = (await _userRepo.getUserInfo()).toResult();
+      final infoRes = await _userRepo.getUserInfo();
       if (infoRes case DbSuccess(:final data)) {
         await UserManager().saveUserInfo(data);
       }

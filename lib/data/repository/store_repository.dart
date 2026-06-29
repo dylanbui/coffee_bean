@@ -6,7 +6,7 @@ class StoreRepository extends BaseRepository {
   StoreRepository({super.client});
 
   /// GET /app-api/trade/delivery/pick-up-store/list
-  Future<ResultType<List<StoreModel>>> getPickUpStoreList({DbLocation? location}) async {
+  Future<DbResult<List<StoreModel>>> getPickUpStoreList({DbLocation? location}) async {
     final Map<String, dynamic> params = {};
     if (location != null) {
       params['latitude'] = location.latitude;
@@ -20,7 +20,7 @@ class StoreRepository extends BaseRepository {
   }
 
   /// GET /app-api/trade/delivery/pick-up-store/get
-  Future<ResultType<StoreModel>> getPickUpStoreDetail(int id) async {
+  Future<DbResult<StoreModel>> getPickUpStoreDetail(int id) async {
     return await networkClient
         .request('/app-api/trade/delivery/pick-up-store/get', params: {'id': id})
         .mapResponseTo(StoreModel.fromJson)
@@ -29,7 +29,7 @@ class StoreRepository extends BaseRepository {
 
   /// Helper: Get default store (first one from list)
   Future<StoreModel?> getDefaultStore({DbLocation? location}) async {
-    final result = (await getPickUpStoreList(location: location)).toResult();
+    final result = await getPickUpStoreList(location: location);
     if (result case DbSuccess(data: final list)) {
       if (list.isNotEmpty) {
         return list.first;

@@ -73,13 +73,14 @@ class ProductListInteractor extends CubitInteractor<ProductListRoutable, Product
       emit(ProductListInProgress());
     }
 
-    // Sử dụng Positional Records Destructuring: (products, err)
-    final (products, err) = await _productRepository.getProducts(limit: _limitItem, offset: 0);
-    if (products != null) {
+    final result = await _productRepository.getProductSpuPage(pageSize: _limitItem, pageNo: 1);
+    
+    if (result case DbSuccess(data: final pageResult)) {
+      final products = pageResult.list;
       bool hasReachedMax = products.length < _limitItem;
-      emit(ProductListGetDataSuccess(products, hasReachedMax, products.length, 0));
-    } else {
-      emit(ProductListGetDataError(err ?? const BaseError(404, "Lỗi không load được dữ liệu")));
+      emit(ProductListGetDataSuccess(products, hasReachedMax, pageResult.total, 1));
+    } else if (result case DbFailure(:final error)) {
+      emit(ProductListGetDataError(error));
     }
   }
 
@@ -88,21 +89,20 @@ class ProductListInteractor extends CubitInteractor<ProductListRoutable, Product
     if (currentState is ProductListGetDataSuccess && !currentState.hasReachedMax) {
       emit(ProductListInLoadMoreProgress(currentState.items));
 
-      // Tính toán offset dựa trên số lượng item hiện có
-      int currentOffset = currentState.items.length;
+      int nextPage = currentState.currentPage + 1;
 
-      // Bóc tách theo vị trí (Positional)
-      final (newList, err) = await _productRepository.getProducts(limit: _limitItem, offset: currentOffset);
+      final result = await _productRepository.getProductSpuPage(pageSize: _limitItem, pageNo: nextPage);
 
-      if (newList != null) {
-        bool hasReachedMax = newList.length < _limitItem;
+      if (result case DbSuccess(data: final pageResult)) {
+        final newList = pageResult.list;
+        bool hasReachedMax = (currentState.items.length + newList.length) >= pageResult.total;
         List<Product> allProducts = currentState.items + newList;
 
-        emit(ProductListGetDataSuccess(allProducts, hasReachedMax, allProducts.length, currentState.currentPage + 1));
-      } else {
+        emit(ProductListGetDataSuccess(allProducts, hasReachedMax, pageResult.total, nextPage));
+      } else if (result case DbFailure(:final error)) {
         // Trả về lại state Success cũ để không bị mất list
         emit(ProductListGetDataSuccess(currentState.items, currentState.hasReachedMax, currentState.totalItems, currentState.currentPage));
-        if (err != null) eLog("Load more error: ${err.message}");
+        eLog("Load more error: ${error.message}");
       }
     }
   }

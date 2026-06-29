@@ -73,18 +73,22 @@ class NetworkDioApi {
     }
   }
 
-  Future<ResultType<T>> makeCall<T>(String url, {NetworkType type = NetworkType.get, Dictionary? params}) async {
+  Future<DbResult<T>> makeCall<T>(String url, {NetworkType type = NetworkType.get, Dictionary? params}) async {
     try {
       Response<T> result;
       if (type == NetworkType.post) {
-        result = await _dio.post<T>(url, data: params,);
+        result = await _dio.post<T>(url, data: params);
       } else {
         result = await _dio.get<T>(url);
       }
-      return (data: result.data as T, error: null);
-
+      if (result.data == null) {
+        return DbFailure(NetworkError(404, "Data is null"));
+      }
+      return DbSuccess(result.data as T);
     } on DioException catch (ex) {
-      return (data: null, error: NetworkError(ex.hashCode, ex.toString()));
+      return DbFailure(NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
+    } catch (e) {
+      return DbFailure(NetworkError(500, e.toString()));
     }
   }
 
@@ -92,44 +96,37 @@ class NetworkDioApi {
   // T only is : List, Map<String, dynamic>
   // Dung cho tat ca cac truong hop can call server Json
   // Simple call for https://jsonplaceholder.typicode.com/posts?_start=0&_limit=5
-  Future<T?> simpleCall<T>(String url, {NetworkType type = NetworkType.get, Dictionary? params}) async {
-
-    // Check kieu nya bi sai, tam thoi dong lai
-    // if (T is! List || T is! Map<String, dynamic>) {
-    //   // return const Tuple(null, DbError(500, "Cast error: T only is : List, Map<String, dynamic>")));
-    //   throw Exception("Cast error: T only is : List, Map<String, dynamic>");
-    // }
-
+  Future<DbResult<T>> simpleCall<T>(String url, {NetworkType type = NetworkType.get, Dictionary? params}) async {
     try {
       Response<T> result;
       if (type == NetworkType.post) {
-        result = await _dio.post<T>(url, data: params,);
+        result = await _dio.post<T>(url, data: params);
       } else {
         result = await _dio.get<T>(url);
       }
-      return result.data;
-    } on DioException {
-      return null;
+
+      if (result.data == null) {
+        return DbFailure(NetworkError(404, "Data is null"));
+      }
+      return DbSuccess(result.data as T);
+    } on DioException catch (ex) {
+      return DbFailure(NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
+    } catch (e) {
+      return DbFailure(NetworkError(500, e.toString()));
     }
   }
 
   // GOOD
   // T only is : List, Map<String, dynamic>
-  Future<(T?, NetworkError?)> call<T>(String url, {NetworkType type = NetworkType.get, Dictionary? params}) async {
-
-    if (T is! List || T is! Map<String, dynamic>) {
-      // return const Tuple(null, DbError(500, "Cast error: T only is : List, Map<String, dynamic>"));
-      throw Exception("Cast error: T only is : List, Map<String, dynamic>");
-    }
-
+  Future<DbResult<T>> call<T>(String url, {NetworkType type = NetworkType.get, Dictionary? params}) async {
     try {
       Response<Dictionary> result;
       if (type == NetworkType.post) {
-        result = await _dio.post(url, data: params,);
+        result = await _dio.post(url, data: params);
       } else {
         result = await _dio.get(url);
       }
-      //TODO: Them cac load khac DELETE, PUT
+      // TODO: Them cac loai khac DELETE, PUT
 
       final json = result.data;
       if (json != null) {
@@ -137,25 +134,23 @@ class NetworkDioApi {
         // Kiem tra cac loi tu server tra ve va xu ly
         if (networkResponse.result == false) {
           // Cac loi tra ve tu server
-          return (null, NetworkError(int.parse(networkResponse.code), networkResponse.message));
+          return DbFailure(NetworkError(int.tryParse(networkResponse.code) ?? 500, networkResponse.message));
         }
-        return (networkResponse.data as T, null);
+        return DbSuccess(networkResponse.data as T);
       }
 
       // return ve loi mac dinh
-      return (null, NetworkError(4040, "result.data == NULL"));
+      return DbFailure(NetworkError(4040, "result.data == NULL"));
     } on DioException catch (ex) {
-      return (null, NetworkError(ex.hashCode, ex.toString()));
-    } on Error catch (error) {
-      return (null, NetworkError(error.hashCode, "Error : ${error.toString()}"));
-    } on Exception catch (ex) {
-      return (null, NetworkError(ex.hashCode, "Exception : ${ex.toString()}"));
+      return DbFailure(NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
+    } catch (e) {
+      return DbFailure(NetworkError(500, e.toString()));
     }
   }
 
   // GOOD
   // https://www.topcoder.com/thrive/articles/networking-with-flutter
-  Future<(UploadResult?, NetworkError?)> doUpload(String url, UploadData uploadData) async {
+  Future<DbResult<UploadResult>> doUpload(String url, UploadData uploadData) async {
     // The image to be uploaded
     // final imagePath = 'path/to/image.jpg';
     // Filling the HTML form programmatically
@@ -169,13 +164,10 @@ class NetworkDioApi {
       //Response<Dictionary> result = await _dio.post(url, data: payload, onSendProgress: uploadData?.progressCallback);
 
       Response<Dictionary> result = await _dio.post(url, data: payload, onSendProgress: (sent, total) {
-
         // If the 'content-length' header is not sent from the server, the value
         // of 'total' will always be set to -1 so we want to make sure that the
         // progress percentage can be computed.
-        if (total != -1) {
-
-        }
+        if (total != -1) {}
         var callback = uploadData.progressCallback;
         if (callback != null) {
           callback(sent, total);
@@ -189,19 +181,17 @@ class NetworkDioApi {
         // Kiem tra cac loi tu server tra ve va xu ly
         if (networkResponse.result == false) {
           // Cac loi tra ve tu server
-          return (null, NetworkError(int.parse(networkResponse.code), networkResponse.message));
+          return DbFailure(NetworkError(int.tryParse(networkResponse.code) ?? 500, networkResponse.message));
         }
-        return (UploadResult.fromMap(networkResponse.data), null);
+        return DbSuccess(UploadResult.fromMap(networkResponse.data));
       }
 
       // return ve loi mac dinh
-      return (null, NetworkError(4040, "result.data == NULL"));
+      return DbFailure(NetworkError(4040, "result.data == NULL"));
     } on DioException catch (ex) {
-      return (null, NetworkError(ex.hashCode, ex.toString()));
-    } on Error catch (error) {
-      return (null, NetworkError(error.hashCode, "Error : ${error.toString()}"));
-    } on Exception catch (ex) {
-      return (null, NetworkError(ex.hashCode, "Exception : ${ex.toString()}"));
+      return DbFailure(NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
+    } catch (e) {
+      return DbFailure(NetworkError(500, e.toString()));
     }
   }
 

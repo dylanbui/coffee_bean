@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:db_core/commons_constants.dart';
-import 'package:db_core/state_management/lib_bloc/bloc_interactor.dart';
-import 'package:db_core/state_management/lib_bloc/constants.dart';
+import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_event_state.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/interactor/user_detail_presenter.dart';
 import 'package:coffee_bean/scenes/rib_samples/user_detail/user_detail_router.dart';
@@ -25,12 +23,12 @@ class UserDetailInteractor extends BlocPresenterInteractor<UserDetailRoutable, U
   Future<void> _onFetchData(UserDetailFetchEvent event, Emitter<BaseBlocState> emit) async {
     emit(UserDetailInProgress());
 
-    final (user, error) = await presenter.fetchUserDetail(event.userId);
+    final result = await presenter.fetchUserDetail(event.userId);
 
-    if (user != null) {
+    if (result case DbSuccess(data: final user)) {
       emit(UserDetailGetDataSuccess(user));
-    } else {
-      emit(UserDetailGetDataError(error ?? BaseError(111, "Invalid response from presenter.")));
+    } else if (result case DbFailure(:final error)) {
+      emit(UserDetailGetDataError(error));
     }
   }
 }

@@ -18,7 +18,7 @@ class AuthRepository extends BaseRepository {
   AuthRepository({super.client});
 
   /// 1. Send SMS Code
-  Future<ResultType<bool>> sendSmsCode(String mobile, SmsScene scene) async {
+  Future<DbResult<bool>> sendSmsCode(String mobile, SmsScene scene) async {
     return await networkClient
         .request('/app-api/member/auth/send-sms-code', 
             type: NetworkType.post, 
@@ -29,7 +29,7 @@ class AuthRepository extends BaseRepository {
   }
 
   /// 2. Validate SMS Code
-  Future<ResultType<bool>> validateSmsCode(String mobile, SmsScene scene, String code) async {
+  Future<DbResult<bool>> validateSmsCode(String mobile, SmsScene scene, String code) async {
     return await networkClient
         .request('/app-api/member/auth/validate-sms-code', 
             type: NetworkType.post, 
@@ -40,7 +40,7 @@ class AuthRepository extends BaseRepository {
   }
 
   /// 3. SMS Login
-  Future<ResultType<AuthLoginResponse>> smsLogin(String mobile, String code) async {
+  Future<DbResult<AuthLoginResponse>> smsLogin(String mobile, String code) async {
     return await networkClient
         .request('/app-api/member/auth/sms-login', 
             type: NetworkType.post, 
@@ -51,7 +51,7 @@ class AuthRepository extends BaseRepository {
   }
 
   /// 3. Login with Mobile & Password
-  Future<ResultType<AuthLoginResponse>> login(String mobile, String password) async {
+  Future<DbResult<AuthLoginResponse>> login(String mobile, String password) async {
     return await networkClient
         .request('/app-api/member/auth/login', 
             type: NetworkType.post, 
@@ -62,7 +62,7 @@ class AuthRepository extends BaseRepository {
   }
 
   /// 4. Logout
-  Future<ResultType<bool>> logout() async {
+  Future<DbResult<bool>> logout() async {
     return await networkClient
         .request('/app-api/member/auth/logout', type: NetworkType.post)
         .mapResponse()
@@ -70,7 +70,7 @@ class AuthRepository extends BaseRepository {
   }
 
   /// 5. Reset Password (Forgot Password)
-  Future<ResultType<bool>> resetPassword(String mobile, String code, String password) async {
+  Future<DbResult<bool>> resetPassword(String mobile, String code, String password) async {
     return await networkClient
         .request('/app-api/member/user/reset-password', 
             type: NetworkType.put, 
@@ -80,7 +80,7 @@ class AuthRepository extends BaseRepository {
   }
 
   /// 6. Update Password (Register Step 3 or Change Password)
-  Future<ResultType<bool>> updatePassword(String password, {String? code}) async {
+  Future<DbResult<bool>> updatePassword(String password, {String? code}) async {
     final Dictionary params = {'password': password};
     if (code != null) params['code'] = code;
     
@@ -93,7 +93,7 @@ class AuthRepository extends BaseRepository {
   }
 
   /// 7. Refresh Token
-  Future<ResultType<AuthLoginResponse>> refreshToken(String refreshToken) async {
+  Future<DbResult<AuthLoginResponse>> refreshToken(String refreshToken) async {
     return await networkClient
         .request('/app-api/member/auth/refresh-token', 
             type: NetworkType.post, 

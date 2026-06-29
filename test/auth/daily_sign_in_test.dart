@@ -94,8 +94,7 @@ void main() {
 
     // 3. Daily Sign-In
     debugPrint("\n👉 STEP 3: PERFORM DAILY SIGN-IN");
-    final signInRes = await userRepository.createSignInRecord();
-    final signInResult = signInRes.toResult();
+    final signInResult = await userRepository.createSignInRecord();
     
     if (signInResult case DbSuccess(:final data)) {
         debugPrint("✅ Sign-In Success: $data");
@@ -127,8 +126,7 @@ void main() {
 
     // 5. Repeat Sign-In
     debugPrint("\n👉 STEP 5: REPEAT SIGN-IN (EXPECT FAILURE)");
-    final repeatRes = await userRepository.createSignInRecord();
-    final repeatResult = repeatRes.toResult();
+    final repeatResult = await userRepository.createSignInRecord();
     
     if (repeatResult case DbFailure(:final error)) {
         debugPrint("✅ SUCCESS: Correctly received error for repeated sign-in: ${error.message}");

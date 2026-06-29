@@ -44,7 +44,7 @@ class SetPasswordInteractor extends CubitInteractor<DbNoteRoutable, SetPasswordS
   Future<void> doSetPassword(String password) async {
     emit(SetPasswordInProgress());
     
-    ResultType<bool> result;
+    DbResult<bool> result;
     
     if (mode == SetPasswordMode.registration) {
       // Step 3 Registration (Logged in via smsLogin)
@@ -54,7 +54,7 @@ class SetPasswordInteractor extends CubitInteractor<DbNoteRoutable, SetPasswordS
       result = await _authRepo.resetPassword(mobile, code, password);
     }
     
-    result.toResult().when(
+    result.when(
       success: (isSuccess) {
         if (isSuccess) {
           emit(SetPasswordSuccess());

@@ -1,35 +1,10 @@
 import 'package:db_core/network/network_common.dart';
 
-extension ResultTypeExtension<T> on ResultType<T> {
-  /// Nếu thành công, trả về dữ liệu (chắc chắn khác null).
-  /// Nếu thất bại, ném ra NetworkError để khối try-catch xử lý.
-  T getOrThrow() {
-    if (error != null) {
-      throw error!;
-    }
-    if (data == null) {
-      throw NetworkError(500, "Dữ liệu trả về trống (Null Data)");
-    }
-    return data!;
-  }
-
-  /// Chuyển đổi từ Record sang Sealed Class để bóc tách an toàn hơn
-  DbResult<T> toResult() {
-    if (error != null) {
-      return DbFailure(error!);
-    }
-    if (data == null) {
-      return DbFailure(NetworkError(500, "Dữ liệu trả về trống"));
-    }
-    return DbSuccess(data!);
-  }
-}
-
 // =========================================================================
 // SEALED CLASS SOLUTION - DbResult / DbSuccess / DbFailure
 // =========================================================================
 
-/// Lớp kết quả Sealed Class (Adapter) bọc ngoài ResultType (Record)
+/// Lớp kết quả Sealed Class (Adapter)
 sealed class DbResult<T> {
   const DbResult();
 
@@ -38,19 +13,40 @@ sealed class DbResult<T> {
     required R Function(T data) success,
     required R Function(NetworkError error) failure,
   }) {
-    if (this is DbSuccess<T>) {
-      return success((this as DbSuccess<T>).data);
-    } else {
-      return failure((this as DbFailure<T>).error);
-    }
+    final result = this;
+    return switch (result) {
+      DbSuccess<T>(:final data) => success(data),
+      DbFailure<T>(:final error) => failure(error),
+    };
+  }
+
+  /// Chuyển đổi dữ liệu nếu thành công
+  DbResult<R> map<R>(R Function(T data) transform) {
+    final result = this;
+    return switch (result) {
+      DbSuccess<T>(:final data) => DbSuccess(transform(data)),
+      DbFailure<T>(:final error) => DbFailure(error),
+    };
+  }
+
+  /// Xử lý kết quả và trả về một giá trị duy nhất (tương tự when nhưng ngắn gọn hơn)
+  R fold<R>(R Function(NetworkError error) failure, R Function(T data) success) {
+    final result = this;
+    return switch (result) {
+      DbSuccess<T>(:final data) => success(data),
+      DbFailure<T>(:final error) => failure(error),
+    };
   }
 
   /// Getters tiện lợi
   bool get isSuccess => this is DbSuccess<T>;
   bool get isFailure => this is DbFailure<T>;
 
-  T? get dataOrNull => isSuccess ? (this as DbSuccess<T>).data : null;
-  NetworkError? get errorOrNull => isFailure ? (this as DbFailure<T>).error : null;
+  T? get data => isSuccess ? (this as DbSuccess<T>).data : null;
+  NetworkError? get error => isFailure ? (this as DbFailure<T>).error : null;
+
+  T? get dataOrNull => data;
+  NetworkError? get errorOrNull => error;
 }
 
 class DbSuccess<T> extends DbResult<T> {

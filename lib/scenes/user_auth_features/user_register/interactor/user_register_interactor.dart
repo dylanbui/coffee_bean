@@ -49,7 +49,7 @@ class UserRegisterInteractor extends CubitInteractor<UserRegisterRouter, UserReg
 
   void sendSmsCode(String phoneNumber) async {
     final result = await _authRepo.sendSmsCode(phoneNumber, SmsScene.smsLogin);
-    result.toResult().when(
+    result.when(
       success: (isSent) {
         if (!isSent) {
           emit(UserRegisterError(message: "Send SMS Failed (Server returned false)"));
@@ -64,8 +64,7 @@ class UserRegisterInteractor extends CubitInteractor<UserRegisterRouter, UserReg
   void doRegister(String phoneNumber, String smsCode, String? invitationCode) async {
     emit(UserRegisterInProgress());
 
-    final loginRes = await _authRepo.smsLogin(phoneNumber, smsCode);
-    final loginResult = loginRes.toResult();
+    final loginResult = await _authRepo.smsLogin(phoneNumber, smsCode);
 
     if (loginResult case DbFailure(:final error)) {
       emit(UserRegisterError(message: error.message));

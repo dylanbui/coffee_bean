@@ -42,7 +42,7 @@ class UploadFilesSuccess extends UploadFilesState {
 
 /// State indicating an error during upload.
 class UploadFilesError extends UploadFilesState {
-  final BaseError error;
+  final DbError error;
   const UploadFilesError(this.error);
 
   @override

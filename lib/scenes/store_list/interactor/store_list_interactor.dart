@@ -107,9 +107,9 @@ class StoreListInteractor extends CubitInteractor<StoreListRoutable, StoreListSt
 
     // Fetch from Repository
     final location = position != null ? DbLocation(latitude: position.latitude, longitude: position.longitude) : null;
-    final result = (await _storeRepository.getPickUpStoreList(
+    final result = await _storeRepository.getPickUpStoreList(
       location: location,
-    )).toResult();
+    );
 
     List<StoreModel> apiStores = [];
     if (result case DbSuccess(data: final list)) {

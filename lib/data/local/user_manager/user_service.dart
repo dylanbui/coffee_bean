@@ -51,8 +51,8 @@ class UserService {
       _promoRepo.getUnusedCouponCount(),
     ]);
 
-    final userResult = (results[0] as ResultType<UserInfo>).toResult();
-    final couponResult = (results[1] as ResultType<int>).toResult();
+    final userResult = results[0] as DbResult<UserInfo>;
+    final couponResult = results[1] as DbResult<int>;
 
     if (userResult case DbSuccess(data: final info)) {
       int? currentCouponCount = _userManager.userInfo?.unusedCouponCount;
@@ -72,7 +72,7 @@ class UserService {
   Future<void> refreshCounters() async {
     if (!_userManager.isLogin || _userManager.userInfo == null) return;
 
-    final result = (await _promoRepo.getUnusedCouponCount()).toResult();
+    final result = await _promoRepo.getUnusedCouponCount();
     if (result case DbSuccess(data: final count)) {
       await _userManager.saveUserInfo(
         _userManager.userInfo!.copyWith(unusedCouponCount: count)

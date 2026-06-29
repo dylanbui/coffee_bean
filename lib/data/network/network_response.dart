@@ -50,7 +50,7 @@ class NetworkResponse<T> {
 extension NetworkMappingProject<T> on Future<Response<T>> {
   /// Xử lý phản hồi theo cấu trúc NetworkResponse cũ/tương thích ngược
   /// Khuyến khích sử dụng mapResponseTo().toObject() thay thế
-  Future<ResultType<R>> mapToNetworkResponse<R>(JsonMapper<dynamic> mapper) async {
+  Future<DbResult<R>> mapToNetworkResponse<R>(JsonMapper<dynamic> mapper) async {
     try {
       final response = await this;
       final rawData = response.data;
@@ -58,16 +58,19 @@ extension NetworkMappingProject<T> on Future<Response<T>> {
       if (rawData is Map<String, dynamic>) {
         final networkRes = NetworkResponse<R>.fromJson(rawData, mapper);
         if (networkRes.isSuccess) {
-          return (data: networkRes.data, error: null);
+          if (networkRes.data == null) {
+            return DbFailure(NetworkError(500, "Dữ liệu trả về trống"));
+          }
+          return DbSuccess(networkRes.data!);
         } else {
-          return (data: null, error: NetworkError(networkRes.code, networkRes.msg));
+          return DbFailure(NetworkError(networkRes.code, networkRes.msg));
         }
       }
-      return (data: null, error: NetworkError(500, "Invalid JSON format"));
+      return DbFailure(NetworkError(500, "Invalid JSON format"));
     } on DioException catch (ex) {
-      return (data: null, error: NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
+      return DbFailure(NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
     } catch (e) {
-      return (data: null, error: NetworkError(500, e.toString()));
+      return DbFailure(NetworkError(500, e.toString()));
     }
   }
 }
@@ -84,7 +87,7 @@ class NetworkResponseDataMapper<T, M> {
   NetworkResponseDataMapper(this.responseFuture, this.mapper);
 
   /// Hàm nội bộ: Bóc tách vỏ bọc JSON, kiểm tra 'code' và lấy ra trường 'data'
-  Future<(dynamic innerData, NetworkError? error)> _extractInnerData() async {
+  Future<DbResult<dynamic>> _extractInnerData() async {
     try {
       final response = await responseFuture;
       final rawData = response.data;
@@ -96,25 +99,26 @@ class NetworkResponseDataMapper<T, M> {
 
         if (code == 0) {
           // Thành công: Trả về phần data bên trong
-          return (rawData['data'], null);
+          return DbSuccess(rawData['data']);
         } else {
           // Lỗi nghiệp vụ từ Server
-          return (null, NetworkError(code, msg));
+          return DbFailure(NetworkError(code, msg));
         }
       }
-      return (null, NetworkError(500, "Invalid JSON wrapper format"));
+      return DbFailure(NetworkError(500, "Invalid JSON wrapper format"));
     } on DioException catch (ex) {
-      return (null, NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
+      return DbFailure(NetworkError(ex.response?.statusCode ?? 500, ex.message ?? "Error Connect"));
     } catch (e) {
-      return (null, NetworkError(500, e.toString()));
+      return DbFailure(NetworkError(500, e.toString()));
     }
   }
 
   /// Parse trường 'data' thành một Object đơn
-  Future<ResultType<M>> toObject() async {
-    final (innerData, error) = await _extractInnerData();
-    if (error != null) return (data: null, error: error);
-    if (innerData == null) return (data: null, error: null);
+  Future<DbResult<M>> toObject() async {
+    final result = await _extractInnerData();
+    if (result case DbFailure(:final error)) return DbFailure(error);
+    final innerData = result.dataOrNull;
+    if (innerData == null) return DbFailure(NetworkError(500, "Dữ liệu trả về trống"));
 
     // Nếu là Map mới dùng mapper để bóc tách
     if (innerData is Map<String, dynamic>) {
@@ -123,35 +127,36 @@ class NetworkResponseDataMapper<T, M> {
 
     // Nếu là kiểu Primitive (bool, int, String...) trả về trực tiếp
     try {
-      return (data: innerData as M?, error: null);
+      return DbSuccess(innerData as M);
     } catch (e) {
-      return (data: null, error: NetworkError(500, "Type mismatch: expected $M but got ${innerData.runtimeType}"));
+      return DbFailure(NetworkError(500, "Type mismatch: expected $M but got ${innerData.runtimeType}"));
     }
   }
 
   /// Parse trường 'data' thành một Danh sách Object
-  Future<ResultType<List<M>>> toList() async {
-    final (innerData, error) = await _extractInnerData();
-    if (error != null) return (data: null, error: error);
-    return NetworkParsingUtils.parseToList(innerData, mapper);
+  Future<DbResult<List<M>>> toList() async {
+    final result = await _extractInnerData();
+    if (result case DbFailure(:final error)) return DbFailure(error);
+    return NetworkParsingUtils.parseToList(result.dataOrNull, mapper);
   }
 
   /// Parse trường 'data' thành một giá trị Primitive (bool, int, String, double...)
   /// Đảm bảo bắt đúng kiểu dữ liệu V yêu cầu.
-  Future<ResultType<V>> toValue<V>() async {
-    final (innerData, error) = await _extractInnerData();
-    if (error != null) return (data: null, error: error);
+  Future<DbResult<V>> toValue<V>() async {
+    final result = await _extractInnerData();
+    if (result case DbFailure(:final error)) return DbFailure(error);
+    final innerData = result.dataOrNull;
 
     if (innerData is V) {
-      return (data: innerData, error: null);
+      return DbSuccess(innerData);
     }
 
     if (innerData == null) {
-      return (data: null, error: null);
+      return DbFailure(NetworkError(500, "Dữ liệu trả về trống"));
     }
 
     // Trường hợp kiểu dữ liệu không khớp
-    return (data: null, error: NetworkError(500, "Type mismatch: expected $V but got ${innerData.runtimeType}"));
+    return DbFailure(NetworkError(500, "Type mismatch: expected $V but got ${innerData.runtimeType}"));
   }
 }
 

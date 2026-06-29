@@ -33,7 +33,7 @@ class ProductDetailInteractor extends CubitInteractor<ProductDetailRoutable, Pro
   Future<void> _loadProductDetail() async {
     emit(state.copyWith(isLoading: true));
 
-    final result = (await _productRepository.getProductSpuDetail(productId)).toResult();
+    final result = await _productRepository.getProductSpuDetail(productId);
 
     if (result case DbSuccess(data: final product)) {
       // [TRACKING]: Log product view detail

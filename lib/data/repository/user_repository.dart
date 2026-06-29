@@ -13,7 +13,7 @@ class UserRepository extends BaseRepository {
   UserRepository({super.client});
 
   /// Lấy thông tin cá nhân (Profile)
-  Future<ResultType<UserInfo>> getUserInfo() async {
+  Future<DbResult<UserInfo>> getUserInfo() async {
     return await networkClient
         .request('/app-api/member/user/get', type: NetworkType.get)
         .mapResponseTo(UserInfo.fromJson)
@@ -21,7 +21,7 @@ class UserRepository extends BaseRepository {
   }
 
   /// Lấy danh sách users (Sử dụng cấu trúc Wrapper Project)
-  Future<ResultType<List<User>>> fetchUsers() async {
+  Future<DbResult<List<User>>> fetchUsers() async {
     return await networkClient
         .request('/users')
         .mapResponseTo(User.fromJson)
@@ -29,7 +29,7 @@ class UserRepository extends BaseRepository {
   }
 
   /// Lấy chi tiết user
-  Future<ResultType<User>> fetchUserDetail(int userId) async {
+  Future<DbResult<User>> fetchUserDetail(int userId) async {
     return await networkClient
         .request('/users/$userId')
         .mapResponseTo(User.fromJson)
@@ -37,7 +37,7 @@ class UserRepository extends BaseRepository {
   }
 
   /// Tạo user mới với POST data (Theo yêu cầu của bạn)
-  Future<ResultType<User>> createUser({
+  Future<DbResult<User>> createUser({
     required String name,
     required String email,
     required String password,
@@ -60,7 +60,7 @@ class UserRepository extends BaseRepository {
   }
 
   /// Cập nhật thông tin cá nhân
-  Future<ResultType<bool>> updateUserInfo({
+  Future<DbResult<bool>> updateUserInfo({
     required String nickname,
     required String avatar,
     required int sex,
@@ -78,7 +78,7 @@ class UserRepository extends BaseRepository {
   }
 
   /// Thay đổi số điện thoại
-  Future<ResultType<bool>> updateMobile({
+  Future<DbResult<bool>> updateMobile({
     required String mobile,
     required String code,
     String? oldCode,
@@ -98,7 +98,7 @@ class UserRepository extends BaseRepository {
   }
 
   /// Điểm danh hàng ngày
-  Future<ResultType<Dictionary>> createSignInRecord() async {
+  Future<DbResult<Dictionary>> createSignInRecord() async {
     return await networkClient
         .request('/app-api/member/sign-in/record/create', type: NetworkType.post)
         .mapResponse()
@@ -106,7 +106,7 @@ class UserRepository extends BaseRepository {
   }
 
   /// Ví dụ cũ dùng Local JSON
-  Future<(List<PointBreakdownItem>?, NetworkError?)> fetchPointBreakdown({int offset = 0, int limit = 20}) async {
+  Future<DbResult<List<PointBreakdownItem>>> fetchPointBreakdown({int offset = 0, int limit = 20}) async {
     try {
       final String response = await rootBundle.loadString('assets/json/reward_point_history.json');
       final data = await json.decode(response);
@@ -117,16 +117,16 @@ class UserRepository extends BaseRepository {
         final start = offset;
         final end = (offset + limit) > allItems.length ? allItems.length : (offset + limit);
         
-        if (start >= allItems.length) return (<PointBreakdownItem>[], null);
+        if (start >= allItems.length) return const DbSuccess(<PointBreakdownItem>[]);
         
         // Giả lập delay mạng
         await Future.delayed(const Duration(milliseconds: 500));
         
-        return (allItems.sublist(start, end), null);
+        return DbSuccess(allItems.sublist(start, end));
       }
-      return (<PointBreakdownItem>[], null);
+      return const DbSuccess(<PointBreakdownItem>[]);
     } catch (e) {
-      return (null, NetworkError(500, e.toString()));
+      return DbFailure(NetworkError(500, e.toString()));
     }
   }
 }

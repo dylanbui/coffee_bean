@@ -37,12 +37,12 @@ class PointBreakdownInteractor extends CubitInteractor<PointBreakdownRoutable, P
       }
 
       // 3. Gọi Repository lấy dữ liệu
-      final (items, error) = await _userRepository.fetchPointBreakdown(
+      final result = await _userRepository.fetchPointBreakdown(
         offset: _currentOffset,
         limit: _limit,
       );
 
-      if (items != null) {
+      if (result case DbSuccess(data: final items)) {
         // Lấy danh sách hiện tại: nếu refresh thì bắt đầu từ rỗng, nếu load more thì lấy list cũ
         final List<PointBreakdownItem> currentList = isRefresh ? [] : List.from(state.items);
         final newList = [...currentList, ...items];

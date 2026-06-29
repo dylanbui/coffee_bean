@@ -1,5 +1,4 @@
-import 'package:db_core/architecture_ribs/note_interactor.dart';
-import 'package:db_core/commons_constants.dart';
+import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/data/model/user.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
 
@@ -12,20 +11,16 @@ class UserDetailPresenter implements DbNotePresentable {
   UserDetailPresenter(this._userRepository);
 
   /// Fetches the details for a specific user.
-  Future<(User?, BaseError?)> fetchUserDetail(int userId) async {
-    final (user, error) = await _userRepository.fetchUserDetail(userId);
-    if (error != null) {
-      return (null, BaseError(error.code, error.message));
-    }
-    return (user, null);
+  Future<DbResult<User>> fetchUserDetail(int userId) async {
+    return await _userRepository.fetchUserDetail(userId);
   }
 
   /// Placeholder for an update user function.
-  Future<(bool, BaseError?)> updateUser(User user) async {
+  Future<DbResult<bool>> updateUser(User user) async {
     // In a real app, you would call something like:
-    // final (success, error) = await _userRepository.updateUser(user.id, user.toJson());
+    // final result = await _userRepository.updateUser(user.id, user.toJson());
     await Future.delayed(const Duration(milliseconds: 500));
-    return (true, null);
+    return const DbSuccess(true);
   }
 
   @override

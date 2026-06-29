@@ -94,7 +94,7 @@ void main() {
 
     // BƯỚC 1: Login với Username/Password
     debugPrint("\n👉 STEP 1: LOGIN (POST /app-api/member/auth/login)");
-    final loginRes = (await authRepository.login(mobile, password)).toResult();
+    final loginRes = await authRepository.login(mobile, password);
     
     if (loginRes case DbSuccess(data: final authData)) {
       debugPrint("✅ Login thành công!");
@@ -104,7 +104,7 @@ void main() {
       
       // BƯỚC 2: Lấy thông tin User
       debugPrint("\n👉 STEP 2: GET USER INFO (GET /app-api/member/user/get)");
-      final userRes = (await userRepository.getUserInfo()).toResult();
+      final userRes = await userRepository.getUserInfo();
       if (userRes case DbSuccess(data: final user)) {
         debugPrint("✅ Lấy profile thành công: ${user.nickname} (ID: ${user.id})");
       } else if (userRes case DbFailure(:final error)) {
@@ -113,7 +113,7 @@ void main() {
 
       // BƯỚC 3: Chủ động Refresh Token
       debugPrint("\n👉 STEP 3: ACTIVE REFRESH TOKEN (POST /app-api/member/auth/refresh-token)");
-      final refreshRes = (await authRepository.refreshToken(authData.refreshToken)).toResult();
+      final refreshRes = await authRepository.refreshToken(authData.refreshToken);
       if (refreshRes case DbSuccess(data: final newAuth)) {
         debugPrint("✅ Chủ động Refresh thành công.");
         debugPrint("New AccessToken: ${newAuth.accessToken.substring(0, 15)}...");
@@ -130,7 +130,7 @@ void main() {
       // Lần gọi này, Interceptor sẽ gửi request với "INVALID_OR_EXPIRED_TOKEN"
       // Server trả về 401 -> Interceptor tự động thực hiện _executeRefreshTokenFlow
       // Sau đó Retry lại request cũ.
-      final userResRetry = (await userRepository.getUserInfo()).toResult();
+      final userResRetry = await userRepository.getUserInfo();
       
       if (userResRetry case DbSuccess(data: final user)) {
         debugPrint("✅ Auto-Refresh & Retry thành công! Profile: ${user.nickname}");

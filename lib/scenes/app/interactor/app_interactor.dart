@@ -112,7 +112,7 @@ class AppInteractor extends CubitInteractor<AppRoutable, AppInteractorState> {
       dLog("AppInteractor: Token is expiring soon. Pre-emptively refreshing...");
       
       final authRepository = locator<AuthRepository>();
-      final result = (await authRepository.refreshToken(session.refreshToken ?? "")).toResult();
+      final result = await authRepository.refreshToken(session.refreshToken ?? "");
 
       if (result case DbSuccess(data: final newAuth)) {
         dLog("AppInteractor: Token refreshed successfully.");
