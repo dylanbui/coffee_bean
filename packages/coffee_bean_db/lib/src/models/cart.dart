@@ -8,7 +8,13 @@ class TblCartItem {
   Id id = Isar.autoIncrement;
 
   @Index()
-  int serverId = 0;
+  int spuId = 0;
+
+  @Index()
+  int skuId = 0;
+
+  @Index()
+  int cartItemId = 0;
 
   @Index()
   String type = "FOOD";
@@ -29,7 +35,9 @@ class TblCartItem {
   // Chuyển đổi sang định dạng JSON để gửi lên Server khi tạo Order
   Map<String, dynamic> toJsonRequest() {
     return {
-      'product_id': serverId,
+      'cart_item_id': cartItemId,
+      'spu_id': spuId,
+      'sku_id': skuId,
       'product_type': type,
       'quantity': quantity,
       'price': finalPrice,

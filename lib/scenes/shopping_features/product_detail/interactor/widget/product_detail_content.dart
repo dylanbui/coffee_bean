@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:group_button/group_button.dart';
+import 'package:coffee_bean/data/model/product.dart';
 
 class ProductDetailContent extends StatelessWidget {
   final ProductDetailInteractor interactor;
@@ -14,7 +16,7 @@ class ProductDetailContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProductDetailInteractor, ProductDetailState>(
-      buildWhen: (p, c) => p.product != c.product || p.selectedOptions != c.selectedOptions,
+      buildWhen: (p, c) => p.product != c.product || p.selectedOptions != c.selectedOptions || p.skuGroups != c.skuGroups,
       builder: (context, state) {
         final product = state.product;
         if (product == null) return const SizedBox.shrink();
@@ -33,7 +35,12 @@ class ProductDetailContent extends StatelessWidget {
                 product.introduction,
                 style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+
+              // Render SKU Groups
+              ...state.skuGroups.map((group) => _buildSkuGroup(context, state, group)),
+
+              const SizedBox(height: 8),
               Text(
                 "Mô tả sản phẩm",
                 style: TMLabsTextStyle.h2,
@@ -48,6 +55,55 @@ class ProductDetailContent extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildSkuGroup(BuildContext context, ProductDetailState state, SkuGroup group) {
+    final selectedIndex = group.options.indexWhere((o) => state.selectedOptions[group.propertyId] == o.valueId);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          group.propertyName,
+          style: TMLabsTextStyle.title.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        GroupButton<SkuProperty>(
+          buttons: group.options,
+          controller: GroupButtonController(selectedIndex: selectedIndex),
+          onSelected: (option, index, isSelected) {
+            // Logic "Mặc định": Nếu chỉ có 1 option và là mặc định, không cho phép thay đổi
+            if (group.options.length == 1 && option.valueName == "Mặc định") return;
+            interactor.selectOption(group.propertyId, option.valueId);
+          },
+          buttonBuilder: (isSelected, option, context) {
+            final isDisable = group.options.length == 1 && option.valueName == "Mặc định";
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+              decoration: BoxDecoration(
+                color: isSelected ? Colors.black : TMLabsColor.lightGrey.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(8),
+                border: isDisable ? Border.all(color: TMLabsColor.grey.withValues(alpha: 0.2)) : null,
+              ),
+              child: Text(
+                option.valueName,
+                style: TMLabsTextStyle.body.copyWith(
+                  color: isSelected ? Colors.white : TMLabsColor.grey,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            );
+          },
+          options: const GroupButtonOptions(
+            mainGroupAlignment: MainGroupAlignment.start,
+            groupingType: GroupingType.wrap,
+            spacing: 12,
+            runSpacing: 12,
+          ),
+        ),
+        const SizedBox(height: 24),
+      ],
     );
   }
 }

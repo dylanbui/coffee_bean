@@ -1,3 +1,5 @@
+import 'package:coffee_bean/data/model/product.dart';
+import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
 import 'package:coffee_bean/scenes/shopping_features/product_detail/product_detail_builder.dart';
 import 'package:db_core/network/network_utils.dart';
@@ -46,16 +48,61 @@ class ProductDetailInteractor extends CubitInteractor<ProductDetailRoutable, Pro
         },
       );
 
-      final cartQty = _cartService.getQuantity(product, null);
-      emit(state.copyWith(
-        product: product, 
-        isLoading: false,
-        quantity: cartQty > 0 ? cartQty : 1,
-      ));
+      _processInitialData(product);
     } else if (result case DbFailure(:final error)) {
       emit(state.copyWith(isLoading: false));
       DbToast.show(error.message);
     }
+  }
+
+  void _processInitialData(ProductDetail product) {
+    final groups = <int, SkuGroup>{};
+
+    for (var sku in product.skus) {
+      for (var prop in sku.properties) {
+        if (!groups.containsKey(prop.propertyId)) {
+          groups[prop.propertyId] = SkuGroup(
+            propertyId: prop.propertyId,
+            propertyName: prop.propertyName,
+            options: [],
+          );
+        }
+
+        final group = groups[prop.propertyId]!;
+        if (!group.options.any((o) => o.valueId == prop.valueId)) {
+          group.options.add(prop);
+        }
+      }
+    }
+
+    // Khởi tạo mặc định: Chọn option đầu tiên của mỗi nhóm
+    final initialSelected = <int, int>{};
+    for (var group in groups.values) {
+      if (group.options.isNotEmpty) {
+        initialSelected[group.propertyId] = group.options.first.valueId;
+      }
+    }
+
+    final matchedSku = _findMatchedSku(product.skus, initialSelected);
+    final cartQty = _cartService.getQuantity(product, null, skuId: matchedSku?.id);
+
+    emit(state.copyWith(
+      product: product,
+      skuGroups: groups.values.toList(),
+      selectedOptions: initialSelected,
+      currentSku: matchedSku,
+      isLoading: false,
+      quantity: cartQty > 0 ? cartQty : 1,
+    ));
+  }
+
+  Sku? _findMatchedSku(List<Sku> skus, Map<int, int> selected) {
+    for (var sku in skus) {
+      // SKU khớp nếu mọi thuộc tính của nó đều nằm trong Map đang chọn
+      bool isMatch = sku.properties.every((p) => selected.containsKey(p.propertyId) && selected[p.propertyId] == p.valueId);
+      if (isMatch) return sku;
+    }
+    return null;
   }
 
   void updateQuantity(int delta) {
@@ -65,33 +112,54 @@ class ProductDetailInteractor extends CubitInteractor<ProductDetailRoutable, Pro
     }
   }
 
-  void selectOption(int propertyId, dynamic option) {
+  void selectOption(int propertyId, int valueId) {
+    final newSelected = Map<int, int>.from(state.selectedOptions);
+    newSelected[propertyId] = valueId;
+
+    final matchedSku = _findMatchedSku(state.product?.skus ?? [], newSelected);
+
+    emit(state.copyWith(
+      selectedOptions: newSelected,
+      currentSku: matchedSku,
+    ));
   }
 
   void addToCart() {
     if (state.isAddingToCart || state.product == null) return;
-    
+
     emit(state.copyWith(isAddingToCart: true));
-    
-    _cartService.upsertCartItem(state.product!, state.quantity, null);
-    
-    DbToast.show(
-      "Đã thêm vào giỏ hàng thành công",
-      gravity: DbToastGravity.top,
-      duration: const Duration(milliseconds: 900),
+
+    // Chuyển đổi SkuProperty sang SelectedOption để lưu vào Cart
+    final List<SelectedOption>? selectedOptions = state.currentSku?.properties.map((p) => SelectedOption()
+          ..optionServerId = p.valueId
+          ..groupName = p.propertyName
+          ..optionName = p.valueName
+          ..extraPrice = 0.0)
+        .toList();
+
+    _cartService.upsertCartItem(
+      state.product!, 
+      state.quantity, 
+      selectedOptions, 
+      skuId: state.currentSku?.id
     );
 
-    Future.delayed(const Duration(milliseconds: 1000), () {
+    // [QC TEST]: Tạm thời comment Toast để test trải nghiệm nhạy hơn
+    // DbToast.show(
+    //   "Đã thêm vào giỏ hàng thành công",
+    //   gravity: DbToastGravity.top,
+    //   duration: const Duration(milliseconds: 900),
+    // );
+
+    // Cho phép bấm lại sau 500ms thay vì 1s
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (isClosed) return;
       emit(state.copyWith(isAddingToCart: false));
     });
   }
 
   void buyNow() {
     addToCart();
-  }
-
-  void goBack() {
-    router?.pop();
   }
 
   @override

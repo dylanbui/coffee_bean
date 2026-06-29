@@ -131,12 +131,13 @@ class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState
   }
 
   void addToCart(Product product) {
-    // Note: Product from API doesn't have defaultSelectedOptions directly in the SPU list model.
-    // If it has specs (specType == true), we should probably route to detail instead of direct add.
+    // Note: Product from API doesn't have default SKU in the list.
+    // For simple products (specType == false), we assume SPU ID = SKU ID for now, 
+    // or you might need to fetch the detail to get the real SKU ID.
     if (product.specType) {
       routeToProductDetail(product);
     } else {
-      _cartService.addToCart(product);
+      _cartService.upsertCartItem(product, 1, null, skuId: product.id);
     }
   }
 

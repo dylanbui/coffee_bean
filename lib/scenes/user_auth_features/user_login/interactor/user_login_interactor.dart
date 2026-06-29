@@ -7,12 +7,14 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'dart:async';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/data/repository/auth_repository.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/data/local/user_manager/user_service.dart';
+import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/interactor/user_login_event_state.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/shared/social_auth_service.dart';
@@ -21,6 +23,7 @@ import 'package:coffee_bean/utils/utils.dart';
 import 'package:db_core/network/network_utils.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:db_core/utils/logger.dart';
+import 'package:db_core/utils/locator.dart';
 
 // Interactor
 class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginState> {
@@ -94,6 +97,9 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
       // Quan trọng: Lưu session và info vào UserManager
       await UserManager().saveSession(userSession);
       await UserManager().saveUserInfo(userInfo);
+
+      // --- SYNC CART AFTER LOGIN ---
+      unawaited(locator<CartService>().mergeLocalCartToServer());
 
       emit(UserLoginSuccess(userSession));
       // Không cần truyền parameters nữa, Flow sẽ lấy từ UserManager
@@ -196,6 +202,10 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
       
       if (userInfo != null) {
         iLog("Login thành công: ${userInfo.nickname}");
+
+        // --- SYNC CART AFTER LOGIN ---
+        unawaited(locator<CartService>().mergeLocalCartToServer());
+
         emit(UserLoginSuccess(userSession));
         router?.navigate(LoginSuccessRoute());
       } else {

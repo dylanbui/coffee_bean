@@ -14,6 +14,7 @@ import 'package:chuck_interceptor/chuck_interceptor.dart';
 import 'package:coffee_bean/data/repository/activity_repository.dart';
 import 'package:coffee_bean/data/repository/auth_repository.dart';
 import 'package:coffee_bean/data/repository/infra_repository.dart';
+import 'package:coffee_bean/data/repository/trade_repository.dart';
 import 'package:coffee_bean/data/repository/upload_files_repository.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
@@ -240,6 +241,7 @@ void _registerLazyServices() {
   locator.registerLazySingleton<StoreRepository>(() => StoreRepository());
   locator.registerLazySingleton<ProductRepository>(() => ProductRepository());
   locator.registerLazySingleton<PromotionRepository>(() => PromotionRepository());
+  locator.registerLazySingleton<TradeRepository>(() => TradeRepository());
 
   // Register Tracking Service
   locator.registerLazySingleton<TrackingService>(() => FirebaseTrackingImpl());

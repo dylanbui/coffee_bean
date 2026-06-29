@@ -29,9 +29,12 @@ class _ProductDetailHeaderState extends State<ProductDetailHeader> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProductDetailInteractor, ProductDetailState>(
-      buildWhen: (p, c) => p.product?.sliderPicUrls != c.product?.sliderPicUrls,
+      buildWhen: (p, c) => p.product?.sliderPicUrls != c.product?.sliderPicUrls || p.displayImage != c.displayImage,
       builder: (context, state) {
-        final images = state.product?.sliderPicUrls ?? [];
+        final sliderImages = state.product?.sliderPicUrls ?? [];
+        // Nếu có SKU image thì ưu tiên hiện nó hoặc chèn vào đầu slider
+        final images = sliderImages.isEmpty ? [state.displayImage] : sliderImages;
+
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: const SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
@@ -65,7 +68,7 @@ class _ProductDetailHeaderState extends State<ProductDetailHeader> {
                   left: 16,
                   top: Utils.getSafeAreaTop(context) + 10,
                   child: GestureDetector(
-                    onTap: () => widget.interactor.goBack(),
+                    onTap: () => widget.interactor.router?.pop(),
                     child: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
                   ),
                 ),

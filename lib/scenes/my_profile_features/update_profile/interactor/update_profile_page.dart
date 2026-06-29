@@ -25,7 +25,6 @@ class _UpdateProfilePageState extends CubitState<UpdateProfilePage, UpdateProfil
   bool get tapToUnfocus => true;
 
   final TextEditingController _nicknameController = TextEditingController();
-  final TextEditingController _avatarController = TextEditingController();
   int _sex = 1;
   
   bool _initialized = false;
@@ -33,7 +32,6 @@ class _UpdateProfilePageState extends CubitState<UpdateProfilePage, UpdateProfil
   @override
   void dispose() {
     _nicknameController.dispose();
-    _avatarController.dispose();
     super.dispose();
   }
 
@@ -61,14 +59,8 @@ class _UpdateProfilePageState extends CubitState<UpdateProfilePage, UpdateProfil
           if (state.userInfo != null) {
             if (!_initialized) {
               _nicknameController.text = state.userInfo?.nickname ?? "";
-              _avatarController.text = state.userInfo?.avatar ?? "";
               _sex = state.userInfo?.sex ?? 1;
               _initialized = true;
-            } else {
-              // Cập nhật lại avatar controller nếu state.userInfo thay đổi (sau khi update thành công)
-              if (state.userInfo?.avatar != null && state.userInfo?.avatar != _avatarController.text) {
-                _avatarController.text = state.userInfo!.avatar;
-              }
             }
           }
         },
@@ -77,42 +69,44 @@ class _UpdateProfilePageState extends CubitState<UpdateProfilePage, UpdateProfil
             return const Center(child: CircularProgressIndicator());
           }
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildAvatar(state.userInfo?.avatar, state.selectedAvatarFile),
-                const SizedBox(height: 16),
-                Text(state.userInfo?.nickname ?? "Nickname", style: TMLabsTextStyle.h2),
-                const SizedBox(height: 32),
-                _buildTextField(
-                  controller: _nicknameController,
-                  label: "Nickname",
-                  hint: "Nhập nickname",
+          return Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _buildAvatar(state.userInfo?.avatar, state.selectedAvatarFile),
+                      const SizedBox(height: 16),
+                      Text(state.userInfo?.nickname ?? "Nickname", style: TMLabsTextStyle.h2),
+                      const SizedBox(height: 32),
+                      _buildTextField(
+                        controller: _nicknameController,
+                        label: "Nickname",
+                        hint: "Nhập nickname",
+                      ),
+                      const SizedBox(height: 16),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text("Giới tính", style: TMLabsTextStyle.bodyBold),
+                      ),
+                      const SizedBox(height: 8),
+                      _buildSexSelector(),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _avatarController,
-                  label: "Link Avatar (tạm sử dụng)",
-                  hint: "Nhập link ảnh đại diện",
-                ),
-                const SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text("Giới tính", style: TMLabsTextStyle.bodyBold),
-                ),
-                const SizedBox(height: 8),
-                _buildSexSelector(),
-                const SizedBox(height: 40),
-                AppButton(
+              ),
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: AppButton(
                   text: "Cập Nhật",
                   isLoading: state.isLoading,
                   style: TMLabsButtonStyle.primary,
-                  onPressed: _onUpdate,
+                  onPressed: () => _onUpdate(state),
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),
@@ -218,18 +212,17 @@ class _UpdateProfilePageState extends CubitState<UpdateProfilePage, UpdateProfil
     );
   }
 
-  void _onUpdate() {
+  void _onUpdate(UpdateProfileState state) {
     final nickname = _nicknameController.text.trim();
-    final avatar = _avatarController.text.trim();
 
-    if (nickname.isEmpty || avatar.isEmpty) {
+    if (nickname.isEmpty) {
       context.showFlashError("Vui lòng nhập đầy đủ thông tin");
       return;
     }
 
     interactor.updateProfile(
       nickname: nickname,
-      avatar: avatar,
+      avatar: state.userInfo?.avatar ?? "",
       sex: _sex,
     );
   }

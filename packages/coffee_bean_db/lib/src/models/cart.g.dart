@@ -22,24 +22,30 @@ const TblCartItemSchema = CollectionSchema(
       name: r'addedAt',
       type: IsarType.dateTime,
     ),
-    r'finalPrice': PropertySchema(
+    r'cartItemId': PropertySchema(
       id: 1,
+      name: r'cartItemId',
+      type: IsarType.long,
+    ),
+    r'finalPrice': PropertySchema(
+      id: 2,
       name: r'finalPrice',
       type: IsarType.double,
     ),
-    r'image': PropertySchema(id: 2, name: r'image', type: IsarType.string),
-    r'name': PropertySchema(id: 3, name: r'name', type: IsarType.string),
-    r'quantity': PropertySchema(id: 4, name: r'quantity', type: IsarType.long),
+    r'image': PropertySchema(id: 3, name: r'image', type: IsarType.string),
+    r'name': PropertySchema(id: 4, name: r'name', type: IsarType.string),
+    r'quantity': PropertySchema(id: 5, name: r'quantity', type: IsarType.long),
     r'selectedOptions': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'selectedOptions',
       type: IsarType.objectList,
 
       target: r'SelectedOption',
     ),
-    r'serverId': PropertySchema(id: 6, name: r'serverId', type: IsarType.long),
     r'sku': PropertySchema(id: 7, name: r'sku', type: IsarType.string),
-    r'type': PropertySchema(id: 8, name: r'type', type: IsarType.string),
+    r'skuId': PropertySchema(id: 8, name: r'skuId', type: IsarType.long),
+    r'spuId': PropertySchema(id: 9, name: r'spuId', type: IsarType.long),
+    r'type': PropertySchema(id: 10, name: r'type', type: IsarType.string),
   },
 
   estimateSize: _tblCartItemEstimateSize,
@@ -48,14 +54,40 @@ const TblCartItemSchema = CollectionSchema(
   deserializeProp: _tblCartItemDeserializeProp,
   idName: r'id',
   indexes: {
-    r'serverId': IndexSchema(
-      id: -7950187970872907662,
-      name: r'serverId',
+    r'spuId': IndexSchema(
+      id: 1145266069395942146,
+      name: r'spuId',
       unique: false,
       replace: false,
       properties: [
         IndexPropertySchema(
-          name: r'serverId',
+          name: r'spuId',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+    r'skuId': IndexSchema(
+      id: -3967072170329486256,
+      name: r'skuId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'skuId',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+    r'cartItemId': IndexSchema(
+      id: -5849302221354791317,
+      name: r'cartItemId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'cartItemId',
           type: IndexType.value,
           caseSensitive: false,
         ),
@@ -131,19 +163,21 @@ void _tblCartItemSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeDateTime(offsets[0], object.addedAt);
-  writer.writeDouble(offsets[1], object.finalPrice);
-  writer.writeString(offsets[2], object.image);
-  writer.writeString(offsets[3], object.name);
-  writer.writeLong(offsets[4], object.quantity);
+  writer.writeLong(offsets[1], object.cartItemId);
+  writer.writeDouble(offsets[2], object.finalPrice);
+  writer.writeString(offsets[3], object.image);
+  writer.writeString(offsets[4], object.name);
+  writer.writeLong(offsets[5], object.quantity);
   writer.writeObjectList<SelectedOption>(
-    offsets[5],
+    offsets[6],
     allOffsets,
     SelectedOptionSchema.serialize,
     object.selectedOptions,
   );
-  writer.writeLong(offsets[6], object.serverId);
   writer.writeString(offsets[7], object.sku);
-  writer.writeString(offsets[8], object.type);
+  writer.writeLong(offsets[8], object.skuId);
+  writer.writeLong(offsets[9], object.spuId);
+  writer.writeString(offsets[10], object.type);
 }
 
 TblCartItem _tblCartItemDeserialize(
@@ -154,20 +188,22 @@ TblCartItem _tblCartItemDeserialize(
 ) {
   final object = TblCartItem();
   object.addedAt = reader.readDateTime(offsets[0]);
-  object.finalPrice = reader.readDouble(offsets[1]);
+  object.cartItemId = reader.readLong(offsets[1]);
+  object.finalPrice = reader.readDouble(offsets[2]);
   object.id = id;
-  object.image = reader.readStringOrNull(offsets[2]);
-  object.name = reader.readString(offsets[3]);
-  object.quantity = reader.readLong(offsets[4]);
+  object.image = reader.readStringOrNull(offsets[3]);
+  object.name = reader.readString(offsets[4]);
+  object.quantity = reader.readLong(offsets[5]);
   object.selectedOptions = reader.readObjectList<SelectedOption>(
-    offsets[5],
+    offsets[6],
     SelectedOptionSchema.deserialize,
     allOffsets,
     SelectedOption(),
   );
-  object.serverId = reader.readLong(offsets[6]);
   object.sku = reader.readStringOrNull(offsets[7]);
-  object.type = reader.readString(offsets[8]);
+  object.skuId = reader.readLong(offsets[8]);
+  object.spuId = reader.readLong(offsets[9]);
+  object.type = reader.readString(offsets[10]);
   return object;
 }
 
@@ -181,14 +217,16 @@ P _tblCartItemDeserializeProp<P>(
     case 0:
       return (reader.readDateTime(offset)) as P;
     case 1:
-      return (reader.readDouble(offset)) as P;
-    case 2:
-      return (reader.readStringOrNull(offset)) as P;
-    case 3:
-      return (reader.readString(offset)) as P;
-    case 4:
       return (reader.readLong(offset)) as P;
+    case 2:
+      return (reader.readDouble(offset)) as P;
+    case 3:
+      return (reader.readStringOrNull(offset)) as P;
+    case 4:
+      return (reader.readString(offset)) as P;
     case 5:
+      return (reader.readLong(offset)) as P;
+    case 6:
       return (reader.readObjectList<SelectedOption>(
             offset,
             SelectedOptionSchema.deserialize,
@@ -196,11 +234,13 @@ P _tblCartItemDeserializeProp<P>(
             SelectedOption(),
           ))
           as P;
-    case 6:
-      return (reader.readLong(offset)) as P;
     case 7:
       return (reader.readStringOrNull(offset)) as P;
     case 8:
+      return (reader.readLong(offset)) as P;
+    case 9:
+      return (reader.readLong(offset)) as P;
+    case 10:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -231,10 +271,26 @@ extension TblCartItemQueryWhereSort
     });
   }
 
-  QueryBuilder<TblCartItem, TblCartItem, QAfterWhere> anyServerId() {
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhere> anySpuId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
-        const IndexWhereClause.any(indexName: r'serverId'),
+        const IndexWhereClause.any(indexName: r'spuId'),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhere> anySkuId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'skuId'),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhere> anyCartItemId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'cartItemId'),
       );
     });
   }
@@ -312,34 +368,34 @@ extension TblCartItemQueryWhere
     });
   }
 
-  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> serverIdEqualTo(
-    int serverId,
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> spuIdEqualTo(
+    int spuId,
   ) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
-        IndexWhereClause.equalTo(indexName: r'serverId', value: [serverId]),
+        IndexWhereClause.equalTo(indexName: r'spuId', value: [spuId]),
       );
     });
   }
 
-  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> serverIdNotEqualTo(
-    int serverId,
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> spuIdNotEqualTo(
+    int spuId,
   ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
             .addWhereClause(
               IndexWhereClause.between(
-                indexName: r'serverId',
+                indexName: r'spuId',
                 lower: [],
-                upper: [serverId],
+                upper: [spuId],
                 includeUpper: false,
               ),
             )
             .addWhereClause(
               IndexWhereClause.between(
-                indexName: r'serverId',
-                lower: [serverId],
+                indexName: r'spuId',
+                lower: [spuId],
                 includeLower: false,
                 upper: [],
               ),
@@ -348,17 +404,17 @@ extension TblCartItemQueryWhere
         return query
             .addWhereClause(
               IndexWhereClause.between(
-                indexName: r'serverId',
-                lower: [serverId],
+                indexName: r'spuId',
+                lower: [spuId],
                 includeLower: false,
                 upper: [],
               ),
             )
             .addWhereClause(
               IndexWhereClause.between(
-                indexName: r'serverId',
+                indexName: r'spuId',
                 lower: [],
-                upper: [serverId],
+                upper: [spuId],
                 includeUpper: false,
               ),
             );
@@ -366,15 +422,15 @@ extension TblCartItemQueryWhere
     });
   }
 
-  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> serverIdGreaterThan(
-    int serverId, {
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> spuIdGreaterThan(
+    int spuId, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IndexWhereClause.between(
-          indexName: r'serverId',
-          lower: [serverId],
+          indexName: r'spuId',
+          lower: [spuId],
           includeLower: include,
           upper: [],
         ),
@@ -382,35 +438,242 @@ extension TblCartItemQueryWhere
     });
   }
 
-  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> serverIdLessThan(
-    int serverId, {
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> spuIdLessThan(
+    int spuId, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IndexWhereClause.between(
-          indexName: r'serverId',
+          indexName: r'spuId',
           lower: [],
-          upper: [serverId],
+          upper: [spuId],
           includeUpper: include,
         ),
       );
     });
   }
 
-  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> serverIdBetween(
-    int lowerServerId,
-    int upperServerId, {
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> spuIdBetween(
+    int lowerSpuId,
+    int upperSpuId, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IndexWhereClause.between(
-          indexName: r'serverId',
-          lower: [lowerServerId],
+          indexName: r'spuId',
+          lower: [lowerSpuId],
           includeLower: includeLower,
-          upper: [upperServerId],
+          upper: [upperSpuId],
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> skuIdEqualTo(
+    int skuId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'skuId', value: [skuId]),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> skuIdNotEqualTo(
+    int skuId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'skuId',
+                lower: [],
+                upper: [skuId],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'skuId',
+                lower: [skuId],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'skuId',
+                lower: [skuId],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'skuId',
+                lower: [],
+                upper: [skuId],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> skuIdGreaterThan(
+    int skuId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'skuId',
+          lower: [skuId],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> skuIdLessThan(
+    int skuId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'skuId',
+          lower: [],
+          upper: [skuId],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> skuIdBetween(
+    int lowerSkuId,
+    int upperSkuId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'skuId',
+          lower: [lowerSkuId],
+          includeLower: includeLower,
+          upper: [upperSkuId],
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> cartItemIdEqualTo(
+    int cartItemId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'cartItemId', value: [cartItemId]),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause>
+  cartItemIdNotEqualTo(int cartItemId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'cartItemId',
+                lower: [],
+                upper: [cartItemId],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'cartItemId',
+                lower: [cartItemId],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'cartItemId',
+                lower: [cartItemId],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'cartItemId',
+                lower: [],
+                upper: [cartItemId],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause>
+  cartItemIdGreaterThan(int cartItemId, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'cartItemId',
+          lower: [cartItemId],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> cartItemIdLessThan(
+    int cartItemId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'cartItemId',
+          lower: [],
+          upper: [cartItemId],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterWhereClause> cartItemIdBetween(
+    int lowerCartItemId,
+    int upperCartItemId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'cartItemId',
+          lower: [lowerCartItemId],
+          includeLower: includeLower,
+          upper: [upperCartItemId],
           includeUpper: includeUpper,
         ),
       );
@@ -522,6 +785,61 @@ extension TblCartItemQueryFilter
       return query.addFilterCondition(
         FilterCondition.between(
           property: r'addedAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition>
+  cartItemIdEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'cartItemId', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition>
+  cartItemIdGreaterThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'cartItemId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition>
+  cartItemIdLessThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'cartItemId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition>
+  cartItemIdBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'cartItemId',
           lower: lower,
           includeLower: includeLower,
           upper: upper,
@@ -1109,61 +1427,6 @@ extension TblCartItemQueryFilter
     });
   }
 
-  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition> serverIdEqualTo(
-    int value,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'serverId', value: value),
-      );
-    });
-  }
-
-  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition>
-  serverIdGreaterThan(int value, {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'serverId',
-          value: value,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition>
-  serverIdLessThan(int value, {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'serverId',
-          value: value,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition> serverIdBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'serverId',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
-    });
-  }
-
   QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition> skuIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -1323,6 +1586,120 @@ extension TblCartItemQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.greaterThan(property: r'sku', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition> skuIdEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'skuId', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition>
+  skuIdGreaterThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'skuId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition> skuIdLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'skuId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition> skuIdBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'skuId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition> spuIdEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'spuId', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition>
+  spuIdGreaterThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'spuId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition> spuIdLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'spuId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterFilterCondition> spuIdBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'spuId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
       );
     });
   }
@@ -1502,6 +1879,18 @@ extension TblCartItemQuerySortBy
     });
   }
 
+  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> sortByCartItemId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'cartItemId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> sortByCartItemIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'cartItemId', Sort.desc);
+    });
+  }
+
   QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> sortByFinalPrice() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'finalPrice', Sort.asc);
@@ -1550,18 +1939,6 @@ extension TblCartItemQuerySortBy
     });
   }
 
-  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> sortByServerId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'serverId', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> sortByServerIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'serverId', Sort.desc);
-    });
-  }
-
   QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> sortBySku() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sku', Sort.asc);
@@ -1571,6 +1948,30 @@ extension TblCartItemQuerySortBy
   QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> sortBySkuDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sku', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> sortBySkuId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'skuId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> sortBySkuIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'skuId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> sortBySpuId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'spuId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> sortBySpuIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'spuId', Sort.desc);
     });
   }
 
@@ -1598,6 +1999,18 @@ extension TblCartItemQuerySortThenBy
   QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> thenByAddedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'addedAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> thenByCartItemId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'cartItemId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> thenByCartItemIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'cartItemId', Sort.desc);
     });
   }
 
@@ -1661,18 +2074,6 @@ extension TblCartItemQuerySortThenBy
     });
   }
 
-  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> thenByServerId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'serverId', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> thenByServerIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'serverId', Sort.desc);
-    });
-  }
-
   QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> thenBySku() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sku', Sort.asc);
@@ -1682,6 +2083,30 @@ extension TblCartItemQuerySortThenBy
   QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> thenBySkuDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sku', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> thenBySkuId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'skuId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> thenBySkuIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'skuId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> thenBySpuId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'spuId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QAfterSortBy> thenBySpuIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'spuId', Sort.desc);
     });
   }
 
@@ -1703,6 +2128,12 @@ extension TblCartItemQueryWhereDistinct
   QueryBuilder<TblCartItem, TblCartItem, QDistinct> distinctByAddedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'addedAt');
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QDistinct> distinctByCartItemId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'cartItemId');
     });
   }
 
@@ -1734,17 +2165,23 @@ extension TblCartItemQueryWhereDistinct
     });
   }
 
-  QueryBuilder<TblCartItem, TblCartItem, QDistinct> distinctByServerId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'serverId');
-    });
-  }
-
   QueryBuilder<TblCartItem, TblCartItem, QDistinct> distinctBySku({
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'sku', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QDistinct> distinctBySkuId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'skuId');
+    });
+  }
+
+  QueryBuilder<TblCartItem, TblCartItem, QDistinct> distinctBySpuId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'spuId');
     });
   }
 
@@ -1768,6 +2205,12 @@ extension TblCartItemQueryProperty
   QueryBuilder<TblCartItem, DateTime, QQueryOperations> addedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'addedAt');
+    });
+  }
+
+  QueryBuilder<TblCartItem, int, QQueryOperations> cartItemIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'cartItemId');
     });
   }
 
@@ -1802,15 +2245,21 @@ extension TblCartItemQueryProperty
     });
   }
 
-  QueryBuilder<TblCartItem, int, QQueryOperations> serverIdProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'serverId');
-    });
-  }
-
   QueryBuilder<TblCartItem, String?, QQueryOperations> skuProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sku');
+    });
+  }
+
+  QueryBuilder<TblCartItem, int, QQueryOperations> skuIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'skuId');
+    });
+  }
+
+  QueryBuilder<TblCartItem, int, QQueryOperations> spuIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'spuId');
     });
   }
 
