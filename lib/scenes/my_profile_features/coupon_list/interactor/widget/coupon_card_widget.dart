@@ -1,7 +1,8 @@
 import 'dart:ui';
-import 'package:coffee_bean/scenes/my_profile_features/coupon_list/interactor/coupon_list_interactor.dart';
+import 'package:coffee_bean/data/model/response/promotion/coupon_model.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/utils/utils_datetime.dart';
 import 'package:db_core/utils/tap_effect.dart';
 import 'package:flutter/material.dart';
 
@@ -30,11 +31,11 @@ class CouponCardWidget extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // VÙNG TRÊN: Vùng chọn (Selection Area) - Bao gồm 30% trái và phần trên bên phải
+              // VÙNG TRÊN: Vùng chọn (Selection Area)
               TapEffect(
                 onTap: onTap,
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center, // Căn giữa checkbox theo chiều dọc của vùng trên
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // Left Section (30% approx)
                     _buildLeftSection(),
@@ -42,12 +43,12 @@ class CouponCardWidget extends StatelessWidget {
                     // Middle Content (Title + Expiry)
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(12, 12, 8, 6), // Giảm top 20->12, bottom 12->6
+                        padding: const EdgeInsets.fromLTRB(12, 12, 8, 6),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              coupon.title,
+                              coupon.name,
                               style: TMLabsTextStyle.bodyBold.copyWith(
                                 color: Colors.black,
                                 fontSize: 15,
@@ -57,7 +58,7 @@ class CouponCardWidget extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              coupon.expiryDate,
+                              _getExpiryText(),
                               style: TMLabsTextStyle.caption.copyWith(
                                 color: TMLabsColor.grey,
                               ),
@@ -76,7 +77,7 @@ class CouponCardWidget extends StatelessWidget {
 
               // VÙNG DƯỚI: Nút mở rộng và Nội dung chi tiết
               Padding(
-                padding: const EdgeInsets.fromLTRB(112, 0, 16, 16), // Padding trái khớp với lề nội dung (100 + 12)
+                padding: const EdgeInsets.fromLTRB(112, 0, 16, 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -120,7 +121,7 @@ class CouponCardWidget extends StatelessWidget {
                 borderRadius: BorderRadius.only(bottomLeft: Radius.circular(8)),
               ),
               child: Text(
-                coupon.category,
+                _getCategoryText(),
                 style: TMLabsTextStyle.caption.copyWith(
                   color: TMLabsColor.secondary,
                   fontWeight: FontWeight.bold,
@@ -134,10 +135,26 @@ class CouponCardWidget extends StatelessWidget {
     );
   }
 
+  String _getExpiryText() {
+    final start = coupon.startDateTime;
+    final end = coupon.endDateTime;
+    if (start == null || end == null) return "Vĩnh viễn";
+    return "${start.toDateTimeStr()} - ${end.toDateTimeStr()}";
+  }
+
+  String _getCategoryText() {
+    return switch (coupon.productScope) {
+      1 => "Toàn sàn",
+      2 => "Sản phẩm",
+      3 => "Danh mục",
+      _ => "Khác",
+    };
+  }
+
   Widget _buildLeftSection() {
     return Container(
       width: 100,
-      padding: const EdgeInsets.symmetric(vertical: 18), // Giảm vertical 24 -> 14
+      padding: const EdgeInsets.symmetric(vertical: 18),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -147,7 +164,7 @@ class CouponCardWidget extends StatelessWidget {
             textBaseline: TextBaseline.alphabetic,
             children: [
               Text(
-                coupon.discountValue.toString(),
+                coupon.displayValue,
                 style: TMLabsTextStyle.h1.copyWith(
                   color: TMLabsColor.error,
                   fontSize: 28,
@@ -156,7 +173,7 @@ class CouponCardWidget extends StatelessWidget {
               ),
               const SizedBox(width: 2),
               Text(
-                coupon.discountType,
+                coupon.discountTypeUnit,
                 style: TMLabsTextStyle.bodyBold.copyWith(
                   color: TMLabsColor.error,
                   fontSize: 14,
@@ -178,7 +195,6 @@ class CouponCardWidget extends StatelessWidget {
   }
 
   Widget _buildSelectionIndicator() {
-    // Không bọc TapEffect ở đây nữa vì cả vùng trên đã có TapEffect
     return coupon.isSelected
         ? const Icon(Icons.check_circle, color: Colors.black, size: 24)
         : Container(
@@ -197,14 +213,16 @@ class CouponCardWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          coupon.description,
+          coupon.thresholdText,
           style: TMLabsTextStyle.caption.copyWith(
             color: TMLabsColor.grey,
             fontSize: 12,
           ),
         ),
-        const SizedBox(height: 12),
-        _buildDashedContainer(),
+        if (coupon.description != null && coupon.description!.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          _buildDashedContainer(),
+        ],
       ],
     );
   }
@@ -215,10 +233,10 @@ class CouponCardWidget extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-        alignment: Alignment.center,
+        alignment: Alignment.centerLeft,
         child: Text(
-          coupon.ruleDescription,
-          style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
+          coupon.description!,
+          style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey, fontSize: 13),
         ),
       ),
     );

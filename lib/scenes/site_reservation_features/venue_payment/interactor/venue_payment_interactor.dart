@@ -1,6 +1,6 @@
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
-import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/data/local/user_manager/user_service.dart';
+import 'package:coffee_bean/data/model/response/promotion/coupon_model.dart';
 import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
 import 'package:coffee_bean/scenes/my_profile_features/coupon_list/interactor/coupon_list_interactor.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_payment/interactor/venue_payment_event_state.dart';
@@ -108,7 +108,7 @@ mixin _VenueCouponListListenerMixin on CubitInteractor<VenuePaymentRoutable, Ven
   @override
   void onCouponSelected(CouponModel coupon) {
     double discount = coupon.discountValue;
-    if (coupon.discountType == "%") {
+    if (coupon.discountTypeStr == "%") {
       discount = state.subtotal * (discount / 100);
     }
 

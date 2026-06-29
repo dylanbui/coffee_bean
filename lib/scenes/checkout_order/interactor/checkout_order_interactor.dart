@@ -1,6 +1,7 @@
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_service.dart';
 import 'package:coffee_bean/data/model/payment_domain.dart';
+import 'package:coffee_bean/data/model/response/promotion/coupon_model.dart';
 import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
 import 'package:coffee_bean/scenes/checkout_order/checkout_order_common.dart';
 import 'package:coffee_bean/scenes/checkout_order/interactor/checkout_order_event_state.dart';
@@ -150,7 +151,7 @@ mixin _CheckoutOrderCouponMixin on CubitInteractor<CheckoutOrderRoutable, Checko
   @override
   void onCouponSelected(CouponModel coupon) {
     double discount = coupon.discountValue;
-    if (coupon.discountType == "%") {
+    if (coupon.discountTypeStr == "%") {
       discount = state.baseAmount * (discount / 100);
     }
 

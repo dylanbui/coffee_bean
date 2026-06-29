@@ -1,10 +1,8 @@
-import 'package:coffee_bean/config/app_pref.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
-import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/data/local/user_manager/user_service.dart';
-import 'package:coffee_bean/data/model/response/trade/store_model.dart';
+import 'package:coffee_bean/data/model/response/promotion/coupon_model.dart';
 import 'package:coffee_bean/data/model/payment_domain.dart';
 import 'package:coffee_bean/data/repository/payment_domain_repository.dart';
 import 'package:coffee_bean/scenes/my_profile_features/coupon_list/interactor/coupon_list_interactor.dart';
@@ -133,7 +131,7 @@ mixin _CouponListListenerMixin on CubitInteractor<OrderConfirmationRoutable, Ord
   @override
   void onCouponSelected(CouponModel coupon) {
     double discount = coupon.discountValue;
-    if (coupon.discountType == "%") {
+    if (coupon.discountTypeStr == "%") {
       discount = state.subtotal * (discount / 100);
     }
 

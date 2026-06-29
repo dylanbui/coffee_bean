@@ -1,3 +1,5 @@
+import 'package:coffee_bean/data/model/response/promotion/coupon_model.dart';
+import 'package:coffee_bean/data/repository/promotion_repository.dart';
 import 'package:coffee_bean/scenes/my_profile_features/coupon_list/coupon_list_router.dart';
 import 'package:db_core/state_management/lib_bloc/constants.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
@@ -7,52 +9,6 @@ import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 abstract interface class CouponListListener {
   void onCouponSelected(CouponModel coupon);
   void onNoCouponSelected();
-}
-
-// --- Model ---
-
-class CouponModel {
-  final int id;
-  final String title;
-  final String expiryDate;
-  final double discountValue;
-  final String discountType;
-  final String category;
-  final String description;
-  final String ruleDescription;
-  final bool isSelected;
-  final bool isExpanded;
-
-  CouponModel({
-    required this.id,
-    required this.title,
-    required this.expiryDate,
-    required this.discountValue,
-    required this.discountType,
-    required this.category,
-    this.description = '',
-    this.ruleDescription = '',
-    this.isSelected = false,
-    this.isExpanded = false,
-  });
-
-  CouponModel copyWith({
-    bool? isSelected,
-    bool? isExpanded,
-  }) {
-    return CouponModel(
-      id: id,
-      title: title,
-      expiryDate: expiryDate,
-      discountValue: discountValue,
-      discountType: discountType,
-      category: category,
-      description: description,
-      ruleDescription: ruleDescription,
-      isSelected: isSelected ?? this.isSelected,
-      isExpanded: isExpanded ?? this.isExpanded,
-    );
-  }
 }
 
 // --- States ---
@@ -71,14 +27,27 @@ class CouponListInitial extends CouponListState {
   CouponListInitial() : super(coupons: []);
 }
 
+class CouponListLoading extends CouponListState {
+  CouponListLoading() : super(coupons: []);
+}
+
 class CouponListLoaded extends CouponListState {
   CouponListLoaded({required super.coupons, super.isNoCouponSelected});
+}
+
+class CouponListError extends CouponListState {
+  final String message;
+  CouponListError(this.message, {required super.coupons});
+
+  @override
+  List<Object?> get props => [...super.props, message];
 }
 
 // --- Interactor ---
 
 class CouponListInteractor extends CubitInteractor<CouponListRoutable, CouponListState> {
   final CouponListListener? listener;
+  final _repository = PromotionRepository();
 
   CouponListInteractor(CouponListRoutable router, {this.listener}) : super(CouponListInitial(), router: router);
 
@@ -88,37 +57,18 @@ class CouponListInteractor extends CubitInteractor<CouponListRoutable, CouponLis
     _loadCoupons();
   }
 
-  void _loadCoupons() {
-    // Mock data
-    final mockCoupons = [
-      CouponModel(
-        id: 1,
-        title: 'Product Voucher Name Long Product Voucher Name',
-        expiryDate: '2026/03/12-2027/03/11',
-        discountValue: 8,
-        discountType: '%',
-        category: 'Beverage',
-        description: 'Applicable scope: Specific product AAA, Specific product BBB, Specific product CCC',
-        ruleDescription: 'Rich Text Content',
-      ),
-      CouponModel(
-        id: 2,
-        title: 'Product Voucher Name Long Product Voucher Name',
-        expiryDate: '2026/03/12-2027/03/11',
-        discountValue: 9,
-        discountType: '%',
-        category: 'Beverage',
-      ),
-      CouponModel(
-        id: 3,
-        title: 'Product Voucher Name Long Product Voucher Name',
-        expiryDate: '2026/03/12-2027/03/11',
-        discountValue: 10,
-        discountType: '%',
-        category: 'Beverage',
-      ),
-    ];
-    emit(CouponListLoaded(coupons: mockCoupons));
+  Future<void> _loadCoupons() async {
+    emit(CouponListLoading());
+    final result = await _repository.getCouponPage();
+    
+    result.when(
+      success: (coupons) {
+        emit(CouponListLoaded(coupons: coupons));
+      },
+      failure: (error) {
+        emit(CouponListError(error.message, coupons: []));
+      },
+    );
   }
 
   void toggleExpand(int index) {
@@ -155,6 +105,4 @@ class CouponListInteractor extends CubitInteractor<CouponListRoutable, CouponLis
     }
     router?.pop();
   }
-
-
 }

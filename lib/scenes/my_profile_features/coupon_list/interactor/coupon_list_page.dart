@@ -45,8 +45,12 @@ class _CouponListPageState extends AppCubitState<CouponListPage, CouponListInter
   Widget getBody(BuildContext context) {
     return BlocBuilder<CouponListInteractor, CouponListState>(
       builder: (context, state) {
-        if (state is CouponListInitial) {
+        if (state is CouponListLoading || state is CouponListInitial) {
           return const Center(child: CircularProgressIndicator());
+        }
+        
+        if (state is CouponListError && state.coupons.isEmpty) {
+          return Center(child: Text(state.message));
         }
 
         return Stack(

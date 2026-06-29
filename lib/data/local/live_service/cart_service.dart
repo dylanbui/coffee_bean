@@ -125,7 +125,7 @@ class CartService implements DbLocatorDisposable {
       // 4. Rollback on failure
       _items = _rollbackItems ?? [];
       _cartController.add(List.unmodifiable(_items));
-      DbToast.show(error.message ?? "Không thể cập nhật giỏ hàng");
+      DbToast.show(error.message);
     } else {
       // Success: Clear backup
       _rollbackItems = null;
