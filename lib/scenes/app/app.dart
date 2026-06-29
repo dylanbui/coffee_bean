@@ -26,7 +26,7 @@ import 'package:coffee_bean/shared/service/notify_app_upgrade/app_upgrade_servic
 import 'package:coffee_bean/scenes/app/mixins/app_network_mixin.dart';
 import 'package:coffee_bean/scenes/app/mixins/app_upgrade_mixin.dart';
 import 'package:coffee_bean/scenes/app/mixins/app_notify_mixin.dart';
-import 'package:coffee_bean/utils/app_cache.dart';
+import 'package:coffee_bean/data/cache/app_cache.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:db_core/architecture_ribs/navigator.dart';
 import 'package:db_core/network/network_client.dart';

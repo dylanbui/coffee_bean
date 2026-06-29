@@ -98,6 +98,18 @@ class NetworkClient {
     return _executeRequest<T>(url, type, requestData, queryParameters, options, isPublic);
   }
 
+  Future<Response<T>> doGet<T>(String url, {Object? params, Map<String, dynamic>? queryParameters, Options? options, bool isPublic = false}) =>
+      request<T>(url, type: NetworkType.get, params: params, queryParameters: queryParameters, options: options, isPublic: isPublic);
+
+  Future<Response<T>> doPost<T>(String url, {Object? params, Map<String, dynamic>? queryParameters, Options? options, bool isPublic = false}) =>
+      request<T>(url, type: NetworkType.post, params: params, queryParameters: queryParameters, options: options, isPublic: isPublic);
+
+  Future<Response<T>> doPut<T>(String url, {Object? params, Map<String, dynamic>? queryParameters, Options? options, bool isPublic = false}) =>
+      request<T>(url, type: NetworkType.put, params: params, queryParameters: queryParameters, options: options, isPublic: isPublic);
+
+  Future<Response<T>> doDelete<T>(String url, {Object? params, Map<String, dynamic>? queryParameters, Options? options, bool isPublic = false}) =>
+      request<T>(url, type: NetworkType.delete, params: params, queryParameters: queryParameters, options: options, isPublic: isPublic);
+
   // --- RETRY LOGIC (Dành cho Interceptor) ---
   /// Hàm này rất quan trọng cho Refresh Token logic.
   /// Tôi đã thêm xử lý để đảm bảo options được copy đúng luồng.

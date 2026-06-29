@@ -6,10 +6,7 @@
  * Date: 04/07/2022 - 11:10
  */
 
-import 'package:db_core/architecture_ribs/navigator.dart';
-import 'package:db_core/architecture_ribs/note_dependency.dart';
-import 'package:db_core/architecture_ribs/note_interactor.dart';
-import 'package:db_core/architecture_ribs/note_viewer.dart';
+import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 
 /// DbNoteRoute: Base interface for route identifiers used in inter-module navigation.
@@ -31,7 +28,7 @@ abstract interface class DbNoteRoutable {
   void pop();
 
   /// Standard push operation.
-  void push(ViewController viewController);
+  void push(ViewController viewController, {PageTransitionType transitionType = PageTransitionType.rightToLeft});
 
   /// Performs complex navigation logic based on a specific [toRoute].
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters});
@@ -120,11 +117,11 @@ abstract class DbNoteRouter implements DbNoteRoutable {
   }
 
   @override
-  void push(ViewController viewController) {
+  void push(ViewController viewController, {PageTransitionType transitionType = PageTransitionType.rightToLeft}) {
     if (parentRouter case var parentRouter?) {
-      parentRouter.push(viewController);
+      parentRouter.push(viewController, transitionType: transitionType);
     } else {
-      navigator.push(viewController);
+      navigator.push(viewController, transitionType: transitionType);
     }
   }
 

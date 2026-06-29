@@ -10,12 +10,12 @@
 import 'package:db_core/architecture_ribs/note_builder.dart';
 import 'package:db_core/architecture_ribs/note_dependency.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
+import 'package:coffee_bean/scenes/user_auth_features/app_agreement/app_agreement_builder.dart';
 import 'package:coffee_bean/scenes/user_auth_features/forgot_password/forgot_password_builder.dart';
-import 'package:coffee_bean/scenes/user_auth_features/privacy_policy/privacy_policy_builder.dart';
-import 'package:coffee_bean/scenes/user_auth_features/user_agreement/user_agreement_builder.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/interactor/user_login_interactor.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/interactor/user_login_page.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/user_register_builder.dart';
+import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -35,12 +35,12 @@ class UserLoginRouter extends DbNoteRouter {
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
     // Day la nhung luong phu, goi parent xu ly nhung code de o day cho nhe,  main flow se day len parent
     if (toRoute is UserAgreementRoute) {
-      UserAgreementBuilder userAgreementBuilder = UserAgreementBuilder();
-      parentRouter?.push(userAgreementBuilder.build().viewController);
+      final builder = AppAgreementBuilder(type: 3, title: "User Agreement");
+      parentRouter?.push(builder.build().viewController, transitionType: PageTransitionType.bottomToTop);
 
     } else if (toRoute is PrivacyPolicyRoute) {
-      PrivacyPolicyBuilder privacyPolicyBuilder = PrivacyPolicyBuilder();
-      parentRouter?.push(privacyPolicyBuilder.build().viewController);
+      final builder = AppAgreementBuilder(type: 4, title: "Privacy Policy");
+      parentRouter?.push(builder.build().viewController, transitionType: PageTransitionType.bottomToTop);
       
     } else {
       // Đẩy các route khác (LoginSuccess, UserRegister, ForgotPassword) lên cho Flow xử lý
