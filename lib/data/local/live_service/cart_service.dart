@@ -8,57 +8,54 @@ import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/data/model/product.dart';
 import 'package:db_core/utils/toast.dart';
 
+/// Service quản lý giỏ hàng toàn app (Cart Management Service).
+/// 
+/// Hỗ trợ 2 chế độ vận hành:
+/// 1. **Guest Mode**: Lưu trữ trực tiếp vào Isar Database (Local).
+/// 2. **Member Mode**: Sử dụng cơ chế Optimistic UI (cập nhật bộ nhớ ngay lập tức, 
+///    đồng bộ API ngầm và rollback nếu lỗi) để mang lại trải nghiệm mượt mà.
 class CartService implements DbLocatorDisposable {
+  
+  // --- Properties ---
+  
   final DatabaseService _dbService = locator<DatabaseService>();
+  
+  /// Controller quản lý luồng dữ liệu giỏ hàng để cập nhật UI real-time.
   final _cartController = StreamController<List<TblCartItem>>.broadcast();
+  
+  /// Danh sách item hiện tại trong bộ nhớ.
   List<TblCartItem> _items = [];
 
-  // Backup for rollback
+  /// Bản sao lưu dùng để khôi phục trạng thái (Rollback) khi API gặp lỗi.
   List<TblCartItem>? _rollbackItems;
+
+  // --- Initialization ---
 
   CartService() {
     _init();
   }
 
+  /// Khởi tạo trạng thái ban đầu dựa trên trạng thái đăng nhập của người dùng.
   void _init() {
     final userManager = UserManager();
     if (!userManager.isLogin) {
-      // Guest: Watch Isar for any changes in the TblCartItem collection
+      // CHẾ ĐỘ GUEST: Theo dõi thay đổi từ Isar DB
       _dbService.isar.tblCartItems.watchLazy().listen((_) async {
         await _refreshFromLocal();
       });
-      // Initial data fetch from local
       _refreshFromLocal();
     } else {
-      // User: Load from server
+      // CHẾ ĐỘ USER: Đồng bộ dữ liệu từ Server
       refreshFromServer();
     }
   }
 
-  Future<void> _refreshFromLocal() async {
-    try {
-      _items = await _dbService.getCartItems();
-      _cartController.add(List.unmodifiable(_items));
-    } catch (e) {
-      eLog("Error refreshing cart from Isar: $e");
-    }
-  }
-
-  /// Query the user's shopping cart list: GET /app-api/trade/cart/list
-  Future<void> refreshFromServer() async {
-    if (!UserManager().isLogin) return;
-    
-    // TODO: Implement actual API call when UI is ready
-    // For now, we still use local data or wait for future implementation
-    await _refreshFromLocal();
-  }
-
+  /// Stream cung cấp dữ liệu giỏ hàng cho UI. 
+  /// Phát dữ liệu hiện tại ngay khi có listener mới kết nối.
   Stream<List<TblCartItem>> get cartStream {
     return Stream<List<TblCartItem>>.multi((controller) {
-      // Emit current data immediately to the new listener
       controller.add(List.unmodifiable(_items));
 
-      // Subscribe to updates from the main broadcast controller
       final subscription = _cartController.stream.listen(
         (event) => controller.add(event),
         onError: (e) => controller.addError(e),
@@ -69,10 +66,17 @@ class CartService implements DbLocatorDisposable {
     }, isBroadcast: true);
   }
 
-  List<TblCartItem> get currentItems => List.unmodifiable(_items);
+  @override
+  void dispose() {
+    _cartController.close();
+  }
+}
 
-  /// Add/Update item with Optimistic UI approach
-  Future<void> addToCartOptimistic({
+// --- EXTENSION: PUBLIC ACTIONS ---
+
+extension CartServiceActions on CartService {
+  /// Thêm hoặc cập nhật sản phẩm vào giỏ hàng với Optimistic UI.
+  Future<void> addToCart({
     required int skuId,
     required int quantity,
     Product? product,
@@ -81,39 +85,41 @@ class CartService implements DbLocatorDisposable {
     final userManager = UserManager();
     
     if (!userManager.isLogin) {
-      // GUEST MODE: Save directly to Isar
+      // Xử lý trực tiếp vào DB nếu chưa đăng nhập
       await _upsertLocal(skuId, quantity, product, options);
       return;
     }
 
-    // LOGGED-IN MODE: Optimistic Update
-    // 1. Backup current state
+    // --- LOGIC CHO MEMBER (OPTIMISTIC UI) ---
+    
+    // 1. Sao lưu trạng thái hiện tại đề phòng lỗi
     _rollbackItems = List.from(_items.map((e) => _cloneCartItem(e)));
 
-    // 2. Update memory & notify UI immediately (0ms)
+    // 2. Cập nhật bộ nhớ và UI ngay lập tức (0ms latency)
     final existingItem = _items.where((i) => i.skuId == skuId).firstOrNull;
     final int? currentCartItemId = existingItem?.cartItemId;
 
     _updateMemory(skuId, quantity, product, options);
-    _cartController.add(List.unmodifiable(_items));
+    _notifyUI();
 
-    // 3. Background API call
+    // 3. Thực hiện gọi API đồng bộ ngầm
     final tradeRepo = locator<TradeRepository>();
     DbResult<dynamic> result;
 
     if (quantity <= 0) {
+      // Trường hợp xóa item
       if (currentCartItemId != null && currentCartItemId > 0) {
         result = await tradeRepo.deleteCartItems([currentCartItemId]);
       } else {
-        // No server ID, already removed from memory, nothing to sync
-        return;
+        return; // Item chưa có trên server, không cần sync
       }
     } else {
+      // Trường hợp thêm mới hoặc cập nhật số lượng
       if (currentCartItemId != null && currentCartItemId > 0) {
         result = await tradeRepo.updateCartItemCount(id: currentCartItemId, count: quantity);
       } else {
         result = await tradeRepo.addToCart(skuId: skuId, count: quantity);
-        // If it's a new item, update the memory item with the new cartItemId from server
+        // Cập nhật cartItemId thực từ server nếu là item mới
         if (result case DbSuccess(data: final int newId)) {
           final item = _items.where((i) => i.skuId == skuId).firstOrNull;
           if (item != null) item.cartItemId = newId;
@@ -121,18 +127,69 @@ class CartService implements DbLocatorDisposable {
       }
     }
 
+    // 4. Xử lý kết quả API
     if (result case DbFailure(:final error)) {
-      // 4. Rollback on failure
+      // Lỗi: Khôi phục lại trạng thái cũ và báo lỗi
       _items = _rollbackItems ?? [];
-      _cartController.add(List.unmodifiable(_items));
+      _notifyUI();
       DbToast.show(error.message);
     } else {
-      // Success: Clear backup
+      // Thành công: Xóa bản sao lưu
       _rollbackItems = null;
     }
   }
 
-  /// Merge Guest Cart to Server after Login
+  /// Xóa toàn bộ giỏ hàng.
+  Future<void> clearCart() async {
+    await _dbService.isar.writeTxn(() async {
+      await _dbService.isar.tblCartItems.clear();
+    });
+    if (UserManager().isLogin) {
+      _items = [];
+      _notifyUI();
+    }
+  }
+}
+
+// --- EXTENSION: QUERIES ---
+
+extension CartServiceQueries on CartService {
+  /// Lấy danh sách item hiện tại (Snapshot).
+  List<TblCartItem> get currentItems => List.unmodifiable(_items);
+
+  /// Lấy số lượng của một sản phẩm hiện có trong giỏ hàng.
+  /// Hỗ trợ tìm kiếm theo [skuId] hoặc [spuId] kết hợp với [options].
+  int getItemQuantity({int? skuId, int? spuId, List<SelectedOption>? options}) {
+    if (skuId != null && skuId > 0) {
+      final item = _items.where((i) => i.skuId == skuId).firstOrNull;
+      return item?.quantity ?? 0;
+    }
+    
+    if (spuId != null && spuId > 0) {
+      final item = _items.where((i) => 
+        i.spuId == spuId &&
+        i.selectedOptions.isSameAs(options)
+      ).firstOrNull;
+      return item?.quantity ?? 0;
+    }
+    
+    return 0;
+  }
+}
+
+// --- EXTENSION: SYNCHRONIZATION ---
+
+extension CartServiceSync on CartService {
+  /// Tải lại danh sách giỏ hàng từ Server.
+  Future<void> refreshFromServer() async {
+    if (!UserManager().isLogin) return;
+    
+    // TODO: Implement actual API call: GET /app-api/trade/cart/list
+    // Hiện tại vẫn fallback về local cho đến khi API được tích hợp hoàn toàn
+    await _refreshFromLocal();
+  }
+
+  /// Đồng bộ giỏ hàng từ Guest Mode lên Server sau khi Login thành công.
   Future<void> mergeLocalCartToServer() async {
     if (!UserManager().isLogin) return;
 
@@ -144,20 +201,38 @@ class CartService implements DbLocatorDisposable {
 
     final tradeRepo = locator<TradeRepository>();
     
-    // Sync each item to server
+    // Duyệt và đẩy từng item lên server
     for (var item in localItems) {
       if (item.skuId > 0) {
         await tradeRepo.addToCart(skuId: item.skuId, count: item.quantity);
       }
     }
 
-    // Clear local data after successful merge
+    // Dọn dẹp local và reload dữ liệu chuẩn từ server
     await clearCart();
-    
-    // Refresh the canonical list from server
     await refreshFromServer();
   }
+}
 
+// --- EXTENSION: INTERNAL HELPERS (Private) ---
+
+extension _CartServiceInternal on CartService {
+  /// Cập nhật danh sách từ Isar vào bộ nhớ.
+  Future<void> _refreshFromLocal() async {
+    try {
+      _items = await _dbService.getCartItems();
+      _notifyUI();
+    } catch (e) {
+      eLog("Error refreshing cart from Isar: $e");
+    }
+  }
+
+  /// Thông báo cho UI về sự thay đổi dữ liệu.
+  void _notifyUI() {
+    _cartController.add(List.unmodifiable(_items));
+  }
+
+  /// Cập nhật danh sách trong bộ nhớ (Memory).
   void _updateMemory(int skuId, int quantity, Product? product, List<SelectedOption>? options) {
     final index = _items.indexWhere((item) => item.skuId == skuId);
     
@@ -168,13 +243,14 @@ class CartService implements DbLocatorDisposable {
         _items[index].quantity = quantity;
       }
     } else if (quantity > 0 && product != null) {
+      // Tính toán giá cuối cùng dựa trên các option đã chọn
       double price = product.price / 100.0;
       options?.forEach((o) => price += o.extraPrice);
 
       final newItem = TblCartItem()
         ..skuId = skuId
         ..spuId = product.id
-        ..cartItemId = 0 // Will be updated after API call
+        ..cartItemId = 0 
         ..name = product.name
         ..image = product.picUrl
         ..finalPrice = price
@@ -186,6 +262,7 @@ class CartService implements DbLocatorDisposable {
     }
   }
 
+  /// Thực hiện ghi/xóa dữ liệu trực tiếp trong Isar.
   Future<void> _upsertLocal(int skuId, int quantity, Product? product, List<SelectedOption>? options) async {
     final isar = _dbService.isar;
     await isar.writeTxn(() async {
@@ -216,6 +293,7 @@ class CartService implements DbLocatorDisposable {
     });
   }
 
+  /// Tạo bản sao sâu (Deep copy) cho Cart Item.
   TblCartItem _cloneCartItem(TblCartItem item) {
     return TblCartItem()
       ..id = item.id
@@ -231,62 +309,21 @@ class CartService implements DbLocatorDisposable {
       ..selectedOptions = item.selectedOptions != null ? List.from(item.selectedOptions!) : null
       ..addedAt = item.addedAt;
   }
+}
 
-  // --- COMPATIBILITY WRAPPERS FOR EXISTING CODE ---
+// --- HELPER EXTENSION: SELECTED OPTIONS ---
 
-  Future<void> upsertCartItem(dynamic product, int quantity, List<SelectedOption>? options, {int? skuId}) async {
-    if (product is! Product) {
-       eLog("Unsupported product type for upsertCartItem: ${product.runtimeType}");
-       return;
-    }
-    await addToCartOptimistic(
-      skuId: skuId ?? 0, 
-      quantity: quantity, 
-      product: product, 
-      options: options
-    );
-  }
+extension SelectedOptionListExtension on List<SelectedOption>? {
+  /// So sánh hai danh sách Option để xác định tính duy nhất của item.
+  bool isSameAs(List<SelectedOption>? other) {
+    if (this == null && other == null) return true;
+    if (this == null || other == null) return false;
+    if (this!.length != other.length) return false;
 
-  int getQuantity(dynamic product, List<SelectedOption>? options, {int? skuId}) {
-    if (skuId != null && skuId > 0) {
-      final item = _items.where((i) => i.skuId == skuId).firstOrNull;
-      return item?.quantity ?? 0;
-    }
-    
-    // Fallback if no skuId (searching by spuId and matching options)
-    int spuId = (product is Product) ? product.id : 0;
-    final item = _items.where((i) => 
-      i.spuId == spuId &&
-      compareOptions(i.selectedOptions, options)
-    ).firstOrNull;
-    
-    return item?.quantity ?? 0;
-  }
-
-  bool compareOptions(List<SelectedOption>? list1, List<SelectedOption>? list2) {
-    if (list1 == null && list2 == null) return true;
-    if (list1 == null || list2 == null) return false;
-    if (list1.length != list2.length) return false;
-
-    for (var o1 in list1) {
-      final found = list2.any((o2) => o2.optionServerId == o1.optionServerId && o2.groupName == o1.groupName);
+    for (var o1 in this!) {
+      final found = other.any((o2) => o2.optionServerId == o1.optionServerId && o2.groupName == o1.groupName);
       if (!found) return false;
     }
     return true;
-  }
-
-  Future<void> clearCart() async {
-    await _dbService.isar.writeTxn(() async {
-      await _dbService.isar.tblCartItems.clear();
-    });
-    if (UserManager().isLogin) {
-      _items = [];
-      _cartController.add([]);
-    }
-  }
-
-  @override
-  void dispose() {
-    _cartController.close();
   }
 }

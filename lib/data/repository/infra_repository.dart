@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:coffee_bean/data/model/response/system/announcement.dart';
 import 'package:db_core/network/base_repository.dart';
 import 'package:db_core/network/network_common.dart';
 import 'package:db_core/network/network_upload_response.dart';
@@ -43,6 +44,31 @@ class InfraRepository extends BaseRepository {
     }
 
     return result;
+  }
+
+  /// Get announcement list by type
+  /// 1=NOTICE, 2=ANNOUNCEMENT
+  /// API: GET /app-api/system/notice/list
+  Future<DbResult<List<Announcement>>> getAnnouncementList(int type) async {
+    return await networkClient
+        .doGet(
+          '/app-api/system/notice/list',
+          queryParameters: {'type': type},
+        )
+        .mapResponseTo(Announcement.fromJson)
+        .toList();
+  }
+
+  /// Get announcement detail by id
+  /// API: GET /app-api/system/notice/get-detail
+  Future<DbResult<Announcement>> getAnnouncementDetail(int id) async {
+    return await networkClient
+        .doGet(
+          '/app-api/system/notice/get-detail',
+          queryParameters: {'id': id},
+        )
+        .mapResponseTo(Announcement.fromJson)
+        .toObject();
   }
 
   /// Upload file to server

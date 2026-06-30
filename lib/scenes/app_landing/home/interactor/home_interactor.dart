@@ -1,11 +1,15 @@
+import 'package:coffee_bean/data/model/response/system/announcement.dart';
+import 'package:coffee_bean/data/repository/infra_repository.dart';
+import 'package:coffee_bean/scenes/announcement_detail/announcement_detail_builder.dart';
+import 'package:coffee_bean/scenes/app_landing/home/home_builder.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_toast_helper.dart';
 import 'package:coffee_bean/utils/utils.dart';
+import 'package:db_core/network/network_utils.dart';
 import 'package:db_core/services/event_bus.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
 import 'package:db_core/utils/locator.dart';
 import 'package:flutter/material.dart';
-import 'package:coffee_bean/scenes/app_landing/home/home_router.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_strings.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_helper.dart';
@@ -13,9 +17,11 @@ import 'package:db_core/architecture_ribs/note_router.dart';
 
 class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
   late final AuthHelper _authHelper;
+  late final InfraRepository _infraRepository;
 
   HomeInteractor(HomeRoutable router) : super(HomeInitial(), router: router) {
     _authHelper = AuthHelper(router as DbNoteRouter);
+    _infraRepository = locator<InfraRepository>();
   }
 
   @override
@@ -25,6 +31,13 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
   }
 
   void initData() async {
+    // 1. Fetch announcements
+    final announcementResult = await _infraRepository.getAnnouncementList(2); // type=2 for announcements
+    List<Announcement> announcements = [];
+    if (announcementResult case DbSuccess(data: final list)) {
+      announcements = list;
+    }
+
     // Simulate initial loading
     await Future.delayed(const Duration(seconds: 2));
 
@@ -50,6 +63,7 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
       announcementData: AnnouncementData(
         message: "Menu mới với combo trader health các món ăn giàu dinh dưỡng... Đặt hàng ngay để nhận ưu đãi!",
       ),
+      announcements: announcements,
       promoData: PromoData(
         title: "Banner quảng cáo",
         description: "Hiển thị banner dạng nhỏ nhấn vào sẽ đến trang...",
@@ -231,5 +245,9 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
   void addToCart(FinancialCourseItem item) {
     // Logic to add to cart
     debugPrint("Added to cart: ${item.title}");
+  }
+
+  void onAnnouncementTap(Announcement announcement) {
+    router?.navigate(AnnouncementDetailRoute(announcement.id));
   }
 }

@@ -7,6 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/data/model/response/system/announcement.dart';
 import 'package:db_core/state_management/lib_bloc/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -151,6 +152,7 @@ class HomeState extends BaseBlocState {
   final QuickActionsData? quickActionsData;
   final AnnouncementData? announcementData;
   final PromoData? promoData;
+  final List<Announcement> announcements;
   final FeaturedCoursesData? featuredCoursesData;
   final CourseSellersData? courseSellersData;
   final CourseVideosData? courseVideosData;
@@ -163,6 +165,7 @@ class HomeState extends BaseBlocState {
     this.quickActionsData,
     this.announcementData,
     this.promoData,
+    this.announcements = const [],
     this.featuredCoursesData,
     this.courseSellersData,
     this.courseVideosData,
@@ -176,6 +179,7 @@ class HomeState extends BaseBlocState {
     QuickActionsData? quickActionsData,
     AnnouncementData? announcementData,
     PromoData? promoData,
+    List<Announcement>? announcements,
     FeaturedCoursesData? featuredCoursesData,
     CourseSellersData? courseSellersData,
     CourseVideosData? courseVideosData,
@@ -188,6 +192,7 @@ class HomeState extends BaseBlocState {
       quickActionsData: quickActionsData ?? this.quickActionsData,
       announcementData: announcementData ?? this.announcementData,
       promoData: promoData ?? this.promoData,
+      announcements: announcements ?? this.announcements,
       featuredCoursesData: featuredCoursesData ?? this.featuredCoursesData,
       courseSellersData: courseSellersData ?? this.courseSellersData,
       courseVideosData: courseVideosData ?? this.courseVideosData,

@@ -63,13 +63,8 @@ class _HomePageState extends AppCubitState<HomePage, HomeInteractor, HomeState> 
             child: QuickActionsPanel(interactor: interactor),
           ),
 
-          // 3. Announcement (Horizontal padding 16)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: AnnouncementBarPanel(interactor: interactor),
-          ),
-
-          const SizedBox(height: 16),
+          // 3. Announcement (Quản lý hiển thị và spacing nội bộ)
+          AnnouncementBarPanel(interactor: interactor),
 
           // 4. Promo Banner (Horizontal padding 16)
           Padding(

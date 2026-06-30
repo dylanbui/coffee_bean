@@ -84,7 +84,7 @@ class ProductDetailInteractor extends CubitInteractor<ProductDetailRoutable, Pro
     }
 
     final matchedSku = _findMatchedSku(product.skus, initialSelected);
-    final cartQty = _cartService.getQuantity(product, null, skuId: matchedSku?.id);
+    final cartQty = _cartService.getItemQuantity(skuId: matchedSku?.id);
 
     emit(state.copyWith(
       product: product,
@@ -137,11 +137,11 @@ class ProductDetailInteractor extends CubitInteractor<ProductDetailRoutable, Pro
           ..extraPrice = 0.0)
         .toList();
 
-    _cartService.upsertCartItem(
-      state.product!, 
-      state.quantity, 
-      selectedOptions, 
-      skuId: state.currentSku?.id
+    _cartService.addToCart(
+      skuId: state.currentSku?.id ?? 0,
+      quantity: state.quantity,
+      product: state.product!,
+      options: selectedOptions,
     );
 
     // [QC TEST]: Tạm thời comment Toast để test trải nghiệm nhạy hơn

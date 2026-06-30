@@ -137,7 +137,7 @@ class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState
     if (product.specType) {
       routeToProductDetail(product);
     } else {
-      _cartService.upsertCartItem(product, 1, null, skuId: product.id);
+      _cartService.addToCart(skuId: product.id, quantity: 1, product: product);
     }
   }
 
