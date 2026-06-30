@@ -141,6 +141,7 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
   Widget _buildActionsList() {
     return DbSelectionTable(
       children: [
+        _buildDbSelectionRow("DAILY_SIGN_IN", AppAssets.icons.icGoldCoin, 'Điểm danh hàng ngày'),
         _buildDbSelectionRow("MY_COUPON", AppAssets.icons.icDoiDiem, 'Mã giảm giá'),
         _buildDbSelectionRow("COURSES", AppAssets.icons.icKhoaHocNone, 'Khóa học'),
         _buildDbSelectionRow("SAVED", AppAssets.icons.icSaved, 'Đã lưu'),

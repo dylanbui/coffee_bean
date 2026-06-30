@@ -41,6 +41,14 @@ abstract class DailySignInState extends BaseBlocState {
     this.todayPoints = 0,
     this.alreadyCheckedInToday = false,
   });
+
+  @override
+  List<Object?> get props => [
+        checkInHistory,
+        streakDays,
+        todayPoints,
+        alreadyCheckedInToday,
+      ];
 }
 
 class DailySignInInitial extends DailySignInState {

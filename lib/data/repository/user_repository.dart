@@ -105,6 +105,22 @@ class UserRepository extends BaseRepository {
         .toValue<Dictionary>();
   }
 
+  /// Lấy cấu hình điểm danh
+  Future<DbResult<List<Dictionary>>> getSignInConfigList() async {
+    return await networkClient
+        .request('/app-api/member/sign-in/config/list', type: NetworkType.get)
+        .mapResponseTo<Dictionary>((json) => json)
+        .toList();
+  }
+
+  /// Lấy tóm tắt điểm danh cá nhân
+  Future<DbResult<Dictionary>> getSignInRecordSummary() async {
+    return await networkClient
+        .request('/app-api/member/sign-in/record/get-summary', type: NetworkType.get)
+        .mapResponseTo<Dictionary>((json) => json)
+        .toObject();
+  }
+
   /// Ví dụ cũ dùng Local JSON
   Future<DbResult<List<PointBreakdownItem>>> fetchPointBreakdown({int offset = 0, int limit = 20}) async {
     try {

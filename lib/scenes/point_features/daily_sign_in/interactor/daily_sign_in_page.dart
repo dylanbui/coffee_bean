@@ -8,6 +8,7 @@
 //
 // Copyright (c) 2026. All rights reserved.
 // **************************************************************************
+import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/scenes/point_features/daily_sign_in/interactor/daily_sign_in_event_state.dart';
 import 'package:coffee_bean/scenes/point_features/daily_sign_in/interactor/daily_sign_in_interactor.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
@@ -15,6 +16,7 @@ import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_sliver_app_bar.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_toast_helper.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,6 +49,7 @@ class _DailySignInPageState extends AppCubitState<DailySignInPage, DailySignInIn
               style: TmLabAppBarStyle.transparentStyle.copyWith(foregroundColor: Colors.white),
               onBackTap: () => interactor.router?.pop(),
             ),
+// ... tiếp tục phần code cũ ...
 
             // Main Content
             SliverToBoxAdapter(
@@ -98,6 +101,7 @@ class _DailySignInPageState extends AppCubitState<DailySignInPage, DailySignInIn
   }
 
   Widget _buildUserCard(DailySignInState state) {
+    final userInfo = UserManager().userInfo;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -107,9 +111,9 @@ class _DailySignInPageState extends AppCubitState<DailySignInPage, DailySignInIn
       ),
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 25,
-            backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=a042581f4e29026704d'),
+            backgroundImage: NetworkImage(userInfo?.avatar ?? 'https://i.pravatar.cc/150?u=a042581f4e29026704d'),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -120,7 +124,8 @@ class _DailySignInPageState extends AppCubitState<DailySignInPage, DailySignInIn
                   text: TextSpan(
                     style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.secondary),
                     children: [
-                      const TextSpan(text: "Bạn đã điểm danh liên tiếp "),
+                      TextSpan(text: userInfo?.nickname ?? "Bạn"),
+                      const TextSpan(text: " đã điểm danh liên tiếp "),
                       TextSpan(text: "${state.streakDays} ngày", style: TMLabsTextStyle.bodyBold),
                     ],
                   ),
