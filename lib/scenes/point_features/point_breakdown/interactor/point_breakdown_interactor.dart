@@ -11,8 +11,8 @@ class PointBreakdownInteractor extends CubitInteractor<PointBreakdownRoutable, P
 
   PointBreakdownInteractor(PointBreakdownRoutable router) : super(PointBreakdownInitial(), router: router);
 
-  int _currentOffset = 0;
-  final int _limit = 20;
+  int _currentPage = 1;
+  final int _pageSize = 20;
   bool _isBusy = false;
 
   @override
@@ -33,27 +33,29 @@ class PointBreakdownInteractor extends CubitInteractor<PointBreakdownRoutable, P
     try {
       // 2. Cập nhật trạng thái loading
       if (isRefresh) {
-        _currentOffset = 0;
+        _currentPage = 1;
       }
 
       // 3. Gọi Repository lấy dữ liệu
       final result = await _userRepository.fetchPointBreakdown(
-        offset: _currentOffset,
-        limit: _limit,
+        pageNo: _currentPage,
+        pageSize: _pageSize,
       );
 
-      if (result case DbSuccess(data: final items)) {
+      if (result case DbSuccess(data: final pageData)) {
         // Lấy danh sách hiện tại: nếu refresh thì bắt đầu từ rỗng, nếu load more thì lấy list cũ
         final List<PointBreakdownItem> currentList = isRefresh ? [] : List.from(state.items);
-        final newList = [...currentList, ...items];
-        _currentOffset = newList.length; // Cập nhật offset mới dựa trên tổng số item đã có
+        final newList = [...currentList, ...pageData.list];
+        
+        _currentPage++; // Tăng trang cho lần tiếp theo
+        
         emit(PointBreakdownDone(
           items: newList,
-          hasMore: items.length == _limit, // Nếu server trả về đủ limit thì giả định còn dữ liệu
+          hasMore: newList.length < pageData.total, // hasMore chính xác dựa trên total từ server
           isLoadingMore: false,
         ));
       } else {
-        // Xử lý lỗi: Duoc xem nhu khong tim thay du lieu
+        // Xử lý lỗi: Giữ nguyên trạng thái cũ
         emit(PointBreakdownDone(
           items: state.items,
           hasMore: state.hasMore,

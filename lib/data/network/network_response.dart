@@ -7,6 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/data/network/page_result.dart';
 import 'package:db_core/network/network_common.dart';
 import 'package:dio/dio.dart';
 
@@ -58,10 +59,11 @@ extension NetworkMappingProject<T> on Future<Response<T>> {
       if (rawData is Map<String, dynamic>) {
         final networkRes = NetworkResponse<R>.fromJson(rawData, mapper);
         if (networkRes.isSuccess) {
-          if (networkRes.data == null) {
+          final data = networkRes.data;
+          if (data == null) {
             return DbFailure(NetworkError(500, "Dữ liệu trả về trống"));
           }
-          return DbSuccess(networkRes.data!);
+          return DbSuccess(data);
         } else {
           return DbFailure(NetworkError(networkRes.code, networkRes.msg));
         }
@@ -169,5 +171,12 @@ extension NetworkMappingProjectChaining<T> on Future<Response<T>> {
   /// Khởi tạo chuỗi xử lý API mà không cần mapper (dùng khi data trả về kiểu cơ bản)
   NetworkResponseDataMapper<T, dynamic> mapResponse() {
     return NetworkResponseDataMapper<T, dynamic>(this, (json) => json);
+  }
+
+  /// Bắt đầu chuỗi xử lý cho các API phân trang có cấu trúc {code, msg, data: { total, list: [] }}
+  NetworkResponseDataMapper<T, PageResult<M>> mapResponseToPage<M>(JsonMapper<M> mapper) {
+    return NetworkResponseDataMapper<T, PageResult<M>>(this, (json) {
+      return PageResult<M>.fromJson(json, (j) => mapper(j as Map<String, dynamic>),);
+    });
   }
 }

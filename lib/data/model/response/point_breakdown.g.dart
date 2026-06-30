@@ -8,18 +8,18 @@ part of 'point_breakdown.dart';
 
 PointBreakdownItem _$PointBreakdownItemFromJson(Map<String, dynamic> json) =>
     PointBreakdownItem(
+      id: (json['id'] as num).toInt(),
       title: json['title'] as String,
-      body: json['body'] as String?,
-      points: (json['points'] as num).toDouble(),
-      dateTime: json['dateTime'] as String,
-      isVoucher: json['isVoucher'] as bool? ?? false,
+      description: json['description'] as String?,
+      point: (json['point'] as num).toInt(),
+      createTime: (json['createTime'] as num).toInt(),
     );
 
 Map<String, dynamic> _$PointBreakdownItemToJson(PointBreakdownItem instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'title': instance.title,
-      'body': instance.body,
-      'points': instance.points,
-      'dateTime': instance.dateTime,
-      'isVoucher': instance.isVoucher,
+      'description': instance.description,
+      'point': instance.point,
+      'createTime': instance.createTime,
     };

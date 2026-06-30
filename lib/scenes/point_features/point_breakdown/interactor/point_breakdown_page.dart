@@ -7,6 +7,7 @@ import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui/app_ui.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:coffee_bean/utils/refresh_loadmore.dart';
+import 'package:coffee_bean/utils/utils_datetime.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -89,9 +90,9 @@ class _PointBreakdownPageState
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                if (item.body != null && item.body!.isNotEmpty)
+                if (item.description != null && item.description!.isNotEmpty)
                   Text(
-                    item.body!,
+                    item.description!,
                     style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -105,15 +106,15 @@ class _PointBreakdownPageState
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                "${item.points > 0 ? '+' : ''}${item.points.toInt()}",
+                "${item.point > 0 ? '+' : ''}${item.point}",
                 style: TMLabsTextStyle.title.copyWith(
-                  color: item.points > 0 ? TMLabsColor.success : TMLabsColor.error,
+                  color: item.point > 0 ? TMLabsColor.success : TMLabsColor.error,
                   fontSize: 18,
                 ),
                 maxLines: 1,
               ),
               Text(
-                item.dateTime,
+                UtcUtils.formatTimestamp(item.createTime, format: AppDateTimeFormat.full),
                 style: TMLabsTextStyle.small.copyWith(
                   color: TMLabsColor.grey,
                   fontWeight: FontWeight.normal,

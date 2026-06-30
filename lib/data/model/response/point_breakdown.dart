@@ -4,18 +4,18 @@ part 'point_breakdown.g.dart';
 
 @JsonSerializable()
 class PointBreakdownItem {
+  final int id;
   final String title;
-  final String? body;
-  final double points;
-  final String dateTime;
-  final bool isVoucher;
+  final String? description;
+  final int point;
+  final int createTime;
 
   PointBreakdownItem({
+    required this.id,
     required this.title,
-    this.body,
-    required this.points,
-    required this.dateTime,
-    this.isVoucher = false,
+    this.description,
+    required this.point,
+    required this.createTime,
   });
 
   factory PointBreakdownItem.fromJson(Map<String, dynamic> json) => _$PointBreakdownItemFromJson(json);

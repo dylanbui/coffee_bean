@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/data/model/response/point_breakdown.dart';
+import 'package:coffee_bean/data/network/page_result.dart';
 import 'package:db_core/commons_constants.dart';
-import 'package:flutter/services.dart';
 import 'package:db_core/network/base_repository.dart';
 import 'package:db_core/network/network_common.dart';
 import 'package:coffee_bean/data/model/user.dart';
@@ -121,28 +121,14 @@ class UserRepository extends BaseRepository {
         .toObject();
   }
 
-  /// Ví dụ cũ dùng Local JSON
-  Future<DbResult<List<PointBreakdownItem>>> fetchPointBreakdown({int offset = 0, int limit = 20}) async {
-    try {
-      final String response = await rootBundle.loadString('assets/json/reward_point_history.json');
-      final data = await json.decode(response);
-      if (data['history'] != null) {
-        final List<dynamic> jsonList = data['history'];
-        final allItems = jsonList.map((j) => PointBreakdownItem.fromJson(j)).toList();
-        
-        final start = offset;
-        final end = (offset + limit) > allItems.length ? allItems.length : (offset + limit);
-        
-        if (start >= allItems.length) return const DbSuccess(<PointBreakdownItem>[]);
-        
-        // Giả lập delay mạng
-        await Future.delayed(const Duration(milliseconds: 500));
-        
-        return DbSuccess(allItems.sublist(start, end));
-      }
-      return const DbSuccess(<PointBreakdownItem>[]);
-    } catch (e) {
-      return DbFailure(NetworkError(500, e.toString()));
-    }
+  /// Lấy lịch sử tích điểm (Point History)
+  Future<ResultPageType<PointBreakdownItem>> fetchPointBreakdown({int pageNo = 1, int pageSize = 20}) async {
+    return await networkClient
+        .request('/app-api/member/point/record/page', params: {
+          'pageNo': pageNo,
+          'pageSize': pageSize,
+        })
+        .mapResponseToPage(PointBreakdownItem.fromJson)
+        .toObject();
   }
 }
