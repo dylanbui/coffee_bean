@@ -1,3 +1,4 @@
+import 'package:coffee_bean/features/cart_workflow/cart_checkout_factory.dart';
 import 'package:coffee_bean/data/model/response/product/product.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
@@ -169,13 +170,15 @@ class ProductDetailInteractor extends CubitInteractor<ProductDetailRoutable, Pro
 
     if (_cartService.currentItems.isNotEmpty) {
       // Nếu trong giỏ hàng đã có sản phẩm => chuyển trang thanh toán
-      router?.gotoOrderConfirmation();
+      final contract = CartCheckoutFactory.createFromCurrentCart();
+      router?.gotoCheckout(contract);
     } else {
       // Nếu trong giỏ hàng chưa có sản phẩm nào => thêm vào giỏ rồi chuyển trang
       // Thực hiện âm thầm (không set isAddingToCart để tránh hiện loading trên nút kia)
       _executeAddToCart();
       // Chuyển trang ngay sau khi lệnh add được gửi đi (Optimistic UI của CartService sẽ lo phần còn lại)
-      router?.gotoOrderConfirmation();
+      final contract = CartCheckoutFactory.createFromCurrentCart();
+      router?.gotoCheckout(contract);
     }
   }
 

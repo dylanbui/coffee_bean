@@ -72,6 +72,7 @@ class TMLabsColor {
 
   // --- 3. NEUTRAL COLORS (Màu trung tính) ---
   static const white = Color(0xFFFFFFFF);       // Trắng (Nền chính, chữ trên nền tối)
+  static const black = Color(0xFF000000);       // Đen
   static const grey = Color(0xFF525556);        // Xám đậm (Văn bản phụ, mô tả)
   static const lightGrey = Color(0xFFCECCCD);   // Xám nhạt (Border, đường kẻ Divider)
   static const bgLight = Color(0xFFF2F2F2);     // Xám cực nhẹ (Nền item card, nền input)

@@ -12,6 +12,6 @@ class CategoryIcons {
   };
 
   static String getIcon(int catId) {
-    return _mapping[catId] ?? AppAssets.icons.icCatCoffee; // Trả về coffee nếu không tìm thấy
+    return _mapping[catId] ?? AppAssets.icons.icNoImage;
   }
 }

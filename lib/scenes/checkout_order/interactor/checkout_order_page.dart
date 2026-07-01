@@ -119,10 +119,6 @@ class _CheckoutOrderPageState extends AppCubitState<CheckoutOrderPage, CheckoutO
     final optionsWidget = contract.buildOptionsWidget(context);
     if (optionsWidget == null) return const SizedBox();
 
-    return Container(
-      color: Colors.white,
-      width: double.infinity,
-      child: optionsWidget,
-    );
+    return optionsWidget;
   }
 }
