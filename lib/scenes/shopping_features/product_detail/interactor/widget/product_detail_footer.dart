@@ -46,11 +46,35 @@ class ProductDetailFooter extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: AppButton(
-                        text: "Thêm giỏ hàng",
-                        onPressed: state.isAddingToCart ? null : () => interactor.addToCart(),
-                        style: TMLabsButtonStyle.outline,
-                        isLoading: state.isAddingToCart,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          AppButton(
+                            text: "Thêm giỏ hàng",
+                            onPressed: state.isAddingToCart ? null : () => interactor.addToCart(),
+                            style: TMLabsButtonStyle.outline,
+                            isLoading: state.isAddingToCart,
+                          ),
+                          if (state.cartItemCount > 0)
+                            Positioned(
+                              right: -5,
+                              top: -5,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: TMLabsColor.red,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.white, width: 1.5),
+                                ),
+                                constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+                                child: Text(
+                                  "${state.cartItemCount}",
+                                  style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                     const SizedBox(width: 15),

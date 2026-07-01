@@ -30,6 +30,12 @@ class ProductDetailInteractor extends CubitInteractor<ProductDetailRoutable, Pro
   void onDidBecomeActive() {
     super.onDidBecomeActive();
     _loadProductDetail();
+
+    // Lắng nghe thay đổi giỏ hàng để cập nhật số lượng hiển thị (Badge)
+    collect(_cartService.cartStream.listen((items) {
+      final totalQty = items.fold<int>(0, (sum, item) => sum + item.quantity);
+      emit(state.copyWith(cartItemCount: totalQty));
+    }));
   }
 
   Future<void> _loadProductDetail() async {
@@ -129,8 +135,21 @@ class ProductDetailInteractor extends CubitInteractor<ProductDetailRoutable, Pro
 
     emit(state.copyWith(isAddingToCart: true));
 
+    _executeAddToCart();
+
+    // Cho phép bấm lại sau 500ms
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (isClosed) return;
+      emit(state.copyWith(isAddingToCart: false));
+    });
+  }
+
+  void _executeAddToCart() {
+    if (state.product == null) return;
+
     // Chuyển đổi SkuProperty sang SelectedOption để lưu vào Cart
-    final List<SelectedOption>? selectedOptions = state.currentSku?.properties.map((p) => SelectedOption()
+    final List<SelectedOption>? selectedOptions = state.currentSku?.properties
+        .map((p) => SelectedOption()
           ..optionServerId = p.valueId
           ..groupName = p.propertyName
           ..optionName = p.valueName
@@ -143,23 +162,21 @@ class ProductDetailInteractor extends CubitInteractor<ProductDetailRoutable, Pro
       product: state.product!,
       options: selectedOptions,
     );
-
-    // [QC TEST]: Tạm thời comment Toast để test trải nghiệm nhạy hơn
-    // DbToast.show(
-    //   "Đã thêm vào giỏ hàng thành công",
-    //   gravity: DbToastGravity.top,
-    //   duration: const Duration(milliseconds: 900),
-    // );
-
-    // Cho phép bấm lại sau 500ms thay vì 1s
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (isClosed) return;
-      emit(state.copyWith(isAddingToCart: false));
-    });
   }
 
-  void buyNow() {
-    addToCart();
+  void buyNow() async {
+    if (state.product == null) return;
+
+    if (_cartService.currentItems.isNotEmpty) {
+      // Nếu trong giỏ hàng đã có sản phẩm => chuyển trang thanh toán
+      router?.gotoOrderConfirmation();
+    } else {
+      // Nếu trong giỏ hàng chưa có sản phẩm nào => thêm vào giỏ rồi chuyển trang
+      // Thực hiện âm thầm (không set isAddingToCart để tránh hiện loading trên nút kia)
+      _executeAddToCart();
+      // Chuyển trang ngay sau khi lệnh add được gửi đi (Optimistic UI của CartService sẽ lo phần còn lại)
+      router?.gotoOrderConfirmation();
+    }
   }
 
   @override

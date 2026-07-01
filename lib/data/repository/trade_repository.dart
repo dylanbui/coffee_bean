@@ -1,3 +1,4 @@
+import 'package:coffee_bean/data/model/response/trade/cart_list_response.dart';
 import 'package:coffee_bean/data/network/network_response.dart';
 import 'package:db_core/db_core.dart';
 
@@ -40,10 +41,10 @@ class TradeRepository extends BaseRepository {
   }
 
   /// Query the user's shopping cart list: GET /app-api/trade/cart/list
-  Future<DbResult<dynamic>> getCartList() async {
+  Future<DbResult<CartListResponse>> getCartList() async {
     return await networkClient
         .request('/app-api/trade/cart/list')
-        .mapResponse()
+        .mapResponseTo(CartListResponse.fromJson)
         .toObject();
   }
 

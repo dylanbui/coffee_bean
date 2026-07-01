@@ -22,6 +22,7 @@ class ProductDetailState extends BaseBlocState {
   final Sku? currentSku;
   final bool isLoading;
   final bool isAddingToCart;
+  final int cartItemCount;
 
   ProductDetailState({
     this.product,
@@ -32,6 +33,7 @@ class ProductDetailState extends BaseBlocState {
     this.currentSku,
     this.isLoading = true,
     this.isAddingToCart = false,
+    this.cartItemCount = 0,
   });
 
   ProductDetailState copyWith({
@@ -43,6 +45,7 @@ class ProductDetailState extends BaseBlocState {
     Sku? currentSku,
     bool? isLoading,
     bool? isAddingToCart,
+    int? cartItemCount,
   }) {
     return ProductDetailState(
       product: product ?? this.product,
@@ -53,6 +56,7 @@ class ProductDetailState extends BaseBlocState {
       currentSku: currentSku ?? this.currentSku,
       isLoading: isLoading ?? this.isLoading,
       isAddingToCart: isAddingToCart ?? this.isAddingToCart,
+      cartItemCount: cartItemCount ?? this.cartItemCount,
     );
   }
 
@@ -74,5 +78,6 @@ class ProductDetailState extends BaseBlocState {
         currentSku,
         isLoading,
         isAddingToCart,
+        cartItemCount,
       ];
 }

@@ -1,4 +1,5 @@
 import 'package:db_core/architecture_ribs/note_builder.dart';
+import 'package:coffee_bean/scenes/order_confirmation/order_confirmation_builder.dart';
 import 'package:coffee_bean/scenes/shopping_features/product_detail/interactor/product_detail_interactor.dart';
 import 'package:coffee_bean/scenes/shopping_features/product_detail/interactor/product_detail_page.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 
 abstract class ProductDetailRoutable implements DbNoteRoutable {
   void gotoCommentList(int productId, int type);
+  void gotoOrderConfirmation();
 }
 
 class ProductDetailRouter extends DbNoteRouter implements ProductDetailRoutable {
@@ -18,6 +20,13 @@ class ProductDetailRouter extends DbNoteRouter implements ProductDetailRoutable 
   @override
   void gotoCommentList(int productId, int type) {
     final builder = CommentListBuilder(productId: productId, type: type);
+    final router = builder.build();
+    navigator.push(router.viewController);
+  }
+
+  @override
+  void gotoOrderConfirmation() {
+    final builder = OrderConfirmationBuilder();
     final router = builder.build();
     navigator.push(router.viewController);
   }
