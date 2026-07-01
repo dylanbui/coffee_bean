@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:group_button/group_button.dart';
-import 'package:coffee_bean/data/model/product.dart';
+import 'package:coffee_bean/data/model/response/product/product.dart';
 
 class ProductDetailContent extends StatelessWidget {
   final ProductDetailInteractor interactor;

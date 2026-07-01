@@ -1,6 +1,6 @@
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
-import 'package:coffee_bean/data/model/product.dart';
-import 'package:coffee_bean/data/model/category.dart';
+import 'package:coffee_bean/data/model/response/product/product.dart';
+import 'package:coffee_bean/data/model/response/product/category.dart';
 import 'package:coffee_bean/scenes/shopping_features/shopping/interactor/shopping_event_state.dart';
 import 'package:coffee_bean/scenes/shopping_features/shopping/interactor/shopping_interactor.dart';
 import 'package:coffee_bean/scenes/shopping_features/shopping/interactor/widget/shopping_category_list.dart';

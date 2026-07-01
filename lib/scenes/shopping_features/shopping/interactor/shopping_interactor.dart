@@ -3,7 +3,7 @@ import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
 import 'package:coffee_bean/data/repository/product_repository.dart';
-import 'package:coffee_bean/data/model/product.dart';
+import 'package:coffee_bean/data/model/response/product/product.dart';
 import 'package:coffee_bean/scenes/shopping_features/shopping/interactor/shopping_event_state.dart';
 import 'package:coffee_bean/scenes/shopping_features/shopping/shopping_router.dart';
 import 'package:coffee_bean/utils/utils.dart';

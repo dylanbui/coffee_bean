@@ -5,7 +5,7 @@ import 'package:db_core/network/network_utils.dart';
 import 'package:db_core/utils/locator.dart';
 import 'package:db_core/utils/logger.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
-import 'package:coffee_bean/data/model/product.dart';
+import 'package:coffee_bean/data/model/response/product/product.dart';
 import 'package:db_core/utils/toast.dart';
 
 /// Service quản lý giỏ hàng toàn app (Cart Management Service).

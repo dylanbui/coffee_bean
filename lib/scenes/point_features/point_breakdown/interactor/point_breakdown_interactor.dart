@@ -1,9 +1,8 @@
-import 'package:coffee_bean/data/model/response/point_breakdown.dart';
+import 'package:coffee_bean/data/model/response/promotion/point_breakdown.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/scenes/point_features/point_breakdown/interactor/point_breakdown_event_state.dart';
 import 'package:coffee_bean/scenes/point_features/point_breakdown/point_breakdown_builder.dart';
 import 'package:db_core/db_core.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 
 // INTERACTOR
 class PointBreakdownInteractor extends CubitInteractor<PointBreakdownRoutable, PointBreakdownState> {

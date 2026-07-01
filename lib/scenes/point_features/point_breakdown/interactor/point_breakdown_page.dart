@@ -1,4 +1,4 @@
-import 'package:coffee_bean/data/model/response/point_breakdown.dart';
+import 'package:coffee_bean/data/model/response/promotion/point_breakdown.dart';
 import 'package:coffee_bean/scenes/point_features/point_breakdown/interactor/point_breakdown_event_state.dart';
 import 'package:coffee_bean/scenes/point_features/point_breakdown/interactor/point_breakdown_interactor.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';

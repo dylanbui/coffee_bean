@@ -1,5 +1,5 @@
 import 'package:db_core/state_management/lib_bloc/constants.dart';
-import 'package:coffee_bean/data/model/product.dart';
+import 'package:coffee_bean/data/model/response/product/product.dart';
 
 class SkuGroup {
   final int propertyId;

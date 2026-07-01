@@ -1,5 +1,5 @@
 import 'package:coffee_bean/config/constants.dart';
-import 'package:coffee_bean/data/model/category.dart';
+import 'package:coffee_bean/data/model/response/product/category.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:flutter/material.dart';

@@ -1,4 +1,4 @@
-import 'package:coffee_bean/data/model/product.dart';
+import 'package:coffee_bean/data/model/response/product/product.dart';
 import 'package:coffee_bean/scenes/shopping_features/product_detail/interactor/product_detail_event_state.dart';
 import 'package:coffee_bean/scenes/shopping_features/product_detail/interactor/product_detail_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';

@@ -1,5 +1,5 @@
-import 'package:coffee_bean/data/model/product.dart';
-import 'package:coffee_bean/data/model/category.dart';
+import 'package:coffee_bean/data/model/response/product/product.dart';
+import 'package:coffee_bean/data/model/response/product/category.dart';
 import 'package:coffee_bean/data/network/network_response.dart';
 import 'package:db_core/db_core.dart';
 
@@ -99,67 +99,73 @@ class ProductRepository extends BaseRepository {
         .toObject();
 
     if (result case DbSuccess(data: final detail)) {
-      // GIẢ LẬP DATA ĐỂ TEST UI (MOCK DATA)
-      final mockSkus = <Sku>[];
-      final sizes = [
-        {'id': 10, 'name': 'Size S', 'price': 120000},
-        {'id': 11, 'name': 'Size M', 'price': 145000},
-        {'id': 12, 'name': 'Size L', 'price': 160000},
-      ];
-      final sugars = [
-        {'id': 20, 'name': '0% Đường'},
-        {'id': 21, 'name': '50% Đường'},
-        {'id': 22, 'name': '100% Đường'},
-      ];
-
-      int skuIdCounter = 1000;
-      for (var size in sizes) {
-        for (var sugar in sugars) {
-          mockSkus.add(Sku(
-            id: skuIdCounter++,
-            price: size['price'] as int,
-            marketPrice: (size['price'] as int) + 20000,
-            picUrl: detail.picUrl,
-            stock: 50,
-            properties: [
-              SkuProperty(
-                propertyId: 1,
-                propertyName: 'Kích thước',
-                valueId: size['id'] as int,
-                valueName: size['name'] as String,
-              ),
-              SkuProperty(
-                propertyId: 2,
-                propertyName: 'Mức đường',
-                valueId: sugar['id'] as int,
-                valueName: sugar['name'] as String,
-              ),
-            ],
-          ));
-        }
+      // Nếu API trả về ít hơn hoặc bằng 1 SKU, dùng Mock data để test UI Options
+      if (detail.skus.length <= 1) {
+        return DbSuccess(_applyMockData(detail));
       }
-
-      final mockDetail = ProductDetail(
-        id: detail.id,
-        name: detail.name,
-        introduction: detail.introduction,
-        categoryId: detail.categoryId,
-        picUrl: detail.picUrl,
-        sliderPicUrls: detail.sliderPicUrls,
-        specType: true, // Bật specType để UI hiểu là có nhiều option
-        price: detail.price,
-        marketPrice: detail.marketPrice,
-        stock: detail.stock,
-        salesCount: detail.salesCount,
-        description: detail.description,
-        deliveryTypes: detail.deliveryTypes,
-        skus: mockSkus, // Thay bằng danh sách mock
-      );
-
-      return DbSuccess(mockDetail);
+      return DbSuccess(detail);
     }
 
     return result;
+  }
+
+  /// Hàm giả lập dữ liệu SKUs để test UI (Dễ dàng xóa bỏ)
+  ProductDetail _applyMockData(ProductDetail detail) {
+    final mockSkus = <Sku>[];
+    final sizes = [
+      {'id': 10, 'name': 'Size S', 'price': 120000},
+      {'id': 11, 'name': 'Size M', 'price': 145000},
+      {'id': 12, 'name': 'Size L', 'price': 160000},
+    ];
+    final sugars = [
+      {'id': 20, 'name': '0% Đường'},
+      {'id': 21, 'name': '50% Đường'},
+      {'id': 22, 'name': '100% Đường'},
+    ];
+
+    int skuIdCounter = 1000;
+    for (var size in sizes) {
+      for (var sugar in sugars) {
+        mockSkus.add(Sku(
+          id: skuIdCounter++,
+          price: size['price'] as int,
+          marketPrice: (size['price'] as int) + 20000,
+          picUrl: detail.picUrl,
+          stock: 50,
+          properties: [
+            SkuProperty(
+              propertyId: 1,
+              propertyName: 'Kích thước',
+              valueId: size['id'] as int,
+              valueName: size['name'] as String,
+            ),
+            SkuProperty(
+              propertyId: 2,
+              propertyName: 'Mức đường',
+              valueId: sugar['id'] as int,
+              valueName: sugar['name'] as String,
+            ),
+          ],
+        ));
+      }
+    }
+
+    return ProductDetail(
+      id: detail.id,
+      name: detail.name,
+      introduction: detail.introduction,
+      categoryId: detail.categoryId,
+      picUrl: detail.picUrl,
+      sliderPicUrls: detail.sliderPicUrls,
+      specType: true, // Bật specType để UI hiểu là có nhiều option
+      price: detail.price,
+      marketPrice: detail.marketPrice,
+      stock: detail.stock,
+      salesCount: detail.salesCount,
+      description: detail.description,
+      deliveryTypes: detail.deliveryTypes,
+      skus: mockSkus,
+    );
   }
 
   /// Tìm kiếm sản phẩm theo danh sách ID

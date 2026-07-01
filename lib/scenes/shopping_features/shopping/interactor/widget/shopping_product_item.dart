@@ -1,11 +1,10 @@
 import 'package:db_core/utils/tap_effect.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
-import 'package:coffee_bean/data/model/product.dart';
+import 'package:coffee_bean/data/model/response/product/product.dart';
 import 'package:coffee_bean/scenes/shopping_features/shopping/interactor/shopping_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
-import 'package:coffee_bean/utils/number_to_vietnamese.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 

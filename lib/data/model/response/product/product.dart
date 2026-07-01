@@ -1,4 +1,4 @@
-import 'package:coffee_bean/data/model/category.dart';
+import 'package:coffee_bean/data/model/response/product/category.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:coffee_bean/data/local/settings_app_manager/settings_app_manager.dart';

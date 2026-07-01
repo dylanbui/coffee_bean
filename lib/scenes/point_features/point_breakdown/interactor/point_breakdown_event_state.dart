@@ -1,5 +1,4 @@
-import 'package:coffee_bean/data/model/response/point_breakdown.dart';
-import 'package:coffee_bean/data/model/response/reward_point_history.dart';
+import 'package:coffee_bean/data/model/response/promotion/point_breakdown.dart';
 import 'package:db_core/state_management/lib_bloc/constants.dart';
 
 // STATES

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:coffee_bean/data/local/user_manager/user_info.dart';
-import 'package:coffee_bean/data/model/response/point_breakdown.dart';
+import 'package:coffee_bean/data/model/response/promotion/point_breakdown.dart';
 import 'package:coffee_bean/data/network/page_result.dart';
 import 'package:db_core/commons_constants.dart';
 import 'package:db_core/network/base_repository.dart';
