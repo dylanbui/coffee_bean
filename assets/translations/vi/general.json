@@ -1,0 +1,47 @@
+{
+  "general": {
+    "action": {
+      "close": "Đóng",
+      "back": "Quay lại",
+      "confirm": "Xác nhận",
+      "save": "Lưu",
+      "see_more": "Xem thêm",
+      "follow": "Theo dõi",
+      "login": "Đăng nhập",
+      "cancel": "Bỏ qua"
+    },
+    "label": {
+      "loading": "Đang tải...",
+      "no_data": "Không có dữ liệu",
+      "posted_on": "Đã đăng ngày",
+      "search_hint": "Tìm kiếm...",
+      "error": "Lỗi"
+    },
+    "tab": {
+      "home": "Trang chủ",
+      "shopping": "Mua sắm",
+      "community": "Cộng đồng",
+      "profile": "Tôi"
+    }
+  },
+  "notifications": {
+    "success": {
+      "update": "Cập nhật thành công",
+      "save": "Đã lưu dữ liệu"
+    },
+    "error": {
+      "generic": "Đã có lỗi xảy ra",
+      "network": "Lỗi kết nối mạng"
+    },
+    "auth": {
+      "login_required": "Yêu cầu đăng nhập",
+      "login_required_msg": "Bạn cần đăng nhập để thực hiện chức năng này.",
+      "redeem_points_login_msg": "Vui lòng đăng nhập để kiểm tra và đổi quà tặng hấp dẫn!"
+    }
+  },
+  "server_errors": {
+    "AUTH_001": "Số điện thoại không tồn tại",
+    "AUTH_002": "Mật khẩu không chính xác",
+    "UNKNOWN": "Lỗi hệ thống không xác định ({code})"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "home_features": {
+    "home": {
+      "quick_action": {
+        "booking": "Đặt chỗ",
+        "redeem_points": "Đổi điểm",
+        "all_courses": "Tất cả khóa học",
+        "health_center": "Trung tâm sk"
+      },
+      "section": {
+        "featured_courses": "Khóa học nổi bật",
+        "course_sellers": "Người bán khóa học",
+        "course_videos": "Video về các khóa học",
+        "financial_courses": "Khóa học tài chính",
+        "posts": "Bài viết"
+      },
+      "label": {
+        "select_store": "Cửa hàng tp.HCM",
+        "morning_welcome": "Chào buổi sáng",
+        "welcome_back": "Chào mừng bạn\nđã quay trở lại"
+      }
+    }
+  }
+}

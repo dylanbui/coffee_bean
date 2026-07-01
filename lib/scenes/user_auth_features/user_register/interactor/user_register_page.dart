@@ -8,6 +8,7 @@
  */
 
 import 'dart:async';
+import 'package:coffee_bean/shared/i18n/locale_keys.g.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:db_core/utils/keyboard_visibility.dart';
@@ -16,6 +17,7 @@ import 'package:coffee_bean/scenes/user_auth_features/user_register/interactor/u
 import 'package:coffee_bean/scenes/user_auth_features/user_register/user_register_builder.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -61,7 +63,7 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
   }
 
   @override
-  String? getTitle() => "Register";
+  String? getTitle() => LocaleKeys.user_auth_features_user_register_title.tr();
 
   @override
   PreferredSizeWidget? getAppBar(BuildContext context) {
@@ -126,7 +128,7 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     sliver: SliverToBoxAdapter(
                       child: AppButton(
-                        text: "Register",
+                        text: LocaleKeys.user_auth_features_user_register_btn_register.tr(),
                         style: TMLabsButtonStyle.primary,
                         isLoading: state is UserRegisterInProgress,
                         onPressed: () {
@@ -158,7 +160,7 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
 
   void _onRegisterStateChanged(BuildContext context, UserRegisterState state) {
     if (state is UserRegisterSuccess) {
-      context.showFlashSuccess("Register Success!");
+      context.showFlashSuccess(LocaleKeys.user_auth_features_user_register_msg_register_success.tr());
     } else if (state is UserRegisterError) {
       _showError(state.message);
     }
@@ -198,14 +200,14 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
         const SizedBox(height: 20),
         UnderlineInputField(
           controller: _registerController.smsController, 
-          hint: "Verification Code", 
+          hint: LocaleKeys.user_auth_features_user_register_verification_code_hint.tr(), 
           suffix: _buildCountdownButton(),
           keyboardType: TextInputType.number,
         ),
         const SizedBox(height: 20),
         UnderlineInputField(
           controller: _registerController.invitationController, 
-          hint: "Invitation Code (Optional)",
+          hint: LocaleKeys.user_auth_features_user_register_invitation_code_hint.tr(),
         ),
       ],
     );
@@ -215,14 +217,16 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
     return InkWell(
       onTap: _isCountingDown ? null : () {
         if (!_registerController.isPhoneValid) {
-          _showError("Phone number must be more than 8 digits");
+          _showError(LocaleKeys.user_auth_features_user_login_msg_phone_invalid.tr());
           return;
         }
         _startCountdown();
         interactor.sendSmsCode(_registerController.formattedPhoneNumber);
       },
       child: Text(
-        _isCountingDown ? "Resend (${_start}s)" : "Send Code",
+        _isCountingDown
+            ? LocaleKeys.user_auth_features_user_login_resend_btn.tr(namedArgs: {'start': '$_start'})
+            : LocaleKeys.user_auth_features_user_login_send_code_btn.tr(),
         style: TMLabsTextStyle.bodyBold.copyWith(
           color: _isCountingDown ? TMLabsColor.lightGrey : TMLabsColor.primary,
         ),
@@ -236,13 +240,13 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Already have an account? ", style: TMLabsTextStyle.body),
+        Text(LocaleKeys.user_auth_features_user_register_already_have_account.tr(), style: TMLabsTextStyle.body),
         InkWell(
           onTap: () {
             interactor.router?.navigate(UserLoginRoute());
           },
           child: Text(
-            "Go to Login",
+            LocaleKeys.user_auth_features_user_register_go_to_login.tr(),
             style: TMLabsTextStyle.bodyBold,
           ),
         ),
@@ -272,17 +276,17 @@ class _UserRegisterPageState extends AppCubitState<UserRegisterPage, UserRegiste
             TextSpan(
               style: TMLabsTextStyle.caption.copyWith(height: 1.5),
               children: [
-                const TextSpan(text: "I have read and agree to the "),
+                TextSpan(text: LocaleKeys.user_auth_features_user_login_policy_agreement_prefix.tr()),
                 TextSpan(
-                  text: "User Agreement",
+                  text: LocaleKeys.user_auth_features_user_login_user_agreement_link.tr(),
                   style: const TextStyle(decoration: TextDecoration.underline),
                   recognizer: TapGestureRecognizer()..onTap = () {
                     interactor.router?.navigate(UserAgreementRoute());
                   },
                 ),
-                const TextSpan(text: " and "),
+                TextSpan(text: LocaleKeys.user_auth_features_user_login_and.tr()),
                 TextSpan(
-                  text: "Privacy Policy",
+                  text: LocaleKeys.user_auth_features_user_login_privacy_policy_link.tr(),
                   style: const TextStyle(decoration: TextDecoration.underline),
                   recognizer: TapGestureRecognizer()..onTap = () {
                     interactor.router?.navigate(PrivacyPolicyRoute());
@@ -327,17 +331,17 @@ class RegisterController {
 
   void validateRegister(UserRegisterInteractor interactor, Function(String) onError) {
     if (!isAgreed) {
-      onError("Please agree to the User Agreement and Privacy Policy");
+      onError(LocaleKeys.user_auth_features_user_login_msg_must_agree_policy.tr());
       return;
     }
 
     if (!isPhoneValid) {
-      onError("Phone number must be more than 8 digits");
+      onError(LocaleKeys.user_auth_features_user_login_msg_phone_invalid.tr());
       return;
     }
 
     if (smsController.text.isEmpty) {
-      onError("Please enter verification code");
+      onError(LocaleKeys.user_auth_features_user_login_msg_enter_sms_code.tr());
       return;
     }
     interactor.doRegister(formattedPhoneNumber, smsController.text, invitationController.text);

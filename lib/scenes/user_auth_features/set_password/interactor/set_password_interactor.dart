@@ -7,14 +7,14 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/repository/auth_repository.dart';
 import 'package:coffee_bean/scenes/user_auth_features/set_password/interactor/set_password_event_state.dart';
 import 'package:coffee_bean/scenes/user_auth_features/set_password/set_password_builder.dart';
+import 'package:coffee_bean/shared/i18n/locale_keys.g.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:db_core/network/network_common.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:coffee_bean/scenes/user_auth_features/user_register/user_register_builder.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 // Interactor
 
@@ -64,7 +64,7 @@ class SetPasswordInteractor extends CubitInteractor<DbNoteRoutable, SetPasswordS
             router?.navigate(SetPasswordResetDoneRoute());
           }
         } else {
-          emit(SetPasswordError(message:  "Set password failed (Server returned false)"));
+          emit(SetPasswordError(message: LocaleKeys.user_auth_features_set_password_error_title.tr()));
         }
       },
       failure: (error) {

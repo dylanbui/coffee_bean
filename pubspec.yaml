@@ -160,7 +160,8 @@ flutter:
     - assets/images/member_card/
     - assets/json/
     - assets/icons/
-    - assets/translations/
+    - assets/translations/vi/
+    - assets/translations/en/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

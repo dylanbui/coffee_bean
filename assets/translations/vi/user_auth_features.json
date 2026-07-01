@@ -1,0 +1,71 @@
+{
+  "user_auth_features": {
+    "app_agreement": {
+      "title": "Thỏa thuận & Bảo mật",
+      "agree_msg": "Tôi đồng ý với các điều khoản",
+      "btn_continue": "Tiếp tục",
+      "no_content": "Không có nội dung điều khoản"
+    },
+    "user_login": {
+      "title": "Đăng nhập",
+      "welcome": "Chào mừng {name}",
+      "phone_hint": "Số điện thoại",
+      "password_hint": "Nhập mật khẩu",
+      "btn_submit": "Đăng nhập ngay",
+      "password_login_tab": "Đăng nhập mật khẩu",
+      "sms_login_tab": "Đăng nhập SMS",
+      "sms_code_hint": "Mã SMS",
+      "resend_btn": "Gửi lại ({start}s)",
+      "send_code_btn": "Gửi mã",
+      "or_login_with": "Hoặc đăng nhập với",
+      "no_account_prefix": "Chưa có tài khoản? ",
+      "register_now": "Đăng ký ngay",
+      "forgot_password": "Quên mật khẩu",
+      "policy_agreement_prefix": "Tôi đã đọc và đồng ý với ",
+      "user_agreement_link": "Thỏa thuận người dùng",
+      "privacy_policy_link": "Chính sách bảo mật",
+      "and": " và ",
+      "msg_must_agree_policy": "Vui lòng đồng ý với Thỏa thuận người dùng và Chính sách bảo mật",
+      "msg_phone_invalid": "Số điện thoại phải có ít nhất 8 chữ số",
+      "msg_enter_password": "Vui lòng nhập mật khẩu",
+      "msg_enter_sms_code": "Vui lòng nhập mã SMS",
+      "login_error_title": "Lỗi đăng nhập",
+      "msg_connecting_social": "Đang kết nối tới {name}...",
+      "msg_verifying_server": "Đang xác thực với máy chủ...",
+      "error_signin_cancelled": "Đăng nhập thất bại: Người dùng đã hủy",
+      "error_signin_failed": "Đăng nhập thất bại: {error}",
+      "error_send_sms_failed": "Gửi mã SMS thất bại",
+      "error_fetch_profile": "Lỗi khi tải thông tin cá nhân: {error}"
+    },
+    "user_register": {
+      "title": "Đăng ký",
+      "verification_code_hint": "Mã xác nhận",
+      "invitation_code_hint": "Mã giới thiệu (Không bắt buộc)",
+      "already_have_account": "Đã có tài khoản? ",
+      "go_to_login": "Đến Đăng nhập",
+      "msg_register_success": "Đăng ký thành công!",
+      "btn_register": "Đăng ký"
+    },
+    "forgot_password": {
+      "title": "Quên mật khẩu",
+      "instruction": "Để đảm bảo an toàn cho tài khoản, vui lòng xác minh danh tính trước.",
+      "btn_reset_password": "Đặt lại mật khẩu"
+    },
+    "set_password": {
+      "title": "Đặt mật khẩu",
+      "header": "Đặt mật khẩu mới",
+      "instruction": "Vui lòng nhập mật khẩu mới của bạn để tiếp tục.",
+      "msg_password_set_success": "Đặt mật khẩu thành công!",
+      "error_title": "Lỗi đặt mật khẩu",
+      "msg_password_min_length": "Mật khẩu phải có ít nhất 6 ký tự"
+    },
+    "user_gift_pack": {
+      "title": "Gói quà người mới",
+      "congratulations": "Chúc mừng! Bạn nhận được gói quà người mới",
+      "gift_pack_hint": "(Điểm thưởng hoặc coupon, popup hiện tại là hình ảnh minh họa)",
+      "btn_view_gift_pack": "Xem gói quà",
+      "btn_back": "Quay lại",
+      "msg_clicked": "Bạn đã nhấn: {name}"
+    }
+  }
+}

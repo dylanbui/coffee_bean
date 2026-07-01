@@ -1,0 +1,71 @@
+{
+  "user_auth_features": {
+    "app_agreement": {
+      "title": "Agreement & Privacy",
+      "agree_msg": "I agree to the terms",
+      "btn_continue": "Continue",
+      "no_content": "No content for agreement"
+    },
+    "user_login": {
+      "title": "Login",
+      "welcome": "Welcome {name}",
+      "phone_hint": "Phone number",
+      "password_hint": "Enter password",
+      "btn_submit": "Login now",
+      "password_login_tab": "Password Login",
+      "sms_login_tab": "SMS Login",
+      "sms_code_hint": "SMS Code",
+      "resend_btn": "Resend ({start}s)",
+      "send_code_btn": "Send Code",
+      "or_login_with": "Or login with",
+      "no_account_prefix": "No account? ",
+      "register_now": "Register Now",
+      "forgot_password": "Forgot Password",
+      "policy_agreement_prefix": "I have read and agree to the ",
+      "user_agreement_link": "User Agreement",
+      "privacy_policy_link": "Privacy Policy",
+      "and": " and ",
+      "msg_must_agree_policy": "Please agree to the User Agreement and Privacy Policy",
+      "msg_phone_invalid": "Phone number must be more than 8 digits",
+      "msg_enter_password": "Please enter password",
+      "msg_enter_sms_code": "Please enter SMS code",
+      "login_error_title": "Login error",
+      "msg_connecting_social": "Connecting to {name}...",
+      "msg_verifying_server": "Verifying with server...",
+      "error_signin_cancelled": "Sign-In failed: User cancelled",
+      "error_signin_failed": "Sign-In failed: {error}",
+      "error_send_sms_failed": "Send SMS Failed",
+      "error_fetch_profile": "Fetch Profile Error: {error}"
+    },
+    "user_register": {
+      "title": "Register",
+      "verification_code_hint": "Verification Code",
+      "invitation_code_hint": "Invitation Code (Optional)",
+      "already_have_account": "Already have an account? ",
+      "go_to_login": "Go to Login",
+      "msg_register_success": "Register Success!",
+      "btn_register": "Register"
+    },
+    "forgot_password": {
+      "title": "Forgot Password",
+      "instruction": "To ensure account security, please verify your identity first.",
+      "btn_reset_password": "Reset Password"
+    },
+    "set_password": {
+      "title": "Set Password",
+      "header": "Set New Password",
+      "instruction": "Please enter your new password to continue.",
+      "msg_password_set_success": "Password set successfully!",
+      "error_title": "Set password error",
+      "msg_password_min_length": "Password must be at least 6 characters"
+    },
+    "user_gift_pack": {
+      "title": "Newcomer Gift Pack",
+      "congratulations": "Congratulations! You've received a Newcomer Gift Pack",
+      "gift_pack_hint": "(Bonus points or coupons, current popup is a background illustration)",
+      "btn_view_gift_pack": "View Gift Pack",
+      "btn_back": "Back",
+      "msg_clicked": "You clicked: {name}"
+    }
+  }
+}

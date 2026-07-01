@@ -7,17 +7,13 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:db_core/architecture_ribs/note_builder.dart';
-import 'package:db_core/architecture_ribs/note_dependency.dart';
-import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/user_auth_features/app_agreement/app_agreement_builder.dart';
-import 'package:coffee_bean/scenes/user_auth_features/forgot_password/forgot_password_builder.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/interactor/user_login_interactor.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/interactor/user_login_page.dart';
-import 'package:coffee_bean/scenes/user_auth_features/user_register/user_register_builder.dart';
+import 'package:coffee_bean/shared/i18n/locale_keys.g.dart';
 import 'package:db_core/db_core.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 // --- ROUTE ---
 class ForgotPasswordRoute implements DbNoteRoute {}
@@ -35,11 +31,11 @@ class UserLoginRouter extends DbNoteRouter {
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
     // Day la nhung luong phu, goi parent xu ly nhung code de o day cho nhe,  main flow se day len parent
     if (toRoute is UserAgreementRoute) {
-      final builder = AppAgreementBuilder(type: 3, title: "User Agreement");
+      final builder = AppAgreementBuilder(type: 3, title: LocaleKeys.user_auth_features_user_login_user_agreement_link.tr());
       parentRouter?.push(builder.build().viewController, transitionType: PageTransitionType.bottomToTop);
 
     } else if (toRoute is PrivacyPolicyRoute) {
-      final builder = AppAgreementBuilder(type: 4, title: "Privacy Policy");
+      final builder = AppAgreementBuilder(type: 4, title: LocaleKeys.user_auth_features_user_login_privacy_policy_link.tr());
       parentRouter?.push(builder.build().viewController, transitionType: PageTransitionType.bottomToTop);
       
     } else {

@@ -7,6 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/shared/i18n/locale_keys.g.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:coffee_bean/scenes/user_auth_features/set_password/interactor/set_password_event_state.dart';
 import 'package:coffee_bean/scenes/user_auth_features/set_password/interactor/set_password_interactor.dart';
@@ -15,8 +16,8 @@ import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/widget/password_field.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
-import 'package:coffee_bean/utils/flash_utils/flash_toast_helper.dart';
 import 'package:db_core/utils/app_button.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -38,7 +39,7 @@ class _SetPasswordPageState extends AppCubitState<SetPasswordPage, SetPasswordIn
   }
 
   @override
-  String? getTitle() => "Set Password";
+  String? getTitle() => LocaleKeys.user_auth_features_set_password_title.tr();
 
   @override
   PreferredSizeWidget? getAppBar(BuildContext context) {
@@ -78,7 +79,7 @@ class _SetPasswordPageState extends AppCubitState<SetPasswordPage, SetPasswordIn
   void _onStateListener(BuildContext context, SetPasswordState state) {
     if (state is SetPasswordSuccess) {
       hideLoading();
-      context.showFlashSuccess("Password set successfully!");
+      context.showFlashSuccess(LocaleKeys.user_auth_features_set_password_msg_password_set_success.tr());
     } else if (state is SetPasswordError) {
       hideLoading();
       _showError(state.message);
@@ -86,7 +87,7 @@ class _SetPasswordPageState extends AppCubitState<SetPasswordPage, SetPasswordIn
   }
 
   void _showError(String message) {
-    context.showFlashError(message, title: "Set password error");
+    context.showFlashError(message, title: LocaleKeys.user_auth_features_set_password_error_title.tr());
   }
 
   Widget _buildMainContent(BuildContext context, SetPasswordState state) {
@@ -106,7 +107,7 @@ class _SetPasswordPageState extends AppCubitState<SetPasswordPage, SetPasswordIn
                 _buildInputs(),
                 const SizedBox(height: 40),
                 AppButton(
-                  text: "Set Password",
+                  text: LocaleKeys.user_auth_features_set_password_title.tr(),
                   style: TMLabsButtonStyle.primary,
                   isLoading: state is SetPasswordInProgress,
                   onPressed: _handleSubmit,
@@ -125,10 +126,10 @@ class _SetPasswordPageState extends AppCubitState<SetPasswordPage, SetPasswordIn
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Set New Password", style: TMLabsTextStyle.h1),
+        Text(LocaleKeys.user_auth_features_set_password_header.tr(), style: TMLabsTextStyle.h1),
         const SizedBox(height: 8),
         Text(
-          "Please enter your new password to continue.",
+          LocaleKeys.user_auth_features_set_password_instruction.tr(),
           style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
         ),
       ],
@@ -136,7 +137,9 @@ class _SetPasswordPageState extends AppCubitState<SetPasswordPage, SetPasswordIn
   }
 
   Widget _buildInputs() {
-    return PasswordField(controller: _setPasswordController.passwordController, hint: "Enter Password");
+    return PasswordField(
+        controller: _setPasswordController.passwordController,
+        hint: LocaleKeys.user_auth_features_user_login_password_hint.tr());
   }
 
   // endregion
@@ -155,11 +158,11 @@ class SetPasswordController {
 
   void validateSetPassword(SetPasswordInteractor interactor, Function(String) onError) {
     if (passwordController.text.isEmpty) {
-      onError("Please enter password");
+      onError(LocaleKeys.user_auth_features_user_login_msg_enter_password.tr());
       return;
     }
     if (passwordController.text.length < 6) {
-      onError("Password must be at least 6 characters");
+      onError(LocaleKeys.user_auth_features_set_password_msg_password_min_length.tr());
       return;
     }
     interactor.doSetPassword(passwordController.text);

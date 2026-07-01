@@ -62,6 +62,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:coffee_bean/data/tracking/tracking_service.dart';
 import 'package:coffee_bean/data/tracking/tracking_context.dart';
 import 'package:coffee_bean/data/tracking/firebase_tracking_impl.dart';
+import 'package:coffee_bean/shared/i18n/auto_module_asset_loader.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -122,6 +123,7 @@ Future<Widget> initializeApp() async {
     supportedLocales: const [Locale('vi'), Locale('en')],
     path: 'assets/translations',
     fallbackLocale: const Locale('vi'),
+    assetLoader: AutoModuleAssetLoader(),
     child: App(),
   );
 }

@@ -12,18 +12,19 @@ import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/data/repository/auth_repository.dart';
-import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/data/local/user_manager/user_service.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/interactor/user_login_event_state.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/shared/social_auth_service.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_login/user_login_builder.dart';
+import 'package:coffee_bean/shared/i18n/locale_keys.g.dart';
 import 'package:coffee_bean/utils/utils.dart';
 import 'package:db_core/network/network_utils.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:db_core/utils/logger.dart';
 import 'package:db_core/utils/locator.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 // Interactor
 class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginState> {
@@ -53,18 +54,19 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
   Future<void> _handleSocialLogin(SocialLoginType type) async {
     try {
       final String providerName = type == SocialLoginType.google ? "Google" : "Apple";
-      emit(UserLoginInProgress(message: "Connecting to $providerName..."));
+      emit(UserLoginInProgress(
+          message: LocaleKeys.user_auth_features_user_login_msg_connecting_social.tr(namedArgs: {'name': providerName})));
 
       final SocialAuthResult? result = await SocialAuthService.login(type);
 
       if (result == null) {
-        emit(UserLoginFailure(error: "Sign-In failed: User cancelled")); // User cancelled
+        emit(UserLoginFailure(error: LocaleKeys.user_auth_features_user_login_error_signin_cancelled.tr()));
         return;
       }
 
       // Gooi len BE de auth, sau do
       iLog("$providerName ID Token: ${result.idToken}");
-      emit(UserLoginInProgress(message: "Verifying with server..."));
+      emit(UserLoginInProgress(message: LocaleKeys.user_auth_features_user_login_msg_verifying_server.tr()));
 
       // THỰC HIỆN disconnect account ngay sau khi lấy được thông tin
       // giúp lần sau nhấn vào Login Google sẽ phải chọn lại account
@@ -109,7 +111,8 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
       eLog("Social Sign-In Error: $error");
       // Thêm delay nhỏ để đảm bảo UI kịp render loading trước khi bị đóng (tránh race condition)
       await Utils.delay(milliseconds: 500);
-      emit(UserLoginFailure(error: "Sign-In failed: $error"));
+      emit(UserLoginFailure(
+          error: LocaleKeys.user_auth_features_user_login_error_signin_failed.tr(namedArgs: {'error': error.toString()})));
     }
   }
 
@@ -174,7 +177,7 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
     result.when(
       success: (isSent) {
         if (!isSent) {
-          emit(UserLoginFailure(error: "Send SMS Failed"));
+          emit(UserLoginFailure(error: LocaleKeys.user_auth_features_user_login_error_send_sms_failed.tr()));
         }
       },
       failure: (error) {
@@ -215,7 +218,7 @@ class UserLoginInteractor extends CubitInteractor<UserLoginRouter, UserLoginStat
       eLog("Fetch Profile Error: $e");
       // OPTIONAL: Xóa session vừa lưu nếu không lấy được profile để tránh trạng thái lửng lơ
       await UserService().logout();
-      emit(UserLoginFailure(error: e.toString()));
+      emit(UserLoginFailure(error: LocaleKeys.user_auth_features_user_login_error_fetch_profile.tr(namedArgs: {'error': e.toString()})));
     }
   }
 }

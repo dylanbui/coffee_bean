@@ -1,0 +1,24 @@
+{
+  "home_features": {
+    "home": {
+      "quick_action": {
+        "booking": "Booking",
+        "redeem_points": "Redeem Points",
+        "all_courses": "All Courses",
+        "health_center": "Health Center"
+      },
+      "section": {
+        "featured_courses": "Featured Courses",
+        "course_sellers": "Course Sellers",
+        "course_videos": "Course Videos",
+        "financial_courses": "Financial Courses",
+        "posts": "Posts"
+      },
+      "label": {
+        "select_store": "HCM Store",
+        "morning_welcome": "Good morning",
+        "welcome_back": "Welcome back\nto Coffee Bean"
+      }
+    }
+  }
+}

@@ -11,9 +11,11 @@ import 'dart:async';
 
 import 'package:coffee_bean/scenes/user_auth_features/forgot_password/interactor/forgot_password_event_state.dart';
 import 'package:coffee_bean/scenes/user_auth_features/forgot_password/interactor/forgot_password_interactor.dart';
+import 'package:coffee_bean/shared/i18n/locale_keys.g.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
@@ -54,7 +56,7 @@ class _ForgotPasswordPageState extends AppCubitState<ForgotPasswordPage, ForgotP
   }
 
   @override
-  String? getTitle() => "Forgot Password";
+  String? getTitle() => LocaleKeys.user_auth_features_forgot_password_title.tr();
 
   @override
   Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
@@ -87,7 +89,7 @@ class _ForgotPasswordPageState extends AppCubitState<ForgotPasswordPage, ForgotP
   }
 
   void _showError(String message) {
-    context.showFlashError(message, title: "Error");
+    context.showFlashError(message, title: LocaleKeys.general_label_error.tr());
   }
 
   Widget _buildMainContent(BuildContext context, ForgotPasswordState state) {
@@ -105,7 +107,7 @@ class _ForgotPasswordPageState extends AppCubitState<ForgotPasswordPage, ForgotP
                 _buildInputs(),
                 const SizedBox(height: 50),
                 AppButton(
-                  text: "Reset Password",
+                  text: LocaleKeys.user_auth_features_forgot_password_btn_reset_password.tr(),
                   style: TMLabsButtonStyle.primary,
                   isLoading: state is ForgotPasswordInProgress,
                   onPressed: () => _forgotPwController.validateAndSubmit(
@@ -127,7 +129,7 @@ class _ForgotPasswordPageState extends AppCubitState<ForgotPasswordPage, ForgotP
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 30.0),
       child: Text(
-        "To ensure account security, please verify your identity first.",
+        LocaleKeys.user_auth_features_forgot_password_instruction.tr(),
         style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
       ),
     );
@@ -148,7 +150,7 @@ class _ForgotPasswordPageState extends AppCubitState<ForgotPasswordPage, ForgotP
         const SizedBox(height: 20),
         UnderlineInputField(
           controller: _forgotPwController.smsController,
-          hint: "Verification Code",
+          hint: LocaleKeys.user_auth_features_user_register_verification_code_hint.tr(),
           suffix: _buildCountdownButton(),
           keyboardType: TextInputType.number,
         ),
@@ -160,7 +162,9 @@ class _ForgotPasswordPageState extends AppCubitState<ForgotPasswordPage, ForgotP
     return InkWell(
       onTap: _isCountingDown ? null : _handleSendSms,
       child: Text(
-        _isCountingDown ? "Resend (${_start}s)" : "Send Code",
+        _isCountingDown
+            ? LocaleKeys.user_auth_features_user_login_resend_btn.tr(namedArgs: {'start': '$_start'})
+            : LocaleKeys.user_auth_features_user_login_send_code_btn.tr(),
         style: TMLabsTextStyle.bodyBold.copyWith(
           color: _isCountingDown ? TMLabsColor.lightGrey : TMLabsColor.primary,
         ),
@@ -174,7 +178,7 @@ class _ForgotPasswordPageState extends AppCubitState<ForgotPasswordPage, ForgotP
 
   void _handleSendSms() {
     if (!_forgotPwController.isPhoneValid) {
-      _showError("Phone number must be more than 8 digits");
+      _showError(LocaleKeys.user_auth_features_user_login_msg_phone_invalid.tr());
       return;
     }
     _startCountdown();
@@ -211,11 +215,11 @@ class ForgotPasswordController {
 
   void validateAndSubmit(ForgotPasswordInteractor interactor, Function(String) onError) {
     if (!isPhoneValid) {
-      onError("Phone number must be more than 8 digits");
+      onError(LocaleKeys.user_auth_features_user_login_msg_phone_invalid.tr());
       return;
     }
     if (smsController.text.isEmpty) {
-      onError("Please enter verification code");
+      onError(LocaleKeys.user_auth_features_user_login_msg_enter_sms_code.tr());
       return;
     }
     interactor.forgotPassword(formattedPhoneNumber, smsController.text);

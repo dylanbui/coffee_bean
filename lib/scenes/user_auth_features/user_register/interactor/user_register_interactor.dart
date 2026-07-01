@@ -10,20 +10,20 @@
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/data/repository/auth_repository.dart';
-import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/data/local/user_manager/user_service.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/interactor/user_register_event_state.dart';
+import 'package:coffee_bean/shared/i18n/locale_keys.g.dart';
 import 'package:db_core/network/network_common.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/user_register_builder.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 
 // Interactor
 
 class UserRegisterInteractor extends CubitInteractor<UserRegisterRouter, UserRegisterState> {
   final _authRepo = AuthRepository();
-  final _userRepo = UserRepository();
 
   UserRegisterInteractor(UserRegisterRouter router) : super(UserRegisterInitial(), router: router);
 
@@ -52,7 +52,7 @@ class UserRegisterInteractor extends CubitInteractor<UserRegisterRouter, UserReg
     result.when(
       success: (isSent) {
         if (!isSent) {
-          emit(UserRegisterError(message: "Send SMS Failed (Server returned false)"));
+          emit(UserRegisterError(message: LocaleKeys.user_auth_features_user_login_error_send_sms_failed.tr()));
         }
       },
       failure: (error) {

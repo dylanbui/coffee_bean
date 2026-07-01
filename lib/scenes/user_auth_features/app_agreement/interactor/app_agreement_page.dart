@@ -9,11 +9,12 @@
 import 'package:coffee_bean/scenes/user_auth_features/app_agreement/interactor/app_agreement_event_state.dart';
 import 'package:coffee_bean/scenes/user_auth_features/app_agreement/interactor/app_agreement_interactor.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
+import 'package:coffee_bean/shared/i18n/locale_keys.g.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:db_core/utils/app_button.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -79,7 +80,7 @@ class _AppAgreementPageState extends AppCubitState<AppAgreementPage, AppAgreemen
                       if (htmlContent.isNotEmpty)
                         Html(data: htmlContent)
                       else if (state is! AppAgreementInitial)
-                        getEmptyItemView(caption: "Không có nội dung điều khoản"),
+                        getEmptyItemView(caption: LocaleKeys.user_auth_features_app_agreement_no_content.tr()),
                     ],
                   ],
                 ),
@@ -88,7 +89,7 @@ class _AppAgreementPageState extends AppCubitState<AppAgreementPage, AppAgreemen
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: AppButton(
-                text: "Đóng",
+                text: LocaleKeys.general_action_close.tr(),
                 style: TMLabsButtonStyle.outline,
                 onPressed: () => interactor.router?.pop(),
               ),

@@ -8,6 +8,7 @@
  */
 
 import 'dart:async';
+import 'package:coffee_bean/shared/i18n/locale_keys.g.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:db_core/utils/logger.dart';
 import 'package:db_core/utils/keyboard_visibility.dart';
@@ -18,6 +19,7 @@ import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -63,7 +65,7 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
   }
 
   @override
-  String? getTitle() => "Login";
+  String? getTitle() => LocaleKeys.user_auth_features_user_login_title.tr();
 
   @override
   PreferredSizeWidget? getAppBar(BuildContext context) {
@@ -155,8 +157,9 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
       iLog("UserLoginStarted");
       // hidePageLoading();
     } else if (state is UserLoginInProgress) {
-      iLog(state.message);
-      showLoading(text: "Loading ...", style: TMLabsLoadingStyle.defaultLoadingStyle);
+      iLog(state.message ?? "");
+      showLoading(
+          text: state.message ?? LocaleKeys.general_label_loading.tr(), style: TMLabsLoadingStyle.defaultLoadingStyle);
     } else if (state is UserLoginFailure || state is UserLoginSuccess) {
       hideLoading();
       if (state is UserLoginFailure) {
@@ -166,7 +169,7 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
   }
 
   void _showError(String message) {
-    context.showFlashError(message, title: "Login error");
+    context.showFlashError(message, title: LocaleKeys.user_auth_features_user_login_login_error_title.tr());
   }
 
   void _startCountdown() {
@@ -207,9 +210,9 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
       indicatorColor: TMLabsColor.primary,
       indicatorSize: TabBarIndicatorSize.label,
       indicatorWeight: 3,
-      tabs: const [
-        Tab(text: "Password Login"),
-        Tab(text: "SMS Login"),
+      tabs: [
+        Tab(text: LocaleKeys.user_auth_features_user_login_password_login_tab.tr()),
+        Tab(text: LocaleKeys.user_auth_features_user_login_sms_login_tab.tr()),
       ],
     );
   }
@@ -242,10 +245,12 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
             },
           ),
           const SizedBox(height: 20),
-          PasswordField(controller: _loginController.passwordController, hint: "Enter Password"),
+          PasswordField(
+              controller: _loginController.passwordController,
+              hint: LocaleKeys.user_auth_features_user_login_password_hint.tr()),
           const SizedBox(height: 30),
           AppButton(
-            text: "Login",
+            text: LocaleKeys.user_auth_features_user_login_btn_submit.tr(),
             style: TMLabsButtonStyle.primary,
             onPressed: () {
               setState(() {
@@ -281,13 +286,13 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
           const SizedBox(height: 20),
           UnderlineInputField(
             controller: _loginController.smsController,
-            hint: "SMS Code",
+            hint: LocaleKeys.user_auth_features_user_login_sms_code_hint.tr(),
             suffix: _buildCountdownButton(),
             keyboardType: TextInputType.number,
           ),
           const SizedBox(height: 30),
           AppButton(
-            text: "Login",
+            text: LocaleKeys.user_auth_features_user_login_btn_submit.tr(),
             style: TMLabsButtonStyle.primary,
             onPressed: () {
               setState(() {
@@ -310,14 +315,16 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
           ? null
           : () {
               if (!_loginController.isPhoneSmsValid) {
-                _showError("Phone number must be more than 8 digits");
+                _showError(LocaleKeys.user_auth_features_user_login_msg_phone_invalid.tr());
                 return;
               }
               _startCountdown();
               interactor.sendSmsCode(_loginController.formattedPhoneSmsLogin);
             },
       child: Text(
-        _isCountingDown ? "Resend (${_start}s)" : "Send Code",
+        _isCountingDown
+            ? LocaleKeys.user_auth_features_user_login_resend_btn.tr(namedArgs: {'start': '$_start'})
+            : LocaleKeys.user_auth_features_user_login_send_code_btn.tr(),
         style: TMLabsTextStyle.bodyBold.copyWith(color: _isCountingDown ? TMLabsColor.lightGrey : TMLabsColor.primary),
       ),
     );
@@ -331,7 +338,8 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
             const Expanded(child: Divider(color: TMLabsColor.lightGrey)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text("Or login with", style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
+              child: Text(LocaleKeys.user_auth_features_user_login_or_login_with.tr(),
+                  style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
             ),
             const Expanded(child: Divider(color: TMLabsColor.lightGrey)),
           ],
@@ -370,10 +378,12 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("No account? ", style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey)),
+              Text(LocaleKeys.user_auth_features_user_login_no_account_prefix.tr(),
+                  style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey)),
               InkWell(
                 onTap: () => interactor.router?.navigate(UserRegisterRoute()),
-                child: Text("Register Now", style: TMLabsTextStyle.bodyBold),
+                child: Text(LocaleKeys.user_auth_features_user_login_register_now.tr(),
+                    style: TMLabsTextStyle.bodyBold),
               ),
             ],
           )
@@ -382,7 +392,8 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
         if (!hideForgotPw)
           InkWell(
             onTap: () => interactor.router?.navigate(ForgotPasswordRoute()),
-            child: Text("Forgot Password", style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey)),
+            child: Text(LocaleKeys.user_auth_features_user_login_forgot_password.tr(),
+                style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey)),
           ),
       ],
     );
@@ -414,15 +425,15 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
             TextSpan(
               style: TMLabsTextStyle.caption.copyWith(height: 1.5),
               children: [
-                const TextSpan(text: "I have read and agree to the "),
+                TextSpan(text: LocaleKeys.user_auth_features_user_login_policy_agreement_prefix.tr()),
                 TextSpan(
-                  text: "User Agreement",
+                  text: LocaleKeys.user_auth_features_user_login_user_agreement_link.tr(),
                   style: const TextStyle(decoration: TextDecoration.underline),
                   recognizer: TapGestureRecognizer()..onTap = () => interactor.router?.navigate(UserAgreementRoute()),
                 ),
-                const TextSpan(text: " and "),
+                TextSpan(text: LocaleKeys.user_auth_features_user_login_and.tr()),
                 TextSpan(
-                  text: "Privacy Policy",
+                  text: LocaleKeys.user_auth_features_user_login_privacy_policy_link.tr(),
                   style: const TextStyle(decoration: TextDecoration.underline),
                   recognizer: TapGestureRecognizer()..onTap = () => interactor.router?.navigate(PrivacyPolicyRoute()),
                 ),
@@ -456,17 +467,17 @@ class LoginController {
   void validatePwLogin(UserLoginInteractor interactor, Function(String) onError) {
     phonePwError = null;
     if (!isAgreed) {
-      onError("Please agree to the User Agreement and Privacy Policy");
+      onError(LocaleKeys.user_auth_features_user_login_msg_must_agree_policy.tr());
       return;
     }
 
     if (!isPhonePwValid) {
-      phonePwError = "Phone number must be more than 8 digits";
+      phonePwError = LocaleKeys.user_auth_features_user_login_msg_phone_invalid.tr();
       return;
     }
 
     if (passwordController.text.isEmpty) {
-      onError("Please enter password");
+      onError(LocaleKeys.user_auth_features_user_login_msg_enter_password.tr());
       return;
     }
     interactor.doLoginWithPw(formattedPhonePwLogin, passwordController.text);
@@ -475,17 +486,17 @@ class LoginController {
   void validateSmsLogin(UserLoginInteractor interactor, Function(String) onError) {
     phoneSmsError = null;
     if (!isAgreed) {
-      onError("Please agree to the User Agreement and Privacy Policy");
+      onError(LocaleKeys.user_auth_features_user_login_msg_must_agree_policy.tr());
       return;
     }
 
     if (!isPhoneSmsValid) {
-      phoneSmsError = "Phone number must be more than 8 digits";
+      phoneSmsError = LocaleKeys.user_auth_features_user_login_msg_phone_invalid.tr();
       return;
     }
 
     if (smsController.text.isEmpty) {
-      onError("Please enter SMS code");
+      onError(LocaleKeys.user_auth_features_user_login_msg_enter_sms_code.tr());
       return;
     }
     interactor.doLoginWithSms(formattedPhoneSmsLogin, smsController.text);

@@ -8,11 +8,11 @@
  */
 
 import 'package:coffee_bean/data/repository/auth_repository.dart';
-import 'package:coffee_bean/scenes/user_auth_features/forgot_password/forgot_password_builder.dart';
 import 'package:coffee_bean/scenes/user_auth_features/forgot_password/forgot_password_router.dart';
 import 'package:coffee_bean/scenes/user_auth_features/forgot_password/interactor/forgot_password_event_state.dart';
-import 'package:db_core/network/network_common.dart';
+import 'package:coffee_bean/shared/i18n/locale_keys.g.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 // Interactor
 
@@ -41,7 +41,7 @@ class ForgotPasswordInteractor extends CubitInteractor<ForgotPasswordRouter, For
         if (isSent) {
           emit(ForgotPasswordSendCodeDone());
         } else {
-          emit(ForgotPasswordError(message: "Send SMS Failed (Server returned false)"));
+          emit(ForgotPasswordError(message: LocaleKeys.user_auth_features_user_login_error_send_sms_failed.tr()));
         }
       },
       failure: (error) {

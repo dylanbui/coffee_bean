@@ -10,9 +10,12 @@
 import 'package:coffee_bean/scenes/user_auth_features/user_gift_pack/interactor/user_gift_pack_event_state.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_gift_pack/interactor/user_gift_pack_interactor.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
+import 'package:coffee_bean/shared/i18n/locale_keys.g.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:db_core/utils/app_button.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,12 +30,12 @@ class UserGiftPackPage extends AppCubitStateFulWidget<UserGiftPackInteractor, Us
 class _UserGiftPackPageState extends AppCubitState<UserGiftPackPage, UserGiftPackInteractor, UserGiftPackState> {
 
   @override
-  String? getTitle() => "Newcomer Gift Pack";
+  String? getTitle() => LocaleKeys.user_auth_features_user_gift_pack_title.tr();
 
   @override
-  Widget? getLeading() => IconButton(
-    icon: const Icon(Icons.close, color: Colors.black),
-    onPressed: () => interactor.router?.pop(),
+  CoffeeAppBarStyleConfig getAppBarStyle() => const CoffeeAppBarStyleConfig(
+    backIcon: Icons.close,
+    foregroundColor: Colors.black,
   );
 
   @override
@@ -112,14 +115,14 @@ class _UserGiftPackPageState extends AppCubitState<UserGiftPackPage, UserGiftPac
         ),
         const SizedBox(height: 40),
         Text(
-          "Congratulations! You've received a Newcomer Gift Pack",
+          LocaleKeys.user_auth_features_user_gift_pack_congratulations.tr(),
           style: TMLabsTextStyle.title,
         ),
         const SizedBox(height: 12),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40.0),
           child: Text(
-            "(Bonus points or coupons, current popup is a background illustration)",
+            LocaleKeys.user_auth_features_user_gift_pack_gift_pack_hint.tr(),
             style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
             textAlign: TextAlign.center,
           ),
@@ -134,15 +137,15 @@ class _UserGiftPackPageState extends AppCubitState<UserGiftPackPage, UserGiftPac
       child: Column(
         children: [
           AppButton(
-            text: "View Gift Pack",
+            text: LocaleKeys.user_auth_features_user_gift_pack_btn_view_gift_pack.tr(),
             isLoading: state is UserGiftPackInProgress,
-            onPressed: () => _handleButtonClick("View Gift Pack"),
+            onPressed: () => _handleButtonClick(LocaleKeys.user_auth_features_user_gift_pack_btn_view_gift_pack.tr()),
           ),
           const SizedBox(height: 10), // Cách nhau 10px
           AppButton(
-            text: "Back",
+            text: LocaleKeys.user_auth_features_user_gift_pack_btn_back.tr(),
             style: TMLabsButtonStyle.outline,
-            onPressed: () => _handleButtonClick("Back"),
+            onPressed: () => _handleButtonClick(LocaleKeys.user_auth_features_user_gift_pack_btn_back.tr()),
           ),
         ],
       ),
@@ -156,7 +159,7 @@ class _UserGiftPackPageState extends AppCubitState<UserGiftPackPage, UserGiftPac
   void _handleButtonClick(String buttonName) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("You clicked: $buttonName"),
+        content: Text(LocaleKeys.user_auth_features_user_gift_pack_msg_clicked.tr(namedArgs: {'name': buttonName})),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 1),
       ),

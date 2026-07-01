@@ -1,8 +1,8 @@
+import 'package:coffee_bean/shared/i18n/locale_keys.g.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
-import 'package:coffee_bean/shared/ui/app_strings.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
-import 'package:coffee_bean/utils/flash_utils/flash_toast_helper.dart';
 import 'package:db_core/db_core.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
@@ -144,11 +144,11 @@ extension AuthHelperExt on AuthHelper {
     // Show login confirmation dialog
     final bool? confirm = await FlashDialogHelper.show<bool>(
       context: context,
-      title: AppStrings.loginRequired,
-      content: confirmMessage ?? AppStrings.loginRequiredMsg,
+      title: LocaleKeys.notifications_auth_login_required.tr(),
+      content: confirmMessage ?? LocaleKeys.notifications_auth_login_required_msg.tr(),
       actions: [
-        FlashDialogAction(label: AppStrings.cancel, value: false),
-        FlashDialogAction(label: AppStrings.login, value: true, color: TMLabsColor.primary),
+        FlashDialogAction(label: LocaleKeys.general_action_cancel.tr(), value: false),
+        FlashDialogAction(label: LocaleKeys.general_action_login.tr(), value: true, color: TMLabsColor.primary),
       ],
     );
 

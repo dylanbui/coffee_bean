@@ -1,0 +1,47 @@
+{
+  "general": {
+    "action": {
+      "close": "Close",
+      "back": "Back",
+      "confirm": "Confirm",
+      "save": "Save",
+      "see_more": "See more",
+      "follow": "Follow",
+      "login": "Login",
+      "cancel": "Cancel"
+    },
+    "label": {
+      "loading": "Loading...",
+      "no_data": "No data",
+      "posted_on": "Posted on",
+      "search_hint": "Search...",
+      "error": "Error"
+    },
+    "tab": {
+      "home": "Home",
+      "shopping": "Shopping",
+      "community": "Community",
+      "profile": "Profile"
+    }
+  },
+  "notifications": {
+    "success": {
+      "update": "Update successful",
+      "save": "Data saved"
+    },
+    "error": {
+      "generic": "An error occurred",
+      "network": "Network error"
+    },
+    "auth": {
+      "login_required": "Login Required",
+      "login_required_msg": "You need to login to perform this action.",
+      "redeem_points_login_msg": "Please login to check and redeem attractive gifts!"
+    }
+  },
+  "server_errors": {
+    "AUTH_001": "Phone number does not exist",
+    "AUTH_002": "Incorrect password",
+    "UNKNOWN": "Unknown system error ({code})"
+  }
+}

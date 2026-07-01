@@ -30,8 +30,8 @@ class UserLoginSuccess extends UserLoginState {
 }
 
 class UserLoginInProgress extends UserLoginState {
-  final String message;
-  UserLoginInProgress({this.message = "Loading..."});
+  final String? message;
+  UserLoginInProgress({this.message});
 }
 
 class UserLoginFailure extends UserLoginState {
