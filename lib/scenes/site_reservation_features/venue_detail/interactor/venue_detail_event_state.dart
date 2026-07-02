@@ -1,4 +1,4 @@
-import 'package:coffee_bean/data/model/response/hub/venue_detail_response.dart';
+import 'package:coffee_bean/data/model/response/hub/venue_info_detail.dart';
 import 'package:coffee_bean/data/model/response/hub/venue_info.dart';
 import 'package:coffee_bean/data/model/response/hub/venue_schedule_response.dart';
 import 'package:db_core/db_core.dart';
@@ -6,7 +6,7 @@ import 'package:db_core/db_core.dart';
 class VenueDetailState extends BaseBlocState {
   final int venueId;
   final int venueTypeId; // Initial or passed from list
-  final VenueDetailResponse? venueDetail;
+  final VenueInfoDetail? venueDetail;
   final DateTime selectedDate;
   final List<VenueTypeItem> availableTypes;
   final VenueTypeItem? selectedType;
@@ -14,6 +14,7 @@ class VenueDetailState extends BaseBlocState {
   final List<VenueSpaceSlotResponse> spaces;
   final List<String> timeSlots;
   final List<VenueWeekResponse> weekDates;
+  final bool isLoading;
 
   VenueDetailState({
     required this.venueId,
@@ -26,6 +27,7 @@ class VenueDetailState extends BaseBlocState {
     this.spaces = const [],
     this.timeSlots = const [],
     this.weekDates = const [],
+    this.isLoading = false,
   });
 
   @override
@@ -40,12 +42,13 @@ class VenueDetailState extends BaseBlocState {
         spaces,
         timeSlots,
         weekDates,
+        isLoading,
       ];
 
   VenueDetailState copyWith({
     int? venueId,
     int? venueTypeId,
-    VenueDetailResponse? venueDetail,
+    VenueInfoDetail? venueDetail,
     DateTime? selectedDate,
     List<VenueTypeItem>? availableTypes,
     VenueTypeItem? selectedType,
@@ -53,6 +56,7 @@ class VenueDetailState extends BaseBlocState {
     List<VenueSpaceSlotResponse>? spaces,
     List<String>? timeSlots,
     List<VenueWeekResponse>? weekDates,
+    bool? isLoading,
   }) {
     return VenueDetailState(
       venueId: venueId ?? this.venueId,
@@ -65,6 +69,7 @@ class VenueDetailState extends BaseBlocState {
       spaces: spaces ?? this.spaces,
       timeSlots: timeSlots ?? this.timeSlots,
       weekDates: weekDates ?? this.weekDates,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 

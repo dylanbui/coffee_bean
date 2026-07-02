@@ -5,7 +5,6 @@ import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/intera
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/venue_detail_builder.dart';
 import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:db_core/db_core.dart';
-import 'package:flutter/material.dart';
 
 class VenueDetailInteractor extends CubitInteractor<VenueDetailRoutable, VenueDetailState> {
   final ReservationRepository _reservationRepository = locator<ReservationRepository>();
@@ -107,7 +106,10 @@ class VenueDetailInteractor extends CubitInteractor<VenueDetailRoutable, VenueDe
         selectedDate: date,
         spaces: data,
         timeSlots: sortedTimes,
+        isLoading: false,
       ));
+    } else {
+      emit(state.copyWith(isLoading: false));
     }
   }
 
@@ -122,11 +124,10 @@ class VenueDetailInteractor extends CubitInteractor<VenueDetailRoutable, VenueDe
     // Nếu ngày là "Không đặt được" (status != 0), chặn không cho chọn và không load API
     if (dateModel.scheduleStatus != 0) return;
 
-    // Cập nhật ngày và xóa dữ liệu cũ để UI có hiệu ứng refresh
+    // Cập nhật ngày và bật loading (giữ lại data cũ để không bị giật layout)
     emit(state.copyWith(
       selectedDate: date,
-      spaces: [],
-      timeSlots: [],
+      isLoading: true,
     ));
 
     // Gọi API load dữ liệu cho ngày mới

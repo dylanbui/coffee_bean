@@ -6,6 +6,7 @@ import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:db_core/utils/tap_effect.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class VenueDetailMainContent extends StatelessWidget {
   final VenueDetailState state;
@@ -19,13 +20,23 @@ class VenueDetailMainContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildLegend(),
-        _buildBookingMatrix(),
-        _buildRulesSection(),
-      ],
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return FadeTransition(opacity: animation, child: child);
+      },
+      child: Opacity(
+        key: ValueKey("matrix_${state.selectedDate}_${state.isLoading}"),
+        opacity: state.isLoading ? 0.5 : 1.0,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildLegend(),
+            _buildBookingMatrix(),
+            _buildRulesSection(),
+          ],
+        ),
+      ),
     );
   }
 
@@ -171,12 +182,29 @@ class VenueDetailMainContent extends StatelessWidget {
   }
 
   Widget _buildRulesSection() {
+    final rulesHtml = state.venueDetail?.venueRules;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text("Quy định đặt chỗ", style: TMLabsTextStyle.title),
+          if (rulesHtml != null && rulesHtml.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Html(
+                data: rulesHtml,
+                style: {
+                  "body": Style(
+                    margin: Margins.zero,
+                    padding: HtmlPaddings.zero,
+                    fontSize: FontSize(14),
+                    color: TMLabsColor.grey,
+                  ),
+                },
+              ),
+            ),
           const SizedBox(height: 12),
           Container(
             width: double.infinity,

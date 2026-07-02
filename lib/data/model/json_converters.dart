@@ -39,3 +39,29 @@ class SmartListStringConverter implements JsonConverter<List<String>, Object?> {
   @override
   Object? toJson(List<String> object) => object;
 }
+
+class SmartListIntConverter implements JsonConverter<List<int>, Object?> {
+  const SmartListIntConverter();
+
+  @override
+  List<int> fromJson(Object? json) {
+    if (json == null) return [];
+    
+    if (json is List) return json.map((e) => int.tryParse(e.toString()) ?? 0).toList();
+    
+    if (json is String && json.isNotEmpty) {
+      final trimmed = json.trim();
+      if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+        try {
+          final decoded = jsonDecode(trimmed);
+          if (decoded is List) return decoded.map((e) => int.tryParse(e.toString()) ?? 0).toList();
+        } catch (_) {}
+      }
+      return trimmed.split(',').map((s) => int.tryParse(s.trim()) ?? 0).toList();
+    }
+    return [];
+  }
+
+  @override
+  Object? toJson(List<int> object) => object;
+}

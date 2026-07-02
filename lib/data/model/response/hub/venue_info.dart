@@ -22,32 +22,40 @@ class VenueTypeItem {
 class VenueInfo {
   final int id;
   final String venueName;
-  final String venueLocation;
   
   @SmartListStringConverter()
   final List<String> venueCover;
   
-  final double latitude;
-  final double longitude;
+  final String venueLocation;
   final String venueOpen;
   final String venueClose;
+  final double venuePrice;
+  final double latitude;
+  final double longitude;
   final double distance;
+  final int businessStatus;
+  
+  @SmartListIntConverter()
+  final List<int>? venueType;
+  
   final List<VenueTypeItem>? venueTypeArray;
 
   VenueInfo({
     required this.id,
-    required this.venueName,
-    required this.venueLocation,
-    required this.venueCover,
+    this.venueName = '',
+    this.venueCover = const [],
+    this.venueLocation = '',
+    this.venueOpen = '',
+    this.venueClose = '',
+    this.venuePrice = 0.0,
     required this.latitude,
     required this.longitude,
-    required this.venueOpen,
-    required this.venueClose,
-    required this.distance,
+    this.distance = 0.0,
+    this.businessStatus = 0,
+    this.venueType,
     this.venueTypeArray,
   });
 
   factory VenueInfo.fromJson(Dictionary json) => _$VenueInfoFromJson(json);
-
   Dictionary toJson() => _$VenueInfoToJson(this);
 }

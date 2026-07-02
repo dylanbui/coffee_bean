@@ -155,7 +155,7 @@ class _ReservationListPageState
                         ),
                       ),
                       child: Text(
-                        "Cách ${item.distance.toStringAsFixed(0)}m",
+                        "Cách ${item.distance!.toStringAsFixed(0)}m",
                         style: TMLabsTextStyle.small.copyWith(color: Colors.white),
                         textAlign: TextAlign.center,
                       ),

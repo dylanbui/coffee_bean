@@ -17,14 +17,19 @@ Map<String, dynamic> _$VenueTypeItemToJson(VenueTypeItem instance) =>
 
 VenueInfo _$VenueInfoFromJson(Map<String, dynamic> json) => VenueInfo(
   id: (json['id'] as num).toInt(),
-  venueName: json['venueName'] as String,
-  venueLocation: json['venueLocation'] as String,
-  venueCover: const SmartListStringConverter().fromJson(json['venueCover']),
+  venueName: json['venueName'] as String? ?? '',
+  venueCover: json['venueCover'] == null
+      ? const []
+      : const SmartListStringConverter().fromJson(json['venueCover']),
+  venueLocation: json['venueLocation'] as String? ?? '',
+  venueOpen: json['venueOpen'] as String? ?? '',
+  venueClose: json['venueClose'] as String? ?? '',
+  venuePrice: (json['venuePrice'] as num?)?.toDouble() ?? 0.0,
   latitude: (json['latitude'] as num).toDouble(),
   longitude: (json['longitude'] as num).toDouble(),
-  venueOpen: json['venueOpen'] as String,
-  venueClose: json['venueClose'] as String,
-  distance: (json['distance'] as num).toDouble(),
+  distance: (json['distance'] as num?)?.toDouble() ?? 0.0,
+  businessStatus: (json['businessStatus'] as num?)?.toInt() ?? 0,
+  venueType: const SmartListIntConverter().fromJson(json['venueType']),
   venueTypeArray: (json['venueTypeArray'] as List<dynamic>?)
       ?.map((e) => VenueTypeItem.fromJson(e as Map<String, dynamic>))
       .toList(),
@@ -33,12 +38,23 @@ VenueInfo _$VenueInfoFromJson(Map<String, dynamic> json) => VenueInfo(
 Map<String, dynamic> _$VenueInfoToJson(VenueInfo instance) => <String, dynamic>{
   'id': instance.id,
   'venueName': instance.venueName,
-  'venueLocation': instance.venueLocation,
   'venueCover': const SmartListStringConverter().toJson(instance.venueCover),
-  'latitude': instance.latitude,
-  'longitude': instance.longitude,
+  'venueLocation': instance.venueLocation,
   'venueOpen': instance.venueOpen,
   'venueClose': instance.venueClose,
+  'venuePrice': instance.venuePrice,
+  'latitude': instance.latitude,
+  'longitude': instance.longitude,
   'distance': instance.distance,
+  'businessStatus': instance.businessStatus,
+  'venueType': _$JsonConverterToJson<Object?, List<int>>(
+    instance.venueType,
+    const SmartListIntConverter().toJson,
+  ),
   'venueTypeArray': instance.venueTypeArray,
 };
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) => value == null ? null : toJson(value);
