@@ -1,4 +1,4 @@
-import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
+// import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_payment/interactor/venue_payment_event_state.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
@@ -32,6 +32,8 @@ class VenuePaymentSlotsCard extends StatelessWidget {
           const SizedBox(height: 12),
           const Divider(height: 1, color: TMLabsColor.bgLight),
           const SizedBox(height: 12),
+          const Center(child: Text("Dữ liệu tạm thời đóng để chờ cập nhật")),
+          /*
           ...params.selectedSlots.map((slot) {
             final court = params.courts.firstWhere((c) => c.id == slot.courtId, orElse: () => VenueCourtModel(id: slot.courtId, name: slot.courtId));
             return Padding(
@@ -65,6 +67,7 @@ class VenuePaymentSlotsCard extends StatelessWidget {
               ),
             );
           }),
+          */
         ],
       ),
     );

@@ -19,7 +19,7 @@ class ReservationListRouter extends DbNoteRouter implements ReservationListRouta
 
   @override
   void openVenueDetail(VenueInfo venue) {
-    final builder = VenueDetailBuilder();
+    final builder = VenueDetailBuilder(venueId: venue.id);
     final router = builder.build();
     push(router.viewController);
   }

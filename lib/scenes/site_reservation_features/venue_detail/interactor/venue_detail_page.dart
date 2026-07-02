@@ -1,3 +1,4 @@
+import 'package:coffee_bean/data/local/settings_app_manager/settings_app_manager.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_interactor.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_main_content.dart';
@@ -7,7 +8,7 @@ import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_sliver_app_bar.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
-import 'package:coffee_bean/utils/number_to_vietnamese.dart';
+import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:db_core/utils/app_label.dart';
 import 'package:db_core/utils/flash_utils/flash_dialog_helper.dart';
@@ -27,7 +28,6 @@ class VenueDetailPage extends AppCubitStateFulWidget<VenueDetailInteractor, Venu
 class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailInteractor, VenueDetailState> {
   final PageController _pageController = PageController();
   final ScrollController _scrollController = ScrollController();
-  int _currentImageIndex = 0;
   bool _isCollapsed = false;
 
   @override
@@ -85,12 +85,13 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
   }
 
   Widget _buildSliverAppBar(VenueDetailState state) {
+    final images = state.venueDetail?.venueCover ?? [];
+    
     return CoffeeSliverAppBar(
       expandedHeight: 316,
       pinned: true,
       style: TmLabAppBarStyle.whiteStyle.copyWith(
         backgroundColor: TMLabsColor.bgSecond,
-        //backIcon: Icons.arrow_back_ios,
         centerTitle: true,
         foregroundColor: _isCollapsed ? TMLabsColor.primary : Colors.white,
       ),
@@ -104,55 +105,79 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
               : const SizedBox.shrink();
         },
       ),
-      background: Stack(
-        children: [
-          PageView.builder(
-            controller: _pageController,
-            onPageChanged: (index) => setState(() => _currentImageIndex = index),
-            itemCount: 5,
-            itemBuilder: (context, index) => DbCachedImageWidget(
-              imageUrl: "https://picsum.photos/seed/${index + 10}/800/600",
+      background: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 400),
+        transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
+        child: images.isEmpty 
+          ? Container(
+              key: const ValueKey("loading_bg"),
               width: double.infinity,
               height: 316,
-              fit: BoxFit.cover,
-              borderRadius: 0,
-            ),
-          ),
-          Positioned(
-            bottom: 20,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                5,
-                (index) => Container(
-                  width: 8,
-                  height: 8,
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _currentImageIndex == index ? Colors.white : Colors.white.withValues(alpha: 0.5),
-                  ),
-                ),
+              color: TMLabsColor.bgLight,
+              child: const Center(
+                child: CircularProgressIndicator(strokeWidth: 2, color: TMLabsColor.primary),
               ),
+            )
+          : Stack(
+              key: ValueKey("image_stack_${images.length}"),
+              children: [
+                PageView.builder(
+                  controller: _pageController,
+                  itemCount: images.length,
+                  itemBuilder: (context, index) {
+                    return DbCachedImageWidget(
+                      imageUrl: images[index],
+                      width: double.infinity,
+                      height: 316,
+                      fit: BoxFit.cover,
+                      borderRadius: 0,
+                    );
+                  },
+                ),
+                if (images.length > 1)
+                  Positioned(
+                    bottom: 16,
+                    right: 16,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: AnimatedBuilder(
+                        animation: _pageController,
+                        builder: (context, child) {
+                          int currentPage = 0;
+                          try {
+                            currentPage = _pageController.page?.round() ?? 0;
+                          } catch (_) {}
+                          return Text(
+                            "${currentPage + 1}/${images.length}",
+                            style: const TextStyle(color: Colors.white, fontSize: 12),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+              ],
             ),
-          ),
-        ],
       ),
     );
   }
 
   Widget _buildVenueInfo(VenueDetailState state) {
+    final detail = state.venueDetail;
+    if (detail == null) return const SizedBox.shrink();
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("TÊN ĐỊA ĐIỂM", style: TMLabsTextStyle.h1),
+          Text(detail.venueName, style: TMLabsTextStyle.h1),
           const SizedBox(height: 8),
           Text(
-            "Bản mô tả giới thiệu địa điểm (văn bản mẫu dùng để hiển thị tạm thời). Bản mô tả giới thiệu địa điểm (văn bản mẫu dùng để hiển thị tạm thời).",
+            detail.venueDesc,
             style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
           ),
           const SizedBox(height: 16),
@@ -176,7 +201,7 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              "84a Nguyễn Cửu Vân, phường Gia Định, tp.HCM",
+                              detail.venueLocation,
                               style: TMLabsTextStyle.caption,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -188,7 +213,8 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
                         children: [
                           const Icon(Icons.access_time_filled, size: 14, color: TMLabsColor.grey),
                           const SizedBox(width: 4),
-                          Text("6h00' - 23h00'", style: TMLabsTextStyle.caption),
+                          Text("${detail.venueOpen} - ${detail.venueClose}",
+                              style: TMLabsTextStyle.caption),
                         ],
                       ),
                     ],
@@ -218,38 +244,61 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
   }
 
   Widget _buildTabs(VenueDetailState state) {
-    final tabs = ["Sân Pickle ball", "Sân bóng rổ"];
-    return Row(
-      children: tabs.map((tab) {
-        final isSelected = state.selectedTab == tab;
-        return Padding(
-          padding: const EdgeInsets.only(right: 24),
-          child: InkWell(
-            onTap: () => interactor.onTabChanged(tab),
-            child: IntrinsicWidth(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    tab,
-                    style: TMLabsTextStyle.title.copyWith(
-                      color: isSelected ? TMLabsColor.primary : TMLabsColor.grey,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+    if (state.availableTypes.isEmpty) return const SizedBox.shrink();
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: state.availableTypes.map((type) {
+          final isSelected = state.selectedType?.id == type.id;
+          return Padding(
+            padding: const EdgeInsets.only(right: 24),
+            child: InkWell(
+              onTap: () {
+                if (isSelected) return;
+                
+                if (state.selectedSlots.isNotEmpty) {
+                  context.showFlashConfirm<bool>(
+                    title: "Chuyển loại sân",
+                    content: "Hành động này sẽ xóa toàn bộ các khung giờ bạn đã chọn. Bạn có chắc chắn muốn chuyển sang loại sân khác?",
+                    actions: [
+                      DbFlashDialogAction(label: "Hủy", value: false, color: TMLabsColor.grey),
+                      DbFlashDialogAction(label: "Chuyển", value: true, color: TMLabsColor.primary),
+                    ],
+                  ).then((confirmed) {
+                    if (confirmed == true) {
+                      interactor.onTabChanged(type);
+                    }
+                  });
+                } else {
+                  interactor.onTabChanged(type);
+                }
+              },
+              child: IntrinsicWidth(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      type.label,
+                      style: TMLabsTextStyle.title.copyWith(
+                        color: isSelected ? TMLabsColor.primary : TMLabsColor.grey,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      ),
                     ),
-                  ),
-                  if (isSelected)
-                    Container(
-                      margin: const EdgeInsets.only(top: 2),
-                      height: 2,
-                      width: double.infinity,
-                      color: TMLabsColor.primary,
-                    ),
-                ],
+                    if (isSelected)
+                      Container(
+                        margin: const EdgeInsets.only(top: 2),
+                        height: 2,
+                        width: double.infinity,
+                        color: TMLabsColor.primary,
+                      ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -269,12 +318,14 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
               itemCount: state.weekDates.length,
               itemBuilder: (context, index) {
                 final dateModel = state.weekDates[index];
-                final isSelected = DateUtils.isSameDay(state.selectedDate, dateModel.date);
-                final dayName = _getDayName(dateModel.date);
-                final dayNum = DateFormat('d/M').format(dateModel.date);
+                final date = DateTime.tryParse(dateModel.scheduleDate ?? '') ?? DateTime.now();
+                final isSelected = DateUtils.isSameDay(state.selectedDate, date);
+                final dayName = _getDayName(date);
+                final dayNum = DateFormat('d/M').format(date);
+                final isAvailable = dateModel.scheduleStatus == 0;
 
                 return TapEffect(
-                  onTap: () => interactor.onDateSelected(dateModel.date),
+                  onTap: () => interactor.onDateSelected(date),
                   child: Container(
                     width: 70,
                     margin: const EdgeInsets.only(right: 8),
@@ -284,7 +335,7 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
                       border: Border.all(color: TMLabsColor.bgLight),
                     ),
                     child: Opacity(
-                      opacity: dateModel.isAvailable ? 1.0 : 0.5,
+                      opacity: isAvailable ? 1.0 : 0.5,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -302,15 +353,15 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
                           ),
                           const SizedBox(height: 4),
                           AppLabel(
-                            dateModel.isAvailable ? "Đặt được" : "Không đặt được",
+                            isAvailable ? "Đặt được" : "Không đặt được",
                             backgroundColor: isSelected
                                 ? Colors.white.withValues(alpha: 0.2)
-                                : (dateModel.isAvailable ? const Color(0xFFE8F5E9) : TMLabsColor.bgLight),
+                                : (isAvailable ? const Color(0xFFE8F5E9) : TMLabsColor.bgLight),
                             style: TMLabsTextStyle.small.copyWith(
                               fontSize: 8,
                               color: isSelected
                                   ? Colors.white
-                                  : (dateModel.isAvailable ? TMLabsColor.success : TMLabsColor.grey),
+                                  : (isAvailable ? TMLabsColor.success : TMLabsColor.grey),
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                           ),
@@ -328,16 +379,12 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
   }
 
   String _getDayName(DateTime date) {
-    final now = DateTime.now();
-    // if (DateUtils.isSameDay(date, now)) return "Thứ hai"; // Demo fix as per screenshot
     final days = ["Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy", "Chủ nhật"];
     return days[date.weekday - 1];
   }
 
   Widget _buildFooter(VenueDetailState state) {
-    // final formatter = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
-    // final totalPrice = formatter.format(state.totalAmount);
-    final totalPrice = NumberToVietnamese.formatNumber(state.totalAmount) ?? "0";
+    final totalPrice = state.totalAmount.toFormatPrice();
     final selectedInfo = state.selectedSlots.isEmpty ? "Chưa chọn sân" : "Đã chọn ${state.selectedSlots.length} khung giờ";
 
     return Container(

@@ -40,10 +40,14 @@ class VenueDetailRouter extends DbNoteRouter implements VenueDetailRoutable {
 
 // -- BUILDER --
 class VenueDetailBuilder extends DbNoteBuilder<VenueDetailRouter> {
+  final int venueId;
+
+  VenueDetailBuilder({required this.venueId});
+
   @override
   VenueDetailRouter build() {
     final router = VenueDetailRouter();
-    final interactor = VenueDetailInteractor(router);
+    final interactor = VenueDetailInteractor(router, venueId: venueId);
     final page = VenueDetailPage(interactor: interactor);
     router.attach(interactor, page);
     return router;

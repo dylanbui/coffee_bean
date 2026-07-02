@@ -58,14 +58,17 @@ class ReservationListInteractor extends CubitInteractor<ReservationListRoutable,
       venueTypeId: (currentSelectedCategory?.id == 0) ? null : currentSelectedCategory?.id,
     );
 
-    if (result case DbSuccess(data: final list)) {
+    if (result case DbSuccess(data: final pageResult)) {
       emit(ReservationListLoaded(
-        reservations: list,
+        reservations: pageResult.list,
         categories: currentCategories,
         selectedCategory: currentSelectedCategory,
         searchQuery: currentQuery,
       ));
     } else {
+      if (result case DbFailure(:final error)) {
+        iLog("Fetch reservations failed: ${error.message} (Code: ${error.code})");
+      }
       emit(ReservationListLoaded(
         reservations: const [],
         categories: currentCategories,

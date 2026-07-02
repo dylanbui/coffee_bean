@@ -1,3 +1,4 @@
+import 'package:coffee_bean/data/local/settings_app_manager/settings_app_manager.dart';
 import 'package:intl/intl.dart';
 
 // https://getemoji.com/
@@ -49,5 +50,12 @@ enum Currency {
     } else {
       return '$symbol$formattedNumber';
     }
+  }
+}
+
+extension CurrencyFormatterExtension on num? {
+  /// Định dạng tiền tệ dựa trên Settings hiện tại của App
+  String toFormatPrice() {
+    return SettingsAppManager.currentCurrency.format(this ?? 0);
   }
 }

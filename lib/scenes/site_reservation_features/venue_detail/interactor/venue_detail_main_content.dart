@@ -1,3 +1,5 @@
+import 'package:coffee_bean/data/model/response/hub/venue_schedule_response.dart';
+import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
@@ -91,7 +93,7 @@ class VenueDetailMainContent extends StatelessWidget {
                 children: [
                   // Court Headers
                   Row(
-                    children: state.courts.map((court) {
+                    children: state.spaces.map((space) {
                       return Container(
                         width: 100,
                         height: 32,
@@ -102,7 +104,7 @@ class VenueDetailMainContent extends StatelessWidget {
                         ),
                         child: Center(
                           child: Text(
-                            court.name,
+                            space.spaceName ?? "Sân",
                             style: TMLabsTextStyle.small.copyWith(color: Colors.white),
                           ),
                         ),
@@ -113,13 +115,22 @@ class VenueDetailMainContent extends StatelessWidget {
                   // Matrix Cells
                   ...state.timeSlots.map((time) {
                     return Row(
-                      children: state.courts.map((court) {
-                        final slot = state.allSlots.firstWhere(
-                          (s) => DateUtils.isSameDay(s.date, state.selectedDate) && s.courtId == court.id && s.time == time,
-                          orElse: () => VenueBookingSlot(date: state.selectedDate, courtId: court.id, time: time, price: 400000),
+                      children: state.spaces.map((space) {
+                        // Tìm slot khớp với mốc giờ này trong danh sách slots của sân
+                        // Nếu không tìm thấy hoặc slots null, tạo một slot ảo với trạng thái 'Đã hết chỗ'
+                        final slot = (space.slots ?? []).firstWhere(
+                          (s) => s.slotStartTime == time,
+                          orElse: () => VenueSlotResponse(
+                            spaceId: space.spaceId,
+                            slotDate: space.slotDate,
+                            slotStartTime: time,
+                            slotStatus: 1,
+                          ),
                         );
+
                         final isSelected = interactor.isSlotSelected(slot);
-                        final priceK = "${(slot.price / 1000).toInt()}K";
+                        final isBooked = slot.slotStatus == 1;
+                        final priceText = slot.slotPrice.toFormatPrice();
 
                         return TapEffect(
                           onTap: () => interactor.onSlotTapped(slot),
@@ -130,7 +141,7 @@ class VenueDetailMainContent extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? TMLabsColor.primary
-                                  : (slot.isBooked ? TMLabsColor.bgLight : Colors.white),
+                                  : (isBooked ? TMLabsColor.bgLight : Colors.white),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
                                 color: isSelected ? TMLabsColor.primary : TMLabsColor.bgLight,
@@ -138,7 +149,7 @@ class VenueDetailMainContent extends StatelessWidget {
                             ),
                             child: Center(
                               child: Text(
-                                slot.isBooked ? "Đã được đặt" : priceK,
+                                isBooked ? "Đã được đặt" : priceText,
                                 style: TMLabsTextStyle.caption.copyWith(
                                   color: isSelected ? Colors.white : TMLabsColor.grey,
                                   fontWeight: FontWeight.w600,

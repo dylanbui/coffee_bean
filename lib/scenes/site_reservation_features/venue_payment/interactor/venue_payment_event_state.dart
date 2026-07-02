@@ -1,5 +1,5 @@
 import 'package:coffee_bean/data/model/payment_domain.dart';
-import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
+// import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
 import 'package:coffee_bean/scenes/order_confirmation/interactor/order_confirmation_event_state.dart';
 import 'package:db_core/db_core.dart';
 
@@ -10,8 +10,8 @@ class VenuePaymentParams extends Equatable {
   final String imageUrl;
   final String address;
   final String openingHours;
-  final List<VenueBookingSlot> selectedSlots;
-  final List<VenueCourtModel> courts;
+  final List<dynamic> selectedSlots;
+  final List<dynamic> courts;
 
   const VenuePaymentParams({
     required this.venueName,
@@ -41,7 +41,7 @@ class VenuePaymentState extends BaseBlocState {
     this.preferences = const CheckoutPreferences(),
   });
 
-  double get subtotal => params.selectedSlots.fold(0, (sum, slot) => sum + slot.price);
+  double get subtotal => 0.0; // Temporarily commented out: params.selectedSlots.fold(0, (sum, slot) => sum + slot.price);
   double get totalAmount => subtotal - promotion.totalDiscount;
 
   VenuePaymentState copyWith({

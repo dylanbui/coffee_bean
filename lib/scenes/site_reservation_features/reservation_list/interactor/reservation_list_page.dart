@@ -129,7 +129,7 @@ class _ReservationListPageState
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
-                    item.venueCover ?? "",
+                    item.venueCover.isNotEmpty ? item.venueCover.first : "",
                     width: 100,
                     height: 100,
                     fit: BoxFit.cover,
@@ -141,7 +141,7 @@ class _ReservationListPageState
                     ),
                   ),
                 ),
-                if (item.distance != null)
+                if (item.distance > 0)
                   Positioned(
                     bottom: 0,
                     right: 0,
@@ -155,7 +155,7 @@ class _ReservationListPageState
                         ),
                       ),
                       child: Text(
-                        "Cách ${item.distance!.toStringAsFixed(0)}m",
+                        "Cách ${item.distance.toStringAsFixed(0)}m",
                         style: TMLabsTextStyle.small.copyWith(color: Colors.white),
                         textAlign: TextAlign.center,
                       ),
@@ -186,7 +186,7 @@ class _ReservationListPageState
                       const SizedBox(width: 4),
                       Expanded(
                         child: AppLabel(
-                          item.venueLocation ?? "",
+                          item.venueLocation,
                           style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
                           maxLines: 2,
                           backgroundColor: Colors.transparent,
@@ -203,7 +203,7 @@ class _ReservationListPageState
                       const Icon(Icons.access_time, size: 14, color: TMLabsColor.grey),
                       const SizedBox(width: 4),
                       Text(
-                        "${item.venueOpen ?? ''} - ${item.venueClose ?? ''}",
+                        "${item.venueOpen} - ${item.venueClose}",
                         style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),
                       ),
                     ],
