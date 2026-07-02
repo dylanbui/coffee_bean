@@ -1,3 +1,5 @@
+import 'package:coffee_bean/data/model/response/hub/venue_info.dart';
+import 'package:coffee_bean/data/model/response/system/dictionary_data.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/reservation_list/interactor/reservation_list_event_state.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/reservation_list/interactor/reservation_list_interactor.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/reservation_list/interactor/widget/reservation_category_picker.dart';
@@ -8,8 +10,6 @@ import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:coffee_bean/shared/widget/search_bar.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_modal_helper.dart';
-import 'package:coffee_bean/utils/flash_utils/flash_toast_helper.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:db_core/db_core.dart';
 import 'package:db_core/utils/app_label.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +57,7 @@ class _ReservationListPageState
           Expanded(
             flex: 4,
             child: AppButton(
-              text: state.selectedCategory?.name ?? "Tất cả các loại",
+              text: state.selectedCategory?.label ?? "Tất cả các loại",
               onPressed: () => _showCategoryModal(context, state),
               height: 32,
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -97,7 +97,7 @@ class _ReservationListPageState
       return FadeSwitcher(stateKey: "getEmptyItemView", child: getEmptyItemView());
     }
 
-    final content =  ListView.separated(
+    final content = ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: state.reservations.length,
       separatorBuilder: (context, index) => const SizedBox(height: 12),
@@ -105,12 +105,10 @@ class _ReservationListPageState
         return _buildReservationItem(context, state.reservations[index]);
       },
     );
-    // Nếu bạn muốn mỗi lần search kết quả mới đều có hiệu ứng mờ nhẹ
-    // bạn nên dùng key động (ví dụ: "content_${state.reservations.length}" hoặc dựa trên query).
     return FadeSwitcher(stateKey: "content_${state.reservations.length}", child: content);
   }
 
-  Widget _buildReservationItem(BuildContext context, TblReservation item) {
+  Widget _buildReservationItem(BuildContext context, VenueInfo item) {
     return TapEffect(
       onTap: () => interactor.onVenueTapped(item),
       child: Container(
@@ -131,7 +129,7 @@ class _ReservationListPageState
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
-                    item.mainImage ?? "",
+                    item.venueCover ?? "",
                     width: 100,
                     height: 100,
                     fit: BoxFit.cover,
@@ -143,25 +141,26 @@ class _ReservationListPageState
                     ),
                   ),
                 ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.4),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(8),
-                        bottomRight: Radius.circular(8),
+                if (item.distance != null)
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.4),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(8),
+                          bottomRight: Radius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        "Cách ${item.distance!.toStringAsFixed(0)}m",
+                        style: TMLabsTextStyle.small.copyWith(color: Colors.white),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                    child: Text(
-                      "Cách 189m", // Demo distance
-                      style: TMLabsTextStyle.small.copyWith(color: Colors.white),
-                      textAlign: TextAlign.center,
-                    ),
                   ),
-                ),
               ],
             ),
             const SizedBox(width: 12),
@@ -171,7 +170,7 @@ class _ReservationListPageState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.name,
+                    item.venueName,
                     style: TMLabsTextStyle.title.copyWith(fontSize: 14),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -187,7 +186,7 @@ class _ReservationListPageState
                       const SizedBox(width: 4),
                       Expanded(
                         child: AppLabel(
-                          item.address,
+                          item.venueLocation ?? "",
                           style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
                           maxLines: 2,
                           backgroundColor: Colors.transparent,
@@ -204,7 +203,7 @@ class _ReservationListPageState
                       const Icon(Icons.access_time, size: 14, color: TMLabsColor.grey),
                       const SizedBox(width: 4),
                       Text(
-                        "${item.openingTime} - ${item.closingTime}",
+                        "${item.venueOpen ?? ''} - ${item.venueClose ?? ''}",
                         style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),
                       ),
                     ],
@@ -219,7 +218,7 @@ class _ReservationListPageState
   }
 
   void _showCategoryModal(BuildContext context, ReservationListState state) {
-    FlashModalHelper.showSmartModal<TblCategory?>(
+    FlashModalHelper.showSmartModal<DictionaryData?>(
       context: context,
       title: "Chọn loại",
       position: FlashModalPosition.top,
@@ -231,7 +230,7 @@ class _ReservationListPageState
         );
       },
     ).then((selected) {
-      if (selected != null || (selected == null && state.selectedCategory != null)) {
+      if (selected != null) {
         interactor.onCategorySelected(selected);
       }
     });

@@ -1,9 +1,9 @@
+import 'package:coffee_bean/data/model/response/hub/venue_info.dart';
+import 'package:coffee_bean/data/model/response/system/dictionary_data.dart';
 import 'package:coffee_bean/data/repository/reservation_repository.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/reservation_list/interactor/reservation_list_event_state.dart';
-import 'package:coffee_bean/scenes/site_reservation_features/reservation_list/reservation_list_router.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:db_core/utils/locator.dart';
+import 'package:coffee_bean/scenes/site_reservation_features/reservation_list/reservation_list_builder.dart';
+import 'package:db_core/db_core.dart';
 
 class ReservationListInteractor extends CubitInteractor<ReservationListRoutable, ReservationListState> {
   final ReservationRepository _repository = locator<ReservationRepository>();
@@ -25,15 +25,21 @@ class ReservationListInteractor extends CubitInteractor<ReservationListRoutable,
       searchQuery: state.searchQuery,
     ));
 
-    // Dữ liệu sẽ được tự động sync bên trong Repository nếu hết hạn hoặc trống
-    final categories = await _repository.getCategories();
+    final result = await _repository.getVenueTypes();
+    final List<DictionaryData> categories = [
+      DictionaryData(id: 0, label: "Tất cả các loại", value: "", dictType: ""),
+      ...(result.dataOrNull ?? [])
+    ];
     
-    fetchReservations(categories: categories);
+    fetchReservations(
+      categories: categories,
+      selectedCategory: categories.first,
+    );
   }
 
   Future<void> fetchReservations({
-    List<TblCategory>? categories,
-    TblCategory? selectedCategory,
+    List<DictionaryData>? categories,
+    DictionaryData? selectedCategory,
     String? query,
   }) async {
     final currentCategories = categories ?? state.categories;
@@ -47,28 +53,37 @@ class ReservationListInteractor extends CubitInteractor<ReservationListRoutable,
       searchQuery: currentQuery,
     ));
 
-    final results = await _repository.getReservations(
-      query: currentQuery,
-      catId: currentSelectedCategory?.serverId,
+    final result = await _repository.getVenues(
+      keyword: currentQuery,
+      venueTypeId: (currentSelectedCategory?.id == 0) ? null : currentSelectedCategory?.id,
     );
 
-    emit(ReservationListLoaded(
-      reservations: results,
-      categories: currentCategories,
-      selectedCategory: currentSelectedCategory,
-      searchQuery: currentQuery,
-    ));
+    if (result case DbSuccess(data: final list)) {
+      emit(ReservationListLoaded(
+        reservations: list,
+        categories: currentCategories,
+        selectedCategory: currentSelectedCategory,
+        searchQuery: currentQuery,
+      ));
+    } else {
+      emit(ReservationListLoaded(
+        reservations: const [],
+        categories: currentCategories,
+        selectedCategory: currentSelectedCategory,
+        searchQuery: currentQuery,
+      ));
+    }
   }
 
   void onSearchChanged(String query) {
     fetchReservations(query: query);
   }
 
-  void onCategorySelected(TblCategory? category) {
+  void onCategorySelected(DictionaryData? category) {
     fetchReservations(selectedCategory: category);
   }
 
-  void onVenueTapped(TblReservation venue) {
+  void onVenueTapped(VenueInfo venue) {
     router?.openVenueDetail(venue);
   }
 }

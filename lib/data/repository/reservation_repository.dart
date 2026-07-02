@@ -1,96 +1,37 @@
-import 'dart:convert';
-import 'package:db_core/commons_constants.dart';
-import 'package:coffee_bean/config/app_pref.dart';
-import 'package:coffee_bean/utils/utils.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
-import 'package:db_core/utils/locator.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
+import 'package:coffee_bean/data/model/response/hub/venue_info.dart';
+import 'package:coffee_bean/data/model/response/system/dictionary_data.dart';
+import 'package:coffee_bean/data/network/network_response.dart';
+import 'package:db_core/db_core.dart';
 
-class ReservationRepository {
-  final DatabaseService _dbService = locator<DatabaseService>();
-  final AppPrefs _prefs = AppPrefs();
+class ReservationRepository extends BaseRepository {
+  ReservationRepository({super.client});
 
-  static const String _catSyncKey = "reservation_category";
-  static const String _itemSyncKey = "reservation_item";
-  static const int _cacheDuration = 24 * 60 * 60 * 1000; // 1 day in ms
-
-  bool _isExpired(String key) {
-    final lastSync = _prefs.getLastSyncTime(key);
-    final now = DateTime.now().millisecondsSinceEpoch;
-    return (now - lastSync) > _cacheDuration;
+  /// Get venue type dictionary
+  /// API: GET /app-api/system/dict-data/type?type=venue_type
+  Future<DbResult<List<DictionaryData>>> getVenueTypes() async {
+    return await networkClient
+        .doGet(
+          '/app-api/system/dict-data/type',
+          queryParameters: {'type': 'venue_type'},
+        )
+        .mapResponseTo(DictionaryData.fromJson)
+        .toList();
   }
 
-  Future<void> _syncCategories() async {
-    try {
-      final String response = await rootBundle.loadString('assets/json/sample_reservation_cat.json');
-      final Dictionary data = json.decode(response);
-      if (data['categories'] != null) {
-        final List<dynamic> catJson = (data['categories'] as List);
-        final categories = catJson.map((item) {
-          final json = item as Dictionary;
-          return TblCategory()
-            ..serverId = (json['id'] as int?) ?? 0
-            ..name = (json['name'] as String?) ?? ''
-            ..type = (json['type'] as String?) ?? 'RESERVATION'
-            ..sortOrder = (json['sort_order'] as int?) ?? 0
-            ..isActive = (json['is_active'] as bool?) ?? true;
-        }).toList();
+  /// Get venue list
+  /// API: GET /app-api/hub/venue-info/list
+  Future<DbResult<List<VenueInfo>>> getVenues({String? keyword, int? venueTypeId}) async {
+    final params = {
+      if (keyword != null && keyword.isNotEmpty) 'keyword': keyword,
+      if (venueTypeId != null) 'venueTypeId': venueTypeId,
+    };
 
-        await _dbService.isar.writeTxn(() async {
-          await _dbService.isar.tblCategorys.filter().typeEqualTo("RESERVATION").deleteAll();
-          await _dbService.isar.tblCategorys.putAll(categories);
-        });
-        _prefs.setLastSyncTime(_catSyncKey, DateTime.now().millisecondsSinceEpoch);
-      }
-    } catch (e) {
-      debugPrint("Error syncing reservation categories: $e");
-    }
-  }
-
-  Future<void> _syncReservations() async {
-    try {
-      final String response = await rootBundle.loadString('assets/json/sample_reservation_item.json');
-      final Dictionary data = json.decode(response);
-      if (data['reservations'] != null) {
-        await _dbService.syncReservationData(data['reservations'] as List<dynamic>);
-        _prefs.setLastSyncTime(_itemSyncKey, DateTime.now().millisecondsSinceEpoch);
-      }
-    } catch (e) {
-      debugPrint("Error syncing reservations: $e");
-    }
-  }
-
-  Future<List<TblCategory>> getCategories() async {
-    final existing = await _dbService.isar.tblCategorys
-        .filter()
-        .typeEqualTo("RESERVATION")
-        .findAll();
-
-    if (existing.isEmpty || _isExpired(_catSyncKey)) {
-      await _syncCategories();
-    }
-
-    // Gia lap cho cham lai
-    Utils.delay(second: 2);
-
-    return _dbService.isar.tblCategorys
-        .filter()
-        .typeEqualTo("RESERVATION")
-        .sortBySortOrder()
-        .findAll();
-  }
-
-  Future<List<TblReservation>> getReservations({String? query, int? catId}) async {
-    final existing = await _dbService.getAllReservations();
-
-    if (existing.isEmpty || _isExpired(_itemSyncKey)) {
-      await _syncReservations();
-    }
-
-    // Gia lap cho cham lai
-    Utils.delay(second: 2);
-
-    return _dbService.searchReservations(query: query, catId: catId);
+    return await networkClient
+        .doGet(
+          '/app-api/hub/venue-info/list',
+          queryParameters: params,
+        )
+        .mapResponseTo(VenueInfo.fromJson)
+        .toList();
   }
 }
