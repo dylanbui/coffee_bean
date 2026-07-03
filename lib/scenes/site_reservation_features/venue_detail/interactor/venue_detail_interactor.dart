@@ -1,5 +1,5 @@
 import 'package:coffee_bean/data/model/response/hub/venue_info.dart';
-import 'package:coffee_bean/data/model/response/hub/venue_schedule_response.dart';
+import 'package:coffee_bean/data/model/response/hub/venue_schedule.dart';
 import 'package:coffee_bean/data/repository/reservation_repository.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/venue_detail_builder.dart';
@@ -118,7 +118,7 @@ class VenueDetailInteractor extends CubitInteractor<VenueDetailRoutable, VenueDe
     final targetDateStr = date.toIso8601String().split('T').first;
     final dateModel = state.weekDates.firstWhere(
       (d) => d.scheduleDate == targetDateStr,
-      orElse: () => VenueWeekResponse(scheduleStatus: 1), // Mặc định coi như không khả dụng nếu không tìm thấy
+      orElse: () => VenueWeek(scheduleStatus: 1), // Mặc định coi như không khả dụng nếu không tìm thấy
     );
 
     // Nếu ngày là "Không đặt được" (status != 0), chặn không cho chọn và không load API
@@ -148,11 +148,11 @@ class VenueDetailInteractor extends CubitInteractor<VenueDetailRoutable, VenueDe
     _fetchInitialData(type.id);
   }
 
-  void onSlotTapped(VenueSlotResponse slot) {
+  void onSlotTapped(VenueSlot slot) {
     // 1 = Booked. Server dùng id == null để báo slot còn trống, nên không chặn theo ID nữa.
     if (slot.slotStatus == 1) return;
 
-    final List<VenueSlotResponse> newSelection = List.from(state.selectedSlots);
+    final List<VenueSlot> newSelection = List.from(state.selectedSlots);
     final index = newSelection.indexWhere((s) => s.uniqueKey == slot.uniqueKey);
 
     if (index != -1) {
@@ -163,12 +163,8 @@ class VenueDetailInteractor extends CubitInteractor<VenueDetailRoutable, VenueDe
     emit(state.copyWith(selectedSlots: newSelection));
   }
 
-  bool isSlotSelected(VenueSlotResponse slot) {
+  bool isSlotSelected(VenueSlot slot) {
     return state.selectedSlots.any((s) => s.uniqueKey == slot.uniqueKey);
-  }
-
-  void onNavigateBack() {
-    router?.pop();
   }
 
   void onOpenMapTap() {

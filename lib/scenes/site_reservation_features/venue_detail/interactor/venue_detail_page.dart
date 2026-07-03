@@ -1,4 +1,3 @@
-import 'package:coffee_bean/data/local/settings_app_manager/settings_app_manager.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_interactor.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_main_content.dart';
@@ -11,6 +10,7 @@ import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:db_core/utils/app_label.dart';
+import 'package:db_core/utils/fade_switcher.dart';
 import 'package:db_core/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:db_core/utils/tap_effect.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
@@ -95,7 +95,7 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
         centerTitle: true,
         foregroundColor: _isCollapsed ? TMLabsColor.primary : Colors.white,
       ),
-      onBackTap: interactor.onNavigateBack,
+      onBackTap: interactor.router?.pop,
       titleWidget: LayoutBuilder(
         builder: (context, constraints) {
           final top = constraints.biggest.height;
@@ -105,62 +105,57 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
               : const SizedBox.shrink();
         },
       ),
-      background: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 400),
-        transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
-        child: images.isEmpty 
-          ? Container(
-              key: const ValueKey("loading_bg"),
-              width: double.infinity,
-              height: 316,
-              color: TMLabsColor.bgLight,
-              child: const Center(
-                child: CircularProgressIndicator(strokeWidth: 2, color: TMLabsColor.primary),
-              ),
-            )
-          : Stack(
-              key: ValueKey("image_stack_${images.length}"),
-              children: [
-                PageView.builder(
-                  controller: _pageController,
-                  itemCount: images.length,
-                  itemBuilder: (context, index) {
-                    return DbCachedImageWidget(
-                      imageUrl: images[index],
-                      width: double.infinity,
-                      height: 316,
-                      fit: BoxFit.cover,
-                      borderRadius: 0,
-                    );
-                  },
-                ),
-                if (images.length > 1)
-                  Positioned(
-                    bottom: 16,
-                    right: 16,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: AnimatedBuilder(
-                        animation: _pageController,
-                        builder: (context, child) {
-                          int currentPage = 0;
-                          try {
-                            currentPage = _pageController.page?.round() ?? 0;
-                          } catch (_) {}
-                          return Text(
-                            "${currentPage + 1}/${images.length}",
-                            style: const TextStyle(color: Colors.white, fontSize: 12),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-              ],
+      background: FadeSwitcher.binary(
+        showFirst: images.isEmpty,
+        first: Container(
+          width: double.infinity,
+          height: 316,
+          color: TMLabsColor.bgLight,
+          child: getLoadingView(),
+        ),
+        second: Stack(
+          key: ValueKey("image_stack_${images.length}"),
+          children: [
+            PageView.builder(
+              controller: _pageController,
+              itemCount: images.length,
+              itemBuilder: (context, index) {
+                return DbCachedImageWidget(
+                  imageUrl: images[index],
+                  width: double.infinity,
+                  height: 316,
+                  fit: BoxFit.cover,
+                  borderRadius: 0,
+                );
+              },
             ),
+            if (images.length > 1)
+              Positioned(
+                bottom: 16,
+                right: 16,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: AnimatedBuilder(
+                    animation: _pageController,
+                    builder: (context, child) {
+                      int currentPage = 0;
+                      try {
+                        currentPage = _pageController.page?.round() ?? 0;
+                      } catch (_) {}
+                      return Text(
+                        "${currentPage + 1}/${images.length}",
+                        style: const TextStyle(color: Colors.white, fontSize: 12),
+                      );
+                    },
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

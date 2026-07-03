@@ -1,9 +1,10 @@
-import 'package:coffee_bean/data/model/response/hub/venue_schedule_response.dart';
+import 'package:coffee_bean/data/model/response/hub/venue_schedule.dart';
 import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:db_core/utils/fade_switcher.dart';
 import 'package:db_core/utils/tap_effect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -20,13 +21,9 @@ class VenueDetailMainContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
-      transitionBuilder: (Widget child, Animation<double> animation) {
-        return FadeTransition(opacity: animation, child: child);
-      },
+    return FadeSwitcher(
+      stateKey: "matrix_${state.selectedDate}_${state.isLoading}",
       child: Opacity(
-        key: ValueKey("matrix_${state.selectedDate}_${state.isLoading}"),
         opacity: state.isLoading ? 0.5 : 1.0,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +128,7 @@ class VenueDetailMainContent extends StatelessWidget {
                         // Nếu không tìm thấy hoặc slots null, tạo một slot ảo với trạng thái 'Đã hết chỗ'
                         final slot = (space.slots ?? []).firstWhere(
                           (s) => s.slotStartTime == time,
-                          orElse: () => VenueSlotResponse(
+                          orElse: () => VenueSlot(
                             spaceId: space.spaceId,
                             slotDate: space.slotDate,
                             slotStartTime: time,

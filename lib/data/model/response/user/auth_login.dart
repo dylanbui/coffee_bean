@@ -1,16 +1,16 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'auth_login_response.g.dart';
+part 'auth_login.g.dart';
 
 @JsonSerializable()
-class AuthLoginResponse {
+class AuthLogin {
   final int userId;
   final String accessToken;
   final String refreshToken;
   final int expiresTime;
   final String? openid;
 
-  AuthLoginResponse({
+  AuthLogin({
     required this.userId,
     required this.accessToken,
     required this.refreshToken,
@@ -18,6 +18,6 @@ class AuthLoginResponse {
     this.openid,
   });
 
-  factory AuthLoginResponse.fromJson(Map<String, dynamic> json) => _$AuthLoginResponseFromJson(json);
-  Map<String, dynamic> toJson() => _$AuthLoginResponseToJson(this);
+  factory AuthLogin.fromJson(Map<String, dynamic> json) => _$AuthLoginFromJson(json);
+  Map<String, dynamic> toJson() => _$AuthLoginToJson(this);
 }

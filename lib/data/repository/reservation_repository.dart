@@ -1,6 +1,6 @@
 import 'package:coffee_bean/data/model/response/hub/venue_info_detail.dart';
 import 'package:coffee_bean/data/model/response/hub/venue_info.dart';
-import 'package:coffee_bean/data/model/response/hub/venue_schedule_response.dart';
+import 'package:coffee_bean/data/model/response/hub/venue_schedule.dart';
 import 'package:coffee_bean/data/model/response/system/dictionary_data.dart';
 import 'package:coffee_bean/data/network/network_response.dart';
 import 'package:coffee_bean/data/network/page_result.dart';
@@ -105,7 +105,7 @@ class ReservationRepository extends BaseRepository {
 
   /// Get 7-day week schedule
   /// API: GET /app-api/hub/venue-schedule/week
-  Future<DbResult<List<VenueWeekResponse>>> getVenueWeekSchedule(int venueId, int venueTypeId) async {
+  Future<DbResult<List<VenueWeek>>> getVenueWeekSchedule(int venueId, int venueTypeId) async {
     return await networkClient
         .doGet(
           '/app-api/hub/venue-schedule/week',
@@ -114,13 +114,13 @@ class ReservationRepository extends BaseRepository {
             'venueTypeId': venueTypeId,
           },
         )
-        .mapResponseTo(VenueWeekResponse.fromJson)
+        .mapResponseTo(VenueWeek.fromJson)
         .toList();
   }
 
   /// Get available spaces with time slots for a venue
   /// API: GET /app-api/hub/venue-slot/available-spaces
-  Future<DbResult<List<VenueSpaceSlotResponse>>> getVenueAvailableSpaces(int venueId, int venueTypeId, String date) async {
+  Future<DbResult<List<VenueSpaceSlot>>> getVenueAvailableSpaces(int venueId, int venueTypeId, String date) async {
     return await networkClient
         .doGet(
           '/app-api/hub/venue-slot/available-spaces',
@@ -130,7 +130,7 @@ class ReservationRepository extends BaseRepository {
             'date': date,
           },
         )
-        .mapResponseTo(VenueSpaceSlotResponse.fromJson)
+        .mapResponseTo(VenueSpaceSlot.fromJson)
         .toList();
   }
 }

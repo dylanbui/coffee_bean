@@ -1,6 +1,6 @@
 import 'package:coffee_bean/data/model/response/hub/venue_info_detail.dart';
 import 'package:coffee_bean/data/model/response/hub/venue_info.dart';
-import 'package:coffee_bean/data/model/response/hub/venue_schedule_response.dart';
+import 'package:coffee_bean/data/model/response/hub/venue_schedule.dart';
 import 'package:db_core/db_core.dart';
 
 class VenueDetailState extends BaseBlocState {
@@ -10,10 +10,10 @@ class VenueDetailState extends BaseBlocState {
   final DateTime selectedDate;
   final List<VenueTypeItem> availableTypes;
   final VenueTypeItem? selectedType;
-  final List<VenueSlotResponse> selectedSlots;
-  final List<VenueSpaceSlotResponse> spaces;
+  final List<VenueSlot> selectedSlots;
+  final List<VenueSpaceSlot> spaces;
   final List<String> timeSlots;
-  final List<VenueWeekResponse> weekDates;
+  final List<VenueWeek> weekDates;
   final bool isLoading;
 
   VenueDetailState({
@@ -52,10 +52,10 @@ class VenueDetailState extends BaseBlocState {
     DateTime? selectedDate,
     List<VenueTypeItem>? availableTypes,
     VenueTypeItem? selectedType,
-    List<VenueSlotResponse>? selectedSlots,
-    List<VenueSpaceSlotResponse>? spaces,
+    List<VenueSlot>? selectedSlots,
+    List<VenueSpaceSlot>? spaces,
     List<String>? timeSlots,
-    List<VenueWeekResponse>? weekDates,
+    List<VenueWeek>? weekDates,
     bool? isLoading,
   }) {
     return VenueDetailState(

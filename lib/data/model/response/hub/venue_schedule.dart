@@ -1,34 +1,34 @@
 import 'package:db_core/commons_constants.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'venue_schedule_response.g.dart';
+part 'venue_schedule.g.dart';
 
 @JsonSerializable()
-class VenueWeekResponse {
+class VenueWeek {
   final String? scheduleWeek;
   final String? scheduleDate;
   final int? scheduleStatus; // 0=Available, 1=Unavailable
 
-  VenueWeekResponse({
+  VenueWeek({
     this.scheduleWeek,
     this.scheduleDate,
     this.scheduleStatus,
   });
 
-  factory VenueWeekResponse.fromJson(Dictionary json) => _$VenueWeekResponseFromJson(json);
-  Dictionary toJson() => _$VenueWeekResponseToJson(this);
+  factory VenueWeek.fromJson(Dictionary json) => _$VenueWeekFromJson(json);
+  Dictionary toJson() => _$VenueWeekToJson(this);
 }
 
 @JsonSerializable()
-class VenueSpaceSlotResponse {
+class VenueSpaceSlot {
   final int? spaceId;
   final String? spaceName;
   final int? venueTypeId;
   final String? slotDate;
   final String? slotDateShort;
-  final List<VenueSlotResponse>? slots;
+  final List<VenueSlot>? slots;
 
-  VenueSpaceSlotResponse({
+  VenueSpaceSlot({
     this.spaceId,
     this.spaceName,
     this.venueTypeId,
@@ -37,12 +37,12 @@ class VenueSpaceSlotResponse {
     this.slots,
   });
 
-  factory VenueSpaceSlotResponse.fromJson(Dictionary json) => _$VenueSpaceSlotResponseFromJson(json);
-  Dictionary toJson() => _$VenueSpaceSlotResponseToJson(this);
+  factory VenueSpaceSlot.fromJson(Dictionary json) => _$VenueSpaceSlotFromJson(json);
+  Dictionary toJson() => _$VenueSpaceSlotToJson(this);
 }
 
 @JsonSerializable()
-class VenueSlotResponse {
+class VenueSlot {
   final int? id;
   final int? spaceId;
   String? slotDate;
@@ -53,7 +53,7 @@ class VenueSlotResponse {
   final int? dayOfWeek;
   String? uniqueKey;
 
-  VenueSlotResponse({
+  VenueSlot({
     this.id,
     this.spaceId,
     this.slotDate,
@@ -65,6 +65,6 @@ class VenueSlotResponse {
     this.uniqueKey,
   });
 
-  factory VenueSlotResponse.fromJson(Dictionary json) => _$VenueSlotResponseFromJson(json);
-  Dictionary toJson() => _$VenueSlotResponseToJson(this);
+  factory VenueSlot.fromJson(Dictionary json) => _$VenueSlotFromJson(json);
+  Dictionary toJson() => _$VenueSlotToJson(this);
 }
