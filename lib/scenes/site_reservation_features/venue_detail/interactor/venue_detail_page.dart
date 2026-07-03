@@ -108,7 +108,7 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
       background: ImageSliderWidget(
         images: images,
         height: 316,
-        indicatorType: AppSliderIndicatorType.all,
+        indicatorType: ImageSliderIndicatorType.all,
       ),
     );
   }

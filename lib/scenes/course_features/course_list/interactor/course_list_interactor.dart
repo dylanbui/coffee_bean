@@ -11,14 +11,15 @@
 import 'package:coffee_bean/data/repository/course_repository.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/course_list_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/interactor/course_list_event_state.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
+import 'package:coffee_bean/data/model/response/system/dictionary_data.dart';
+import 'package:coffee_bean/data/model/response/hub/course_info.dart';
 import 'package:db_core/db_core.dart';
 
 class CourseListInteractor extends CubitInteractor<CourseListRoutable, CourseListState> {
   final CourseRepository _courseRepository = locator<CourseRepository>();
 
   CourseListInteractor(CourseListRoutable router)
-      : super(CourseListState(), router: router);
+      : super(const CourseListState(), router: router);
 
   @override
   void onDidBecomeActive() {
@@ -29,8 +30,18 @@ class CourseListInteractor extends CubitInteractor<CourseListRoutable, CourseLis
   Future<void> _initData() async {
     emit(state.copyWith(isLoading: true));
     
-    final cats = await _courseRepository.getCategories();
-    final items = await _courseRepository.getCourses();
+    final catResult = await _courseRepository.getCourseCategories();
+    final courseResult = await _courseRepository.getCoursePage();
+    
+    List<DictionaryData> cats = [];
+    if (catResult case DbSuccess(data: final data)) {
+      cats = data;
+    }
+
+    List<CourseInfo> items = [];
+    if (courseResult case DbSuccess(data: final data)) {
+      items = data.list;
+    }
     
     emit(state.copyWith(
       categories: cats,
@@ -39,8 +50,8 @@ class CourseListInteractor extends CubitInteractor<CourseListRoutable, CourseLis
     ));
   }
 
-  void onCategorySelected(TblCategory? category) async {
-    if (state.selectedCategory?.serverId == category?.serverId && category != null) return;
+  void onCategorySelected(DictionaryData? category) async {
+    if (state.selectedCategory?.id == category?.id && category != null) return;
 
     emit(state.copyWith(
       selectedCategory: category,
@@ -48,25 +59,30 @@ class CourseListInteractor extends CubitInteractor<CourseListRoutable, CourseLis
       isLoading: true,
     ));
 
-    final items = await _courseRepository.getCourses(
-      query: state.searchQuery,
-      catId: category?.serverId,
+    final courseResult = await _courseRepository.getCoursePage(
+      keyword: state.searchQuery,
+      courseType: category?.id,
     );
 
-    emit(state.copyWith(courses: items, isLoading: false));
+    if (courseResult case DbSuccess(data: final data)) {
+      emit(state.copyWith(courses: data.list, isLoading: false));
+    } else {
+      emit(state.copyWith(courses: [], isLoading: false));
+    }
   }
 
   void onSearchChanged(String query) async {
     emit(state.copyWith(searchQuery: query, isLoading: true));
 
-    final items = await _courseRepository.getCourses(
-      query: query,
-      catId: state.selectedCategory?.serverId,
+    final courseResult = await _courseRepository.getCoursePage(
+      keyword: query,
+      courseType: state.selectedCategory?.id,
     );
 
-    emit(state.copyWith(courses: items, isLoading: false));
+    if (courseResult case DbSuccess(data: final data)) {
+      emit(state.copyWith(courses: data.list, isLoading: false));
+    } else {
+      emit(state.copyWith(courses: [], isLoading: false));
+    }
   }
-  // void onCourseTapped(TblCourse course) {
-  //   router?.navigate(CourseDetailRoute(course.serverId));
-  // }
 }

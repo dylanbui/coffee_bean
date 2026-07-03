@@ -1,14 +1,14 @@
 import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 
-enum AppSliderIndicatorType { dots, fraction, all, none }
+enum ImageSliderIndicatorType { dots, fraction, all, none }
 
 /// A reusable image slider widget that supports dots and fraction indicators.
 /// It uses DbCachedImageWidget internally for optimized loading and caching.
 class ImageSliderWidget extends StatefulWidget {
   final List<String> images;
   final double height;
-  final AppSliderIndicatorType indicatorType;
+  final ImageSliderIndicatorType indicatorType;
   final BoxFit fit;
   final double borderRadius;
   final Color? backgroundColor;
@@ -18,7 +18,7 @@ class ImageSliderWidget extends StatefulWidget {
     super.key,
     required this.images,
     this.height = 300,
-    this.indicatorType = AppSliderIndicatorType.fraction,
+    this.indicatorType = ImageSliderIndicatorType.fraction,
     this.fit = BoxFit.cover,
     this.borderRadius = 0,
     this.backgroundColor,
@@ -91,13 +91,13 @@ class _ImageSliderWidgetState extends State<ImageSliderWidget> {
 
   Widget _buildIndicator() {
     final type = widget.indicatorType;
-    if (type == AppSliderIndicatorType.none) return const SizedBox.shrink();
+    if (type == ImageSliderIndicatorType.none) return const SizedBox.shrink();
 
     return Stack(
       children: [
-        if (type == AppSliderIndicatorType.dots || type == AppSliderIndicatorType.all)
+        if (type == ImageSliderIndicatorType.dots || type == ImageSliderIndicatorType.all)
           _buildDotsIndicator(),
-        if (type == AppSliderIndicatorType.fraction || type == AppSliderIndicatorType.all)
+        if (type == ImageSliderIndicatorType.fraction || type == ImageSliderIndicatorType.all)
           _buildFractionIndicator(),
       ],
     );
