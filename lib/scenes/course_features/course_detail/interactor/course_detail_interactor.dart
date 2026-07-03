@@ -80,7 +80,10 @@ class CourseDetailInteractor extends CubitInteractor<CourseDetailRoutable, Cours
   }
 
   void onInstructorDetailTap() {
-    DbToast.show("Xem chi tiết giảng viên");
+    final instructorId = state.courseDetail?.instructorId;
+    if (instructorId != null) {
+      router?.gotoInstructorDetail(instructorId);
+    }
   }
 
   @override

@@ -51,7 +51,7 @@ class ReservationRepository extends BaseRepository {
     String? keyword,
     int? venueTypeId,
     int pageNo = 1,
-    int pageSize = 10,
+    int pageSize = 100,
   }) async {
     final params = {
       'pageNo': pageNo,
