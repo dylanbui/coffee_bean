@@ -46,6 +46,7 @@ class VenueSlot {
   final int? id;
   final int? spaceId;
   String? slotDate;
+  String? spaceName;
   final String? slotStartTime;
   final String? slotEndTime;
   final double? slotPrice;
@@ -57,6 +58,7 @@ class VenueSlot {
     this.id,
     this.spaceId,
     this.slotDate,
+    this.spaceName,
     this.slotStartTime,
     this.slotEndTime,
     this.slotPrice,

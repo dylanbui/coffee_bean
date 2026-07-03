@@ -2,6 +2,7 @@ import 'package:coffee_bean/data/model/response/hub/venue_info.dart';
 import 'package:coffee_bean/data/model/response/hub/venue_schedule.dart';
 import 'package:coffee_bean/data/repository/reservation_repository.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
+import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/venue_checkout_item.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/venue_detail_builder.dart';
 import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:db_core/db_core.dart';
@@ -95,6 +96,7 @@ class VenueDetailInteractor extends CubitInteractor<VenueDetailRoutable, VenueDe
           for (var slot in space.slots!) {
             // Logic xử lý dữ liệu: Ép slotDate từ cha xuống con để đảm bảo định danh duy nhất (UniqueKey) luôn chính xác khi đổi ngày
             slot.slotDate = space.slotDate;
+            slot.spaceName = space.spaceName;
             slot.uniqueKey = "${space.spaceId}_${space.slotDate}_${slot.slotStartTime}";
             if (slot.slotStartTime != null) times.add(slot.slotStartTime!);
           }
@@ -182,13 +184,26 @@ class VenueDetailInteractor extends CubitInteractor<VenueDetailRoutable, VenueDe
     iLog("=== XÁC NHẬN ĐẶT LỊCH ===");
     iLog("Tổng số slot: ${state.selectedSlots.length}");
     iLog("Tổng tiền: ${state.totalAmount.toFormatPrice()}");
-    
+
     for (var i = 0; i < state.selectedSlots.length; i++) {
       final slot = state.selectedSlots[i];
       iLog("Slot ${i + 1}: Key=${slot.uniqueKey} | Giá=${slot.slotPrice?.toFormatPrice()}");
     }
     iLog("=========================");
+    
+    final detail = state.venueDetail;
+    if (detail == null) return;
 
-    // Module venue_payment will be replaced, temporarily keeping this logic as is.
+    final venueItem = VenueCheckoutItem(
+      venueId: detail.id,
+      venueName: detail.venueName,
+      venueLocation: detail.venueLocation,
+      venueOpeningHours: "${detail.venueOpen} - ${detail.venueClose}",
+      venueTypeName: state.selectedType?.label ?? "",
+      selectedSlots: state.selectedSlots,
+      venueImageUrl: detail.venueCover.firstOrNull,
+    );
+
+    router?.openCheckoutOrder(venueItem);
   }
 }
