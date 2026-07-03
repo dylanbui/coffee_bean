@@ -72,6 +72,7 @@ export 'commons_constants.dart';
 export 'data/db_location.dart';
 
 // Share packages
+export 'package:shimmer/shimmer.dart';
 export 'package:path_provider/path_provider.dart';
 export 'package:page_transition/page_transition.dart';
 export 'package:flash/flash.dart';
