@@ -272,8 +272,14 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
                 final dayNum = DateFormat('d/M').format(date);
                 final isAvailable = dateModel.scheduleStatus == 0;
 
+                final now = DateTime.now();
+                final today = DateTime(now.year, now.month, now.day);
+                // logic: Kiểm tra nếu ngày trong danh sách là ngày trước ngày hiện tại
+                final isPastDate = date.isBefore(today);
+
                 return TapEffect(
-                  onTap: () => interactor.onDateSelected(date),
+                  // logic: Nếu là ngày cũ, chặn không cho chọn (trả về empty function để giữ hiệu ứng ripple)
+                  onTap: isPastDate ? () {} : () => interactor.onDateSelected(date),
                   child: Container(
                     width: 70,
                     margin: const EdgeInsets.only(right: 8),
@@ -283,7 +289,8 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
                       border: Border.all(color: TMLabsColor.bgLight),
                     ),
                     child: Opacity(
-                      opacity: isAvailable ? 1.0 : 0.5,
+                      // logic: Làm mờ UI nếu ngày đã qua hoặc không còn chỗ
+                      opacity: (isAvailable && !isPastDate) ? 1.0 : 0.5,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -301,15 +308,20 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
                           ),
                           const SizedBox(height: 4),
                           AppLabel(
-                            isAvailable ? "Đặt được" : "Không đặt được",
+                            // logic: Hiển thị trạng thái "Đã qua" thay vì trạng thái đặt chỗ thông thường
+                            isPastDate ? "Đã qua" : (isAvailable ? "Đặt được" : "Không đặt được"),
                             backgroundColor: isSelected
                                 ? Colors.white.withValues(alpha: 0.2)
-                                : (isAvailable ? const Color(0xFFE8F5E9) : TMLabsColor.bgLight),
+                                : (isAvailable && !isPastDate
+                                    ? const Color(0xFFE8F5E9)
+                                    : TMLabsColor.bgLight),
                             style: TMLabsTextStyle.small.copyWith(
                               fontSize: 8,
                               color: isSelected
                                   ? Colors.white
-                                  : (isAvailable ? TMLabsColor.success : TMLabsColor.grey),
+                                  : (isAvailable && !isPastDate
+                                      ? TMLabsColor.success
+                                      : TMLabsColor.grey),
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                           ),

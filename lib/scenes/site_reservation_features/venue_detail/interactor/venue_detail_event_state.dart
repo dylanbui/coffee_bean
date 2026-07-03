@@ -3,6 +3,11 @@ import 'package:coffee_bean/data/model/response/hub/venue_info.dart';
 import 'package:coffee_bean/data/model/response/hub/venue_schedule.dart';
 import 'package:db_core/db_core.dart';
 
+class VenueDetailConstants {
+  /// Quy định: Không cho phép đặt khung giờ sắp diễn ra trong vòng 30 phút tới
+  static const Duration bookingBufferTime = Duration(minutes: 30);
+}
+
 class VenueDetailState extends BaseBlocState {
   final int venueId;
   final int venueTypeId; // Initial or passed from list
