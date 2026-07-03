@@ -51,10 +51,82 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
     super.dispose();
   }
 
+  Widget _buildShimmerBlock({required double width, required double height, double borderRadius = 4}) {
+    return Shimmer.fromColors(
+      baseColor: TMLabsColor.bgLight,
+      highlightColor: Colors.white,
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(borderRadius),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVenueInfoShimmer() {
+    return Padding(
+      key: const ValueKey("info_shimmer"),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildShimmerBlock(width: 200, height: 28), // Title
+          const SizedBox(height: 8),
+          _buildShimmerBlock(width: double.infinity, height: 16), // Desc line 1
+          const SizedBox(height: 4),
+          _buildShimmerBlock(width: 250, height: 16), // Desc line 2
+          const SizedBox(height: 16),
+          _buildShimmerBlock(width: double.infinity, height: 64, borderRadius: 12), // Location box
+          const SizedBox(height: 20),
+          // Tabs skeleton
+          Row(
+            children: List.generate(
+              3,
+              (index) => Padding(
+                padding: const EdgeInsets.only(right: 24),
+                child: _buildShimmerBlock(width: 60, height: 20),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateSelectorShimmer() {
+    return Container(
+      key: const ValueKey("date_shimmer"),
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: 7,
+        itemBuilder: (context, index) => Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: _buildShimmerBlock(width: 70, height: 100, borderRadius: 12),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMainContentShimmer() {
+    return Padding(
+      key: const ValueKey("main_shimmer"),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: _buildShimmerBlock(width: double.infinity, height: 400, borderRadius: 12),
+    );
+  }
+
   @override
   Widget getBody(BuildContext context) {
     return BlocBuilder<VenueDetailInteractor, VenueDetailState>(
       builder: (context, state) {
+        final isLoading = state.venueDetail == null;
+
         return Scaffold(
           backgroundColor: Colors.white,
           body: Column(
@@ -64,21 +136,27 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
                   controller: _scrollController,
                   slivers: [
                     _buildSliverAppBar(state),
-                    SliverToBoxAdapter(child: _buildVenueInfo(state)),
-                    _buildSliverDateSelector(state),
-                    SliverToBoxAdapter(
-                      child: VenueDetailMainContent(
-                        state: state,
-                        interactor: interactor,
+                    if (isLoading) ...[
+                      SliverToBoxAdapter(child: _buildVenueInfoShimmer()),
+                      _buildSliverDateSelector(state, isLoading),
+                      SliverToBoxAdapter(child: _buildMainContentShimmer()),
+                    ] else ...[
+                      SliverToBoxAdapter(child: _buildVenueInfo(state)),
+                      _buildSliverDateSelector(state, isLoading),
+                      SliverToBoxAdapter(
+                        child: VenueDetailMainContent(
+                          state: state,
+                          interactor: interactor,
+                        ),
                       ),
-                    ),
+                    ],
                     const SliverToBoxAdapter(child: SizedBox(height: 100)), // Space for footer
                   ],
                 ),
               ),
             ],
           ),
-          bottomNavigationBar: _buildFooter(state),
+          bottomNavigationBar: isLoading ? const SizedBox.shrink() : _buildFooter(state),
         );
       },
     );
@@ -118,6 +196,7 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
     if (detail == null) return const SizedBox.shrink();
 
     return Padding(
+      key: const ValueKey("info_content"),
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,13 +329,15 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
     );
   }
 
-  Widget _buildSliverDateSelector(VenueDetailState state) {
+  Widget _buildSliverDateSelector(VenueDetailState state, bool isLoading) {
     return SliverPersistentHeader(
       pinned: true,
       delegate: FixedHeaderDelegate(
         minHeight: 100,
         maxHeight: 100,
         childBuilder: (shrinkOffset, overlapsContent) {
+          if (isLoading) return _buildDateSelectorShimmer();
+
           return Container(
             color: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -348,6 +429,7 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
     final selectedInfo = state.selectedSlots.isEmpty ? "Chưa chọn sân" : "Đã chọn ${state.selectedSlots.length} khung giờ";
 
     return Container(
+      key: const ValueKey("footer_content"),
       height: 90,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
