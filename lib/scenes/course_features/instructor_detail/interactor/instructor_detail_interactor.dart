@@ -1,13 +1,14 @@
-import 'package:coffee_bean/data/repository/course_repository.dart';
 import 'package:coffee_bean/scenes/course_features/instructor_detail/instructor_detail_builder.dart';
 import 'package:db_core/db_core.dart';
+import 'package:coffee_bean/data/repository/course_repository.dart';
 import 'package:coffee_bean/scenes/course_features/instructor_detail/interactor/instructor_detail_event_state.dart';
 
 class InstructorDetailInteractor extends CubitInteractor<InstructorDetailRoutable, InstructorDetailState> {
   final int instructorId;
   final CourseRepository _courseRepository = locator<CourseRepository>();
 
-  InstructorDetailInteractor(InstructorDetailRoutable router, {required this.instructorId,}) : super(const InstructorDetailState(), router: router);
+  InstructorDetailInteractor(InstructorDetailRoutable router, {required this.instructorId})
+      : super(InstructorDetailState(), router: router);
 
   @override
   void onDidBecomeActive() {

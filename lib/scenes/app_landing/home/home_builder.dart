@@ -1,4 +1,6 @@
 import 'package:coffee_bean/scenes/announcement_detail/announcement_detail_builder.dart';
+import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
+import 'package:coffee_bean/scenes/course_features/instructor_profile/instructor_profile_builder.dart';
 import 'package:db_core/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_page.dart';
@@ -18,6 +20,12 @@ class ReservationListRoute implements DbNoteRoute {}
 class CourseListRoute implements DbNoteRoute {}
 class ActivityListRoute implements DbNoteRoute {}
 class MyPointListRoute implements DbNoteRoute {}
+
+class SellerDetailRoute implements DbNoteRoute {
+  final int instructorId;
+  SellerDetailRoute(this.instructorId);
+}
+
 
 abstract class HomeRoutable implements DbNoteRoutable {}
 
@@ -53,6 +61,11 @@ class HomeRouter extends DbNoteRouter implements HomeRoutable {
 
     } else if (toRoute is AnnouncementDetailRoute) {
       final nextBuilder = AnnouncementDetailBuilder(toRoute.announcementId);
+      final nextRouter = nextBuilder.build();
+      push(nextRouter.viewController);
+
+    } else if (toRoute is SellerDetailRoute) {
+      final nextBuilder = InstructorProfileBuilder(instructorId: toRoute.instructorId);
       final nextRouter = nextBuilder.build();
       push(nextRouter.viewController);
     }

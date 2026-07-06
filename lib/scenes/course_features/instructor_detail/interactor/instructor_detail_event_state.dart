@@ -1,13 +1,11 @@
 import 'package:coffee_bean/data/model/response/hub/instructor_info.dart';
-import 'package:db_core/commons_constants.dart';
-import 'package:db_core/network/network_common.dart';
-import 'package:equatable/equatable.dart';
+import 'package:db_core/db_core.dart';
 
-class InstructorDetailState extends Equatable {
+class InstructorDetailState extends BaseBlocState {
   final InstructorInfo? instructor;
   final DbError? error;
 
-  const InstructorDetailState({this.instructor, this.error});
+  InstructorDetailState({this.instructor, this.error});
 
   InstructorDetailState copyWith({InstructorInfo? instructor, DbError? error}) {
     return InstructorDetailState(
