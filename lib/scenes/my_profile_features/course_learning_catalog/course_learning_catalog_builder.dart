@@ -1,7 +1,8 @@
+import 'package:coffee_bean/scenes/course_features/instructor_detail/instructor_detail_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/course_learning_catalog/interactor/course_learning_catalog_interactor.dart';
 import 'package:coffee_bean/scenes/my_profile_features/course_learning_catalog/interactor/course_learning_catalog_page.dart';
+import 'package:coffee_bean/scenes/my_profile_features/course_learning_detail/course_learning_detail_builder.dart';
 import 'package:db_core/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/scenes/course_features/instructor_detail/instructor_detail_builder.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 
 abstract class CourseLearningCatalogRoutable implements DbNoteRoutable {
@@ -12,9 +13,8 @@ abstract class CourseLearningCatalogRoutable implements DbNoteRoutable {
 class CourseLearningCatalogRouter extends DbNoteRouter implements CourseLearningCatalogRoutable {
   @override
   void gotoLessonDetail(int lessonId) {
-    // Placeholder for course_learning_detail module
-    // final builder = CourseLearningDetailBuilder(lessonId: lessonId);
-    // push(builder.build().viewController);
+    final builder = CourseLearningDetailBuilder(lessonId: lessonId);
+    push(builder.build().viewController);
   }
 
   @override
