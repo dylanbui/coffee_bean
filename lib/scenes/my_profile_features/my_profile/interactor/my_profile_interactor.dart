@@ -79,7 +79,7 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
         router?.navigate(ReservationListRoute());
         break;
       case "COURSES":
-        router?.navigate(CourseListRoute());
+        router?.navigate(CourseLearningListRoute());
         break;
       case "MY_EVENTS":
         router?.navigate(ActivityListRoute());

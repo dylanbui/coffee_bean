@@ -1,6 +1,6 @@
+import 'package:coffee_bean/scenes/my_profile_features/course_learning_list/course_learning_list_builder.dart';
 import 'package:coffee_bean/scenes/point_features/daily_sign_in/daily_sign_in_builder.dart';
 import 'package:coffee_bean/scenes/setting_features/settings_app/settings_app_builder.dart';
-import 'package:coffee_bean/scenes/course_features/course_list/course_list_builder.dart';
 import 'package:coffee_bean/scenes/event_features/activity_list/activity_list_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/change_mobile/change_mobile_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/coupon_list/coupon_list_builder.dart';
@@ -13,7 +13,7 @@ import 'package:flutter/cupertino.dart';
 class EditProfileRoute implements DbNoteRoute {}
 class ChangeMobileRoute implements DbNoteRoute {}
 class ReservationListRoute implements DbNoteRoute {}
-class CourseListRoute implements DbNoteRoute {}
+class CourseLearningListRoute implements DbNoteRoute {}
 class ActivityListRoute implements DbNoteRoute {}
 class SettingsAppRoute implements DbNoteRoute {}
 class CouponListRoute implements DbNoteRoute {}
@@ -41,8 +41,8 @@ class MyProfileRouter extends DbNoteRouter implements MyProfileRoutable {
       final builder = ReservationListBuilder().build();
       push(builder.viewController);
 
-    } else if (toRoute is CourseListRoute) {
-      final builder = CourseListBuilder().build();
+    } else if (toRoute is CourseLearningListRoute) {
+      final builder = CourseLearningListBuilder().build();
       push(builder.viewController);
 
     } else if (toRoute is ActivityListRoute) {
