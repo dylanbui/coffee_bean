@@ -24,6 +24,6 @@ class CourseLearningListInteractor extends CubitInteractor<CourseLearningListRou
   }
 
   void onCourseTap(CourseLearningProgressModel item) {
-    // To be implemented
+    router?.gotoCourseCatalog(item.course.id);
   }
 }
