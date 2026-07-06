@@ -225,7 +225,15 @@ void _registerLazyServices() {
   // Đăng ký AppCache sử dụng Isar từ DatabaseService
   if (!locator.isRegistered<DbCacheProvider>()) {
     final dbService = locator<DatabaseService>();
-    locator.registerSingleton<DbCacheProvider>(AppCache(dbService.isar));
+    final appCache = AppCache(dbService.isar);
+    locator.registerSingleton<DbCacheProvider>(appCache);
+    
+    // Kích hoạt dọn dẹp cache hết hạn ngay khi service sẵn sàng
+    appCache.vacuum();
+    // Trong môi trường Development, xóa sạch cache mỗi khi restart để đảm bảo dữ liệu mới nhất
+    if (kDebugMode) {
+      appCache.clearAll();
+    }
   }
   // Register Repositories
   locator.registerLazySingleton<AuthRepository>(() => AuthRepository());
@@ -302,6 +310,11 @@ class _AppState extends State<App> with WidgetsBindingObserver, AppNetworkMixin,
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       checkUpgrade(force: newVersion != null);
+      
+      // Tự động dọn dẹp cache hết hạn khi người dùng quay lại app
+      if (locator.isRegistered<DbCacheProvider>()) {
+        locator<DbCacheProvider>().vacuum();
+      }
     }
   }
 

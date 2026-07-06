@@ -51,8 +51,13 @@ class AppInteractor extends CubitInteractor<AppRoutable, AppInteractorState> {
     }));
 
     // Listen to app settings changes (Language/Currency)
-    collect(locator<DbEventBus>().on<SettingsAppChangedEvent>().listen((event) {
-      dLog("AppInteractor: Received SettingsAppChangedEvent! Rebooting to Main Root...");
+    collect(locator<DbEventBus>().on<SettingsAppChangedEvent>().listen((event) async {
+      dLog("AppInteractor: Settings changed, clearing cache for localization consistency...");
+      
+      if (locator.isRegistered<DbCacheProvider>()) {
+        await locator<DbCacheProvider>().clearAll();
+      }
+
       router?.gotoMainRoot();
     }));
 

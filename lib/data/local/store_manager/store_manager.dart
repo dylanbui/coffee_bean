@@ -29,8 +29,20 @@ class StoreManager extends ChangeNotifier {
 
   /// Lưu thông tin cửa hàng đã chọn (Guest hoặc User đều dùng được)
   Future<void> saveSelectedStore(StoreModel store) async {
+    // Chỉ thực hiện logic xóa cache nếu store thực sự thay đổi hoặc chưa có store nào
+    if (_selectedStore != null && _selectedStore?.id == store.id) {
+      return;
+    }
+
     _selectedStore = store;
     await DbSharedPreferences().set(_storeKey, jsonEncode(store.toJson()));
+    
+    // Xóa cache khi đổi cửa hàng để đảm bảo menu và giá cả chính xác
+    if (locator.isRegistered<DbCacheProvider>()) {
+      // Xóa sạch để đảm bảo an toàn tuyệt đối khi đổi chi nhánh
+      await locator<DbCacheProvider>().clearAll();
+    }
+
     notifyListeners();
   }
 

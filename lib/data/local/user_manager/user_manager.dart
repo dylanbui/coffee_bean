@@ -113,6 +113,11 @@ class UserManager extends ChangeNotifier
       clearPermissionsFromStorage(),
     ]);
 
+    // Xóa toàn bộ cache trong Isar khi người dùng đăng xuất
+    if (locator.isRegistered<DbCacheProvider>()) {
+      await locator<DbCacheProvider>().clearAll();
+    }
+
     notifyListeners();
   }
 
