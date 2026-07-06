@@ -1,8 +1,10 @@
+import 'dart:ui';
 import 'package:coffee_bean/scenes/course_features/instructor_profile/interactor/instructor_profile_event_state.dart';
 import 'package:coffee_bean/scenes/course_features/instructor_profile/interactor/instructor_profile_interactor.dart';
 import 'package:coffee_bean/scenes/course_features/instructor_profile/interactor/widgets/instructor_course_item.dart';
 import 'package:coffee_bean/scenes/course_features/instructor_profile/interactor/widgets/instructor_header_info.dart';
 import 'package:coffee_bean/scenes/course_features/instructor_profile/interactor/widgets/instructor_post_item.dart';
+import 'package:coffee_bean/scenes/course_features/instructor_profile/models/instructor_profile_model.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
@@ -12,6 +14,7 @@ import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class InstructorProfilePage extends AppCubitStateFulWidget<InstructorProfileInteractor, InstructorProfileState> {
   InstructorProfilePage({super.key, required super.interactor});
@@ -33,12 +36,6 @@ class _InstructorProfilePageState extends AppCubitState<InstructorProfilePage, I
           body: CustomScrollView(
             slivers: [
               _buildSliverHeader(state),
-              SliverToBoxAdapter(
-                child: InstructorHeaderInfo(
-                  data: state.instructor!,
-                  onFollowTap: interactor.onFollowTap,
-                ),
-              ),
               SliverToBoxAdapter(child: _buildBio(state.instructor?.bio)),
               SliverToBoxAdapter(child: _buildTabSelection(state.currentTab)),
               
@@ -59,11 +56,10 @@ class _InstructorProfilePageState extends AppCubitState<InstructorProfilePage, I
     return SliverPersistentHeader(
       pinned: true,
       delegate: InstructorProfileHeaderDelegate(
-        instructorName: state.instructor!.name,
-        avatarUrl: state.instructor!.avatar,
-        coverImages: state.instructor!.coverImages,
+        data: state.instructor!,
         safeAreaTop: MediaQuery.of(context).padding.top,
         onBack: () => interactor.router?.pop(),
+        onFollowTap: interactor.onFollowTap,
       ),
     );
   }
@@ -87,40 +83,45 @@ class _InstructorProfilePageState extends AppCubitState<InstructorProfilePage, I
 
   Widget _buildTabSelection(InstructorTab currentTab) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
-      child: Row(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(width: 16),
-          _buildTabItem("Bài đăng", InstructorTab.posts, currentTab),
-          const SizedBox(width: 24),
-          _buildTabItem("Khóa học", InstructorTab.courses, currentTab),
+          Row(
+            children: [
+              _buildTabButton("Bài đăng", InstructorTab.posts, currentTab),
+              const SizedBox(width: 24),
+              _buildTabButton("Khóa học", InstructorTab.courses, currentTab),
+            ],
+          ),
+          const SizedBox(height: 4),
+          // Sliding Underline
+          AnimatedPadding(
+            duration: 300.ms,
+            curve: Curves.easeInOut,
+            padding: EdgeInsets.only(
+              left: currentTab == InstructorTab.posts ? 0 : 89,
+            ),
+            child: Container(
+              height: 2,
+              width: currentTab == InstructorTab.posts ? 65 : 70,
+              color: Colors.black,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTabItem(String title, InstructorTab tab, InstructorTab currentTab) {
+  Widget _buildTabButton(String title, InstructorTab tab, InstructorTab currentTab) {
     final isSelected = tab == currentTab;
     return TapEffect(
       onTap: () => interactor.onTabChanged(tab),
-      child: IntrinsicWidth(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: TMLabsTextStyle.bodyBold.copyWith(
-                color: isSelected ? Colors.black : TMLabsColor.grey,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Container(
-              height: 2,
-              color: isSelected ? Colors.black : Colors.transparent,
-            ),
-          ],
+      child: Text(
+        title,
+        style: TMLabsTextStyle.bodyBold.copyWith(
+          color: isSelected ? Colors.black : TMLabsColor.grey,
+          fontSize: 16,
         ),
       ),
     );
@@ -140,7 +141,7 @@ class _InstructorProfilePageState extends AppCubitState<InstructorProfilePage, I
           (context, index) => InstructorPostItem(
             data: state.posts[index],
             onTap: () => interactor.onPostTap(state.posts[index].id),
-          ),
+          ).animate(key: ValueKey("post_$index")).fadeIn(duration: 400.ms, delay: (index * 50).ms),
           childCount: state.posts.length,
         ),
       ),
@@ -153,7 +154,7 @@ class _InstructorProfilePageState extends AppCubitState<InstructorProfilePage, I
         (context, index) => InstructorCourseItem(
           data: state.courses[index],
           onTap: () => interactor.onCourseTap(state.courses[index].id),
-        ),
+        ).animate(key: ValueKey("course_$index")).fadeIn(duration: 400.ms, delay: (index * 50).ms),
         childCount: state.courses.length,
       ),
     );
@@ -161,107 +162,147 @@ class _InstructorProfilePageState extends AppCubitState<InstructorProfilePage, I
 }
 
 class InstructorProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
-  final String instructorName;
-  final String? avatarUrl;
-  final List<String> coverImages;
+  final InstructorProfileModel data;
   final double safeAreaTop;
   final VoidCallback onBack;
+  final VoidCallback onFollowTap;
 
   InstructorProfileHeaderDelegate({
-    required this.instructorName,
-    this.avatarUrl,
-    required this.coverImages,
+    required this.data,
     required this.safeAreaTop,
     required this.onBack,
+    required this.onFollowTap,
   });
 
+  // Slider height 280, Info height ~130. Total ~410.
   @override
-  double get maxExtent => 280.0;
+  double get maxExtent => 280.0 + 130.0;
   
   @override
   double get minExtent => kToolbarHeight + safeAreaTop;
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    // 0.0 to 1.0 based on scroll
     final double percent = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
     
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        // 1. Background Slider (Mờ dần khi scroll up)
-        Opacity(
-          opacity: (1.0 - percent).clamp(0.0, 1.0),
-          child: ImageSliderWidget(
-            images: coverImages,
-            height: maxExtent,
-            indicatorType: ImageSliderIndicatorType.dots,
-          ),
-        ),
-        
-        // White overlay for status bar when collapsed
-        IgnorePointer(
-          ignoring: percent < 0.5,
-          child: Opacity(
-            opacity: percent,
-            child: Container(color: Colors.white),
-          ),
-        ),
+    // Animation phases
+    // Phase 1: Slider disappears (0 to 280 offset)
+    // Phase 2: Info section animates into AppBar (280 to 410 offset)
+    
+    final double sliderVisiblePercent = (1.0 - (shrinkOffset / 200.0)).clamp(0.0, 1.0);
+    final double appBarVisiblePercent = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
+    
+    // Flying Animation Logic
+    // Avatar starts at (16, 280 + 16) and ends at (48, safeAreaTop + centered)
+    final double avatarSize = lerpDouble(70, 40, percent)!;
+    final double avatarX = lerpDouble(16, 48, percent)!;
+    final double avatarY = lerpDouble(
+      280.0 + 16.0 - shrinkOffset,
+      safeAreaTop + (kToolbarHeight - 40) / 2,
+      percent
+    )!;
 
-        // 2. AppBar Area (Back Button + Collapsed Content)
-        Positioned(
-          top: safeAreaTop,
-          left: 0,
-          right: 0,
-          height: kToolbarHeight,
-          child: Row(
-            children: [
-              // Back Button
-              IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios_new,
-                  color: percent > 0.5 ? Colors.black : Colors.white,
-                  size: 20,
-                ),
-                onPressed: onBack,
-              ),
-              
-              // Collapsed Content: Avatar + Name (Hiện dần)
-              Expanded(
-                child: IgnorePointer(
-                  ignoring: percent < 0.7,
-                  child: Opacity(
-                    opacity: (percent * 2 - 1.0).clamp(0.0, 1.0),
-                    child: Row(
-                      children: [
-                        AvatarWidget(imageUrl: avatarUrl, size: 32),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            instructorName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TMLabsTextStyle.h2.copyWith(fontSize: 16),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        
-        // Bottom border when collapsed
-        if (percent > 0.95)
+    // Name starts next to avatar and ends next to collapsed avatar
+    final double nameX = lerpDouble(16 + 70 + 10, 48 + 32 + 18, percent)!;
+    final double nameY = lerpDouble(
+      280.0 + 16.0 - shrinkOffset,
+      safeAreaTop + (kToolbarHeight - 20) / 2,
+      percent
+    )!;
+    final double nameScale = lerpDouble(1.0, 0.8, percent)!;
+
+    return Container(
+      color: Colors.white,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // 1. Image Slider (Background)
           Positioned(
-            bottom: 0,
+            top: -shrinkOffset * 0.5, // Slow scroll parallax
             left: 0,
             right: 0,
-            child: Container(height: 0.5, color: TMLabsColor.grey.withValues(alpha: 0.3)),
+            height: 280,
+            child: Opacity(
+              opacity: sliderVisiblePercent,
+              child: ImageSliderWidget(
+                images: data.coverImages,
+                height: 280,
+                indicatorType: ImageSliderIndicatorType.dots,
+              ),
+            ),
           ),
-      ],
+
+          // 2. Info Section (The part that fades out)
+          Positioned(
+            top: 280 - shrinkOffset,
+            left: 0,
+            right: 0,
+            child: Opacity(
+              opacity: (1.0 - percent * 2).clamp(0.0, 1.0),
+              child: InstructorHeaderInfo(
+                data: data,
+                onFollowTap: onFollowTap,
+                isTemplate: true, // Internal flag to hide internal avatar/name
+              ),
+            ),
+          ),
+          
+          // 3. AppBar Layer (Back Button & Border)
+          Positioned(
+            top: safeAreaTop,
+            left: 0,
+            right: 0,
+            height: kToolbarHeight,
+            child: Row(
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios_new,
+                    color: appBarVisiblePercent > 0.5 ? Colors.black : Colors.white,
+                    size: 20,
+                  ),
+                  onPressed: onBack,
+                ),
+                const Spacer(),
+              ],
+            ),
+          ),
+
+          // 4. Flying Avatar (The Magic)
+          Positioned(
+            left: avatarX,
+            top: avatarY,
+            child: AvatarWidget(imageUrl: data.avatar, size: avatarSize),
+          ),
+
+          // 5. Flying Name
+          Positioned(
+            left: nameX,
+            top: nameY,
+            child: Transform.scale(
+              alignment: Alignment.centerLeft,
+              scale: nameScale,
+              child: Text(
+                data.name,
+                style: TMLabsTextStyle.h2.copyWith(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+
+          // Bottom border when collapsed
+          if (percent > 0.95)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(height: 0.5, color: TMLabsColor.grey.withValues(alpha: 0.3)),
+            ),
+        ],
+      ),
     );
   }
 
