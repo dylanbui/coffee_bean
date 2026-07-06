@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:db_core/architecture_ribs/note_interactor.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:db_core/state_management/lib_bloc/constants.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// An abstract class that merges the responsibilities of a BLoC/Cubit's state management
@@ -109,6 +109,13 @@ abstract class CubitInteractor<T extends DbNoteRoutable, S> extends Cubit<S>
   @protected
   void collect(StreamSubscription subscription) {
     _autoDisposables.add(subscription);
+  }
+
+  /// Lắng nghe một Stream và tự động quản lý Subscription.
+  /// Đây là hàm tiện ích giúp code gọn gàng hơn thay vì gọi collect(stream.listen(...))
+  @protected
+  void observe<E>(Stream<E> stream, void Function(E event) onData) {
+    collect(stream.listen(onData));
   }
 
   // --- HOOK METHODS: Subclasses will override these methods ---

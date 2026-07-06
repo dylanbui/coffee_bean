@@ -10,36 +10,38 @@ import 'package:db_core/network/base_repository.dart';
 import 'package:db_core/network/network_common.dart';
 import 'package:db_core/utils/locator.dart';
 
-class CourseRepository extends BaseRepository {
-  DbCacheProvider get _cache => locator<DbCacheProvider>();
+class CourseRepository extends BaseRepository with SmartFetchMixin {
+  @override
+  DbCacheProvider get cache => locator<DbCacheProvider>();
 
   CourseRepository({super.client});
 
-  Future<DbResult<List<DictionaryData>>> getCourseCategories() async {
-    const cacheKey = 'course_categories';
-
-    final cachedData = await _cache.get<List<DictionaryData>>(cacheKey,
-      fromJson: (json) => (json as List).map((e) => DictionaryData.fromJson(e as Dictionary)).toList(),
+  /// [Hàm mẫu dùng Smart Cache]
+  /// Tự động xử lý Cache -> Network -> MD5 Check -> Emit
+  Stream<dynamic> watchCourseCategories() {
+    return smartFetchList<DictionaryData>(
+      cacheKey: 'course_categories',
+      // Truyền thẳng request từ NetworkClient (không cần parse ở đây)
+      request: networkClient.doGet('/app-api/system/dict-data/type', queryParameters: {'type': 'hub_course_type'}),
+      // Chỉ cần truyền hàm mapping JSON -> Model
+      mapper: DictionaryData.fromJson,
     );
-    if (cachedData != null) return DbSuccess(cachedData);
+  }
 
-    final result = await networkClient
+  // --- CÁC HÀM CŨ (GIỮ NGUYÊN HOẶC CHUYỂN DẦN SANG SMART FETCH) ---
+
+  Future<DbResult<List<DictionaryData>>> getCourseCategories() async {
+    return await networkClient
         .doGet('/app-api/system/dict-data/type', queryParameters: {'type': 'hub_course_type'})
         .mapResponseTo(DictionaryData.fromJson)
         .toList();
-
-    if (result case DbSuccess(data: final list)) {
-      await _cache.set(cacheKey, list, ttl: const Duration(hours: 1));
-    }
-
-    return result;
   }
 
   Future<ResultPageType<CourseInfo>> getCoursePage({
     String? keyword,
     int? courseType,
     int pageNo = 1,
-    int pageSize = 100, // Load more as possible since UI doesn't have load more yet
+    int pageSize = 100,
   }) async {
     return await networkClient
         .doGet(
@@ -57,8 +59,7 @@ class CourseRepository extends BaseRepository {
 
   Future<DbResult<CourseInfo>> getCourseById(int courseId) async {
     final cacheKey = 'course_id_$courseId';
-
-    final cached = await _cache.get<CourseInfo>(cacheKey, fromJson: (json) => CourseInfo.fromJson(json as Dictionary));
+    final cached = await cache.get<CourseInfo>(cacheKey, fromJson: (json) => CourseInfo.fromJson(json as Dictionary));
     if (cached != null) return DbSuccess(cached);
 
     final result = await networkClient
@@ -67,18 +68,14 @@ class CourseRepository extends BaseRepository {
         .toObject();
 
     if (result case DbSuccess(data: final data)) {
-      await _cache.set(cacheKey, data, ttl: const Duration(hours: 1));
+      await cache.set(cacheKey, data, ttl: const Duration(hours: 1));
     }
     return result;
   }
 
   Future<DbResult<CourseInfoDetail>> getCourseDetailById(int courseId) async {
     final cacheKey = 'course_detail_id_$courseId';
-
-    final cached = await _cache.get<CourseInfoDetail>(
-      cacheKey,
-      fromJson: (json) => CourseInfoDetail.fromJson(json as Dictionary),
-    );
+    final cached = await cache.get<CourseInfoDetail>(cacheKey, fromJson: (json) => CourseInfoDetail.fromJson(json as Dictionary));
     if (cached != null) return DbSuccess(cached);
 
     final result = await networkClient
@@ -87,18 +84,14 @@ class CourseRepository extends BaseRepository {
         .toObject();
 
     if (result case DbSuccess(data: final data)) {
-      await _cache.set(cacheKey, data, ttl: const Duration(hours: 1));
+      await cache.set(cacheKey, data, ttl: const Duration(hours: 1));
     }
     return result;
   }
 
   Future<DbResult<InstructorInfo>> getInstructorById(int instructorId) async {
     final cacheKey = 'instructor_id_$instructorId';
-
-    final cached = await _cache.get<InstructorInfo>(
-      cacheKey,
-      fromJson: (json) => InstructorInfo.fromJson(json as Dictionary),
-    );
+    final cached = await cache.get<InstructorInfo>(cacheKey, fromJson: (json) => InstructorInfo.fromJson(json as Dictionary));
     if (cached != null) return DbSuccess(cached);
 
     final result = await networkClient
@@ -107,7 +100,7 @@ class CourseRepository extends BaseRepository {
         .toObject();
 
     if (result case DbSuccess(data: final data)) {
-      await _cache.set(cacheKey, data, ttl: const Duration(hours: 1));
+      await cache.set(cacheKey, data, ttl: const Duration(hours: 1));
     }
     return result;
   }

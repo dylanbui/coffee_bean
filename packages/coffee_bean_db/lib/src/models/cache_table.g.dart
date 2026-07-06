@@ -20,12 +20,18 @@ const TblCacheSchema = CollectionSchema(
     r'content': PropertySchema(id: 0, name: r'content', type: IsarType.string),
     r'expiry': PropertySchema(id: 1, name: r'expiry', type: IsarType.dateTime),
     r'group': PropertySchema(id: 2, name: r'group', type: IsarType.string),
+    r'hash': PropertySchema(id: 3, name: r'hash', type: IsarType.string),
     r'isExpired': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'isExpired',
       type: IsarType.bool,
     ),
-    r'key': PropertySchema(id: 4, name: r'key', type: IsarType.string),
+    r'key': PropertySchema(id: 5, name: r'key', type: IsarType.string),
+    r'updatedAt': PropertySchema(
+      id: 6,
+      name: r'updatedAt',
+      type: IsarType.dateTime,
+    ),
   },
 
   estimateSize: _tblCacheEstimateSize,
@@ -96,6 +102,12 @@ int _tblCacheEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  {
+    final value = object.hash;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.key.length * 3;
   return bytesCount;
 }
@@ -109,8 +121,10 @@ void _tblCacheSerialize(
   writer.writeString(offsets[0], object.content);
   writer.writeDateTime(offsets[1], object.expiry);
   writer.writeString(offsets[2], object.group);
-  writer.writeBool(offsets[3], object.isExpired);
-  writer.writeString(offsets[4], object.key);
+  writer.writeString(offsets[3], object.hash);
+  writer.writeBool(offsets[4], object.isExpired);
+  writer.writeString(offsets[5], object.key);
+  writer.writeDateTime(offsets[6], object.updatedAt);
 }
 
 TblCache _tblCacheDeserialize(
@@ -123,8 +137,10 @@ TblCache _tblCacheDeserialize(
   object.content = reader.readString(offsets[0]);
   object.expiry = reader.readDateTime(offsets[1]);
   object.group = reader.readStringOrNull(offsets[2]);
+  object.hash = reader.readStringOrNull(offsets[3]);
   object.id = id;
-  object.key = reader.readString(offsets[4]);
+  object.key = reader.readString(offsets[5]);
+  object.updatedAt = reader.readDateTime(offsets[6]);
   return object;
 }
 
@@ -142,9 +158,13 @@ P _tblCacheDeserializeProp<P>(
     case 2:
       return (reader.readStringOrNull(offset)) as P;
     case 3:
-      return (reader.readBool(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 4:
+      return (reader.readBool(offset)) as P;
+    case 5:
       return (reader.readString(offset)) as P;
+    case 6:
+      return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -903,6 +923,168 @@ extension TblCacheQueryFilter
     });
   }
 
+  QueryBuilder<TblCache, TblCache, QAfterFilterCondition> hashIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'hash'),
+      );
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterFilterCondition> hashIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'hash'),
+      );
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterFilterCondition> hashEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'hash',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterFilterCondition> hashGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'hash',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterFilterCondition> hashLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'hash',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterFilterCondition> hashBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'hash',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterFilterCondition> hashStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'hash',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterFilterCondition> hashEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'hash',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterFilterCondition> hashContains(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'hash',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterFilterCondition> hashMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'hash',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterFilterCondition> hashIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'hash', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterFilterCondition> hashIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'hash', value: ''),
+      );
+    });
+  }
+
   QueryBuilder<TblCache, TblCache, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -1115,6 +1297,65 @@ extension TblCacheQueryFilter
       );
     });
   }
+
+  QueryBuilder<TblCache, TblCache, QAfterFilterCondition> updatedAtEqualTo(
+    DateTime value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'updatedAt', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterFilterCondition> updatedAtGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'updatedAt',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterFilterCondition> updatedAtLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'updatedAt',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterFilterCondition> updatedAtBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'updatedAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
 }
 
 extension TblCacheQueryObject
@@ -1160,6 +1401,18 @@ extension TblCacheQuerySortBy on QueryBuilder<TblCache, TblCache, QSortBy> {
     });
   }
 
+  QueryBuilder<TblCache, TblCache, QAfterSortBy> sortByHash() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hash', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterSortBy> sortByHashDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hash', Sort.desc);
+    });
+  }
+
   QueryBuilder<TblCache, TblCache, QAfterSortBy> sortByIsExpired() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isExpired', Sort.asc);
@@ -1181,6 +1434,18 @@ extension TblCacheQuerySortBy on QueryBuilder<TblCache, TblCache, QSortBy> {
   QueryBuilder<TblCache, TblCache, QAfterSortBy> sortByKeyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'key', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterSortBy> sortByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterSortBy> sortByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
     });
   }
 }
@@ -1223,6 +1488,18 @@ extension TblCacheQuerySortThenBy
     });
   }
 
+  QueryBuilder<TblCache, TblCache, QAfterSortBy> thenByHash() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hash', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterSortBy> thenByHashDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hash', Sort.desc);
+    });
+  }
+
   QueryBuilder<TblCache, TblCache, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -1258,6 +1535,18 @@ extension TblCacheQuerySortThenBy
       return query.addSortBy(r'key', Sort.desc);
     });
   }
+
+  QueryBuilder<TblCache, TblCache, QAfterSortBy> thenByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QAfterSortBy> thenByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
 }
 
 extension TblCacheQueryWhereDistinct
@@ -1284,6 +1573,14 @@ extension TblCacheQueryWhereDistinct
     });
   }
 
+  QueryBuilder<TblCache, TblCache, QDistinct> distinctByHash({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hash', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<TblCache, TblCache, QDistinct> distinctByIsExpired() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isExpired');
@@ -1295,6 +1592,12 @@ extension TblCacheQueryWhereDistinct
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'key', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<TblCache, TblCache, QDistinct> distinctByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'updatedAt');
     });
   }
 }
@@ -1325,6 +1628,12 @@ extension TblCacheQueryProperty
     });
   }
 
+  QueryBuilder<TblCache, String?, QQueryOperations> hashProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hash');
+    });
+  }
+
   QueryBuilder<TblCache, bool, QQueryOperations> isExpiredProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isExpired');
@@ -1334,6 +1643,12 @@ extension TblCacheQueryProperty
   QueryBuilder<TblCache, String, QQueryOperations> keyProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'key');
+    });
+  }
+
+  QueryBuilder<TblCache, DateTime, QQueryOperations> updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'updatedAt');
     });
   }
 }

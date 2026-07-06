@@ -4,7 +4,7 @@
 // File: course_list_interactor.dart
 // Author: dylanbui
 // Create Date: 2026-06-09
-// Description: [Add a brief description of the file's purpose]
+// Description: Interactor for Course List module, implementing Smart Cache.
 //
 // Copyright (c) 2026. All rights reserved.
 // **************************************************************************
@@ -27,62 +27,72 @@ class CourseListInteractor extends CubitInteractor<CourseListRoutable, CourseLis
     _initData();
   }
 
-  Future<void> _initData() async {
+  /// Khởi tạo dữ liệu sử dụng Smart Cache cho Categories
+  void _initData() {
+    // 1. Vừa vào trang, mặc nhiên hiển thị loading
     emit(state.copyWith(isLoading: true));
-    
-    final catResult = await _courseRepository.getCourseCategories();
-    final courseResult = await _courseRepository.getCoursePage();
-    
-    List<DictionaryData> cats = [];
-    if (catResult case DbSuccess(data: final data)) {
-      cats = data;
-    }
+    // 2. Category load từ cache hay server ta không quan tâm, cứ có data là update Tab
+    observe(_courseRepository.watchCourseCategories(), (result) {
+      if (result is (List<DictionaryData>, DataOrigin)) {
+        final (data, origin) = result;
+        
+        final List<DictionaryData> categories = [
+          DictionaryData(id: 0, label: "Tất cả khóa học", value: "", dictType: ""),
+          ...data
+        ];
 
-    List<CourseInfo> items = [];
-    if (courseResult case DbSuccess(data: final data)) {
-      items = data.list;
-    }
-    
-    emit(state.copyWith(
-      categories: cats,
-      courses: items,
-      isLoading: false,
-    ));
+        emit(state.copyWith(
+          categories: categories,
+          selectedCategory: state.selectedCategory ?? categories.first,
+        ));
+
+        // Tự động gọi fetch khóa học. 
+        // Chỉ hiện Loading Spinner nếu đây là lần đầu (chưa có danh sách khóa học)
+        _fetchCourses(showLoading: state.courses.isEmpty);
+      } 
+      // Nếu lỗi Category, vẫn phải tắt loading để user không bị kẹt ở Spinner
+      else if (result is DbFailure) {
+        emit(state.copyWith(isLoading: false));
+      }
+    });
   }
 
-  void onCategorySelected(DictionaryData? category) async {
+  /// Hàm fetch danh sách khóa học tập trung
+  /// [showLoading]: Nếu false, dữ liệu sẽ được cập nhật ngầm (Silent Sync)
+  Future<void> _fetchCourses({bool showLoading = true}) async {
+    if (showLoading) emit(state.copyWith(isLoading: true));
+
+    final courseResult = await _courseRepository.getCoursePage(
+      keyword: state.searchQuery,
+      courseType: (state.selectedCategory?.id == 0) ? null : state.selectedCategory?.id,
+    );
+
+    // 3. Khi _fetchCourses xong thì mới thực sự ẩn loading
+    if (courseResult case DbSuccess(data: final pageData)) {
+      emit(state.copyWith(courses: pageData.list, isLoading: false));
+    } else {
+      emit(state.copyWith(courses: [], isLoading: false));
+    }
+  }
+
+  /// Xử lý khi người dùng chọn một Category
+  void onCategorySelected(DictionaryData? category) {
     if (state.selectedCategory?.id == category?.id && category != null) return;
 
     emit(state.copyWith(
       selectedCategory: category,
       clearSelectedCategory: category == null,
-      isLoading: true,
     ));
-
-    final courseResult = await _courseRepository.getCoursePage(
-      keyword: state.searchQuery,
-      courseType: category?.id,
-    );
-
-    if (courseResult case DbSuccess(data: final data)) {
-      emit(state.copyWith(courses: data.list, isLoading: false));
-    } else {
-      emit(state.copyWith(courses: [], isLoading: false));
-    }
+    
+    // Gọi fetch lại dữ liệu
+    _fetchCourses();
   }
 
-  void onSearchChanged(String query) async {
-    emit(state.copyWith(searchQuery: query, isLoading: true));
-
-    final courseResult = await _courseRepository.getCoursePage(
-      keyword: query,
-      courseType: state.selectedCategory?.id,
-    );
-
-    if (courseResult case DbSuccess(data: final data)) {
-      emit(state.copyWith(courses: data.list, isLoading: false));
-    } else {
-      emit(state.copyWith(courses: [], isLoading: false));
-    }
+  /// Xử lý khi người dùng thay đổi nội dung tìm kiếm
+  void onSearchChanged(String query) {
+    emit(state.copyWith(searchQuery: query));
+    
+    // Gọi fetch lại dữ liệu
+    _fetchCourses();
   }
 }

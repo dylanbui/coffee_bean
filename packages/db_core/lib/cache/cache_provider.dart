@@ -26,10 +26,14 @@ abstract class DbCacheProvider {
   /// [fromJson] là callback để parse dữ liệu từ JSON (nếu là Object/List)
   Future<T?> get<T>(String key, {T Function(dynamic json)? fromJson});
 
+  /// Lấy dữ liệu kèm theo Metadata (Data + Hash)
+  Future<(T? data, String? hash)?> getWithMetadata<T>(String key, {T Function(dynamic json)? fromJson});
+
   /// Lưu dữ liệu linh hoạt với Duration (TTL) hoặc DateTime cụ thể
   Future<void> set(
     String key,
     dynamic data, {
+    String? hash,
     Duration? ttl,
     DateTime? expiry,
     String? group,
