@@ -20,6 +20,7 @@ import 'package:coffee_bean/scenes/rib_samples/flash_demo/flash_demo_builder.dar
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/venue_detail_builder.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/user_register_builder.dart';
+import 'package:coffee_bean/shared/widget/multi_upload/test_multi_upload_page.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_builder.dart';
 import 'package:coffee_bean/scenes/shopping_features/shopping/shopping_builder.dart';
@@ -51,10 +52,12 @@ class AppRouter extends DbNoteRouter implements AppRoutable {
     // --- TEST UI CHECKOUT ORDER ---
     // await _testCheckoutOrder();
 
+    navigator.push(const TestMultiUploadPage());
+
     // Load trang dau tien
-    MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
-    final router = mainTabbarBuilder.build();
-    navigator.pushSameRootPage(router.viewController);
+    // MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
+    // final router = mainTabbarBuilder.build();
+    // navigator.pushSameRootPage(router.viewController);
 
     // final builder = UpdateProfileBuilder();
     // navigator.pushSameRootPage(builder.build().viewController);
