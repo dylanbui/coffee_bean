@@ -28,7 +28,9 @@ USAGE EXAMPLES:
 
 enum AppDateTimeFormat {
   /// dd/MM/yyyy HH:mm:ss
-  full("dd/MM/yyyy HH:mm:ss"),
+  fullDatetime("dd/MM/yyyy HH:mm:ss"),
+  /// dd/MM/yyyy HH:mm
+  full("dd/MM/yyyy HH:mm"),
   /// dd/MM/yyyy
   dateOnly("dd/MM/yyyy"),
   /// dd/MM
@@ -43,6 +45,19 @@ enum AppDateTimeFormat {
 }
 
 class UtcUtils {
+
+  /// Converts UTC milliseconds since epoch to local DateTime
+  static DateTime fromUtcMs(int ms) {
+    return DateTime.fromMillisecondsSinceEpoch(ms).toLocal();
+  }
+
+  /// Converts dynamic input (String ISO or int Timestamp) to local DateTime. Returns null if parsing fails
+  static DateTime? toDateTimeSafe(dynamic input) {
+    if (input == null) return null;
+    if (input is int) return DateTime.fromMillisecondsSinceEpoch(input).toLocal();
+    if (input is String) return DateTime.tryParse(input)?.toLocal();
+    return null;
+  }
 
   /// Receives UTC string from server (ISO 8601) and converts to local DateTime
   static DateTime toDateTime(String utcString, {DateTime? defaultValue}) {
@@ -61,18 +76,14 @@ class UtcUtils {
     return DateTime.tryParse(isoString)?.toLocal();
   }
 
-  /// Receives UTC string from server (ISO 8601) and displays in local timezone
+  /// Receives dynamic input (ISO String or Timestamp int) and displays in local timezone
   static String toDateTimeStr(
-    String utcString, {
+    dynamic input, {
     AppDateTimeFormat format = AppDateTimeFormat.dateOnly,
   }) {
-    if (utcString.isEmpty) return "";
-    try {
-      final dateTime = DateTime.parse(utcString).toLocal();
-      return formatDateTime(dateTime, format: format);
-    } catch (_) {
-      return "";
-    }
+    final dateTime = toDateTimeSafe(input);
+    if (dateTime == null) return "";
+    return formatDateTime(dateTime, format: format);
   }
 
   /// Receives local string based on [format] and converts to UTC ISO 8601 for server storage

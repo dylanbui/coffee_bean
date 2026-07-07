@@ -1,18 +1,15 @@
+import 'package:coffee_bean/data/model/response/hub/activity_info.dart';
+import 'package:coffee_bean/data/model/response/system/dictionary_data.dart';
 import 'package:coffee_bean/data/repository/activity_repository.dart';
 import 'package:coffee_bean/scenes/event_features/activity_list/activity_list_builder.dart';
 import 'package:coffee_bean/scenes/event_features/activity_list/interactor/activity_list_event_state.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:db_core/db_core.dart';
-
 
 class ActivityListInteractor extends CubitInteractor<ActivityListRoutable, ActivityListState> {
   final ActivityRepository _activityRepository = locator<ActivityRepository>();
 
-  // ActivityListInteractor(this._repository) : super(ActivityListState());
-
   ActivityListInteractor(ActivityListRoutable router)
-      : super(ActivityListState(), router: router);
-
+      : super(const ActivityListState(), router: router);
 
   @override
   void onDidBecomeActive() {
@@ -23,8 +20,18 @@ class ActivityListInteractor extends CubitInteractor<ActivityListRoutable, Activ
   Future<void> _initData() async {
     emit(state.copyWith(isLoading: true));
 
-    final cats = await _activityRepository.getCategories();
-    final items = await _activityRepository.getActivities();
+    final catResult = await _activityRepository.getActivityCategories();
+    final activityResult = await _activityRepository.getActivityPage();
+
+    List<DictionaryData> cats = [];
+    if (catResult case DbSuccess(data: final data)) {
+      cats = data;
+    }
+
+    List<ActivityInfo> items = [];
+    if (activityResult case DbSuccess(data: final data)) {
+      items = data.list;
+    }
 
     emit(state.copyWith(
       categories: cats,
@@ -33,18 +40,8 @@ class ActivityListInteractor extends CubitInteractor<ActivityListRoutable, Activ
     ));
   }
 
-  // void initData() {
-  //   _loadCategories();
-  //   _fetchActivities();
-  // }
-
-  // Future<void> _loadCategories() async {
-  //   final categories = await _repository.getCategories();
-  //   emit(state.copyWith(categories: categories));
-  // }
-
-  void onCategorySelected(TblCategory? category) async {
-    if (state.selectedCategory?.serverId == category?.serverId && category != null) return;
+  void onCategorySelected(DictionaryData? category) async {
+    if (state.selectedCategory?.id == category?.id && category != null) return;
 
     emit(state.copyWith(
       selectedCategory: category,
@@ -52,26 +49,34 @@ class ActivityListInteractor extends CubitInteractor<ActivityListRoutable, Activ
       isLoading: true,
     ));
 
-    final items = await _activityRepository.getActivities(
-      query: state.searchQuery,
-      catId: category?.serverId,
+    final activityResult = await _activityRepository.getActivityPage(
+      keyword: state.searchQuery,
+      activityType: category?.id != 0 ? category?.id : null,
     );
 
-    emit(state.copyWith(activities: items, isLoading: false));
+    if (activityResult case DbSuccess(data: final data)) {
+      emit(state.copyWith(activities: data.list, isLoading: false));
+    } else {
+      emit(state.copyWith(activities: [], isLoading: false));
+    }
   }
 
   void onSearchChanged(String query) async {
     emit(state.copyWith(searchQuery: query, isLoading: true));
 
-    final items = await _activityRepository.getActivities(
-      query: query,
-      catId: state.selectedCategory?.serverId,
+    final activityResult = await _activityRepository.getActivityPage(
+      keyword: query,
+      activityType: state.selectedCategory?.id != 0 ? state.selectedCategory?.id : null,
     );
 
-    emit(state.copyWith(activities: items, isLoading: false));
+    if (activityResult case DbSuccess(data: final data)) {
+      emit(state.copyWith(activities: data.list, isLoading: false));
+    } else {
+      emit(state.copyWith(activities: [], isLoading: false));
+    }
   }
 
-  void onActivitySelected(TblActivity activity) {
-    router?.gotoActivityDetail(activity.serverId);
+  void onActivitySelected(ActivityInfo activity) {
+    router?.gotoActivityDetail(activity.id);
   }
 }
