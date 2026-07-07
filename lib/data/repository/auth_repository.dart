@@ -1,7 +1,7 @@
 import 'package:db_core/commons_constants.dart';
 import 'package:db_core/network/base_repository.dart';
 import 'package:db_core/network/network_common.dart';
-import 'package:coffee_bean/data/model/response/user/auth_login_response.dart';
+import 'package:coffee_bean/data/model/response/user/auth_login.dart';
 import 'package:coffee_bean/data/network/network_response.dart';
 
 enum SmsScene {
@@ -40,24 +40,24 @@ class AuthRepository extends BaseRepository {
   }
 
   /// 3. SMS Login
-  Future<DbResult<AuthLoginResponse>> smsLogin(String mobile, String code) async {
+  Future<DbResult<AuthLogin>> smsLogin(String mobile, String code) async {
     return await networkClient
         .request('/app-api/member/auth/sms-login', 
             type: NetworkType.post, 
             params: {'mobile': mobile, 'code': code},
             isPublic: true)
-        .mapResponseTo(AuthLoginResponse.fromJson)
+        .mapResponseTo(AuthLogin.fromJson)
         .toObject();
   }
 
   /// 3. Login with Mobile & Password
-  Future<DbResult<AuthLoginResponse>> login(String mobile, String password) async {
+  Future<DbResult<AuthLogin>> login(String mobile, String password) async {
     return await networkClient
         .request('/app-api/member/auth/login', 
             type: NetworkType.post, 
             params: {'mobile': mobile, 'password': password},
             isPublic: true)
-        .mapResponseTo(AuthLoginResponse.fromJson)
+        .mapResponseTo(AuthLogin.fromJson)
         .toObject();
   }
 
@@ -93,13 +93,13 @@ class AuthRepository extends BaseRepository {
   }
 
   /// 7. Refresh Token
-  Future<DbResult<AuthLoginResponse>> refreshToken(String refreshToken) async {
+  Future<DbResult<AuthLogin>> refreshToken(String refreshToken) async {
     return await networkClient
         .request('/app-api/member/auth/refresh-token', 
             type: NetworkType.post, 
             queryParameters: {'refreshToken': refreshToken},
             isPublic: true)
-        .mapResponseTo(AuthLoginResponse.fromJson)
+        .mapResponseTo(AuthLogin.fromJson)
         .toObject();
   }
 }

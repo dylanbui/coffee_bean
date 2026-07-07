@@ -19,8 +19,6 @@ import 'package:coffee_bean/scenes/rib_samples/dialog_demo/dialog_demo_builder.d
 import 'package:coffee_bean/scenes/rib_samples/flash_demo/flash_demo_builder.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/venue_detail_builder.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
-import 'package:coffee_bean/scenes/site_reservation_features/venue_payment/interactor/venue_payment_event_state.dart';
-import 'package:coffee_bean/scenes/site_reservation_features/venue_payment/venue_payment_builder.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_register/user_register_builder.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_builder.dart';

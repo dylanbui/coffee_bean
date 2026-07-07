@@ -1,14 +1,14 @@
+import 'package:coffee_bean/data/model/response/system/dictionary_data.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 import 'package:group_button/group_button.dart';
 
 class CourseCategoryPicker extends StatelessWidget {
-  final List<TblCategory> categories;
-  final TblCategory? selectedCategory;
-  final FlashController<TblCategory?> controller;
+  final List<DictionaryData> categories;
+  final DictionaryData? selectedCategory;
+  final FlashController<DictionaryData?> controller;
 
   const CourseCategoryPicker({
     super.key,
@@ -20,21 +20,19 @@ class CourseCategoryPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final allCats = [
-      TblCategory()
-        ..serverId = -1
-        ..name = "Tất cả các loại",
+      DictionaryData(id: 0, label: "Tất cả các loại", value: "", dictType: ""),
       ...categories
     ];
 
     int selectedIndex = allCats.indexWhere(
-        (c) => (c.serverId == (selectedCategory?.serverId ?? -1)));
+        (c) => (c.id == (selectedCategory?.id ?? 0)));
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: GroupButton<TblCategory>(
+      child: GroupButton<DictionaryData>(
         buttons: allCats,
         onSelected: (cat, index, isSelected) {
-          controller.dismiss(cat.serverId == -1 ? null : cat);
+          controller.dismiss(cat.id == 0 ? null : cat);
         },
         controller: GroupButtonController(selectedIndex: selectedIndex),
         buttonBuilder: (selected, cat, _) {
@@ -48,7 +46,7 @@ class CourseCategoryPicker extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                cat.name,
+                cat.label,
                 style: TMLabsTextStyle.bodyBold.copyWith(
                   color: selected ? Colors.white : TMLabsColor.accent,
                 ),

@@ -1,14 +1,19 @@
+import 'package:coffee_bean/data/model/response/hub/activity_info_detail.dart';
 import 'package:coffee_bean/scenes/event_features/activity_detail/interactor/activity_detail_event_state.dart';
 import 'package:coffee_bean/scenes/event_features/activity_detail/interactor/activity_detail_interactor.dart';
+import 'package:coffee_bean/scenes/event_features/activity_detail/interactor/widget/activity_countdown_widget.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_sliver_app_bar.dart';
 import 'package:coffee_bean/shared/ui_control/share_action/share_poster_dialog.dart';
-import 'package:coffee_bean/utils/number_to_vietnamese.dart';
+import 'package:coffee_bean/utils/currency_utils.dart';
+import 'package:coffee_bean/utils/utils_datetime.dart';
 import 'package:db_core/db_core.dart';
+import 'package:db_core/utils/app_label.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class ActivityDetailPage extends AppCubitStateFulWidget<ActivityDetailInteractor, ActivityDetailState> {
   ActivityDetailPage({super.key, required super.interactor});
@@ -18,9 +23,7 @@ class ActivityDetailPage extends AppCubitStateFulWidget<ActivityDetailInteractor
 }
 
 class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, ActivityDetailInteractor, ActivityDetailState> {
-  final PageController _pageController = PageController();
   final ScrollController _scrollController = ScrollController();
-  int _currentImageIndex = 0;
   bool _isCollapsed = false;
 
   @override
@@ -37,19 +40,18 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
     }
   }
 
-  void _showShareDialog(ActivityDetailState state) {
+  void _showShareDialog(ActivityInfoDetail activity) {
     SharePosterDialog.show(
       context: context,
-      imageUrl: state.images.isNotEmpty ? state.images.first : "",
-      title: state.title,
+      imageUrl: activity.activityCover ?? "",
+      title: activity.activityName,
       shareLink: "https://tmlabs.coffee/event/${interactor.activityId}",
-      shareText: "Tham gia cùng tôi tại sự kiện: ${state.title}",
+      shareText: "Tham gia cùng tôi tại sự kiện: ${activity.activityName}",
     );
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -58,32 +60,33 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
   Widget getBody(BuildContext context) {
     return BlocBuilder<ActivityDetailInteractor, ActivityDetailState>(
       builder: (context, state) {
-        if (state.isLoading) return getLoadingView();
+        if (state.isLoading || state.activityDetail == null) return getLoadingView();
+        
+        final activity = state.activityDetail!;
         
         return Scaffold(
           backgroundColor: Colors.white,
           body: CustomScrollView(
             controller: _scrollController,
             slivers: [
-              _buildSliverAppBar(state),
-              SliverToBoxAdapter(child: _buildActivityInfo(state)),
-              SliverToBoxAdapter(child: _buildCapacityBox(state)),
-              SliverToBoxAdapter(child: _buildLocationBox(state)),
+              _buildSliverAppBar(activity),
+              SliverToBoxAdapter(child: _buildActivityInfo(activity)),
+              SliverToBoxAdapter(child: _buildCapacityBox(activity)),
+              SliverToBoxAdapter(child: _buildLocationBox(activity)),
               
-              // --- MOCK DATA CONTENT (SERVER HTML) ---
-              SliverToBoxAdapter(child: _buildServerDetailPlaceholder()),
-              // ---------------------------------------
+              if ((activity.activityDetail ?? "").isNotEmpty) 
+                SliverToBoxAdapter(child: _buildAboutActivity(activity)),
 
-              const SliverToBoxAdapter(child: SizedBox(height: 100)),
+              const SliverToBoxAdapter(child: SizedBox(height: 550)),
             ],
           ),
-          bottomNavigationBar: _buildFooter(state),
+          bottomNavigationBar: _buildFooter(activity),
         );
       },
     );
   }
 
-  Widget _buildSliverAppBar(ActivityDetailState state) {
+  Widget _buildSliverAppBar(ActivityInfoDetail activity) {
     return CoffeeSliverAppBar(
       expandedHeight: 316,
       pinned: true,
@@ -99,7 +102,7 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
         Padding(
           padding: const EdgeInsets.only(right: 16),
           child: TapEffect(
-            onTap: () => _showShareDialog(state),
+            onTap: () => _showShareDialog(activity),
             child: Icon(
               Icons.share_outlined,
               color: _isCollapsed ? TMLabsColor.primary : Colors.white,
@@ -116,65 +119,100 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
               : const SizedBox.shrink();
         },
       ),
-      background: Stack(
-        children: [
-          PageView.builder(
-            controller: _pageController,
-            onPageChanged: (index) => setState(() => _currentImageIndex = index),
-            itemCount: state.images.length,
-            itemBuilder: (context, index) => DbCachedImageWidget(
-              imageUrl: state.images[index],
-              width: double.infinity,
-              height: 316,
-              fit: BoxFit.cover,
-              borderRadius: 0,
-            ),
-          ),
-          Positioned(
-            bottom: 20,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                state.images.length,
-                (index) => Container(
-                  width: 8,
-                  height: 8,
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _currentImageIndex == index ? Colors.white : Colors.white.withValues(alpha: 0.5),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+      background: DbCachedImageWidget(
+        imageUrl: activity.activityCover ?? "",
+        width: double.infinity,
+        height: 316,
+        fit: BoxFit.cover,
+        borderRadius: 0,
       ),
     );
   }
 
-  Widget _buildActivityInfo(ActivityDetailState state) {
+  Widget _buildActivityInfo(ActivityInfoDetail activity) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(state.title, style: TMLabsTextStyle.h1),
-          const SizedBox(height: 8),
-          Text(
-            state.description,
-            style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
+          Row(
+            children: [
+              Expanded(child: Text(activity.activityName, style: TMLabsTextStyle.h1)),
+            ],
           ),
+          const SizedBox(height: 12),
+          _buildStatusAndCountdown(activity),
+          if (activity.activityDesc != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              activity.activityDesc!,
+              style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
+            ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildCapacityBox(ActivityDetailState state) {
-    final remaining = state.totalSlots - state.bookedSlots;
-    final progress = state.bookedSlots / state.totalSlots;
+  Widget _buildStatusAndCountdown(ActivityInfoDetail activity) {
+    final now = DateTime.now();
+    final deadline = UtcUtils.toDateTimeSafe(activity.activityRegEnd);
+    final isExpired = deadline != null && now.isAfter(deadline);
+    final isFull = (activity.maxPeople ?? 0) > 0 && (activity.currPeople ?? 0) >= (activity.maxPeople ?? 0);
+
+    String statusText = "ĐANG ĐĂNG KÝ";
+    Color statusColor = TMLabsColor.primary;
+
+    if (isExpired) {
+      statusText = "HẾT HẠN";
+      statusColor = TMLabsColor.grey;
+    } else if (isFull) {
+      statusText = "ĐÃ ĐỦ NGƯỜI";
+      statusColor = TMLabsColor.grey;
+    } else if (activity.activityStatus != 1) {
+      // Mapping other statuses if needed, default to Ended/Closed
+      statusText = "KẾT THÚC";
+      statusColor = TMLabsColor.grey;
+    }
+
+    return Row(
+      children: [
+        AppLabel(
+          statusText,
+          backgroundColor: statusColor,
+          borderRadius: 4,
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(width: 8),
+        if (deadline != null && !isExpired && !isFull && activity.activityStatus == 1)
+          Flexible(
+            child: ActivityCountdownWidget(
+              deadline: deadline,
+              onExpired: () => setState(() {}),
+              style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey, fontSize: 12),
+            ),
+          )
+        else if (deadline != null)
+          Flexible(
+            child: Text(
+              "Hạn đăng ký: ${UtcUtils.toDateTimeStr(activity.activityRegEnd, format: AppDateTimeFormat.fullDatetime)}",
+              style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey, fontSize: 12),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildCapacityBox(ActivityInfoDetail activity) {
+    final total = activity.maxPeople ?? 0;
+    final booked = activity.currPeople ?? 0;
+    if (total <= 0) return const SizedBox.shrink();
+
+    final remaining = total - booked;
+    final progress = (booked / total).clamp(0.0, 1.0);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -192,7 +230,7 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Số chỗ còn lại: $remaining", style: TMLabsTextStyle.bodyBold.copyWith(fontSize: 13)),
+                  Text("Số chỗ còn lại: ${remaining > 0 ? remaining : 0}", style: TMLabsTextStyle.bodyBold.copyWith(fontSize: 13)),
                   const SizedBox(height: 6),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(4),
@@ -207,48 +245,20 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
               ),
             ),
             const SizedBox(width: 16),
-            _buildOverlappingAvatars(state),
+            Text(
+              "$booked người đã đăng ký",
+              style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey, fontSize: 11),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildOverlappingAvatars(ActivityDetailState state) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 50,
-          height: 30,
-          child: Stack(
-            children: List.generate(state.registeredAvatars.length, (index) {
-              return Positioned(
-                left: index * 12.0,
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 1.5),
-                    image: DecorationImage(
-                      image: NetworkImage(state.registeredAvatars[index]),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              );
-            }),
-          ),
-        ),
-        Text(
-          "${state.bookedSlots} người đã đăng ký",
-          style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey, fontSize: 11),
-        ),
-      ],
-    );
-  }
+  Widget _buildLocationBox(ActivityInfoDetail activity) {
+    final startTime = UtcUtils.toDateTimeStr(activity.activityStart, format: AppDateTimeFormat.full);
+    final endTime = UtcUtils.toDateTimeStr(activity.activityEnd, format: AppDateTimeFormat.full);
 
-  Widget _buildLocationBox(ActivityDetailState state) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
@@ -266,41 +276,44 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        width: 20,
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 2),
-                          child: Icon(Icons.location_on, size: 16, color: TMLabsColor.grey),
+                  if (activity.activityLocation != null)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          width: 20,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 2),
+                            child: Icon(Icons.location_on, size: 16, color: TMLabsColor.grey),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          state.address,
-                          style: TMLabsTextStyle.body.copyWith(fontSize: 12, height: 1.2),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            activity.activityLocation ?? "",
+                            style: TMLabsTextStyle.body.copyWith(fontSize: 12, height: 1.2),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const SizedBox(
-                        width: 20,
-                        child: Icon(Icons.access_time, size: 14, color: TMLabsColor.grey),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        "${state.startTime} - ${state.endTime}",
-                        style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  if (startTime.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const SizedBox(
+                          width: 20,
+                          child: Icon(Icons.access_time, size: 14, color: TMLabsColor.grey),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          "$startTime ${endTime.isNotEmpty ? "- $endTime" : ""}",
+                          style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -313,7 +326,7 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
               ),
               width: 100,
               height: 30,
-              padding: const EdgeInsets.symmetric(horizontal: 4), // Giảm padding để hiện chữ
+              padding: const EdgeInsets.symmetric(horizontal: 4),
               onPressed: interactor.onDirectionTap,
             ),
           ],
@@ -322,28 +335,44 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
     );
   }
 
-  Widget _buildServerDetailPlaceholder() {
+  Widget _buildAboutActivity(ActivityInfoDetail activity) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Container(
-        height: 500,
-        decoration: BoxDecoration(
-          color: TMLabsColor.bgLight,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: TMLabsColor.lightGrey.withValues(alpha: 0.5)),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          "Chi tiết nội dung văn bản định dạng được\nquản trị ở hệ thống backend.",
-          textAlign: TextAlign.center,
-          style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.lightGrey),
-        ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("Về sự kiện này", style: TMLabsTextStyle.h2),
+          Html(
+            data: activity.activityDetail ?? "",
+            style: {
+              "body": Style(
+                margin: Margins.zero,
+                padding: HtmlPaddings.zero,
+                fontSize: FontSize(14),
+                color: TMLabsColor.grey,
+              ),
+            },
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildFooter(ActivityDetailState state) {
-    final priceStr = NumberToVietnamese.formatNumber(state.price);
+  Widget _buildFooter(ActivityInfoDetail activity) {
+    final priceStr = activity.activityPrice == 0 ? "Miễn phí" : activity.activityPrice.toFormatPrice();
+    
+    final now = DateTime.now();
+    final deadline = UtcUtils.toDateTimeSafe(activity.activityRegEnd);
+    final isExpired = deadline != null && now.isAfter(deadline);
+    final isFull = (activity.maxPeople ?? 0) > 0 && (activity.currPeople ?? 0) >= (activity.maxPeople ?? 0);
+    final canRegister = !isExpired && !isFull && activity.activityStatus == 1;
+
+    String btnText = "ĐĂNG KÝ NGAY";
+    if (isExpired) {
+      btnText = "HẾT HẠN";
+    } else if (isFull) {
+      btnText = "ĐÃ ĐỦ NGƯỜI";
+    }
 
     return Container(
       height: 70,
@@ -358,26 +387,31 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                priceStr,
-                style: TMLabsTextStyle.h2.copyWith(color: TMLabsColor.primary, fontWeight: FontWeight.w900),
-              ),
-              Text(
-                "Phí đăng ký",
-                style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),
-              ),
-            ],
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  priceStr,
+                  style: TMLabsTextStyle.h2.copyWith(color: TMLabsColor.primary, fontWeight: FontWeight.w900),
+                ),
+                Text(
+                  activity.activityPrice == 0 ? "Tham gia tự do" : "Phí đăng ký",
+                  style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
+          const SizedBox(width: 12),
           AppButton(
-            text: "ĐĂNG KÝ NGAY",
-            style: TMLabsButtonStyle.primary,
+            text: btnText,
+            style: canRegister ? TMLabsButtonStyle.primary : TMLabsButtonStyle.primary.copyWith(backgroundColor: TMLabsColor.grey),
             width: 164,
             height: 30,
-            onPressed: interactor.onPaymentTap,
+            onPressed: canRegister ? interactor.onPaymentTap : null,
           ),
         ],
       ),

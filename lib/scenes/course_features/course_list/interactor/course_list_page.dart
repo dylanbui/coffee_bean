@@ -8,6 +8,8 @@
 //
 // Copyright (c) 2026. All rights reserved.
 // **************************************************************************
+import 'package:coffee_bean/data/model/response/hub/course_info.dart';
+import 'package:coffee_bean/data/model/response/system/dictionary_data.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/course_list_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/interactor/course_list_event_state.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/interactor/course_list_interactor.dart';
@@ -18,11 +20,10 @@ import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:coffee_bean/shared/widget/search_bar.dart';
+import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_modal_helper.dart';
 import 'package:coffee_bean/utils/number_to_vietnamese.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:db_core/db_core.dart';
-import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -65,7 +66,7 @@ class _CourseListPageState extends AppCubitState<CourseListPage, CourseListInter
           Expanded(
             flex: 4,
             child: AppButton(
-              text: state.selectedCategory?.name ?? "Tất cả các loại",
+              text: state.selectedCategory?.label ?? "Tất cả các loại",
               onPressed: () => _showCategoryModal(context, state),
               height: 36,
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -118,9 +119,9 @@ class _CourseListPageState extends AppCubitState<CourseListPage, CourseListInter
     return FadeSwitcher(stateKey: "content_${state.courses.length}", child: content);
   }
 
-  Widget _buildCourseItem(BuildContext context, TblCourse item) {
+  Widget _buildCourseItem(BuildContext context, CourseInfo item) {
     return TapEffect(
-      onTap: () => interactor.router?.navigate(CourseDetailRoute(item.serverId)),
+      onTap: () => interactor.router?.navigate(CourseDetailRoute(item.id)),
       child: Container(
         height: 120,
         padding: const EdgeInsets.all(12),
@@ -152,24 +153,25 @@ class _CourseListPageState extends AppCubitState<CourseListPage, CourseListInter
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.name,
+                    item.courseName,
                     style: TMLabsTextStyle.title.copyWith(fontSize: 15, height: 1.2),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    item.description ?? "",
+                    // Default is description, if null get category name
+                    item.courseDesc ?? (item.courseTypeArray?.isNotEmpty == true ? (item.courseTypeArray?.first.label ?? "") : ""),
                     style: TMLabsTextStyle.body.copyWith(
                       fontSize: 13,
-                      color: TMLabsColor.accent.withValues(alpha: 0.6),
+                      color: TMLabsColor.secondary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const Spacer(),
                   Text(
-                    NumberToVietnamese.formatNumber(item.price),
+                    item.coursePrice.toFormatPrice(),
                     style: TMLabsTextStyle.title.copyWith(
                       fontSize: 16,
                       color: Colors.black,
@@ -186,9 +188,9 @@ class _CourseListPageState extends AppCubitState<CourseListPage, CourseListInter
   }
 
   void _showCategoryModal(BuildContext context, CourseListState state) {
-    FlashModalHelper.showSmartModal<TblCategory?>(
+    FlashModalHelper.showSmartModal<DictionaryData?>(
       context: context,
-      title: "Tất cả các loại", // Design has title in modal
+      title: "Tất cả các loại",
       position: FlashModalPosition.top,
       childBuilder: (ctx, controller) {
         return CourseCategoryPicker(

@@ -50,6 +50,7 @@ app.*.map.json
 # AI Assistants Context & Config Files
 # =========================================================================
 # Gemini / General AI Context
+*.md
 AI_CONTEXT.md
 AGENTS.md
 docs/

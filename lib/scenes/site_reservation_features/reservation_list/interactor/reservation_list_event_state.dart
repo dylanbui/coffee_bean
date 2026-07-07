@@ -1,10 +1,11 @@
-import 'package:coffee_bean_db/coffee_bean_db.dart';
+import 'package:coffee_bean/data/model/response/hub/venue_info.dart';
+import 'package:coffee_bean/data/model/response/system/dictionary_data.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class ReservationListState extends Equatable {
-  final List<TblReservation> reservations;
-  final List<TblCategory> categories;
-  final TblCategory? selectedCategory;
+  final List<VenueInfo> reservations;
+  final List<DictionaryData> categories;
+  final DictionaryData? selectedCategory;
   final String searchQuery;
   final bool isLoading;
 

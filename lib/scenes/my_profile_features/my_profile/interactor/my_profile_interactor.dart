@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager_events.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
-import 'package:coffee_bean/data/repository/auth_repository.dart';
 import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_helper.dart';
 import 'package:db_core/commons_constants.dart';
@@ -40,7 +39,6 @@ class MyProfileLoaded extends MyProfileState {
 }
 
 class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileState> implements UserAuthFlowListener {
-  final _authRepo = AuthRepository();
   final _userRepo = UserRepository();
 
   MyProfileInteractor(MyProfileRoutable router) : super(MyProfileInitial(), router: router);
@@ -57,12 +55,7 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
 
     // Lắng nghe sự kiện cập nhật thông tin cá nhân
     collect(locator<DbEventBus>().on<UserInfoUpdatedEvent>().listen((event) {
-      emit(MyProfileLoaded(
-        isLoggedIn: state.isLoggedIn,
-        isCheckedIn: state.isCheckedIn,
-        session: state.session,
-        userInfo: event.userInfo,
-      ));
+      checkLoginStatus();
     }));
   }
 
@@ -86,7 +79,7 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
         router?.navigate(ReservationListRoute());
         break;
       case "COURSES":
-        router?.navigate(CourseListRoute());
+        router?.navigate(CourseLearningListRoute());
         break;
       case "MY_EVENTS":
         router?.navigate(ActivityListRoute());
@@ -102,6 +95,9 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
         break;
       case "SETTINGS":
         router?.navigate(SettingsAppRoute());
+        break;
+      case "FEEDBACK":
+        router?.navigate(FeedbackRoute());
         break;
       default:
         debugPrint("Action $actionKey chưa được thực hiện");

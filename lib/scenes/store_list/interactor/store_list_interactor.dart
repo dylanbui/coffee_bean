@@ -121,7 +121,7 @@ class StoreListInteractor extends CubitInteractor<StoreListRoutable, StoreListSt
       apiStores = apiStores
           .where((s) =>
               s.name.toLowerCase().contains(searchKeyword.toLowerCase()) ||
-              (s.address?.toLowerCase().contains(searchKeyword.toLowerCase()) ?? false))
+              (s.fullAddress.toLowerCase().contains(searchKeyword.toLowerCase())))
           .toList();
     }
 

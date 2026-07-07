@@ -1,4 +1,5 @@
 import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
+import 'package:coffee_bean/scenes/shopping_features/shopping/shopping_router.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:db_core/utils/tap_effect.dart';
 import 'package:coffee_bean/scenes/shopping_features/shopping/interactor/shopping_interactor.dart';
@@ -57,7 +58,7 @@ class ShoppingHeader extends StatelessWidget {
             builder: (context, child) {
               final storeName = StoreManager().selectedStore?.name ?? "";
               return TapEffect(
-                onTap: () => interactor.openStoreList(),
+                onTap: () => interactor.router?.navigate(StoreListRoute()),
                 child: Row(
                   children: [
                     Text(

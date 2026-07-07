@@ -28,7 +28,6 @@ class ActivityListRouter extends DbNoteRouter implements ActivityListRoutable {
 }
 
 // -- BUILDER --
-// -- BUILDER --
 class ActivityListBuilder extends DbNoteBuilder<ActivityListRouter> {
   @override
   ActivityListRouter build() {

@@ -77,15 +77,15 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
       ),
       courseSellersData: CourseSellersData(
         items: [
-          SellerItem(name: "Tyler Ballmer One", imageUrl: "https://i.pravatar.cc/300"),
-          SellerItem(name: "Julia Two", imageUrl: "https://i.pravatar.cc/310"),
-          SellerItem(name: "Stella Three", imageUrl: "https://i.pravatar.cc/320"),
-          SellerItem(name: "Henry", imageUrl: "https://i.pravatar.cc/330"),
-          SellerItem(name: "Henry Four", imageUrl: "https://i.pravatar.cc/340"),
-          SellerItem(name: "Henry Five", imageUrl: "https://i.pravatar.cc/350"),
-          SellerItem(name: "My Team", imageUrl: "https://picsum.photos/id/34/200/200"),
-          SellerItem(name: "Coffee Four", imageUrl: "https://picsum.photos/id/35/200/200"),
-          SellerItem(name: "Tea Five", imageUrl: "https://picsum.photos/id/36/200/200"),
+          SellerItem(id: 1, name: "Tyler Ballmer One", imageUrl: "https://i.pravatar.cc/300"),
+          SellerItem(id: 2, name: "Julia Two", imageUrl: "https://i.pravatar.cc/310"),
+          SellerItem(id: 3, name: "Stella Three", imageUrl: "https://i.pravatar.cc/320"),
+          SellerItem(id: 4, name: "Henry", imageUrl: "https://i.pravatar.cc/330"),
+          SellerItem(id: 5, name: "Henry Four", imageUrl: "https://i.pravatar.cc/340"),
+          SellerItem(id: 6, name: "Henry Five", imageUrl: "https://i.pravatar.cc/350"),
+          SellerItem(id: 7, name: "My Team", imageUrl: "https://picsum.photos/id/34/200/200"),
+          SellerItem(id: 8, name: "Coffee Four", imageUrl: "https://picsum.photos/id/35/200/200"),
+          SellerItem(id: 9, name: "Tea Five", imageUrl: "https://picsum.photos/id/36/200/200"),
         ],
       ),
       courseVideosData: CourseVideosData(
@@ -224,7 +224,7 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
 
   void selectSeller(SellerItem item) {
     // Logic for select seller
-    // router?.navigate(SellerDetailRoute(item));
+    router?.navigate(SellerDetailRoute(item.id));
   }
 
   void selectCourse(CourseItem item) {

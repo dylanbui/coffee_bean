@@ -186,6 +186,12 @@ class TMLabsButtonStyle {
     borderRadius: 25,
   );
 
+  static const secondary = AppButtonStyleConfig(
+    backgroundColor: TMLabsColor.secondary,
+    textColor: Colors.white,
+    borderRadius: 25,
+  );
+
   static const outline = AppButtonStyleConfig(
     backgroundColor: Colors.transparent,
     textColor: TMLabsColor.primary,

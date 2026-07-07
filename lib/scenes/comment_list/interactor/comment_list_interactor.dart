@@ -1,7 +1,7 @@
 import 'package:coffee_bean/data/repository/comment_repository.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_router.dart';
 import 'package:coffee_bean/scenes/comment_list/interactor/comment_list_event_state.dart';
-import 'package:coffee_bean/data/model/response/product/product_comment_response.dart';
+import 'package:coffee_bean/data/model/response/product/product_comment.dart';
 import 'package:db_core/db_core.dart';
 
 class CommentListInteractor extends CubitInteractor<CommentListRoutable, CommentListState> {

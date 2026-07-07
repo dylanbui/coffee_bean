@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
+import 'package:coffee_bean/data/model/response/hub/instructor_info.dart';
 import 'package:coffee_bean/data/repository/course_repository.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_detail/course_checkout_item.dart';
 import 'package:coffee_bean/scenes/course_features/course_detail/course_detail_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_detail/interactor/course_detail_event_state.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:db_core/utils/locator.dart';
-import 'package:db_core/utils/toast.dart';
+import 'package:db_core/db_core.dart';
 
 class CourseDetailInteractor extends CubitInteractor<CourseDetailRoutable, CourseDetailState>
     implements CommentListSmallListener {
@@ -29,19 +28,22 @@ class CourseDetailInteractor extends CubitInteractor<CourseDetailRoutable, Cours
   Future<void> _loadCourseDetail() async {
     emit(state.copyWith(isLoading: true));
     
-    final course = await _courseRepository.getCourseById(courseId);
+    final result = await _courseRepository.getCourseDetailById(courseId);
     
-    if (course != null) {
+    if (result case DbSuccess(data: final course)) {
+      InstructorInfo? instructor;
+
+      if (course.instructorId != null) {
+        final instructorResult = await _courseRepository.getInstructorById(course.instructorId!);
+        if (instructorResult case DbSuccess(data: final instructorData)) {
+          instructor = instructorData;
+        }
+      }
+
       emit(state.copyWith(
         isLoading: false,
-        courseTitle: course.name,
-        courseDescription: course.description ?? "",
-        totalAmount: course.price,
-        images: course.images?.map((e) => e.url ?? "").toList() ?? [],
-        // --- MOCK DATA (Sẽ cập nhật khi DB có các field này) ---
-        instructorName: course.instructor ?? "TYLER BALLMER",
-        // instructorBio & instructorAvatar sử dụng giá trị mặc định trong state
-        // -------------------------------------------------------
+        courseDetail: course,
+        instructor: instructor,
       ));
     } else {
       emit(state.copyWith(isLoading: false));
@@ -60,12 +62,17 @@ class CourseDetailInteractor extends CubitInteractor<CourseDetailRoutable, Cours
 
   void onBuyTap() {
     final user = UserManager().userInfo;
+    final course = state.courseDetail;
+    final instructor = state.instructor;
+    
+    if (course == null) return;
+
     final checkoutItem = CourseCheckoutItem(
       courseId: courseId,
-      courseTitle: state.courseTitle,
-      instructorName: state.instructorName,
-      courseImageUrl: state.images.isNotEmpty ? state.images.first : null,
-      coursePrice: state.totalAmount,
+      courseTitle: course.courseName,
+      instructorName: instructor?.instructorName ?? "Đang cập nhật",
+      courseImageUrl: course.courseCover.isNotEmpty ? course.courseCover.first : null,
+      coursePrice: course.coursePrice ?? 0,
       initialNickname: user?.nickname ?? "",
       initialPhone: user?.mobile ?? "",
     );
@@ -73,7 +80,10 @@ class CourseDetailInteractor extends CubitInteractor<CourseDetailRoutable, Cours
   }
 
   void onInstructorDetailTap() {
-    DbToast.show("Xem chi tiết giảng viên");
+    final instructorId = state.courseDetail?.instructorId;
+    if (instructorId != null) {
+      router?.gotoInstructorDetail(instructorId);
+    }
   }
 
   @override

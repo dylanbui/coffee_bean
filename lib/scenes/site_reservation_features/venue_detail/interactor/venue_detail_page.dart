@@ -1,18 +1,21 @@
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_interactor.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_main_content.dart';
+import 'package:coffee_bean/shared/widget/image_slider_widget.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_sliver_app_bar.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
-import 'package:coffee_bean/utils/number_to_vietnamese.dart';
+import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:db_core/utils/app_label.dart';
+import 'package:db_core/utils/fade_switcher.dart';
 import 'package:db_core/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:db_core/utils/tap_effect.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
+import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -25,9 +28,7 @@ class VenueDetailPage extends AppCubitStateFulWidget<VenueDetailInteractor, Venu
 }
 
 class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailInteractor, VenueDetailState> {
-  final PageController _pageController = PageController();
   final ScrollController _scrollController = ScrollController();
-  int _currentImageIndex = 0;
   bool _isCollapsed = false;
 
   @override
@@ -46,15 +47,86 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
 
   @override
   void dispose() {
-    _pageController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Widget _buildShimmerBlock({required double width, required double height, double borderRadius = 4}) {
+    return Shimmer.fromColors(
+      baseColor: TMLabsColor.bgLight,
+      highlightColor: Colors.white,
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(borderRadius),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVenueInfoShimmer() {
+    return Padding(
+      key: const ValueKey("info_shimmer"),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildShimmerBlock(width: 200, height: 28), // Title
+          const SizedBox(height: 8),
+          _buildShimmerBlock(width: double.infinity, height: 16), // Desc line 1
+          const SizedBox(height: 4),
+          _buildShimmerBlock(width: 250, height: 16), // Desc line 2
+          const SizedBox(height: 16),
+          _buildShimmerBlock(width: double.infinity, height: 64, borderRadius: 12), // Location box
+          const SizedBox(height: 20),
+          // Tabs skeleton
+          Row(
+            children: List.generate(
+              3,
+              (index) => Padding(
+                padding: const EdgeInsets.only(right: 24),
+                child: _buildShimmerBlock(width: 60, height: 20),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateSelectorShimmer() {
+    return Container(
+      key: const ValueKey("date_shimmer"),
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: 7,
+        itemBuilder: (context, index) => Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: _buildShimmerBlock(width: 70, height: 100, borderRadius: 12),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMainContentShimmer() {
+    return Padding(
+      key: const ValueKey("main_shimmer"),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: _buildShimmerBlock(width: double.infinity, height: 400, borderRadius: 12),
+    );
   }
 
   @override
   Widget getBody(BuildContext context) {
     return BlocBuilder<VenueDetailInteractor, VenueDetailState>(
       builder: (context, state) {
+        final isLoading = state.venueDetail == null;
+
         return Scaffold(
           backgroundColor: Colors.white,
           body: Column(
@@ -64,37 +136,44 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
                   controller: _scrollController,
                   slivers: [
                     _buildSliverAppBar(state),
-                    SliverToBoxAdapter(child: _buildVenueInfo(state)),
-                    _buildSliverDateSelector(state),
-                    SliverToBoxAdapter(
-                      child: VenueDetailMainContent(
-                        state: state,
-                        interactor: interactor,
+                    if (isLoading) ...[
+                      SliverToBoxAdapter(child: _buildVenueInfoShimmer()),
+                      _buildSliverDateSelector(state, isLoading),
+                      SliverToBoxAdapter(child: _buildMainContentShimmer()),
+                    ] else ...[
+                      SliverToBoxAdapter(child: _buildVenueInfo(state)),
+                      _buildSliverDateSelector(state, isLoading),
+                      SliverToBoxAdapter(
+                        child: VenueDetailMainContent(
+                          state: state,
+                          interactor: interactor,
+                        ),
                       ),
-                    ),
+                    ],
                     const SliverToBoxAdapter(child: SizedBox(height: 100)), // Space for footer
                   ],
                 ),
               ),
             ],
           ),
-          bottomNavigationBar: _buildFooter(state),
+          bottomNavigationBar: isLoading ? const SizedBox.shrink() : _buildFooter(state),
         );
       },
     );
   }
 
   Widget _buildSliverAppBar(VenueDetailState state) {
+    final images = state.venueDetail?.venueCover ?? [];
+    
     return CoffeeSliverAppBar(
       expandedHeight: 316,
       pinned: true,
       style: TmLabAppBarStyle.whiteStyle.copyWith(
         backgroundColor: TMLabsColor.bgSecond,
-        //backIcon: Icons.arrow_back_ios,
         centerTitle: true,
         foregroundColor: _isCollapsed ? TMLabsColor.primary : Colors.white,
       ),
-      onBackTap: interactor.onNavigateBack,
+      onBackTap: interactor.router?.pop,
       titleWidget: LayoutBuilder(
         builder: (context, constraints) {
           final top = constraints.biggest.height;
@@ -104,55 +183,28 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
               : const SizedBox.shrink();
         },
       ),
-      background: Stack(
-        children: [
-          PageView.builder(
-            controller: _pageController,
-            onPageChanged: (index) => setState(() => _currentImageIndex = index),
-            itemCount: 5,
-            itemBuilder: (context, index) => DbCachedImageWidget(
-              imageUrl: "https://picsum.photos/seed/${index + 10}/800/600",
-              width: double.infinity,
-              height: 316,
-              fit: BoxFit.cover,
-              borderRadius: 0,
-            ),
-          ),
-          Positioned(
-            bottom: 20,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                5,
-                (index) => Container(
-                  width: 8,
-                  height: 8,
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _currentImageIndex == index ? Colors.white : Colors.white.withValues(alpha: 0.5),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+      background: ImageSliderWidget(
+        images: images,
+        height: 316,
+        indicatorType: ImageSliderIndicatorType.all,
       ),
     );
   }
 
   Widget _buildVenueInfo(VenueDetailState state) {
+    final detail = state.venueDetail;
+    if (detail == null) return const SizedBox.shrink();
+
     return Padding(
+      key: const ValueKey("info_content"),
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("TÊN ĐỊA ĐIỂM", style: TMLabsTextStyle.h1),
+          Text(detail.venueName, style: TMLabsTextStyle.h1),
           const SizedBox(height: 8),
           Text(
-            "Bản mô tả giới thiệu địa điểm (văn bản mẫu dùng để hiển thị tạm thời). Bản mô tả giới thiệu địa điểm (văn bản mẫu dùng để hiển thị tạm thời).",
+            detail.venueDesc,
             style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
           ),
           const SizedBox(height: 16),
@@ -176,7 +228,7 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              "84a Nguyễn Cửu Vân, phường Gia Định, tp.HCM",
+                              detail.venueLocation,
                               style: TMLabsTextStyle.caption,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -188,7 +240,8 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
                         children: [
                           const Icon(Icons.access_time_filled, size: 14, color: TMLabsColor.grey),
                           const SizedBox(width: 4),
-                          Text("6h00' - 23h00'", style: TMLabsTextStyle.caption),
+                          Text("${detail.venueOpen} - ${detail.venueClose}",
+                              style: TMLabsTextStyle.caption),
                         ],
                       ),
                     ],
@@ -218,48 +271,73 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
   }
 
   Widget _buildTabs(VenueDetailState state) {
-    final tabs = ["Sân Pickle ball", "Sân bóng rổ"];
-    return Row(
-      children: tabs.map((tab) {
-        final isSelected = state.selectedTab == tab;
-        return Padding(
-          padding: const EdgeInsets.only(right: 24),
-          child: InkWell(
-            onTap: () => interactor.onTabChanged(tab),
-            child: IntrinsicWidth(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    tab,
-                    style: TMLabsTextStyle.title.copyWith(
-                      color: isSelected ? TMLabsColor.primary : TMLabsColor.grey,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+    if (state.availableTypes.isEmpty) return const SizedBox.shrink();
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: state.availableTypes.map((type) {
+          final isSelected = state.selectedType?.id == type.id;
+          return Padding(
+            padding: const EdgeInsets.only(right: 24),
+            child: InkWell(
+              onTap: () {
+                if (isSelected) return;
+                
+                if (state.selectedSlots.isNotEmpty) {
+                  context.showFlashConfirm<bool>(
+                    title: "Chuyển loại sân",
+                    content: "Hành động này sẽ xóa toàn bộ các khung giờ bạn đã chọn. Bạn có chắc chắn muốn chuyển sang loại sân khác?",
+                    actions: [
+                      DbFlashDialogAction(label: "Hủy", value: false, color: TMLabsColor.grey),
+                      DbFlashDialogAction(label: "Chuyển", value: true, color: TMLabsColor.primary),
+                    ],
+                  ).then((confirmed) {
+                    if (confirmed == true) {
+                      interactor.onTabChanged(type);
+                    }
+                  });
+                } else {
+                  interactor.onTabChanged(type);
+                }
+              },
+              child: IntrinsicWidth(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      type.label,
+                      style: TMLabsTextStyle.title.copyWith(
+                        color: isSelected ? TMLabsColor.primary : TMLabsColor.grey,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      ),
                     ),
-                  ),
-                  if (isSelected)
-                    Container(
-                      margin: const EdgeInsets.only(top: 2),
-                      height: 2,
-                      width: double.infinity,
-                      color: TMLabsColor.primary,
-                    ),
-                ],
+                    if (isSelected)
+                      Container(
+                        margin: const EdgeInsets.only(top: 2),
+                        height: 2,
+                        width: double.infinity,
+                        color: TMLabsColor.primary,
+                      ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 
-  Widget _buildSliverDateSelector(VenueDetailState state) {
+  Widget _buildSliverDateSelector(VenueDetailState state, bool isLoading) {
     return SliverPersistentHeader(
       pinned: true,
       delegate: FixedHeaderDelegate(
         minHeight: 100,
         maxHeight: 100,
         childBuilder: (shrinkOffset, overlapsContent) {
+          if (isLoading) return _buildDateSelectorShimmer();
+
           return Container(
             color: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -269,12 +347,20 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
               itemCount: state.weekDates.length,
               itemBuilder: (context, index) {
                 final dateModel = state.weekDates[index];
-                final isSelected = DateUtils.isSameDay(state.selectedDate, dateModel.date);
-                final dayName = _getDayName(dateModel.date);
-                final dayNum = DateFormat('d/M').format(dateModel.date);
+                final date = DateTime.tryParse(dateModel.scheduleDate ?? '') ?? DateTime.now();
+                final isSelected = DateUtils.isSameDay(state.selectedDate, date);
+                final dayName = _getDayName(date);
+                final dayNum = DateFormat('d/M').format(date);
+                final isAvailable = dateModel.scheduleStatus == 0;
+
+                final now = DateTime.now();
+                final today = DateTime(now.year, now.month, now.day);
+                // logic: Kiểm tra nếu ngày trong danh sách là ngày trước ngày hiện tại
+                final isPastDate = date.isBefore(today);
 
                 return TapEffect(
-                  onTap: () => interactor.onDateSelected(dateModel.date),
+                  // logic: Nếu là ngày cũ, chặn không cho chọn (trả về empty function để giữ hiệu ứng ripple)
+                  onTap: isPastDate ? () {} : () => interactor.onDateSelected(date),
                   child: Container(
                     width: 70,
                     margin: const EdgeInsets.only(right: 8),
@@ -284,7 +370,8 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
                       border: Border.all(color: TMLabsColor.bgLight),
                     ),
                     child: Opacity(
-                      opacity: dateModel.isAvailable ? 1.0 : 0.5,
+                      // logic: Làm mờ UI nếu ngày đã qua hoặc không còn chỗ
+                      opacity: (isAvailable && !isPastDate) ? 1.0 : 0.5,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -302,15 +389,20 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
                           ),
                           const SizedBox(height: 4),
                           AppLabel(
-                            dateModel.isAvailable ? "Đặt được" : "Không đặt được",
+                            // logic: Hiển thị trạng thái "Đã qua" thay vì trạng thái đặt chỗ thông thường
+                            isPastDate ? "Đã qua" : (isAvailable ? "Đặt được" : "Không đặt được"),
                             backgroundColor: isSelected
                                 ? Colors.white.withValues(alpha: 0.2)
-                                : (dateModel.isAvailable ? const Color(0xFFE8F5E9) : TMLabsColor.bgLight),
+                                : (isAvailable && !isPastDate
+                                    ? const Color(0xFFE8F5E9)
+                                    : TMLabsColor.bgLight),
                             style: TMLabsTextStyle.small.copyWith(
                               fontSize: 8,
                               color: isSelected
                                   ? Colors.white
-                                  : (dateModel.isAvailable ? TMLabsColor.success : TMLabsColor.grey),
+                                  : (isAvailable && !isPastDate
+                                      ? TMLabsColor.success
+                                      : TMLabsColor.grey),
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                           ),
@@ -328,19 +420,16 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
   }
 
   String _getDayName(DateTime date) {
-    final now = DateTime.now();
-    // if (DateUtils.isSameDay(date, now)) return "Thứ hai"; // Demo fix as per screenshot
     final days = ["Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy", "Chủ nhật"];
     return days[date.weekday - 1];
   }
 
   Widget _buildFooter(VenueDetailState state) {
-    // final formatter = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
-    // final totalPrice = formatter.format(state.totalAmount);
-    final totalPrice = NumberToVietnamese.formatNumber(state.totalAmount) ?? "0";
+    final totalPrice = state.totalAmount.toFormatPrice();
     final selectedInfo = state.selectedSlots.isEmpty ? "Chưa chọn sân" : "Đã chọn ${state.selectedSlots.length} khung giờ";
 
     return Container(
+      key: const ValueKey("footer_content"),
       height: 90,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(

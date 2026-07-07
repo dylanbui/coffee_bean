@@ -2,7 +2,7 @@ import 'package:coffee_bean/data/model/response/product/product.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'product_comment_response.g.dart';
+part 'product_comment.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class ProductComment extends Equatable {

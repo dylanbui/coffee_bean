@@ -1,4 +1,4 @@
-import 'package:coffee_bean/data/model/response/product/product_comment_response.dart';
+import 'package:coffee_bean/data/model/response/product/product_comment.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:flutter/material.dart';

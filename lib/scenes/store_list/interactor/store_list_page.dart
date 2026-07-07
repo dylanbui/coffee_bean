@@ -260,7 +260,7 @@ class _StoreListPageState extends AppCubitState<StoreListPage, StoreListInteract
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
-                                  store.address ?? "",
+                                  store.fullAddress,
                                   style: TMLabsTextStyle.title.copyWith(color: TMLabsColor.white, height: 1.2),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,

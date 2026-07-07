@@ -9,7 +9,7 @@
 
 import 'dart:ui';
 
-import 'package:coffee_bean/data/model/response/user/auth_login_response.dart';
+import 'package:coffee_bean/data/model/response/user/auth_login.dart';
 import 'package:coffee_bean/data/network/network_response.dart';
 import 'package:db_core/network/network_client.dart';
 import 'package:db_core/network/network_common.dart';
@@ -133,7 +133,7 @@ class TokenInterceptor extends QueuedInterceptorsWrapper {
           .request(refreshPath, 
               type: NetworkType.post, 
               queryParameters: {'refreshToken': refreshToken})
-          .mapResponseTo(AuthLoginResponse.fromJson)
+          .mapResponseTo(AuthLogin.fromJson)
           .toObject();
 
       if (result case DbSuccess(data: final loginData)) {

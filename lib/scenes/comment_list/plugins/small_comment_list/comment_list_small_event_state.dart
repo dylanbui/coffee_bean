@@ -1,4 +1,4 @@
-import 'package:coffee_bean/data/model/response/product/product_comment_response.dart';
+import 'package:coffee_bean/data/model/response/product/product_comment.dart';
 import 'package:db_core/state_management/lib_bloc/constants.dart';
 
 class CommentListSmallState extends BaseBlocState {

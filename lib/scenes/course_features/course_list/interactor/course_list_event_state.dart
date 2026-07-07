@@ -8,13 +8,14 @@
 //
 // Copyright (c) 2026. All rights reserved.
 // **************************************************************************
-import 'package:coffee_bean_db/coffee_bean_db.dart';
+import 'package:coffee_bean/data/model/response/hub/course_info.dart';
+import 'package:coffee_bean/data/model/response/system/dictionary_data.dart';
 import 'package:db_core/db_core.dart';
 
 class CourseListState extends Equatable {
-  final List<TblCategory> categories;
-  final List<TblCourse> courses;
-  final TblCategory? selectedCategory;
+  final List<DictionaryData> categories;
+  final List<CourseInfo> courses;
+  final DictionaryData? selectedCategory;
   final String searchQuery;
   final bool isLoading;
 
@@ -27,9 +28,9 @@ class CourseListState extends Equatable {
   });
 
   CourseListState copyWith({
-    List<TblCategory>? categories,
-    List<TblCourse>? courses,
-    TblCategory? selectedCategory,
+    List<DictionaryData>? categories,
+    List<CourseInfo>? courses,
+    DictionaryData? selectedCategory,
     String? searchQuery,
     bool? isLoading,
     bool clearSelectedCategory = false,

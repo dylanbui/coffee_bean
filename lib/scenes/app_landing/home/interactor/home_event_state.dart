@@ -92,9 +92,10 @@ class FinancialCoursesData {
 }
 
 class SellerItem {
+  final int id;
   final String name;
   final String? imageUrl;
-  SellerItem({required this.name, this.imageUrl});
+  SellerItem({required this.id, required this.name, this.imageUrl});
 }
 
 class CourseSellersData {

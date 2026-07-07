@@ -1,95 +1,84 @@
+import 'package:coffee_bean/data/model/response/hub/venue_info_detail.dart';
+import 'package:coffee_bean/data/model/response/hub/venue_info.dart';
+import 'package:coffee_bean/data/model/response/hub/venue_schedule.dart';
 import 'package:db_core/db_core.dart';
 
-class VenueDateModel extends Equatable {
-  final DateTime date;
-  final bool isAvailable;
-
-  const VenueDateModel({required this.date, this.isAvailable = true});
-
-  @override
-  List<Object?> get props => [date, isAvailable];
-}
-
-class VenueCourtModel extends Equatable {
-  final String id;
-  final String name;
-
-  const VenueCourtModel({required this.id, required this.name});
-
-  @override
-  List<Object?> get props => [id, name];
-}
-
-class VenueBookingSlot extends Equatable {
-  final DateTime date;
-  final String courtId;
-  final String time;
-  final double price;
-  final bool isBooked;
-
-  const VenueBookingSlot({
-    required this.date,
-    required this.courtId,
-    required this.time,
-    required this.price,
-    this.isBooked = false,
-  });
-
-  @override
-  List<Object?> get props => [date, courtId, time, price, isBooked];
+class VenueDetailConstants {
+  /// Quy định: Không cho phép đặt khung giờ sắp diễn ra trong vòng 30 phút tới
+  static const Duration bookingBufferTime = Duration(minutes: 30);
 }
 
 class VenueDetailState extends BaseBlocState {
+  final int venueId;
+  final int venueTypeId; // Initial or passed from list
+  final VenueInfoDetail? venueDetail;
   final DateTime selectedDate;
-  final String selectedTab;
-  final List<VenueBookingSlot> selectedSlots;
-  final List<VenueCourtModel> courts;
+  final List<VenueTypeItem> availableTypes;
+  final VenueTypeItem? selectedType;
+  final List<VenueSlot> selectedSlots;
+  final List<VenueSpaceSlot> spaces;
   final List<String> timeSlots;
-  final List<VenueBookingSlot> allSlots;
-  final List<VenueDateModel> weekDates;
+  final List<VenueWeek> weekDates;
+  final bool isLoading;
 
   VenueDetailState({
+    required this.venueId,
+    this.venueTypeId = 0,
+    this.venueDetail,
     required this.selectedDate,
-    this.selectedTab = 'Sân Pickle ball',
+    this.availableTypes = const [],
+    this.selectedType,
     this.selectedSlots = const [],
-    this.courts = const [],
+    this.spaces = const [],
     this.timeSlots = const [],
-    this.allSlots = const [],
     this.weekDates = const [],
+    this.isLoading = false,
   });
 
   @override
   List<Object?> get props => [
+        venueId,
+        venueTypeId,
+        venueDetail,
         selectedDate,
-        selectedTab,
+        availableTypes,
+        selectedType,
         selectedSlots,
-        courts,
+        spaces,
         timeSlots,
-        allSlots,
         weekDates,
+        isLoading,
       ];
 
   VenueDetailState copyWith({
+    int? venueId,
+    int? venueTypeId,
+    VenueInfoDetail? venueDetail,
     DateTime? selectedDate,
-    String? selectedTab,
-    List<VenueBookingSlot>? selectedSlots,
-    List<VenueCourtModel>? courts,
+    List<VenueTypeItem>? availableTypes,
+    VenueTypeItem? selectedType,
+    List<VenueSlot>? selectedSlots,
+    List<VenueSpaceSlot>? spaces,
     List<String>? timeSlots,
-    List<VenueBookingSlot>? allSlots,
-    List<VenueDateModel>? weekDates,
+    List<VenueWeek>? weekDates,
+    bool? isLoading,
   }) {
     return VenueDetailState(
+      venueId: venueId ?? this.venueId,
+      venueTypeId: venueTypeId ?? this.venueTypeId,
+      venueDetail: venueDetail ?? this.venueDetail,
       selectedDate: selectedDate ?? this.selectedDate,
-      selectedTab: selectedTab ?? this.selectedTab,
+      availableTypes: availableTypes ?? this.availableTypes,
+      selectedType: selectedType ?? this.selectedType,
       selectedSlots: selectedSlots ?? this.selectedSlots,
-      courts: courts ?? this.courts,
+      spaces: spaces ?? this.spaces,
       timeSlots: timeSlots ?? this.timeSlots,
-      allSlots: allSlots ?? this.allSlots,
       weekDates: weekDates ?? this.weekDates,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 
   double get totalAmount {
-    return selectedSlots.fold(0, (sum, slot) => sum + slot.price);
+    return selectedSlots.fold(0, (sum, slot) => sum + (slot.slotPrice ?? 0));
   }
 }

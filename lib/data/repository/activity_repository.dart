@@ -1,100 +1,46 @@
-import 'dart:convert';
-import 'package:coffee_bean/config/app_pref.dart';
-import 'package:coffee_bean/utils/utils.dart';
-import 'package:coffee_bean_db/coffee_bean_db.dart';
-import 'package:db_core/utils/locator.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
+import 'package:coffee_bean/data/model/response/hub/activity_info.dart';
+import 'package:coffee_bean/data/model/response/hub/activity_info_detail.dart';
+import 'package:coffee_bean/data/model/response/system/dictionary_data.dart';
+import 'package:coffee_bean/data/network/page_result.dart';
+import 'package:db_core/network/base_repository.dart';
+import 'package:db_core/network/network_common.dart';
+import 'package:coffee_bean/data/network/network_response.dart';
 
-class ActivityRepository {
-  final DatabaseService _dbService = locator<DatabaseService>();
-  final AppPrefs _prefs = AppPrefs();
+class ActivityRepository extends BaseRepository {
+  ActivityRepository({super.client});
 
-  static const String _catSyncKey = "activity_category_sync";
-  static const String _itemSyncKey = "activity_item_sync";
-  static const int _cacheDuration = 0; //24 * 60 * 60 * 1000; // 1 day in ms
-
-  bool _isExpired(String key) {
-    final lastSync = _prefs.getLastSyncTime(key);
-    final now = DateTime.now().millisecondsSinceEpoch;
-    return (now - lastSync) > _cacheDuration;
+  Future<DbResult<List<DictionaryData>>> getActivityCategories() async {
+    return await networkClient
+        .doGet('/app-api/system/dict-data/type', queryParameters: {'type': 'hub_activity_type'})
+        .mapResponseTo(DictionaryData.fromJson)
+        .toList();
   }
 
-  Future<void> _syncCategories() async {
-    try {
-      final String response = await rootBundle.loadString('assets/json/sample_activity_cat.json');
-      final data = await json.decode(response);
-      if (data['categories'] != null) {
-        final List<dynamic> catJson = data['categories'];
-        final categories = catJson.map((json) {
-          final name = json['name'] ?? '';
-          return TblCategory()
-            ..serverId = json['server_id'] ?? json['id']
-            ..name = name
-            ..searchName = Utils.toNoSign(name)
-            ..type = json['type'] ?? 'ACTIVITY'
-            ..sortOrder = json['sort_order'] ?? 0
-            ..isActive = json['is_active'] ?? true;
-        }).toList();
-
-        await _dbService.isar.writeTxn(() async {
-          await _dbService.isar.tblCategorys.filter().typeEqualTo("ACTIVITY").deleteAll();
-          await _dbService.isar.tblCategorys.putAll(categories);
-        });
-        _prefs.setLastSyncTime(_catSyncKey, DateTime.now().millisecondsSinceEpoch);
-      }
-    } catch (e) {
-      debugPrint("Error syncing activity categories: $e");
-    }
+  Future<ResultPageType<ActivityInfo>> getActivityPage({
+    String? keyword,
+    int? activityType,
+    int pageNo = 1,
+    int pageSize = 100,
+  }) async {
+    return await networkClient
+        .doGet(
+          '/app-api/hub/activity-info/page',
+          queryParameters: {
+            if (keyword != null && keyword.isNotEmpty) 'name': keyword,
+            if (activityType != null) 'activityType': activityType,
+            'pageNo': pageNo,
+            'pageSize': pageSize,
+          },
+        )
+        .mapResponseToPage(ActivityInfo.fromJson)
+        .toObject();
   }
 
-  Future<void> _syncActivities() async {
-    try {
-      final String response = await rootBundle.loadString('assets/json/sample_activity_item.json');
-      final data = await json.decode(response);
-      if (data['activities'] != null) {
-        await _dbService.syncActivityData(data['activities']);
-        _prefs.setLastSyncTime(_itemSyncKey, DateTime.now().millisecondsSinceEpoch);
-      }
-    } catch (e) {
-      debugPrint("Error syncing activities: $e");
-    }
+  Future<DbResult<ActivityInfoDetail>> getActivityById(int activityId) async {
+    return await networkClient
+        .doGet('/app-api/hub/activity-info/get', queryParameters: {'id': activityId})
+        .mapResponseTo(ActivityInfoDetail.fromJson)
+        .toObject();
   }
 
-  Future<List<TblCategory>> getCategories() async {
-    final existing = await _dbService.isar.tblCategorys
-        .filter()
-        .typeEqualTo("ACTIVITY")
-        .findAll();
-
-    if (existing.isEmpty || _isExpired(_catSyncKey)) {
-      await _syncCategories();
-    }
-
-    // Giả lập cho chậm lại
-    //await Utils.delay(second: 1);
-
-    return _dbService.isar.tblCategorys
-        .filter()
-        .typeEqualTo("ACTIVITY")
-        .sortBySortOrder()
-        .findAll();
-  }
-
-  Future<List<TblActivity>> getActivities({String? query, int? catId}) async {
-    final existing = await _dbService.getAllActivities();
-
-    if (existing.isEmpty || _isExpired(_itemSyncKey)) {
-      await _syncActivities();
-    }
-
-    // Giả lập cho chậm lại
-    // await Utils.delay(second: 1);
-
-    return _dbService.searchActivities(query: query, catId: catId);
-  }
-
-  Future<TblActivity?> getActivityById(int activityId) async {
-    return _dbService.isar.tblActivitys.filter().serverIdEqualTo(activityId).findFirst();
-  }
 }

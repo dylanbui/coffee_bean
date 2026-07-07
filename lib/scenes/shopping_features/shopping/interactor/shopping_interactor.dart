@@ -1,3 +1,4 @@
+import 'package:coffee_bean/features/cart_workflow/cart_checkout_factory.dart';
 import 'package:coffee_bean/scenes/store_list/store_list_constant.dart';
 import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
@@ -155,12 +156,9 @@ class ShoppingInteractor extends CubitInteractor<ShoppingRoutable, ShoppingState
 
   void checkout() {
     if (_cartService.currentItems.isNotEmpty) {
-      router?.navigate(OrderConfirmationRoute());
+      final contract = CartCheckoutFactory.createFromCurrentCart();
+      router?.navigate(CheckoutOrderRoute(contract));
     }
-  }
-
-  void openStoreList() {
-    router?.navigate(StoreListRoute());
   }
 
   CartService get cartService => _cartService;

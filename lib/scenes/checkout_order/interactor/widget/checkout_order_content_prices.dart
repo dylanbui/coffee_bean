@@ -79,9 +79,9 @@ class CheckoutOrderContentPrices extends StatelessWidget {
         titleStyle: TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.bold),
         valueStyle: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
       ),
-      const SizedBox(height: 12),
-      _buildNoteSection(context, state),
-      const SizedBox(height: 24),
+      // const SizedBox(height: 12),
+      // _buildNoteSection(context, state),
+      // const SizedBox(height: 24),
     ];
   }
 

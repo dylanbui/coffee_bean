@@ -6,13 +6,15 @@ import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_sliver_app_bar.dart';
 import 'package:coffee_bean/shared/ui_control/share_action/share_poster_dialog.dart';
-import 'package:coffee_bean/utils/number_to_vietnamese.dart';
+import 'package:coffee_bean/shared/widget/avatar_widget.dart';
+import 'package:coffee_bean/shared/widget/image_slider_widget.dart';
+import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:db_core/utils/app_label.dart';
 import 'package:db_core/utils/tap_effect.dart';
-import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class CourseDetailPage extends AppCubitStateFulWidget<CourseDetailInteractor, CourseDetailState> {
   CourseDetailPage({super.key, required super.interactor});
@@ -22,9 +24,7 @@ class CourseDetailPage extends AppCubitStateFulWidget<CourseDetailInteractor, Co
 }
 
 class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetailInteractor, CourseDetailState> {
-  final PageController _pageController = PageController();
   final ScrollController _scrollController = ScrollController();
-  int _currentImageIndex = 0;
   bool _isCollapsed = false;
   Widget? _commentPlugin;
 
@@ -43,18 +43,19 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
   }
 
   void _showShareDialog(CourseDetailState state) {
+    final course = state.courseDetail;
+    if (course == null) return;
     SharePosterDialog.show(
       context: context,
-      imageUrl: state.images.isNotEmpty ? state.images.first : "",
-      title: state.courseTitle,
+      imageUrl: course.courseCover.isNotEmpty ? course.courseCover.first : "",
+      title: course.courseName,
       shareLink: "https://tmlabs.coffee/course/${interactor.courseId}",
-      shareText: "Tham gia cùng tôi tại khóa học: ${state.courseTitle}",
+      shareText: "Tham gia cùng tôi tại khóa học: ${course.courseName}",
     );
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -63,7 +64,7 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
   Widget getBody(BuildContext context) {
     return BlocBuilder<CourseDetailInteractor, CourseDetailState>(
       builder: (context, state) {
-        if (state.isLoading) return getLoadingView();
+        if (state.isLoading || state.courseDetail == null) return getLoadingView();
         
         return Scaffold(
           backgroundColor: Colors.white,
@@ -74,10 +75,7 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
               SliverToBoxAdapter(child: _buildCourseInfo(state)),
               SliverToBoxAdapter(child: _buildInstructorBox(state)),
 
-              // --- MOCK DATA SECTIONS (Xóa khi có API) ---
-              SliverToBoxAdapter(child: _buildCourseContent(state)),
-              SliverToBoxAdapter(child: _buildAboutCourse(state)),
-              // ------------------------------------------
+              if ((state.courseDetail?.courseDetail ?? "").isNotEmpty) SliverToBoxAdapter(child: _buildAboutCourse(state)),
 
               SliverToBoxAdapter(child: _buildCommentSection(state)),
               const SliverToBoxAdapter(child: SizedBox(height: 100)), // Bottom spacing
@@ -90,6 +88,7 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
   }
 
   Widget _buildSliverAppBar(CourseDetailState state) {
+    final course = state.courseDetail!;
     return CoffeeSliverAppBar(
       expandedHeight: 316,
       pinned: true,
@@ -133,55 +132,25 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
               : const SizedBox.shrink();
         },
       ),
-      background: Stack(
-        children: [
-          PageView.builder(
-            controller: _pageController,
-            onPageChanged: (index) => setState(() => _currentImageIndex = index),
-            itemCount: state.images.length,
-            itemBuilder: (context, index) => DbCachedImageWidget(
-              imageUrl: state.images[index],
-              width: double.infinity,
-              height: 316,
-              fit: BoxFit.cover,
-              borderRadius: 0,
-            ),
-          ),
-          Positioned(
-            bottom: 20,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                state.images.length,
-                (index) => Container(
-                  width: 8,
-                  height: 8,
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _currentImageIndex == index ? Colors.white : Colors.white.withValues(alpha: 0.5),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+      background: ImageSliderWidget(
+        images: course.courseCover,
+        height: 316,
+        indicatorType: ImageSliderIndicatorType.all,
       ),
     );
   }
 
   Widget _buildCourseInfo(CourseDetailState state) {
+    final course = state.courseDetail!;
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(state.courseTitle, style: TMLabsTextStyle.h1),
+          Text(course.courseName, style: TMLabsTextStyle.h1),
           const SizedBox(height: 8),
           Text(
-            state.courseDescription,
+            course.courseDesc ?? "",
             style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
           ),
         ],
@@ -190,6 +159,7 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
   }
 
   Widget _buildInstructorBox(CourseDetailState state) {
+    final instructor = state.instructor;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
@@ -205,16 +175,9 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
           children: [
             Row(
               children: [
-                Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: NetworkImage(state.instructorAvatar),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                AvatarWidget(
+                  imageUrl: instructor?.instructorAvatar,
+                  size: 30,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -225,7 +188,7 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
                         children: [
                           Flexible(
                             child: Text(
-                              state.instructorName,
+                              instructor?.instructorName ?? "Đang cập nhật",
                               style: TMLabsTextStyle.bodyBold,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -262,47 +225,13 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
             ),
             const SizedBox(height: 8),
             Text(
-              state.instructorBio,
+              instructor?.instructorDesc ?? "Chưa có giới thiệu",
               style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  // --- MOCK DATA WIDGETS ---
-
-  Widget _buildCourseContent(CourseDetailState state) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("Nội dung khóa học", style: TMLabsTextStyle.h2),
-          const SizedBox(height: 12),
-          ...List.generate(
-            5,
-            (index) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Row(
-                children: [
-                  const Icon(Icons.play_circle_fill, color: TMLabsColor.primary, size: 20),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      "Bài ${index + 1}: Nội dung hướng dẫn chi tiết phần ${index + 1}",
-                      style: TMLabsTextStyle.body,
-                    ),
-                  ),
-                  Text("15:00", style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
-                ],
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -315,11 +244,16 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
         children: [
           const Text("Về khóa học này", style: TMLabsTextStyle.h2),
           const SizedBox(height: 12),
-          Text(
-            "Đây là một khóa học chuyên sâu được thiết kế để cung cấp cho bạn những kiến thức thực tế nhất. Bạn sẽ được học qua các ví dụ thực tiễn, bài tập thực hành và được giảng viên hỗ trợ trực tiếp.\n\n"
-            "Mục tiêu của khóa học là giúp bạn làm chủ các kỹ năng cần thiết trong thời gian ngắn nhất nhưng vẫn đảm bảo được chất lượng kiến thức thu nhận được.\n\n"
-            "Hãy bắt đầu hành trình chinh phục kiến thức mới ngay hôm nay cùng chúng tôi!",
-            style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
+          Html(
+            data: state.courseDetail?.courseDetail ?? "",
+            style: {
+              "body": Style(
+                margin: Margins.zero,
+                padding: HtmlPaddings.zero,
+                fontSize: FontSize(14),
+                color: TMLabsColor.grey,
+              ),
+            },
           ),
         ],
       ),
@@ -341,7 +275,8 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
   }
 
   Widget _buildFooter(CourseDetailState state) {
-    final totalPrice = NumberToVietnamese.formatNumber(state.totalAmount);
+    final course = state.courseDetail!;
+    final totalPrice = course.coursePrice.toFormatPrice();
 
     return Container(
       height: 70,

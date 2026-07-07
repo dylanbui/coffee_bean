@@ -1,4 +1,4 @@
-import 'package:coffee_bean/data/model/response/product/product_comment_response.dart';
+import 'package:coffee_bean/data/model/response/product/product_comment.dart';
 import 'package:coffee_bean/data/network/network_response.dart';
 import 'package:coffee_bean/data/network/page_result.dart';
 import 'package:db_core/network/base_repository.dart';

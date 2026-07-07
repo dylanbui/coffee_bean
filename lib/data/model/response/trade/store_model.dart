@@ -6,28 +6,36 @@ part 'store_model.g.dart';
 @JsonSerializable()
 class StoreModel extends Equatable {
   final int id;
+  final int? brandId;
+  final int? merchantId;
   final String name;
-  final String? address;
+  final String? logo;
   final String? phone;
+  final int? areaId;
+  final String? areaName;
+  final String? detailAddress;
+  final String? openingTime;
+  final String? closingTime;
   final double latitude;
   final double longitude;
   final double? distance;
-  final String? openingTime;
-  final String? closingTime;
-  final String? logo;
   final List<String>? images;
 
   const StoreModel({
     required this.id,
+    this.brandId,
+    this.merchantId,
     required this.name,
-    this.address,
+    this.logo,
     this.phone,
+    this.areaId,
+    this.areaName,
+    this.detailAddress,
+    this.openingTime,
+    this.closingTime,
     this.latitude = 0.0,
     this.longitude = 0.0,
     this.distance,
-    this.openingTime,
-    this.closingTime,
-    this.logo,
     this.images,
   });
 
@@ -41,18 +49,24 @@ class StoreModel extends Equatable {
     return null;
   }
 
+  String get fullAddress => detailAddress ?? "";
+
   @override
   List<Object?> get props => [
         id,
+        brandId,
+        merchantId,
         name,
-        address,
+        logo,
         phone,
+        areaId,
+        areaName,
+        detailAddress,
+        openingTime,
+        closingTime,
         latitude,
         longitude,
         distance,
-        openingTime,
-        closingTime,
-        logo,
         images,
       ];
 }

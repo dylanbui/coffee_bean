@@ -20,18 +20,12 @@ class ActivityDetailInteractor extends CubitInteractor<ActivityDetailRoutable, A
   Future<void> _loadActivityDetail() async {
     emit(state.copyWith(isLoading: true));
     
-    final activity = await _activityRepository.getActivityById(activityId);
+    final result = await _activityRepository.getActivityById(activityId);
     
-    if (activity != null) {
+    if (result case DbSuccess(data: final activity)) {
       emit(state.copyWith(
         isLoading: false,
-        title: activity.name,
-        description: activity.description ?? "",
-        price: activity.price,
-        images: activity.images?.map((e) => e.url ?? "").toList() ?? [],
-        // Mocking slots data as they might not be in sample JSON
-        totalSlots: 100,
-        bookedSlots: 57,
+        activityDetail: activity,
       ));
     } else {
       emit(state.copyWith(isLoading: false));
@@ -44,12 +38,15 @@ class ActivityDetailInteractor extends CubitInteractor<ActivityDetailRoutable, A
   }
 
   void onPaymentTap() {
+    final activity = state.activityDetail;
+    if (activity == null) return;
+
     final checkoutItem = ActivityCheckoutItem(
       activityId: activityId,
-      activityTitle: state.title,
-      activityAddress: state.address,
-      activityImageUrl: state.images.isNotEmpty ? state.images.first : null,
-      activityPrice: state.price,
+      activityTitle: activity.activityName,
+      activityAddress: activity.activityLocation ?? "",
+      activityImageUrl: activity.activityCover,
+      activityPrice: activity.activityPrice,
     );
     router?.openCheckout(checkoutItem);
   }

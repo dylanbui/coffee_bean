@@ -9,11 +9,23 @@ import 'package:coffee_bean/data/model/response/product/product.dart';
 import 'package:db_core/utils/toast.dart';
 
 /// Service quản lý giỏ hàng toàn app (Cart Management Service).
-/// 
-/// Hỗ trợ 2 chế độ vận hành:
-/// 1. **Guest Mode**: Lưu trữ trực tiếp vào Isar Database (Local).
-/// 2. **Member Mode**: Sử dụng cơ chế Optimistic UI (cập nhật bộ nhớ ngay lập tức, 
-///    đồng bộ API ngầm và rollback nếu lỗi) để mang lại trải nghiệm mượt mà.
+///
+/// Vận hành theo kiến trúc **Integrated Local-First** với cơ chế **Optimistic UI**:
+///
+/// 1. **Single Source of Truth (SSOT)**:
+///    - Dữ liệu trong bộ nhớ (_items) và Isar DB luôn được ưu tiên cập nhật đầu tiên.
+///    - UI lắng nghe qua `cartStream` để phản hồi tức thì (Instant UI) mà không chờ API.
+///
+/// 2. **Cơ chế Đồng bộ (Member Synchronization)**:
+///    - Với Member: Sau khi cập nhật Local, Service tự động thực hiện các lệnh gọi API ngầm.
+///    - Nếu API trả về thành công (vd: `cartItemId` mới), Local DB sẽ được cập nhật bổ sung.
+///    - Nếu API thất bại, Service thực hiện **Rollback** toàn bộ trạng thái (Memory & Isar)
+///      về phiên bản trước đó và thông báo lỗi.
+///
+/// 3. **Chế độ Guest & Chuyển vùng (Guest to Member)**:
+///    - Guest Mode: Hoạt động thuần túy trên Isar DB.
+///    - Khi Login thành công: Tự động kích hoạt `mergeLocalCartToServer` để đẩy dữ liệu tạm
+///      lên Server và đồng bộ lại giỏ hàng chính thức.
 class CartService implements DbLocatorDisposable {
   
   // --- Properties ---
@@ -84,57 +96,62 @@ extension CartServiceActions on CartService {
   }) async {
     final userManager = UserManager();
     
-    if (!userManager.isLogin) {
-      // Xử lý trực tiếp vào DB nếu chưa đăng nhập
-      await _upsertLocal(skuId, quantity, product, options);
-      return;
-    }
-
-    // --- LOGIC CHO MEMBER (OPTIMISTIC UI) ---
-    
-    // 1. Sao lưu trạng thái hiện tại đề phòng lỗi
-    _rollbackItems = List.from(_items.map((e) => _cloneCartItem(e)));
-
-    // 2. Cập nhật bộ nhớ và UI ngay lập tức (0ms latency)
+    // --- 1. PERSISTENCE LOCAL (LUÔN THỰC HIỆN) ---
+    // Cập nhật bộ nhớ và Isar ngay lập tức để không mất dữ liệu khi restart
     final existingItem = _items.where((i) => i.skuId == skuId).firstOrNull;
     final int? currentCartItemId = existingItem?.cartItemId;
 
     _updateMemory(skuId, quantity, product, options);
     _notifyUI();
+    
+    // Ghi xuống DB để lưu trữ bền vững
+    await _upsertLocal(skuId, quantity, product, options);
 
-    // 3. Thực hiện gọi API đồng bộ ngầm
+    if (!userManager.isLogin) return;
+
+    // --- 2. LOGIC CHO MEMBER (SYNCHRONIZE SERVER) ---
+    
+    // Sao lưu trạng thái để rollback nếu API lỗi
+    _rollbackItems = List.from(_items.map((e) => _cloneCartItem(e)));
+
     final tradeRepo = locator<TradeRepository>();
     DbResult<dynamic> result;
 
     if (quantity <= 0) {
-      // Trường hợp xóa item
       if (currentCartItemId != null && currentCartItemId > 0) {
         result = await tradeRepo.deleteCartItems([currentCartItemId]);
       } else {
-        return; // Item chưa có trên server, không cần sync
+        return;
       }
     } else {
-      // Trường hợp thêm mới hoặc cập nhật số lượng
       if (currentCartItemId != null && currentCartItemId > 0) {
         result = await tradeRepo.updateCartItemCount(id: currentCartItemId, count: quantity);
       } else {
         result = await tradeRepo.addToCart(skuId: skuId, count: quantity);
-        // Cập nhật cartItemId thực từ server nếu là item mới
         if (result case DbSuccess(data: final int newId)) {
           final item = _items.where((i) => i.skuId == skuId).firstOrNull;
-          if (item != null) item.cartItemId = newId;
+          if (item != null) {
+            item.cartItemId = newId;
+            // Cập nhật lại cartItemId vào local DB
+            await _dbService.isar.writeTxn(() async {
+              final dbItem = await _dbService.isar.tblCartItems.filter().skuIdEqualTo(skuId).findFirst();
+              if (dbItem != null) {
+                dbItem.cartItemId = newId;
+                await _dbService.isar.tblCartItems.put(dbItem);
+              }
+            });
+          }
         }
       }
     }
 
-    // 4. Xử lý kết quả API
     if (result case DbFailure(:final error)) {
-      // Lỗi: Khôi phục lại trạng thái cũ và báo lỗi
       _items = _rollbackItems ?? [];
       _notifyUI();
+      // Rollback cả local DB
+      await _refreshFromLocal();
       DbToast.show(error.message);
     } else {
-      // Thành công: Xóa bản sao lưu
       _rollbackItems = null;
     }
   }
@@ -184,9 +201,44 @@ extension CartServiceSync on CartService {
   Future<void> refreshFromServer() async {
     if (!UserManager().isLogin) return;
     
-    // TODO: Implement actual API call: GET /app-api/trade/cart/list
-    // Hiện tại vẫn fallback về local cho đến khi API được tích hợp hoàn toàn
-    await _refreshFromLocal();
+    final tradeRepo = locator<TradeRepository>();
+    final result = await tradeRepo.getCartList();
+
+    if (result case DbSuccess(data: final cartData)) {
+      // 1. Chuyển đổi dữ liệu từ server sang TblCartItem
+      final List<TblCartItem> serverItems = cartData.validList.map((itemRes) {
+        final List<SelectedOption> opts = itemRes.sku?.properties?.map((p) => SelectedOption()
+          ..optionServerId = p.valueId
+          ..groupName = p.propertyName
+          ..optionName = p.valueName
+          ..extraPrice = 0.0
+        ).toList() ?? [];
+
+        return TblCartItem()
+          ..cartItemId = itemRes.id
+          ..spuId = itemRes.spu?.id ?? 0
+          ..skuId = itemRes.sku?.id ?? 0
+          ..name = itemRes.spu?.name ?? ""
+          ..image = itemRes.sku?.picUrl ?? itemRes.spu?.picUrl
+          ..finalPrice = (itemRes.sku?.price ?? 0) / 100.0
+          ..quantity = itemRes.count
+          ..selectedOptions = opts
+          ..addedAt = DateTime.now();
+      }).toList();
+
+      // 2. Cập nhật đồng bộ vào Isar (Xóa cũ, ghi mới)
+      await _dbService.isar.writeTxn(() async {
+        await _dbService.isar.tblCartItems.clear();
+        await _dbService.isar.tblCartItems.putAll(serverItems);
+      });
+
+      // 3. Cập nhật vào bộ nhớ và thông báo UI
+      _items = serverItems;
+      _notifyUI();
+    } else {
+      // Nếu API lỗi, fallback về local
+      await _refreshFromLocal();
+    }
   }
 
   /// Đồng bộ giỏ hàng từ Guest Mode lên Server sau khi Login thành công.

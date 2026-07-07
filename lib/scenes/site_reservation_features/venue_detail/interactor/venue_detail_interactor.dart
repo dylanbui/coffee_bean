@@ -1,86 +1,161 @@
+import 'package:coffee_bean/data/model/response/hub/venue_info.dart';
+import 'package:coffee_bean/data/model/response/hub/venue_schedule.dart';
+import 'package:coffee_bean/data/repository/reservation_repository.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_event_state.dart';
+import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/venue_checkout_item.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/venue_detail_builder.dart';
-import 'package:coffee_bean/scenes/site_reservation_features/venue_payment/interactor/venue_payment_event_state.dart';
+import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:db_core/db_core.dart';
-import 'package:flutter/material.dart';
 
 class VenueDetailInteractor extends CubitInteractor<VenueDetailRoutable, VenueDetailState> {
-  VenueDetailInteractor(VenueDetailRoutable router)
-      : super(
-          VenueDetailState(selectedDate: DateTime.now()),
+  final ReservationRepository _reservationRepository = locator<ReservationRepository>();
+  
+  VenueDetailInteractor(
+    VenueDetailRoutable router, {
+    required int venueId,
+    int venueTypeId = 0,
+  }) : super(
+          VenueDetailState(
+            venueId: venueId,
+            venueTypeId: venueTypeId,
+            selectedDate: DateTime.now(),
+          ),
           router: router,
         );
 
   @override
   void onDidBecomeActive() {
     super.onDidBecomeActive();
-    _initMockData();
+    _fetchVenueData();
   }
 
-  void _initMockData() {
-    final now = DateTime.now();
-    final weekDates = List.generate(7, (index) {
-      final date = now.add(Duration(days: index));
-      return VenueDateModel(date: date, isAvailable: index != 4); // Giả sử thứ 6 không đặt được
-    });
+  Future<void> _fetchVenueData() async {
+    // 1. Get Venue Detail
+    final detailResult = await _reservationRepository.getVenueDetail(state.venueId);
+    if (detailResult case DbSuccess(data: final venueData)) {
+      // Use venueTypeArray from BE instead of calling dictionary API
+      final availableTypes = venueData.venueTypeArray ?? [];
+      
+      // Default select the first one, or the one passed from the previous screen
+      VenueTypeItem? selectedType;
+      if (availableTypes.isNotEmpty) {
+        selectedType = availableTypes.firstWhere(
+          (t) => t.id == state.venueTypeId,
+          orElse: () => availableTypes.first,
+        );
+      }
 
-    final courts = [
-      const VenueCourtModel(id: '1', name: 'Sân số 1'),
-      const VenueCourtModel(id: '2', name: 'Sân số 2'),
-      const VenueCourtModel(id: '3', name: 'Sân số 3'),
-      const VenueCourtModel(id: '4', name: 'Sân số 4'),
-      const VenueCourtModel(id: 'vip1', name: 'VIP 1'),
-      const VenueCourtModel(id: 'vip2', name: 'VIP 2'),
-    ];
+      emit(state.copyWith(
+        venueDetail: venueData,
+        availableTypes: availableTypes,
+        selectedType: selectedType,
+        venueTypeId: selectedType?.id ?? 0,
+      ));
 
-    final timeSlots = [
-      '05:00', '06:00', '07:00', '08:00', '09:00', '10:00',
-      '11:00', '12:00', '13:00', '14:00', '15:00', '16:00',
-      '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'
-    ];
-
-    final List<VenueBookingSlot> allSlots = [];
-    for (var dateModel in weekDates) {
-      for (var time in timeSlots) {
-        for (var court in courts) {
-          // Mock một số ô đã hết chỗ
-          final isBooked = (time == '07:00' && court.id == '2') || (time == '21:00' && court.id == 'vip1');
-          allSlots.add(VenueBookingSlot(
-            date: dateModel.date,
-            courtId: court.id,
-            time: time,
-            price: 400000,
-            isBooked: isBooked,
-          ));
-        }
+      // 3. Load schedule and slots if we have a type
+      if (selectedType != null) {
+        _fetchInitialData(selectedType.id);
       }
     }
+  }
 
-    emit(state.copyWith(
-      weekDates: weekDates,
-      courts: courts,
-      timeSlots: timeSlots,
-      allSlots: allSlots,
-    ));
+  Future<void> _fetchInitialData(int typeId) async {
+    // 1. Get Week Schedule
+    final weekResult = await _reservationRepository.getVenueWeekSchedule(state.venueId, typeId);
+    if (weekResult case DbSuccess(data: final data)) {
+      emit(state.copyWith(weekDates: data));
+      if (data.isNotEmpty) {
+        // Tự động tìm ngày đầu tiên "Mở cửa" (status == 0) để load dữ liệu
+        final firstAvailableDateModel = data.firstWhere(
+          (d) => d.scheduleStatus == 0,
+          orElse: () => data.first,
+        );
+
+        final firstDate = DateTime.tryParse(firstAvailableDateModel.scheduleDate ?? '') ?? DateTime.now();
+        _fetchAvailableSpaces(firstDate, typeId: typeId);
+      }
+    }
+  }
+
+  Future<void> _fetchAvailableSpaces(DateTime date, {int? typeId}) async {
+    final targetTypeId = typeId ?? state.selectedType?.id ?? 0;
+    if (targetTypeId == 0) return;
+
+    final dateStr = date.toIso8601String().split('T').first;
+    final spacesResult = await _reservationRepository.getVenueAvailableSpaces(
+      state.venueId,
+      targetTypeId,
+      dateStr,
+    );
+
+    if (spacesResult case DbSuccess(data: final data)) {
+      // Extract unique time slots from all spaces
+      final Set<String> times = {};
+      for (var space in data) {
+        if (space.slots != null) {
+          for (var slot in space.slots!) {
+            // Logic xử lý dữ liệu: Ép slotDate từ cha xuống con để đảm bảo định danh duy nhất (UniqueKey) luôn chính xác khi đổi ngày
+            slot.slotDate = space.slotDate;
+            slot.spaceName = space.spaceName;
+            slot.uniqueKey = "${space.spaceId}_${space.slotDate}_${slot.slotStartTime}";
+            if (slot.slotStartTime != null) times.add(slot.slotStartTime!);
+          }
+        }
+      }
+      final sortedTimes = times.toList()..sort();
+
+      emit(state.copyWith(
+        selectedDate: date,
+        spaces: data,
+        timeSlots: sortedTimes,
+        isLoading: false,
+      ));
+    } else {
+      emit(state.copyWith(isLoading: false));
+    }
   }
 
   void onDateSelected(DateTime date) {
-    final dateModel = state.weekDates.firstWhere((d) => DateUtils.isSameDay(d.date, date));
-    if (!dateModel.isAvailable) return;
+    // Tìm model ngày tương ứng trong list weekDates
+    final targetDateStr = date.toIso8601String().split('T').first;
+    final dateModel = state.weekDates.firstWhere(
+      (d) => d.scheduleDate == targetDateStr,
+      orElse: () => VenueWeek(scheduleStatus: 1), // Mặc định coi như không khả dụng nếu không tìm thấy
+    );
 
-    emit(state.copyWith(selectedDate: date));
+    // Nếu ngày là "Không đặt được" (status != 0), chặn không cho chọn và không load API
+    if (dateModel.scheduleStatus != 0) return;
+
+    // Cập nhật ngày và bật loading (giữ lại data cũ để không bị giật layout)
+    emit(state.copyWith(
+      selectedDate: date,
+      isLoading: true,
+    ));
+
+    // Gọi API load dữ liệu cho ngày mới
+    _fetchAvailableSpaces(date);
   }
 
-  void onTabChanged(String tab) {
-    emit(state.copyWith(selectedTab: tab));
+  void onTabChanged(VenueTypeItem type) {
+    if (state.selectedType?.id == type.id) return;
+
+    // Reset danh sách đã chọn khi đổi loại sân (Ví dụ: Sân 5 -> Sân 7)
+    // vì thường không thể đặt chung các loại sân khác nhau trong cùng một đơn
+    emit(state.copyWith(
+      selectedType: type,
+      venueTypeId: type.id,
+      selectedSlots: [], // Reset lại selection
+    ));
+
+    _fetchInitialData(type.id);
   }
 
-  void onSlotTapped(VenueBookingSlot slot) {
-    if (slot.isBooked) return;
+  void onSlotTapped(VenueSlot slot) {
+    // 1 = Booked. Server dùng id == null để báo slot còn trống, nên không chặn theo ID nữa.
+    if (slot.slotStatus == 1) return;
 
-    final List<VenueBookingSlot> newSelection = List.from(state.selectedSlots);
-    final index = newSelection.indexWhere((s) =>
-        DateUtils.isSameDay(s.date, slot.date) && s.courtId == slot.courtId && s.time == slot.time);
+    final List<VenueSlot> newSelection = List.from(state.selectedSlots);
+    final index = newSelection.indexWhere((s) => s.uniqueKey == slot.uniqueKey);
 
     if (index != -1) {
       newSelection.removeAt(index);
@@ -90,17 +165,14 @@ class VenueDetailInteractor extends CubitInteractor<VenueDetailRoutable, VenueDe
     emit(state.copyWith(selectedSlots: newSelection));
   }
 
-  bool isSlotSelected(VenueBookingSlot slot) {
-    return state.selectedSlots.any((s) =>
-        DateUtils.isSameDay(s.date, slot.date) && s.courtId == slot.courtId && s.time == slot.time);
-  }
-
-  void onNavigateBack() {
-    router?.pop();
+  bool isSlotSelected(VenueSlot slot) {
+    return state.selectedSlots.any((s) => s.uniqueKey == slot.uniqueKey);
   }
 
   void onOpenMapTap() {
-    router?.openMap("84a Nguyễn Cửu Vân, phường Gia Định, tp.HCM");
+    if (state.venueDetail?.venueLocation != null) {
+      router?.openMap(state.venueDetail!.venueLocation);
+    }
   }
 
   void onBookingConfirm() {
@@ -109,15 +181,29 @@ class VenueDetailInteractor extends CubitInteractor<VenueDetailRoutable, VenueDe
       return;
     }
 
-    final params = VenuePaymentParams(
-      venueName: state.selectedTab,
-      imageUrl: "https://images.unsplash.com/photo-1599423088114-f81d83764835?q=80&w=2670&auto=format&fit=crop", // Mock image
-      address: "Sân Nguyễn Cửu Vân, phường Gia Định, TP HCM",
-      openingHours: "6h00' - 23h00'",
+    iLog("=== XÁC NHẬN ĐẶT LỊCH ===");
+    iLog("Tổng số slot: ${state.selectedSlots.length}");
+    iLog("Tổng tiền: ${state.totalAmount.toFormatPrice()}");
+
+    for (var i = 0; i < state.selectedSlots.length; i++) {
+      final slot = state.selectedSlots[i];
+      iLog("Slot ${i + 1}: Key=${slot.uniqueKey} | Giá=${slot.slotPrice?.toFormatPrice()}");
+    }
+    iLog("=========================");
+    
+    final detail = state.venueDetail;
+    if (detail == null) return;
+
+    final venueItem = VenueCheckoutItem(
+      venueId: detail.id,
+      venueName: detail.venueName,
+      venueLocation: detail.venueLocation,
+      venueOpeningHours: "${detail.venueOpen} - ${detail.venueClose}",
+      venueTypeName: state.selectedType?.label ?? "",
       selectedSlots: state.selectedSlots,
-      courts: state.courts,
+      venueImageUrl: detail.venueCover.firstOrNull,
     );
 
-    router?.openVenuePayment(params);
+    router?.openCheckoutOrder(venueItem);
   }
 }
