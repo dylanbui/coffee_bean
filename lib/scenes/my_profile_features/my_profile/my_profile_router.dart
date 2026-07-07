@@ -1,3 +1,4 @@
+import 'package:coffee_bean/scenes/feedback_features/send_feedback/send_feedback_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/course_learning_list/course_learning_list_builder.dart';
 import 'package:coffee_bean/scenes/point_features/daily_sign_in/daily_sign_in_builder.dart';
 import 'package:coffee_bean/scenes/setting_features/settings_app/settings_app_builder.dart';
@@ -18,6 +19,7 @@ class ActivityListRoute implements DbNoteRoute {}
 class SettingsAppRoute implements DbNoteRoute {}
 class CouponListRoute implements DbNoteRoute {}
 class DailySignInRoute implements DbNoteRoute {}
+class FeedbackRoute implements DbNoteRoute {}
 
 
 abstract class MyProfileRoutable implements DbNoteRoutable {
@@ -59,6 +61,10 @@ class MyProfileRouter extends DbNoteRouter implements MyProfileRoutable {
 
     } else if (toRoute is DailySignInRoute) {
       final builder = DailySignInBuilder().build();
+      push(builder.viewController);
+
+    } else if (toRoute is FeedbackRoute) {
+      final builder = SendFeedbackBuilder().build();
       push(builder.viewController);
     }
 
