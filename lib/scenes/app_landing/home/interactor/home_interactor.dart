@@ -117,6 +117,7 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
         items: List.generate(
           5,
           (index) => PostItem(
+            id: index + 1,
             authorName: "TylerBallmer invest",
             authorAvatar: "https://i.pravatar.cc/300",
             postDate: "23/04/2026",
@@ -234,6 +235,10 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
 
   void selectMarketTag(MarketData data) {
     // Logic for select market tag
+  }
+
+  void selectPost(PostItem item) {
+    router?.navigate(PostDetailRoute(item.id));
   }
 
   void playVideo(CourseVideoItem item) {

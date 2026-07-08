@@ -104,6 +104,7 @@ class CourseSellersData {
 }
 
 class PostItem {
+  final int id;
   final String authorName;
   final String? authorAvatar;
   final String postDate;
@@ -117,6 +118,7 @@ class PostItem {
   final List<MarketData> marketData;
 
   PostItem({
+    required this.id,
     required this.authorName,
     this.authorAvatar,
     required this.postDate,
