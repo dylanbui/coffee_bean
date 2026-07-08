@@ -1,3 +1,4 @@
+import 'package:app_video_player/app_video_player.dart';
 import 'package:coffee_bean/data/model/response/hub/activity_info_detail.dart';
 import 'package:coffee_bean/scenes/event_features/activity_detail/interactor/activity_detail_event_state.dart';
 import 'package:coffee_bean/scenes/event_features/activity_detail/interactor/activity_detail_interactor.dart';
@@ -87,6 +88,9 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
   }
 
   Widget _buildSliverAppBar(ActivityInfoDetail activity) {
+    // Link MP4 mẫu để demo
+    const String demoMp4Url = "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_30MB.mp4";
+
     return CoffeeSliverAppBar(
       expandedHeight: 316,
       pinned: true,
@@ -119,12 +123,9 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
               : const SizedBox.shrink();
         },
       ),
-      background: DbCachedImageWidget(
-        imageUrl: activity.activityCover ?? "",
-        width: double.infinity,
-        height: 316,
-        fit: BoxFit.cover,
-        borderRadius: 0,
+      background: AppVideoPlayer(
+        url: demoMp4Url,
+        thumbnailUrl: activity.activityCover,
       ),
     );
   }

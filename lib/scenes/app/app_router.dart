@@ -52,12 +52,10 @@ class AppRouter extends DbNoteRouter implements AppRoutable {
     // --- TEST UI CHECKOUT ORDER ---
     // await _testCheckoutOrder();
 
-    navigator.push(const AppVideoPlayerTest());
-
     // Load trang dau tien
-    // MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
-    // final router = mainTabbarBuilder.build();
-    // navigator.pushSameRootPage(router.viewController);
+    MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
+    final router = mainTabbarBuilder.build();
+    navigator.pushSameRootPage(router.viewController);
 
     // final builder = UpdateProfileBuilder();
     // navigator.pushSameRootPage(builder.build().viewController);

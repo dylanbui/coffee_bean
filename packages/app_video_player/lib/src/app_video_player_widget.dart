@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:app_video_player/src/widgets/thumbnail_placeholder.dart';
 import 'package:app_video_player/src/widgets/seek_overlay.dart';
-import 'package:app_video_player/src/youtube_player_widget.dart';
+// Future YouTube Support: Import youtube_player_widget.dart here
 
 class AppVideoPlayer extends StatefulWidget {
   final String url;
@@ -25,17 +25,16 @@ class AppVideoPlayer extends StatefulWidget {
 class _AppVideoPlayerState extends State<AppVideoPlayer> {
   late VideoPlayerController _videoController;
   ChewieController? _chewieController;
-  bool _isYouTube = false;
   bool _isControlsVisible = false;
   Timer? _hideTimer;
 
   @override
   void initState() {
     super.initState();
-    _isYouTube = widget.url.contains('youtube.com') || widget.url.contains('youtu.be');
-    if (!_isYouTube) {
-      _initializeServerPlayer();
-    }
+    // Future YouTube Support: Detect YouTube URL here
+    // bool isYouTube = widget.url.contains('youtube.com') || widget.url.contains('youtu.be');
+    
+    _initializeServerPlayer();
   }
 
   Future<void> _initializeServerPlayer() async {
@@ -92,9 +91,8 @@ class _AppVideoPlayerState extends State<AppVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isYouTube) {
-      return YoutubePlayerWidget(url: widget.url);
-    }
+    // Future YouTube Support:
+    // if (isYouTube) return YoutubePlayerWidget(url: widget.url);
 
     if (_chewieController == null) {
       return const Center(child: CircularProgressIndicator(color: Colors.brown));
@@ -131,10 +129,8 @@ class _AppVideoPlayerState extends State<AppVideoPlayer> {
   @override
   void dispose() {
     _hideTimer?.cancel();
-    if (!_isYouTube) {
-      _videoController.dispose();
-      _chewieController?.dispose();
-    }
+    _videoController.dispose();
+    _chewieController?.dispose();
     super.dispose();
   }
 }

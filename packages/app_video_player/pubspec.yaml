@@ -1,5 +1,5 @@
 name: app_video_player
-description: A custom video player package for Coffee Bean project supporting Server MP4/HLS and YouTube.
+description: A custom video player package for Coffee Bean project supporting Server MP4/HLS.
 version: 0.0.1
 publish_to: 'none'
 
@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  video_player: ^2.11.1
-  chewie: ^1.14.1
-  youtube_player_flutter: ^9.1.1
+  video_player: ^2.10.1
+  chewie: ^1.13.0
+  # video_player: ^2.9.1
+  # chewie: ^1.10.0 # Good
+  # To support YouTube in the future youtube_player_flutter, add:

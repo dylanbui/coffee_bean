@@ -1,3 +1,4 @@
+import 'package:app_video_player/app_video_player.dart';
 import 'package:coffee_bean/scenes/my_profile_features/course_learning_detail/interactor/course_learning_detail_event_state.dart';
 import 'package:coffee_bean/scenes/my_profile_features/course_learning_detail/interactor/course_learning_detail_interactor.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
@@ -88,6 +89,10 @@ class _CourseLearningDetailPageState extends AppCubitState<CourseLearningDetailP
   }
 
   Widget _buildSliverAppBar(CourseLearningDetailState state) {
+    final lesson = state.lesson!;
+    // Link MP4 mẫu để demo nếu lessonVideo null
+    const String demoMp4Url = "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_30MB.mp4";
+
     return CoffeeSliverAppBar(
       expandedHeight: 320,
       pinned: true,
@@ -108,7 +113,10 @@ class _CourseLearningDetailPageState extends AppCubitState<CourseLearningDetailP
               : const SizedBox.shrink();
         },
       ),
-      background: _buildVideoPlaceholder(),
+      background: AppVideoPlayer(
+        url: lesson.lessonVideo ?? demoMp4Url,
+        // thumbnailUrl: Có thể truyền thumbnail từ data nếu có
+      ),
     );
   }
 

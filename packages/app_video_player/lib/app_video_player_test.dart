@@ -8,7 +8,7 @@ class AppVideoPlayerTest extends StatelessWidget {
   Widget build(BuildContext context) {
     // Link MP4 mẫu để demo
     const String demoMp4Url = "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_30MB.mp4";
-    const String youtubeUrl = "https://www.youtube.com/watch?v=aqz-KE-bpKQ";
+    // Future YouTube Support: const String youtubeUrl = "https://www.youtube.com/watch?v=aqz-KE-bpKQ";
 
     return Scaffold(
       appBar: AppBar(
@@ -31,17 +31,6 @@ class AppVideoPlayerTest extends StatelessWidget {
                 url: demoMp4Url,
                 enableSeekOverlay: true,
               ),
-            ),
-
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text("2. YouTube Video - Dùng YoutubePlayerWidget", 
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            ),
-            // Video từ YouTube
-            const AspectRatio(
-              aspectRatio: 16 / 9,
-              child: AppVideoPlayer(url: youtubeUrl),
             ),
 
             const Padding(

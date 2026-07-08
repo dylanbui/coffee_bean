@@ -1,3 +1,4 @@
+import 'package:app_video_player/app_video_player.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
@@ -57,6 +58,46 @@ class _CourseVideoCard extends StatelessWidget {
   final HomeInteractor interactor;
   const _CourseVideoCard({required this.item, required this.interactor});
 
+  void _showVideoPlayer(BuildContext context) {
+    // Sử dụng link demo mặc định nếu videoUrl trống hoặc để test
+    const String demoMp4Url = "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_30MB.mp4";
+    final url = item.videoUrl.isEmpty ? demoMp4Url : item.videoUrl;
+
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "VideoPlayer",
+      barrierColor: Colors.black.withValues(alpha: 0.9),
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Stack(
+            children: [
+              Center(
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: AppVideoPlayer(
+                    url: url,
+                    thumbnailUrl: item.imageUrl,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: MediaQuery.of(context).padding.top + 10,
+                right: 20,
+                child: IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white, size: 30),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -72,7 +113,10 @@ class _CourseVideoCard extends StatelessWidget {
               top: 15,
               right: 15,
               child: TapEffect(
-                onTap: () => interactor.playVideo(item),
+                onTap: () {
+                  interactor.playVideo(item);
+                  _showVideoPlayer(context);
+                },
                 child: AppIcon(AppAssets.icons.icPlayVideo, size: 26),
               ),
             ),
