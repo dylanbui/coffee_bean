@@ -1,6 +1,7 @@
 // This file defines logical routes for navigation, especially for deep linking.
 // They are simple data classes that carry the necessary parameters for a destination.
 
+import 'package:app_video_player/app_video_player.dart';
 import 'package:coffee_bean/config/app_pref.dart';
 import 'package:coffee_bean/data/local/live_service/cart_service.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
@@ -51,10 +52,12 @@ class AppRouter extends DbNoteRouter implements AppRoutable {
     // --- TEST UI CHECKOUT ORDER ---
     // await _testCheckoutOrder();
 
+    navigator.push(const AppVideoPlayerTest());
+
     // Load trang dau tien
-    MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
-    final router = mainTabbarBuilder.build();
-    navigator.pushSameRootPage(router.viewController);
+    // MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
+    // final router = mainTabbarBuilder.build();
+    // navigator.pushSameRootPage(router.viewController);
 
     // final builder = UpdateProfileBuilder();
     // navigator.pushSameRootPage(builder.build().viewController);

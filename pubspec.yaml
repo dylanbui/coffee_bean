@@ -44,6 +44,9 @@ dependencies:
   # Local database module (Isar)
   coffee_bean_db:
     path: ./packages/coffee_bean_db
+  # Custom Video Player Module
+  app_video_player:
+    path: ./packages/app_video_player
 
   # --- Logic & Architecture ---
   # State management framework

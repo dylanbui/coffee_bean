@@ -6,6 +6,7 @@
 # Đường dẫn tới các local packages
 DB_CORE="./packages/db_core"
 COFFEE_DB="./packages/coffee_bean_db"
+APP_VIDEO_PLAYER="./packages/app_video_player"
 ROOT_PROJECT="."
 
 # File lưu checksum để so sánh
@@ -48,11 +49,11 @@ function check_and_pubget() {
 echo "🔄 Auto build hệ thống module bắt đầu..."
 
 # Bước 1: Build db_core (Nền tảng)
-echo "--- [1/3] Processing db_core ---"
+echo "--- [1/4] Processing db_core ---"
 check_and_pubget $DB_CORE
 
 # Bước 2: Build coffee_bean_db (Phụ thuộc vào db_core)
-echo "--- [2/3] Processing coffee_bean_db ---"
+echo "--- [2/4] Processing coffee_bean_db ---"
 check_and_pubget $COFFEE_DB
 cd $COFFEE_DB || exit
 if grep -q "build_runner" pubspec.yaml; then
@@ -60,8 +61,12 @@ if grep -q "build_runner" pubspec.yaml; then
 fi
 cd - >/dev/null || exit
 
-# Bước 3: Build source chính
-echo "--- [3/3] Processing Root Project ---"
+# Bước 3: Build app_video_player
+echo "--- [3/4] Processing app_video_player ---"
+check_and_pubget $APP_VIDEO_PLAYER
+
+# Bước 4: Build source chính
+echo "--- [4/4] Processing Root Project ---"
 check_and_pubget $ROOT_PROJECT
 dart run build_runner build
 
