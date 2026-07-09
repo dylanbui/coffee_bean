@@ -131,7 +131,7 @@ class _PostCard extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () =>
-                          context.showPhotoGallery(imageUrls: item.images, initialIndex: index),
+                          context.showMediaGallery(urls: item.images, initialIndex: index),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(15),
                         child: SizedBox(

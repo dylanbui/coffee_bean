@@ -7,7 +7,9 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import 'package:coffee_bean/shared/widget/image_slider_widget.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_image_helper.dart';
+import 'package:coffee_bean/shared/widget/media_gallery/app_media_gallery.dart';
 import 'package:db_core/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:db_core/utils/flash_utils/flash_toast_helper.dart';
 
@@ -110,6 +112,34 @@ extension FlashExtension on BuildContext {
             imageUrls: imageUrls,
             initialIndex: initialIndex,
             heroTagPrefix: heroPrefix,
+        );
+    }
+
+    /// Views media (images & videos) in a gallery
+    void showMediaGallery({required List<String> urls, int initialIndex = 0, String? heroPrefix}) {
+        AppMediaGallery.show(
+            this,
+            urls: urls,
+            initialIndex: initialIndex,
+            heroTagPrefix: heroPrefix,
+        );
+    }
+
+    /// Trả về một ImageSliderWidget đã được cấu hình sẵn để mở Media Gallery khi tap
+    Widget imageSlider({
+        required List<String> images,
+        double height = 300,
+        ImageSliderIndicatorType indicatorType = ImageSliderIndicatorType.fraction,
+        double borderRadius = 0,
+        String? heroPrefix,
+    }) {
+        return ImageSliderWidget(
+            images: images,
+            height: height,
+            indicatorType: indicatorType,
+            borderRadius: borderRadius,
+            onImageTap: (index, allImages) =>
+                showMediaGallery(urls: allImages, initialIndex: index, heroPrefix: heroPrefix),
         );
     }
 

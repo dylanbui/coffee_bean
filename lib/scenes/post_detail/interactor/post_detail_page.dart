@@ -9,6 +9,7 @@ import 'package:coffee_bean/shared/ui_control/share_action/share_poster_dialog.d
 import 'package:coffee_bean/shared/widget/avatar_widget.dart';
 import 'package:coffee_bean/shared/widget/image_slider_widget.dart';
 import 'package:coffee_bean/utils/extensions.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:db_core/db_core.dart';
 import 'package:db_core/utils/app_label.dart';
 import 'package:flutter/material.dart';
@@ -84,9 +85,9 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
                 ],
                 const SizedBox(height: 16),
                 if (post.images != null && post.images!.isNotEmpty)
-                  ImageSliderWidget(
+                  context.imageSlider(
                     images: post.images!,
-                    height: 160,
+                    height: 240,
                     borderRadius: 16,
                     indicatorType: ImageSliderIndicatorType.dots,
                   ),

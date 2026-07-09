@@ -6,6 +6,7 @@ import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_sliver_app_bar.dart';
 import 'package:coffee_bean/shared/widget/avatar_widget.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:coffee_bean/shared/widget/image_slider_widget.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:db_core/utils/app_label.dart';
@@ -95,7 +96,7 @@ class _CourseLearningCatalogPageState extends AppCubitState<CourseLearningCatalo
               : const SizedBox.shrink();
         },
       ),
-      background: ImageSliderWidget(
+      background: context.imageSlider(
         images: course.courseCover,
         height: 320,
         indicatorType: ImageSliderIndicatorType.all,

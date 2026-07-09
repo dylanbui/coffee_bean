@@ -9,6 +9,7 @@ import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/avatar_widget.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:coffee_bean/shared/widget/image_slider_widget.dart';
 import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
@@ -225,7 +226,7 @@ class InstructorProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
             height: 280,
             child: Opacity(
               opacity: sliderVisiblePercent,
-              child: ImageSliderWidget(
+              child: context.imageSlider(
                 images: data.coverImages,
                 height: 280,
                 indicatorType: ImageSliderIndicatorType.dots,

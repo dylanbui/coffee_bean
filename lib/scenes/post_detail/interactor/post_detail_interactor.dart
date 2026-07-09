@@ -37,6 +37,7 @@ class PostDetailInteractor extends CubitInteractor<PostDetailRoutable, PostDetai
       hashtags: ["#jbhsdkjbdj", "#hagtag"],
       images: [
         "https://picsum.photos/id/10/800/400",
+        "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4",
         "https://picsum.photos/id/20/800/400",
         "https://picsum.photos/id/30/800/400",
       ],

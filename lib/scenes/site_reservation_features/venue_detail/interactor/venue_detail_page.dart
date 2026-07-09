@@ -183,7 +183,7 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
               : const SizedBox.shrink();
         },
       ),
-      background: ImageSliderWidget(
+      background: context.imageSlider(
         images: images,
         height: 316,
         indicatorType: ImageSliderIndicatorType.all,

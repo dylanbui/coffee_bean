@@ -9,6 +9,7 @@ import 'package:coffee_bean/shared/ui_control/share_action/share_poster_dialog.d
 import 'package:coffee_bean/shared/widget/avatar_widget.dart';
 import 'package:coffee_bean/shared/widget/image_slider_widget.dart';
 import 'package:coffee_bean/utils/currency_utils.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:db_core/utils/app_label.dart';
 import 'package:db_core/utils/tap_effect.dart';
@@ -132,7 +133,7 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
               : const SizedBox.shrink();
         },
       ),
-      background: ImageSliderWidget(
+      background: context.imageSlider(
         images: course.courseCover,
         height: 316,
         indicatorType: ImageSliderIndicatorType.all,

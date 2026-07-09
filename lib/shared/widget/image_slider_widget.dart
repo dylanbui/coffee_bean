@@ -1,3 +1,4 @@
+import 'package:app_video_player/app_video_player.dart';
 import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,7 @@ class ImageSliderWidget extends StatefulWidget {
   final double borderRadius;
   final Color? backgroundColor;
   final ValueChanged<int>? onPageChanged;
+  final Function(int index, List<String> allImages)? onImageTap;
 
   const ImageSliderWidget({
     super.key,
@@ -23,6 +25,7 @@ class ImageSliderWidget extends StatefulWidget {
     this.borderRadius = 0,
     this.backgroundColor,
     this.onPageChanged,
+    this.onImageTap,
   });
 
   @override
@@ -43,6 +46,14 @@ class _ImageSliderWidgetState extends State<ImageSliderWidget> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  bool _isVideo(String url) {
+    final path = url.split('?').first.toLowerCase();
+    return path.endsWith('.mp4') ||
+        path.endsWith('.mov') ||
+        path.endsWith('.m4v') ||
+        path.endsWith('.m3u8');
   }
 
   @override
@@ -74,12 +85,35 @@ class _ImageSliderWidgetState extends State<ImageSliderWidget> {
               widget.onPageChanged?.call(index);
             },
             itemBuilder: (context, index) {
-              return DbCachedImageWidget(
-                imageUrl: widget.images[index],
-                width: double.infinity,
-                height: widget.height,
-                fit: widget.fit,
-                borderRadius: widget.borderRadius,
+              final url = widget.images[index];
+
+              if (_isVideo(url)) {
+                return Container(
+                  width: double.infinity,
+                  height: widget.height,
+                  color: widget.backgroundColor ?? Colors.black,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(widget.borderRadius),
+                    child: AppVideoPlayer(url: url),
+                  ),
+                );
+              }
+
+              return GestureDetector(
+                onTap: () {
+                  if (widget.onImageTap != null) {
+                    widget.onImageTap!(index, widget.images);
+                  } else {
+                    // Mặc định hoặc không làm gì nếu không có callback
+                  }
+                },
+                child: DbCachedImageWidget(
+                  imageUrl: url,
+                  width: double.infinity,
+                  height: widget.height,
+                  fit: widget.fit,
+                  borderRadius: widget.borderRadius,
+                ),
               );
             },
           ),
