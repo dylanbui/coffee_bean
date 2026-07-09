@@ -168,8 +168,11 @@ Future<void> _setupUserManager() async {
   // Load data from SecureStorage into UserManager RAM immediately
   await UserManager().init();
 
-  // TODO: 3. Demo logic - clear all data on every app restart (Development phase only)
+  // 3. Demo logic - clear all data on every app restart (Development phase only)
   // await UserManager().doLogoutAndClearAll();
+  
+  // Clear cart on every app restart to ensure fresh data for testing
+  await locator<CartService>().clearCart();
 }
 
 Future<void> _setupNetwork() async {

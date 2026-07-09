@@ -1,4 +1,6 @@
+import 'package:coffee_bean/data/model/request/trade/order_settlement_request.dart';
 import 'package:coffee_bean/data/model/response/trade/cart_list_response.dart';
+import 'package:coffee_bean/data/model/response/trade/order_settlement_response.dart';
 import 'package:coffee_bean/data/network/network_response.dart';
 import 'package:db_core/db_core.dart';
 
@@ -87,5 +89,16 @@ class TradeRepository extends BaseRepository {
             })
         .mapResponse()
         .toValue<bool>();
+  }
+
+  // --- ORDER API ---
+
+  /// Get order settlement information: GET /app-api/trade/order/settlement
+  Future<DbResult<OrderSettlementResponse>> getSettlementInfo(OrderSettlementRequest request) async {
+    return await networkClient
+        .request('/app-api/trade/order/settlement', 
+            queryParameters: request.toQueryParameters())
+        .mapResponseTo(OrderSettlementResponse.fromJson)
+        .toObject();
   }
 }

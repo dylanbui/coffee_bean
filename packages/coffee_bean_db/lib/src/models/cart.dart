@@ -1,5 +1,5 @@
 import 'package:isar_community/isar.dart';
-import 'product.dart';
+import 'package:coffee_bean_db/src/models/product.dart';
 
 part 'cart.g.dart';
 

@@ -2,7 +2,7 @@ import 'package:coffee_bean/scenes/shopping_features/product_detail/interactor/p
 import 'package:coffee_bean/scenes/shopping_features/product_detail/interactor/product_detail_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/utils/number_to_vietnamese.dart';
+import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:db_core/utils/tap_effect.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +36,7 @@ class ProductDetailFooter extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      NumberToVietnamese.formatNumber(state.totalPrice),
+                      state.totalPrice.toFormatPrice(),
                       style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: TMLabsColor.primary),
                     ),
                     _buildStepping(state),

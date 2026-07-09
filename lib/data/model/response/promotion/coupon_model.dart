@@ -78,7 +78,7 @@ class CouponModel extends Equatable {
   }
 
   double get discountValue {
-    if (discountType == 1) return (discountPrice ?? 0) / 100.0;
+    if (discountType == 1) return (discountPrice ?? 0).toDouble();
     if (discountType == 2) return (discountPercent ?? 0).toDouble(); // Return percent value (e.g. 85.0 for 85%)
     return 0.0;
   }

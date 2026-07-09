@@ -4,7 +4,7 @@ import 'package:coffee_bean/scenes/shopping_features/shopping/interactor/shoppin
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/utils/number_to_vietnamese.dart';
+import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:flutter/material.dart';
 
 class ShoppingFooter extends StatelessWidget {
@@ -68,7 +68,7 @@ class ShoppingFooter extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        NumberToVietnamese.formatNumber(totalPrice),
+                        totalPrice.toFormatPrice(),
                         style: TMLabsTextStyle.title.copyWith(color: TMLabsColor.white, fontWeight: FontWeight.bold),
                       ),
                       const Text(

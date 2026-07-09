@@ -43,8 +43,8 @@ mixin ProductServiceMixin on BaseMixin {
         ..picUrl = json['picUrl']
         ..sliderPicUrls = (json['sliderPicUrls'] as List?)?.map((e) => e.toString()).toList()
         ..specType = json['specType'] ?? false
-        ..price = (json['price'] ?? 0) / 100.0 // API returns cents
-        ..marketPrice = (json['marketPrice'] ?? 0) / 100.0
+        ..price = (json['price'] ?? 0).toDouble() // API returns raw units
+        ..marketPrice = (json['marketPrice'] ?? 0).toDouble()
         ..stock = json['stock'] ?? 0
         ..salesCount = json['salesCount'] ?? 0
         ..deliveryTypes = (json['deliveryTypes'] as List?)?.map((e) => e as int).toList()

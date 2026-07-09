@@ -18,7 +18,7 @@ class CartItem {
 
   String get cartItemId => "${product.id}_${note ?? ''}";
 
-  double get totalPrice => (product.price * quantity) / 100.0;
+  num get totalPrice => product.price * quantity;
 
   factory CartItem.fromJson(Dictionary json) => _$CartItemFromJson(json);
   Dictionary toJson() => _$CartItemToJson(this);

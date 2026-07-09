@@ -37,7 +37,11 @@ class AppCartCheckoutContract extends CheckoutItemContract {
     'store_id': store?.id,
     'note': noteNotifier.value,
     'delivery_method': deliveryMethodNotifier.value.name,
-    'items': items.map((e) => {'sku_id': e.skuId, 'quantity': e.quantity}).toList(),
+    'items': items.map((e) => {
+      'sku_id': e.skuId, 
+      'quantity': e.quantity,
+      'cart_id': e.cartItemId, // SỬA TẠI ĐÂY: Dùng cartItemId (Server ID) thay vì e.id (Local ID)
+    }).toList(),
   };
 
   @override

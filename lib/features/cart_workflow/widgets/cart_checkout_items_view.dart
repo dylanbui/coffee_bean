@@ -1,5 +1,5 @@
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/utils/number_to_vietnamese.dart';
+import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:coffee_bean_db/coffee_bean_db.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +43,7 @@ class CartCheckoutItemsView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("x${item.quantity}", style: TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.bold)),
-                        Text(NumberToVietnamese.formatNumber(item.totalPrice), style: TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.bold)),
+                        Text(item.totalPrice.toFormatPrice(), style: TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],

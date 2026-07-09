@@ -220,7 +220,7 @@ extension CartServiceSync on CartService {
           ..skuId = itemRes.sku?.id ?? 0
           ..name = itemRes.spu?.name ?? ""
           ..image = itemRes.sku?.picUrl ?? itemRes.spu?.picUrl
-          ..finalPrice = (itemRes.sku?.price ?? 0) / 100.0
+          ..finalPrice = (itemRes.sku?.price ?? 0).toDouble()
           ..quantity = itemRes.count
           ..selectedOptions = opts
           ..addedAt = DateTime.now();
@@ -296,7 +296,7 @@ extension _CartServiceInternal on CartService {
       }
     } else if (quantity > 0 && product != null) {
       // Tính toán giá cuối cùng dựa trên các option đã chọn
-      double price = product.price / 100.0;
+      double price = product.price.toDouble();
       options?.forEach((o) => price += o.extraPrice);
 
       final newItem = TblCartItem()
@@ -328,7 +328,7 @@ extension _CartServiceInternal on CartService {
           await isar.tblCartItems.put(existing);
         }
       } else if (quantity > 0 && product != null) {
-        double price = product.price / 100.0;
+        double price = product.price.toDouble();
         options?.forEach((o) => price += o.extraPrice);
 
         final newItem = TblCartItem()

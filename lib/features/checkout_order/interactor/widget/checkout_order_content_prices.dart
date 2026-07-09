@@ -97,8 +97,12 @@ class CheckoutOrderContentPrices extends StatelessWidget {
         children: [
           _buildSummaryRow("Số tiền gốc", _formatPrice(state.baseAmount), TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.bold)),
           if (isLoggedIn) ...[
+            if (state.deliveryPrice > 0) ...[
+              const SizedBox(height: 20),
+              _buildSummaryRow("Phí vận chuyển", _formatPrice(state.deliveryPrice), TMLabsTextStyle.body.copyWith(fontWeight: FontWeight.bold)),
+            ],
             const SizedBox(height: 20),
-            _buildSummaryRow("Giảm giá ưu đãi", "-${_formatPrice(state.promotion.couponDiscount)}", TMLabsTextStyle.body.copyWith(color: Colors.red)),
+            _buildSummaryRow("Giảm giá ưu đãi", "-${_formatPrice(state.couponDiscount)}", TMLabsTextStyle.body.copyWith(color: Colors.red)),
             const SizedBox(height: 20),
             _buildSummaryRow("Giảm giá từ điểm", "-${_formatPrice(state.pointDiscount)}", TMLabsTextStyle.body.copyWith(color: Colors.red)),
             const SizedBox(height: 24),
