@@ -99,6 +99,9 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
       case "FEEDBACK":
         router?.navigate(FeedbackRoute());
         break;
+      case "MAP_TEST":
+        router?.navigate(MapTestRoute());
+        break;
       default:
         debugPrint("Action $actionKey chưa được thực hiện");
     }

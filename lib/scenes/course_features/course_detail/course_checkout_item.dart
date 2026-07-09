@@ -1,4 +1,4 @@
-import 'package:coffee_bean/scenes/checkout_order/checkout_order_common.dart';
+import 'package:coffee_bean/features/checkout_order/checkout_order_common.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/phone_input_field.dart';

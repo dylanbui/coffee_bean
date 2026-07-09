@@ -1,5 +1,5 @@
-import 'package:coffee_bean/scenes/checkout_order/checkout_order_builder.dart';
-import 'package:coffee_bean/scenes/checkout_order/checkout_order_common.dart';
+import 'package:coffee_bean/features/checkout_order/checkout_order_builder.dart';
+import 'package:coffee_bean/features/checkout_order/checkout_order_common.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_interactor.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_page.dart';
 import 'package:db_core/architecture_ribs/note_builder.dart';

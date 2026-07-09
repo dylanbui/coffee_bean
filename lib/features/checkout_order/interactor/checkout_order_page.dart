@@ -1,9 +1,9 @@
-import 'package:coffee_bean/scenes/checkout_order/interactor/checkout_order_event_state.dart';
-import 'package:coffee_bean/scenes/checkout_order/interactor/checkout_order_interactor.dart';
-import 'package:coffee_bean/scenes/checkout_order/interactor/widget/checkout_order_content_prices.dart';
-import 'package:coffee_bean/scenes/checkout_order/interactor/widget/checkout_order_footer.dart';
-import 'package:coffee_bean/scenes/checkout_order/interactor/widget/checkout_order_summary_fallback.dart';
-import 'package:coffee_bean/scenes/checkout_order/interactor/widget/checkout_order_payment_result.dart';
+import 'package:coffee_bean/features/checkout_order/interactor/checkout_order_event_state.dart';
+import 'package:coffee_bean/features/checkout_order/interactor/checkout_order_interactor.dart';
+import 'package:coffee_bean/features/checkout_order/interactor/widget/checkout_order_content_prices.dart';
+import 'package:coffee_bean/features/checkout_order/interactor/widget/checkout_order_footer.dart';
+import 'package:coffee_bean/features/checkout_order/interactor/widget/checkout_order_summary_fallback.dart';
+import 'package:coffee_bean/features/checkout_order/interactor/widget/checkout_order_payment_result.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';

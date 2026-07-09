@@ -7,6 +7,8 @@ import 'package:coffee_bean/scenes/my_profile_features/change_mobile/change_mobi
 import 'package:coffee_bean/scenes/my_profile_features/coupon_list/coupon_list_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/update_profile/update_profile_builder.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/reservation_list/reservation_list_builder.dart';
+import 'package:coffee_bean/features/app_map/app_map_builder.dart';
+import 'package:coffee_bean/data/map_provider/app_map_contract.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:coffee_bean/scenes/user_auth_features/user_auth_flow.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,6 +22,7 @@ class SettingsAppRoute implements DbNoteRoute {}
 class CouponListRoute implements DbNoteRoute {}
 class DailySignInRoute implements DbNoteRoute {}
 class FeedbackRoute implements DbNoteRoute {}
+class MapTestRoute implements DbNoteRoute {}
 
 
 abstract class MyProfileRoutable implements DbNoteRoutable {
@@ -65,6 +68,16 @@ class MyProfileRouter extends DbNoteRouter implements MyProfileRoutable {
 
     } else if (toRoute is FeedbackRoute) {
       final builder = SendFeedbackBuilder().build();
+      push(builder.viewController);
+
+    } else if (toRoute is MapTestRoute) {
+      final marker = MapMarker(
+        id: "tmlabs_coffee",
+        location: const MapLocation(10.796993411873403, 106.7059799422638),
+        title: "TMLabs Coffee",
+        address: "84a Nguyễn Cửu Vân, Gia Định, Hồ Chí Minh, Vietnam",
+      );
+      final builder = AppMapBuilder(marker).build();
       push(builder.viewController);
     }
 

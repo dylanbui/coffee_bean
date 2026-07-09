@@ -1,5 +1,5 @@
-import 'package:coffee_bean/scenes/checkout_order/checkout_order_builder.dart';
-import 'package:coffee_bean/scenes/checkout_order/checkout_order_common.dart';
+import 'package:coffee_bean/features/checkout_order/checkout_order_builder.dart';
+import 'package:coffee_bean/features/checkout_order/checkout_order_common.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_detail/interactor/course_detail_interactor.dart';
 import 'package:coffee_bean/scenes/course_features/course_detail/interactor/course_detail_page.dart';

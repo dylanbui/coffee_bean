@@ -1,6 +1,6 @@
 import 'package:coffee_bean/data/model/payment_domain.dart';
 import 'package:coffee_bean/data/model/response/trade/store_model.dart';
-import 'package:coffee_bean/scenes/checkout_order/checkout_order_common.dart';
+import 'package:coffee_bean/features/checkout_order/checkout_order_common.dart';
 import 'package:coffee_bean/features/cart_workflow/widgets/cart_checkout_header_view.dart';
 import 'package:coffee_bean/features/cart_workflow/widgets/cart_checkout_items_view.dart';
 import 'package:coffee_bean/features/cart_workflow/widgets/cart_checkout_options_view.dart';

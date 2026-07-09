@@ -1,4 +1,4 @@
-import 'package:coffee_bean/scenes/checkout_order/checkout_order_common.dart';
+import 'package:coffee_bean/features/checkout_order/checkout_order_common.dart';
 import 'package:db_core/commons_constants.dart';
 import 'package:flutter/material.dart';
 

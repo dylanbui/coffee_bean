@@ -5,7 +5,6 @@ import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:db_core/db_core.dart';
-import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:coffee_bean/shared/service/notify_app_upgrade/app_upgrade_service.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -51,6 +50,32 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
                       _buildActionsList(),
                       const SizedBox(height: 16),
                       _buildUserProfileActionsList(),
+                      const SizedBox(height: 16),
+
+                      DbSelectionRow(
+                        leading: const SizedBox(
+                          width: 24,
+                          child: Center(
+                            child: Icon(Icons.map_outlined, size: 20, color: TMLabsColor.secondary),
+                          ),
+                        ),
+                        title: 'Kiểm tra Bản đồ (Test)',
+                        titleStyle: TMLabsTextStyle.body.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: TMLabsColor.primary,
+                        ),
+                        trailing: SizedBox(
+                          width: 14,
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: AppIcon(AppAssets.icons.icArrowRightNone, size: 14, color: TMLabsColor.deepNavy.withValues(alpha: 0.8)),
+                          ),
+                        ),
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        onTap: () {
+                          interactor.doMainAction("MAP_TEST");
+                        },
+                      ),
                       const SizedBox(height: 16),
 
                       DbSelectionRow(

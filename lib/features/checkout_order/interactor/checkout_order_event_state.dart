@@ -1,5 +1,5 @@
 import 'package:coffee_bean/data/model/payment_domain.dart';
-import 'package:coffee_bean/scenes/checkout_order/checkout_order_common.dart';
+import 'package:coffee_bean/features/checkout_order/checkout_order_common.dart';
 import 'package:db_core/db_core.dart';
 
 enum CheckoutOrderStatus { confirming, processing, success, failure }

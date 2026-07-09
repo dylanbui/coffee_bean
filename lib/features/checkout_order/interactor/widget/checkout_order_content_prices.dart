@@ -1,8 +1,8 @@
 import 'package:coffee_bean/data/local/settings_app_manager/settings_app_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/model/payment_domain.dart';
-import 'package:coffee_bean/scenes/checkout_order/interactor/checkout_order_event_state.dart';
-import 'package:coffee_bean/scenes/checkout_order/interactor/checkout_order_interactor.dart';
+import 'package:coffee_bean/features/checkout_order/interactor/checkout_order_event_state.dart';
+import 'package:coffee_bean/features/checkout_order/interactor/checkout_order_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/note_picker_modal.dart';
