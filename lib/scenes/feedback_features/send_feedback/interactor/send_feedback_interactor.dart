@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:coffee_bean/data/repository/feedback_repository.dart';
 import 'package:coffee_bean/data/repository/infra_repository.dart';
-import 'package:coffee_bean/scenes/feedback_features/feedback_record/feedback_record_builder.dart';
 import 'package:coffee_bean/scenes/feedback_features/send_feedback/send_feedback_builder.dart';
 import 'package:coffee_bean/utils/image_utils.dart';
 import 'package:db_core/db_core.dart';
@@ -11,35 +10,31 @@ class SendFeedbackInteractor extends CubitInteractor<SendFeedbackRoutable, SendF
   final FeedbackRepository _feedbackRepository = FeedbackRepository();
   final InfraRepository _infraRepository = InfraRepository();
 
-  SendFeedbackInteractor(SendFeedbackRoutable router) : super(const SendFeedbackInitial(), router: router);
+  SendFeedbackInteractor(SendFeedbackRoutable router) : super(SendFeedbackInitial(), router: router);
 
   void onTextChanged(String text) {
-    emit(SendFeedbackUpdate(text: text, images: state.images));
+    emit(state.copyWith(text: text));
   }
 
   void onImagePicked(String path) {
     final updatedImages = List<String>.from(state.images)..add(path);
-    emit(SendFeedbackUpdate(text: state.text, images: updatedImages));
+    emit(state.copyWith(images: updatedImages));
   }
 
   void onImagesPicked(List<String> paths) {
     final updatedImages = List<String>.from(state.images)..addAll(paths);
-    emit(SendFeedbackUpdate(text: state.text, images: updatedImages));
+    emit(state.copyWith(images: updatedImages));
   }
 
   void removeImage(int index) {
     final updatedImages = List<String>.from(state.images)..removeAt(index);
-    emit(SendFeedbackUpdate(text: state.text, images: updatedImages));
+    emit(state.copyWith(images: updatedImages));
   }
-
-  // void goToFeedbackRecord() {
-  //   router?.navigate(Fee());
-  // }
 
   Future<void> sendFeedback({bool uploadParallel = true}) async {
     if (state.text.isEmpty) return;
 
-    emit(SendFeedbackSubmitting(text: state.text, images: state.images));
+    emit(state.copyWith(isSubmitting: true, errorMessage: null, isSuccess: false));
 
     try {
       // 1. Nén ảnh và Upload ảnh lên server
@@ -51,7 +46,6 @@ class SendFeedbackInteractor extends CubitInteractor<SendFeedbackRoutable, SendF
 
         if (uploadParallel) {
           // Phiên bản Upload ĐỒNG THỜI (Parallel)
-          // Sử dụng Future.wait để upload tất cả cùng lúc
           final uploadResults = await Future.wait(
             compressedFiles.map((file) => _infraRepository.uploadFile(file, directory: 'feedback')),
           );
@@ -60,7 +54,6 @@ class SendFeedbackInteractor extends CubitInteractor<SendFeedbackRoutable, SendF
             if (result case DbSuccess(:final data)) {
               uploadedUrls.add(data);
             }
-            // Nếu lỗi (DbFailure) thì bỏ qua theo yêu cầu
           }
         } else {
           // Phiên bản Upload TUẦN TỰ (Sequential)
@@ -70,7 +63,7 @@ class SendFeedbackInteractor extends CubitInteractor<SendFeedbackRoutable, SendF
             if (uploadResult case DbSuccess(:final data)) {
               uploadedUrls.add(data);
             } else if (uploadResult case DbFailure(:final error)) {
-              emit(SendFeedbackError("Upload ảnh thất bại: ${error.message}", text: state.text, images: state.images));
+              emit(state.copyWith(isSubmitting: false, errorMessage: "Upload ảnh thất bại: ${error.message}"));
               return;
             }
           }
@@ -84,15 +77,14 @@ class SendFeedbackInteractor extends CubitInteractor<SendFeedbackRoutable, SendF
       );
 
       if (result case DbSuccess()) {
-        // Dọn dẹp file tạm sau khi thành công
         await ImageUtils.cleanTemporaryFiles();
-        emit(const SendFeedbackSuccess());
+        emit(state.copyWith(isSubmitting: false, isSuccess: true));
       } else if (result case DbFailure(:final error)) {
-        emit(SendFeedbackError(error.message, text: state.text, images: state.images));
+        emit(state.copyWith(isSubmitting: false, errorMessage: error.message));
       }
 
     } catch (e) {
-      emit(SendFeedbackError(e.toString(), text: state.text, images: state.images));
+      emit(state.copyWith(isSubmitting: false, errorMessage: e.toString()));
     }
   }
 }

@@ -114,7 +114,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
     // Chỉ cập nhật value nếu text thực tế có thay đổi (bị cắt prefix hoặc xóa số 0)
     if (text != originalText || hasPrefixChanged) {
       int newOffset = oldSelection.end;
-      
+
       if (hasPrefixChanged) {
         // Nếu bóc prefix, con trỏ thường nhảy về cuối phần số còn lại
         newOffset = text.length;

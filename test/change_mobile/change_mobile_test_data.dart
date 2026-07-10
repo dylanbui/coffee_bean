@@ -21,7 +21,7 @@ class ChangeMobileTestData {
 
   static ChangeMobileState errorState(String message) => initialState.copyWith(
         isLoading: false,
-        error: message,
+        errorMessage: message,
       );
 
   static ChangeMobileState get successState => initialState.copyWith(

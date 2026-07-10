@@ -3,29 +3,29 @@ import 'package:db_core/db_core.dart';
 
 class ChangeMobileState extends BaseBlocState {
   final bool isLoading;
-  final String? error;
+  final String? errorMessage;
   final UserInfo? userInfo;
   final bool isUpdateSuccess;
 
   ChangeMobileState({
     this.isLoading = false,
-    this.error,
+    this.errorMessage,
     this.userInfo,
     this.isUpdateSuccess = false,
   });
 
   @override
-  List<Object?> get props => [isLoading, error, userInfo, isUpdateSuccess];
+  List<Object?> get props => [isLoading, errorMessage, userInfo, isUpdateSuccess];
 
   ChangeMobileState copyWith({
     bool? isLoading,
-    String? error,
+    String? errorMessage,
     UserInfo? userInfo,
     bool? isUpdateSuccess,
   }) {
     return ChangeMobileState(
       isLoading: isLoading ?? this.isLoading,
-      error: error,
+      errorMessage: errorMessage, // Reset error if not provided
       userInfo: userInfo ?? this.userInfo,
       isUpdateSuccess: isUpdateSuccess ?? this.isUpdateSuccess,
     );

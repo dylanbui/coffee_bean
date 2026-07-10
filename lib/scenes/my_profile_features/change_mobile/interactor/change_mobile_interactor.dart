@@ -19,18 +19,18 @@ class ChangeMobileInteractor extends CubitInteractor<ChangeMobileRoutable, Chang
   }
 
   Future<void> sendSmsCode(String mobile) async {
-    emit(state.copyWith(isLoading: true, error: null));
+    emit(state.copyWith(isLoading: true, errorMessage: null));
     final result = await _authRepository.sendSmsCode(mobile, SmsScene.updatePhoneNumber);
     
     if (result case DbSuccess()) {
       emit(state.copyWith(isLoading: false));
     } else if (result case DbFailure(:final error)) {
-      emit(state.copyWith(isLoading: false, error: error.message));
+      emit(state.copyWith(isLoading: false, errorMessage: error.message));
     }
   }
 
   Future<void> updateMobile(String newMobile, String newCode) async {
-    emit(state.copyWith(isLoading: true, error: null));
+    emit(state.copyWith(isLoading: true, errorMessage: null));
     
     // Đã bỏ qua oldCode vì backend hiện tại không bắt buộc
     final result = await _userRepository.updateMobile(
@@ -47,10 +47,10 @@ class ChangeMobileInteractor extends CubitInteractor<ChangeMobileRoutable, Chang
         }
         emit(state.copyWith(isLoading: false, isUpdateSuccess: true));
       } else {
-        emit(state.copyWith(isLoading: false, error: "Cập nhật thất bại"));
+        emit(state.copyWith(isLoading: false, errorMessage: "Cập nhật thất bại"));
       }
     } else if (result case DbFailure(:final error)) {
-      emit(state.copyWith(isLoading: false, error: error.message));
+      emit(state.copyWith(isLoading: false, errorMessage: error.message));
     }
   }
 }
