@@ -73,13 +73,15 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
     switch (actionKey) {
       case "ORDERS":
         locator<DbEventBus>().fire(SystemInfoNotifyEvent("Bạn đã hoàn thành điểm danh hôm nay"));
-        // locator<DbEventBus>().fire(SystemSuccessNotifyEvent(AppStrings.authLoginSuccess));
         break;
       case "APPOINTMENTS":
         router?.navigate(ReservationListRoute());
         break;
-      case "COURSES":
+      case "COURSES_LEARNING":
         router?.navigate(CourseLearningListRoute());
+        break;
+      case "COURSES_ORDER":
+        router?.navigate(CourseOrderCatalogRoute());
         break;
       case "MY_EVENTS":
         router?.navigate(ActivityListRoute());

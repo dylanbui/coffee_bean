@@ -5,6 +5,7 @@ import 'package:coffee_bean/scenes/setting_features/settings_app/settings_app_bu
 import 'package:coffee_bean/scenes/event_features/activity_list/activity_list_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/change_mobile/change_mobile_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/coupon_list/coupon_list_builder.dart';
+import 'package:coffee_bean/scenes/my_profile_features/course_order_catalog/course_order_catalog_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/update_profile/update_profile_builder.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/reservation_list/reservation_list_builder.dart';
 import 'package:coffee_bean/features/app_map/app_map_builder.dart';
@@ -23,6 +24,7 @@ class CouponListRoute implements DbNoteRoute {}
 class DailySignInRoute implements DbNoteRoute {}
 class FeedbackRoute implements DbNoteRoute {}
 class MapTestRoute implements DbNoteRoute {}
+class CourseOrderCatalogRoute implements DbNoteRoute {}
 
 
 abstract class MyProfileRoutable implements DbNoteRoutable {
@@ -78,6 +80,10 @@ class MyProfileRouter extends DbNoteRouter implements MyProfileRoutable {
         address: "84a Nguyễn Cửu Vân, Gia Định, Hồ Chí Minh, Vietnam",
       );
       final builder = AppMapBuilder(marker).build();
+      push(builder.viewController);
+
+    } else if (toRoute is CourseOrderCatalogRoute) {
+      final builder = CourseOrderCatalogBuilder().build();
       push(builder.viewController);
     }
 
