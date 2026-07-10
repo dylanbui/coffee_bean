@@ -1,3 +1,4 @@
+import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -19,32 +20,30 @@ class PhoneInputField extends StatefulWidget {
   final List<String>? countryCodes;
   final String initialCountryCode;
   final String hintText;
+  final String? labelText;
+  final AppInputStyleConfig config;
   final TextEditingController? controller;
   final String? errorText;
+  final String? Function(String?)? validator;
   final bool enabled;
   final Function(PhoneValue)? onChanged;
-
-  // UI Customization
   final TextStyle? style;
-  final TextStyle? hintStyle;
-  final Color? underlineColor;
-  final Color? activeUnderlineColor;
-  final double underlineWidth;
+  final TextInputAction? textInputAction;
 
   const PhoneInputField({
     super.key,
     this.countryCodes,
     this.initialCountryCode = "+84",
     this.hintText = "Phone Number",
+    this.labelText,
+    this.config = const AppInputStyleConfig(),
     this.controller,
     this.errorText,
+    this.validator,
     this.enabled = true,
     this.onChanged,
     this.style,
-    this.hintStyle,
-    this.underlineColor,
-    this.activeUnderlineColor,
-    this.underlineWidth = 1.0,
+    this.textInputAction,
   });
 
   @override
@@ -60,7 +59,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
     "+84": "🇻🇳", // Việt Nam
     "+86": "🇨🇳", // Trung Quốc
     "+65": "🇸🇬", // Singapore
-    "+1": "🇺🇸", // Mỹ
+    "+1": "🇺🇸",  // Mỹ
     "+44": "🇬🇧", // Anh
   };
 
@@ -70,6 +69,16 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
     _selectedCode = widget.initialCountryCode;
     _internalController = widget.controller ?? TextEditingController();
     _internalController.addListener(_handleChanged);
+  }
+
+  @override
+  void dispose() {
+    if (widget.controller == null) {
+      _internalController.dispose();
+    } else {
+      _internalController.removeListener(_handleChanged);
+    }
+    super.dispose();
   }
 
   void _handleChanged() {
@@ -114,7 +123,6 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
     // Chỉ cập nhật value nếu text thực tế có thay đổi (bị cắt prefix hoặc xóa số 0)
     if (text != originalText || hasPrefixChanged) {
       int newOffset = oldSelection.end;
-
       if (hasPrefixChanged) {
         // Nếu bóc prefix, con trỏ thường nhảy về cuối phần số còn lại
         newOffset = text.length;
@@ -143,79 +151,50 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
   @override
   Widget build(BuildContext context) {
     final bool showSelectBox = widget.countryCodes != null && widget.countryCodes!.isNotEmpty;
-    final Color effectiveUnderlineColor = widget.errorText != null
-        ? Colors.red
-        : (widget.activeUnderlineColor ?? Colors.black);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: widget.errorText != null
-                    ? Colors.red
-                    : (widget.underlineColor ?? Colors.grey.shade200),
-                width: widget.errorText != null ? 2.0 : widget.underlineWidth,
-              ),
-            ),
-          ),
-          child: Row(
-            children: [
-              if (showSelectBox) ...[
-                DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: _selectedCode,
-                    icon: const Icon(Icons.keyboard_arrow_down, size: 18, color: Colors.grey),
-                    items: widget.countryCodes!.map((code) {
-                      final flag = countryFlags[code] ?? "🌐";
-                      return DropdownMenuItem(
-                        value: code,
-                        child: Text("$flag $code"),
-                      );
-                    }).toList(),
-                    onChanged: widget.enabled
-                        ? (val) {
-                            if (val != null) {
-                              setState(() => _selectedCode = val);
-                              _handleChanged();
-                            }
-                          }
-                        : null,
-                  ),
-                ),
-                const SizedBox(width: 15),
-              ],
-              Expanded(
-                child: TextField(
-                  controller: _internalController,
-                  keyboardType: TextInputType.phone,
-                  enabled: widget.enabled,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(15),
-                  ],
-                  style: widget.style ?? const TextStyle(fontSize: 16),
-                  decoration: InputDecoration(
-                    hintText: widget.hintText,
-                    border: InputBorder.none,
-                    hintStyle: widget.hintStyle ?? TextStyle(color: Colors.grey.shade400),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        if (widget.errorText != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 5),
-            child: Text(
-              widget.errorText!,
-              style: const TextStyle(color: Colors.red, fontSize: 12),
-            ),
-          ),
+    return AppInputField(
+      controller: _internalController,
+      hintText: widget.hintText,
+      labelText: widget.labelText,
+      config: widget.config,
+      enabled: widget.enabled,
+      style: widget.style,
+      errorText: widget.errorText,
+      keyboardType: TextInputType.phone,
+      textInputAction: widget.textInputAction,
+      validator: widget.validator,
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(15),
       ],
+      prefixIcon: showSelectBox ? _buildCountryCodeSelector() : null,
+    );
+  }
+
+  Widget _buildCountryCodeSelector() {
+    return DropdownButtonHideUnderline(
+      child: IntrinsicWidth(
+        child: DropdownButton<String>(
+          value: _selectedCode,
+          icon: const Icon(Icons.keyboard_arrow_down, size: 18, color: Colors.grey),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          items: widget.countryCodes!.map((code) {
+            final flag = countryFlags[code] ?? "🌐";
+            return DropdownMenuItem(
+              value: code,
+              child: Text("$flag $code", style: widget.style),
+            );
+          }).toList(),
+          onChanged: widget.enabled
+              ? (val) {
+                  if (val != null) {
+                    setState(() => _selectedCode = val);
+                    _handleChanged();
+                  }
+                }
+              : null,
+        ),
+      ),
     );
   }
 }

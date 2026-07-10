@@ -24,20 +24,13 @@ class _CouponListPageState extends AppCubitState<CouponListPage, CouponListInter
   CoffeeAppBarStyleConfig getAppBarStyle() => TmLabAppBarStyle.whiteStyle;
 
   @override
-  PreferredSizeWidget? getAppBar(BuildContext context) {
-    return CoffeeAppBar(
-      title: getTitle(),
-      style: getAppBarStyle(),
-      onBackTap: () => interactor.router?.pop(),
-    );
-  }
-
-  @override
   Widget buildScaffold(BuildContext context, PreferredSizeWidget? appBar, Widget body) {
-    return Scaffold(
-      backgroundColor: TMLabsColor.bgMain,
-      appBar: appBar,
-      body: body,
+    return wrapTapToUnfocus(
+      Scaffold(
+        backgroundColor: TMLabsColor.bgMain,
+        appBar: appBar,
+        body: body,
+      ),
     );
   }
 
@@ -46,11 +39,15 @@ class _CouponListPageState extends AppCubitState<CouponListPage, CouponListInter
     return BlocBuilder<CouponListInteractor, CouponListState>(
       builder: (context, state) {
         if (state is CouponListLoading || state is CouponListInitial) {
-          return const Center(child: CircularProgressIndicator());
+          return getLoadingView();
         }
         
         if (state is CouponListError && state.coupons.isEmpty) {
-          return Center(child: Text(state.message));
+          return getEmptyItemView(caption: state.message);
+        }
+
+        if (state.coupons.isEmpty) {
+          return getEmptyItemView(caption: 'Bạn chưa có mã giảm giá nào');
         }
 
         return Stack(

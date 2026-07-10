@@ -31,8 +31,6 @@ class _MainTabbarPageState extends AppCubitState<MainTabbarPage, MainTabbarInter
     _ensurePageLoaded(0);
   }
 
-
-
   void _ensurePageLoaded(int index) {
     if (_pages.indexWhere((element) => element.index == index) == -1) {
       DbNoteRouter? router;
@@ -109,8 +107,8 @@ class _MainTabbarPageState extends AppCubitState<MainTabbarPage, MainTabbarInter
           Expanded(
             child: Theme(
               data: Theme.of(context).copyWith(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
+                splashColor: TMLabsColor.primary.withValues(alpha: 0.16),
+                highlightColor: TMLabsColor.primary.withValues(alpha: 0.02),
               ),
               child: BottomNavigationBar(
                 elevation: 0,

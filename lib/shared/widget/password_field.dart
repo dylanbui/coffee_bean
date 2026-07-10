@@ -1,13 +1,28 @@
+import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 
 class PasswordField extends StatefulWidget {
   final TextEditingController controller;
-  final String hint;
+  final String? hint;
+  final String? labelText;
+  final AppInputStyleConfig config;
+  final String? errorText;
+  final String? Function(String?)? validator;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onChanged;
+  final bool enabled;
 
   const PasswordField({
     super.key,
     required this.controller,
     this.hint = "Enter Password",
+    this.labelText,
+    this.config = const AppInputStyleConfig(),
+    this.errorText,
+    this.validator,
+    this.textInputAction,
+    this.onChanged,
+    this.enabled = true,
   });
 
   @override
@@ -19,29 +34,28 @@ class _PasswordFieldState extends State<PasswordField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    return AppInputField(
       controller: widget.controller,
+      hintText: widget.hint,
+      labelText: widget.labelText,
       obscureText: _obscureText,
-      decoration: InputDecoration(
-        hintText: widget.hint,
-        suffixIcon: IconButton(
-          icon: Icon(
-            _obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-            size: 18,
-            color: Colors.grey,
-          ),
-          onPressed: () {
-            setState(() {
-              _obscureText = !_obscureText;
-            });
-          },
+      config: widget.config,
+      errorText: widget.errorText,
+      validator: widget.validator,
+      textInputAction: widget.textInputAction,
+      onChanged: widget.onChanged,
+      enabled: widget.enabled,
+      suffixIcon: IconButton(
+        icon: Icon(
+          _obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+          size: 18,
+          color: Colors.grey,
         ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey.shade200),
-        ),
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
-        ),
+        onPressed: () {
+          setState(() {
+            _obscureText = !_obscureText;
+          });
+        },
       ),
     );
   }

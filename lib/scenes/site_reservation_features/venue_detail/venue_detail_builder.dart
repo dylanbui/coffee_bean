@@ -1,10 +1,12 @@
+import 'package:coffee_bean/data/map_provider/app_map_contract.dart';
+import 'package:coffee_bean/features/app_map/app_map_builder.dart';
 import 'package:coffee_bean/features/checkout_order/checkout_order_builder.dart';
 import 'package:coffee_bean/features/checkout_order/checkout_order_common.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_interactor.dart';
 import 'package:coffee_bean/scenes/site_reservation_features/venue_detail/interactor/venue_detail_page.dart';
 import 'package:db_core/architecture_ribs/note_builder.dart';
 import 'package:db_core/architecture_ribs/note_router.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:db_core/data/db_location.dart';
 
 // ROUTABLE
 abstract class VenueDetailRoutable implements DbNoteRoutable {
@@ -25,15 +27,15 @@ class VenueDetailRouter extends DbNoteRouter implements VenueDetailRoutable {
   }
 
   @override
-  void openMap(String address) async {
-    final Uri googleMapsUrl = Uri.parse("https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}");
-    final Uri appleMapsUrl = Uri.parse("http://maps.apple.com/?q=${Uri.encodeComponent(address)}");
-
-    if (await canLaunchUrl(googleMapsUrl)) {
-      await launchUrl(googleMapsUrl);
-    } else if (await canLaunchUrl(appleMapsUrl)) {
-      await launchUrl(appleMapsUrl);
-    }
+  void openMap(String address) {
+    final marker = MapMarker(
+      id: "tmlabs_coffee",
+      location: const DbLocation(latitude: 10.796993411873403, longitude: 106.7059799422638),
+      title: "TMLabs Coffee",
+      address: "84a Nguyễn Cửu Vân, Gia Định, Hồ Chí Minh, Vietnam",
+    );
+    final builder = AppMapBuilder(marker).build();
+    push(builder.viewController);
   }
 }
 

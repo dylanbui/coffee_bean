@@ -43,8 +43,8 @@ class _ChangeMobilePageState extends AppCubitState<ChangeMobilePage, ChangeMobil
   Widget getBody(BuildContext context) {
     return BlocConsumer<ChangeMobileInteractor, ChangeMobileState>(
       listener: (context, state) {
-        if (state.errorMessage != null) {
-          context.showFlashError(state.errorMessage!);
+        if (state.failure != null) {
+          context.showFlashError(state.failure!.error.message);
         }
         if (state.isUpdateSuccess) {
           context.showFlashSuccess("Cập nhật số điện thoại thành công");
@@ -89,7 +89,7 @@ class _ChangeMobilePageState extends AppCubitState<ChangeMobilePage, ChangeMobil
                   }
                   final phone = _getFullPhone();
                   await interactor.sendSmsCode(phone);
-                  return interactor.state.errorMessage == null;
+                  return interactor.state.failure == null;
                 },
               ),
               const SizedBox(height: 40),

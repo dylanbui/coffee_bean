@@ -182,7 +182,7 @@ class _MyPointListPageState extends AppCubitState<MyPointListPage, MyPointListIn
 
   Widget _buildGridContent(MyPointListState state) {
     if (state.items.isEmpty) {
-      return AppUi.getEmptyItemWidget();
+      return AppUi.getEmptyItemView();
     }
     return GridView.builder(
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),

@@ -1,6 +1,7 @@
+import 'package:db_core/data/db_location.dart';
 import 'package:flutter/material.dart';
-import 'app_map_contract.dart';
-import 'native_map_widget.dart';
+import 'package:coffee_bean/data/map_provider/app_map_contract.dart';
+import 'package:coffee_bean/data/map_provider/native_map_widget.dart';
 
 class MapTestPage extends StatefulWidget {
   const MapTestPage({super.key});
@@ -11,7 +12,7 @@ class MapTestPage extends StatefulWidget {
 
 class _MapTestPageState extends State<MapTestPage> {
   AppMapController? _mapController;
-  final MapLocation _center = const MapLocation(10.762622, 106.660172); // TPHCM
+  final DbLocation _center = const DbLocation(latitude: 10.762622, longitude: 106.660172); // TPHCM
 
   void _onMarkerTapped(MapMarker marker) {
     showModalBottomSheet(
@@ -99,7 +100,7 @@ class _MapTestPageState extends State<MapTestPage> {
                             ),
                             MapMarker(
                               id: "store_2", 
-                              location: const MapLocation(10.772, 106.670), 
+                              location: const DbLocation(latitude: 10.772, longitude: 106.670), 
                               title: "Coffee Bean Quận 3", 
                               snippet: "456 Nguyễn Đình Chiểu",
                               data: {"store_id": "CB002", "status": "closed"}, 
@@ -117,7 +118,7 @@ class _MapTestPageState extends State<MapTestPage> {
                         onPressed: () {
                           _mapController?.drawDirections(
                             _center, 
-                            const MapLocation(10.772, 106.670)
+                            const DbLocation(latitude: 10.772, longitude: 106.670)
                           );
                         },
                       ),
@@ -145,7 +146,7 @@ class _MapTestPageState extends State<MapTestPage> {
   }) {
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white.withOpacity(0.9),
+        backgroundColor: Colors.white.withValues(alpha: 0.9),
         foregroundColor: Colors.brown,
         elevation: 4,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),

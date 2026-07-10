@@ -7,16 +7,14 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import 'package:coffee_bean/scenes/global_search/global_search_router.dart';
+import 'package:coffee_bean/scenes/global_search/global_search_builder.dart';
 import 'package:coffee_bean/scenes/global_search/interactor/global_search_event_state.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
+import 'package:db_core/db_core.dart';
 
 
-// Interactor
+class GlobalSearchInteractor extends CubitInteractor<GlobalSearchRoutable, GlobalSearchState> {
 
-class GlobalSearchInteractor extends CubitInteractor<GlobalSearchRouter, GlobalSearchState> {
-
-  GlobalSearchInteractor(GlobalSearchRouter router) : super(GlobalSearchInitial(), router: router);
+  GlobalSearchInteractor(GlobalSearchRoutable router) : super(GlobalSearchState(), router: router);
 
   @override
   void onDidBecomeActive() {
@@ -29,19 +27,19 @@ class GlobalSearchInteractor extends CubitInteractor<GlobalSearchRouter, GlobalS
     // In a real app, this would be an API call
     await Future.delayed(const Duration(milliseconds: 500));
     final categories = ["Products", "Venues", "Courses", "Activities", "Posts", "Users"];
-    emit(GlobalSearchInitial(categories: categories));
+    emit(state.copyWith(categories: categories));
   }
 
   void onSearchChanged(String value) {
     if (value.length >= 5) {
       _performSearch(value);
     } else if (value.isEmpty) {
-      emit(GlobalSearchInitial(categories: state.categories));
+      emit(state.copyWith(query: '', results: []));
     }
   }
 
   Future<void> _performSearch(String query) async {
-    emit(GlobalSearchInProgress(query: query, categories: state.categories));
+    emit(state.copyWith(isLoading: true, query: query, failure: null));
 
     // Simulate API call
     await Future.delayed(const Duration(seconds: 1));
@@ -54,13 +52,13 @@ class GlobalSearchInteractor extends CubitInteractor<GlobalSearchRouter, GlobalS
     ];
 
     if (mockResults.isEmpty) {
-      emit(GlobalSearchEmpty(query: query, categories: state.categories));
+      emit(state.copyWith(isLoading: false, results: []));
     } else {
-      emit(GlobalSearchSuccess(query: query, results: mockResults, categories: state.categories));
+      emit(state.copyWith(isLoading: false, results: mockResults));
     }
   }
 
   void clearSearch() {
-    emit(GlobalSearchInitial(categories: state.categories));
+    emit(state.copyWith(query: '', results: [], failure: null));
   }
 }

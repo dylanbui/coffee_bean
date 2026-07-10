@@ -44,7 +44,7 @@ class CourseLearningDetailMockData {
       id: lessonId,
       chapterId: 1,
       lessonName: "Bài học số $lessonId: Kỹ thuật Latte Art cơ bản",
-      lessonVideo: "https://www.example.com/video.mp4",
+      lessonVideo: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_20MB.mp4",
       lessonDuration: 600,
       lessonTrial: 0,
       lessonSort: 1,

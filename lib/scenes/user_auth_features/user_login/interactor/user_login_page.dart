@@ -205,6 +205,15 @@ class _UserLoginPageState extends AppCubitState<UserLoginPage, UserLoginInteract
       unselectedLabelColor: TMLabsColor.grey,
       labelStyle: TMLabsTextStyle.title,
       indicatorColor: TMLabsColor.primary,
+      // Sử dụng UnderlineTabIndicator để tùy chỉnh linh hoạt
+      indicator: const UnderlineTabIndicator(
+        borderSide: BorderSide(
+          width: 3,
+          color: TMLabsColor.primary, // Đổi màu tại đây
+        ),
+        // Chỉnh EdgeInsets.only(bottom: X). X càng lớn, đường kẻ càng sát text
+        insets: EdgeInsets.only(bottom: 8),
+      ),
       indicatorSize: TabBarIndicatorSize.label,
       indicatorWeight: 3,
       tabs: const [

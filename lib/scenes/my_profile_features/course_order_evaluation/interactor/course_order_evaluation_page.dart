@@ -8,6 +8,7 @@ import 'package:db_core/utils/app_label.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
+import 'package:coffee_bean/shared/ui/app_input_configs.dart';
 import 'package:coffee_bean/shared/widget/image_wechat_picker_list_view.dart';
 import 'package:coffee_bean/scenes/my_profile_features/course_order_evaluation/interactor/course_order_evaluation_interactor.dart';
 import 'package:coffee_bean/scenes/my_profile_features/course_order_evaluation/interactor/course_order_evaluation_event_state.dart';
@@ -137,29 +138,27 @@ class _CourseOrderEvaluationPageState extends AppCubitState<CourseOrderEvaluatio
 
   Widget _buildCommentInput(CourseOrderEvaluationState state) {
     const int maxLength = 1000;
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: TMLabsColor.bgLight,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: TextField(
-        controller: _commentController,
-        maxLines: 6,
-        maxLength: maxLength,
-        style: TMLabsTextStyle.body,
-        decoration: InputDecoration(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        AppInputField(
+          controller: _commentController,
           hintText: "Mô tả trải nghiệm học tập của khóa học này",
-          hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
-          border: InputBorder.none,
-          counterText: "${maxLength - _commentController.text.length}",
-          counterStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+          maxLines: 6,
+          maxLength: maxLength,
+          style: TMLabsTextStyle.body,
+          config: CoffeeInputStyles.filled,
+          onChanged: (value) {
+            interactor.onCommentChanged(value);
+            setState(() {}); // Cập nhật số ký tự đếm ngược
+          },
         ),
-        onChanged: (value) {
-          interactor.onCommentChanged(value);
-          setState(() {}); // Cập nhật số ký tự đếm ngược
-        },
-      ),
+        const SizedBox(height: 4),
+        Text(
+          "${maxLength - _commentController.text.length}",
+          style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),
+        ),
+      ],
     );
   }
 

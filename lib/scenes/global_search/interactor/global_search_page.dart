@@ -13,7 +13,6 @@ import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/custom_search_app_bar.dart';
-import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -101,15 +100,23 @@ class _GlobalSearchPageState extends AppCubitState<GlobalSearchPage, GlobalSearc
   }
 
   Widget _buildContent(GlobalSearchState state) {
-    if (state is GlobalSearchInProgress) {
-      return const Center(child: LoadingView(width: 150, height: 150));
+    if (state.isLoading) {
+      return getLoadingView();
     }
-    if (state is GlobalSearchEmpty) {
-      return _buildEmptyState();
+    
+    if (state.failure != null) {
+      // In a real app, you might want to show an error view or toast
+      return Center(child: Text(state.failure!.error.message));
     }
-    if (state is GlobalSearchSuccess) {
+
+    if (state.isEmpty) {
+      return getEmptyItemView(caption: "No relevant content found");
+    }
+    
+    if (state.isSuccess) {
       return _buildResultsList(state.results);
     }
+
     return Container(color: AppColor.basicBackground);
   }
 
@@ -117,7 +124,7 @@ class _GlobalSearchPageState extends AppCubitState<GlobalSearchPage, GlobalSearc
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: results.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 16),
+      separatorBuilder: (_, _) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
         return _buildProductItem(results[index]);
       },
@@ -181,19 +188,6 @@ class _GlobalSearchPageState extends AppCubitState<GlobalSearchPage, GlobalSearc
         shape: BoxShape.circle,
       ),
       child: const Icon(Icons.add, color: TMLabsColor.white, size: 16),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.image_not_supported, size: 64, color: Colors.grey[300]),
-          const SizedBox(height: 16),
-          Text("No relevant content found", style: BasicStyle.secondaryText),
-        ],
-      ),
     );
   }
 }

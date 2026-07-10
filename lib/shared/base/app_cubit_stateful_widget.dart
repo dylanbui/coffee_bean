@@ -1,8 +1,5 @@
-import 'package:coffee_bean/shared/ui/app_assets.dart';
-import 'package:coffee_bean/shared/ui/app_colors.dart';
-import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui/app_ui.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
-import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/shared/base/keyboard_unfocus_mixin.dart';
@@ -74,21 +71,11 @@ abstract class AppCubitState<T extends AppCubitStateFulWidget<B, S>, B extends C
   }
 
   Widget getLoadingView() {
-    return const Center(child: LoadingView(width: 150, height: 150));
+    return AppUi.getLoadingView();
   }
 
   Widget getEmptyItemView({String caption = "Không tìm thấy nội dung liên quan"}) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AppIcon(AppAssets.images.imgNoneItem, size: 120),
-          const SizedBox(height: 16),
-          Text(caption,style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
-          ),
-        ],
-      ),
-    );
+    return AppUi.getEmptyItemView(caption: caption);
   }
 
 }

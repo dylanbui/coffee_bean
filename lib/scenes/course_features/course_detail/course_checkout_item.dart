@@ -1,5 +1,6 @@
 import 'package:coffee_bean/features/checkout_order/checkout_order_common.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
+import 'package:coffee_bean/shared/ui/app_input_configs.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/phone_input_field.dart';
 import 'package:db_core/commons_constants.dart';
@@ -153,14 +154,12 @@ class _CourseOptionsWidgetState extends State<_CourseOptionsWidget> {
             initialCountryCode: "+84",
             controller: _phoneController,
             style: TMLabsTextStyle.body,
-            underlineColor: TMLabsColor.lightGrey,
-            activeUnderlineColor: TMLabsColor.primary,
+            config: CoffeeInputStyles.underline,
             onChanged: (phoneValue) {
               widget.item._phoneNumber = phoneValue.fullNumber;
               widget.item._isPhoneValid = phoneValue.isValid;
               widget.item._validate();
             },
-            underlineWidth: 1.0,
           ),
           const SizedBox(height: 24),
 

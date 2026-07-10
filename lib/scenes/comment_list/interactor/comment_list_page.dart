@@ -45,7 +45,7 @@ class _CommentListPageState extends AppCubitState<CommentListPage, CommentListIn
         return FadeSwitcher.binary(
           duration: const Duration(milliseconds: 300),
           showFirst: state.isLoading && state.comments.isEmpty,
-          first: const Center(child: CircularProgressIndicator(color: TMLabsColor.primary)),
+          first: getLoadingView(),
           second: _buildMainContent(state),
         );
       },
@@ -54,7 +54,7 @@ class _CommentListPageState extends AppCubitState<CommentListPage, CommentListIn
 
   Widget _buildMainContent(CommentListState state) {
     if (state.comments.isEmpty) {
-      return const Center(child: Text("Chưa có đánh giá nào"));
+      return getEmptyItemView(caption: "Chưa có đánh giá nào");
     }
 
     return RefreshIndicator(

@@ -1,13 +1,17 @@
+import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 
-class DbLocation {
+class DbLocation extends Equatable {
   final double latitude;
   final double longitude;
 
-  DbLocation({
+  const DbLocation({
     required this.latitude,
     required this.longitude,
   });
+
+  @override
+  List<Object?> get props => [latitude, longitude];
 
   @override
   String toString() => 'Lat: $latitude, Lng: $longitude';

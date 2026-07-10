@@ -1,5 +1,6 @@
 import 'package:coffee_bean/scenes/my_profile_features/change_mobile/interactor/change_mobile_event_state.dart';
 import 'package:coffee_bean/data/local/user_manager/user_info.dart';
+import 'package:db_core/db_core.dart';
 
 /// Lớp cung cấp dữ liệu mẫu cho các bài test Change Mobile
 class ChangeMobileTestData {
@@ -21,7 +22,7 @@ class ChangeMobileTestData {
 
   static ChangeMobileState errorState(String message) => initialState.copyWith(
         isLoading: false,
-        errorMessage: message,
+        failure: DbFailure(NetworkError(-1, message)),
       );
 
   static ChangeMobileState get successState => initialState.copyWith(

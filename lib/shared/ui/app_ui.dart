@@ -1,5 +1,3 @@
-
-
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
@@ -14,7 +12,7 @@ class AppUi {
   // --- REFRESH & LOAD MORE ---
 
   /// Default widget for pull-to-refresh (Mostly used for iOS style)
-  static Widget? getRefreshTopWidget(BuildContext context) {
+  static Widget? getRefreshTop(BuildContext context) {
     final bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
     if (isIOS) {
       return const CupertinoActivityIndicator();
@@ -23,7 +21,7 @@ class AppUi {
   }
 
   /// Default widget for loading more at bottom
-  static Widget getLoadingBottomWidget(BuildContext context, {Color? color}) {
+  static Widget getLoadingBottom(BuildContext context, {Color? color}) {
     final bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
     if (isIOS) {
       return const CupertinoActivityIndicator();
@@ -42,15 +40,15 @@ class AppUi {
   static RefreshLoadmoreStyle getDefaultRefreshLoadmoreStyle(BuildContext context) {
     return RefreshLoadmoreStyle(
       color: TMLabsColor.primary,
-      loadingWidget: AppUi.getLoadingBottomWidget(context, color: TMLabsColor.primary),
-      noMoreWidget: AppUi.getNoMoreWidget(context),
+      loadingWidget: AppUi.getLoadingBottom(context, color: TMLabsColor.primary),
+      noMoreWidget: AppUi.getNoMore(context),
       errorLoadMoreWidget: const Text("Không thể tải thêm dữ liệu"),
       errorRefreshWidget: const Text("Đã có lỗi xảy ra khi tải dữ liệu", textAlign: TextAlign.center,),
     );
   }
 
   /// Default widget for no more data at bottom
-  static Widget getNoMoreWidget(BuildContext context) => Padding(
+  static Widget getNoMore(BuildContext context) => Padding(
     padding: const EdgeInsets.all(16.0),
     child: Text('Đã hiển thị tất cả dữ liệu', style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),),
   );
@@ -59,17 +57,21 @@ class AppUi {
     return const Center(child: LoadingView(width: 150, height: 150));
   }
 
-  static Widget getEmptyItemWidget({String? imgNoneItem, String title = "Không tìm thấy nội dung liên quan" }) {
+  static Widget getEmptyItemView({
+    String caption = "Không tìm thấy nội dung liên quan",
+    String? imgNoneItem,
+    double iconSize = 120,
+  }) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SvgPicture.asset(
-            imgNoneItem ?? AppAssets.images.imgNoneItem,
-            width: 160,
-          ),
+          AppIcon(imgNoneItem ?? AppAssets.images.imgNoneItem, size: iconSize),
           const SizedBox(height: 16),
-          Text(title, style: TMLabsTextStyle.body,),
+          Text(
+            caption,
+            style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey),
+          ),
         ],
       ),
     );

@@ -34,7 +34,7 @@ class ActivityDetailInteractor extends CubitInteractor<ActivityDetailRoutable, A
   }
 
   void onDirectionTap() {
-    DbToast.show("Đang mở bản đồ...");
+    router?.openMap();
   }
 
   void onPaymentTap() {
