@@ -10,6 +10,7 @@ import 'package:coffee_bean/shared/ui/app_ui.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:coffee_bean/shared/widget/search_bar.dart';
+import 'package:db_core/utils/app_sliding_tab_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -142,37 +143,23 @@ class _MyPointListPageState extends AppCubitState<MyPointListPage, MyPointListIn
       child: Row(
         children: [
           Expanded(
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: state.categories.length,
-              itemBuilder: (context, index) {
-                final cat = state.categories[index];
-                final isSelected = state.selectedCatId == cat.id;
-                return GestureDetector(
-                  onTap: () => interactor.onCategorySelected(cat.id),
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 10),
-                    alignment: Alignment.center,
-                    child: IntrinsicWidth(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            cat.name,
-                            style: TMLabsTextStyle.caption.copyWith(
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                              color: isSelected ? TMLabsColor.primary : TMLabsColor.grey,
-                            ),
-                          ),
-                          if (isSelected)
-                            Container(height: 2, color: TMLabsColor.primary,),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: AppSlidingTabBar<int>(
+                currentItem: state.selectedCatId,
+                items: state.categories
+                    .map((cat) => AppTabItem(value: cat.id, label: cat.name))
+                    .toList(),
+                onTabChanged: (id) => interactor.onCategorySelected(id),
+                style: TMLabsTabBarStyle.defaultStyle.copyWith(
+                  activeStyle: TMLabsTextStyle.caption.copyWith(fontWeight: FontWeight.bold),
+                  inactiveStyle: TMLabsTextStyle.caption,
+                  activeColor: TMLabsColor.primary,
+                  inactiveColor: TMLabsColor.grey,
+                  spacing: 16,
+                  itemPadding: const EdgeInsets.symmetric(vertical: 8),
+                ),
+              ),
             ),
           ),
           if (!state.isSearchMode)

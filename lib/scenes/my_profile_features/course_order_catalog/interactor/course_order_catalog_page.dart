@@ -2,12 +2,11 @@ import 'package:coffee_bean/scenes/my_profile_features/course_order_catalog/inte
 import 'package:coffee_bean/scenes/my_profile_features/course_order_catalog/interactor/course_order_catalog_interactor.dart';
 import 'package:coffee_bean/scenes/my_profile_features/course_order_catalog/interactor/widgets/course_order_item_widget.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
-import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:db_core/db_core.dart';
+import 'package:db_core/utils/app_sliding_tab_bar.dart';
+import 'package:db_core/utils/common_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 class CourseOrderCatalogPage extends AppCubitStateFulWidget<CourseOrderCatalogInteractor, CourseOrderCatalogState> {
   CourseOrderCatalogPage({super.key, required super.interactor});
@@ -42,72 +41,23 @@ class _CourseOrderCatalogPageState extends AppCubitState<CourseOrderCatalogPage,
   Widget _buildTabSelection(int activeTabIndex) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16,),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              _buildTabButton("Tất cả", 0, activeTabIndex),
-              const SizedBox(width: 20),
-              _buildTabButton("Chờ thanh toán", 1, activeTabIndex),
-              const SizedBox(width: 20),
-              _buildTabButton("Đã hoàn thành", 2, activeTabIndex),
-              const SizedBox(width: 20),
-              _buildTabButton("Đã hủy", 3, activeTabIndex),
+          AppSlidingTabBar<int>(
+            currentItem: activeTabIndex,
+            style: TMLabsTabBarStyle.defaultStyle,
+            items: [
+              AppTabItem(value: 0, label: "Tất cả"),
+              AppTabItem(value: 1, label: "Chờ thanh toán"),
+              AppTabItem(value: 2, label: "Đã hoàn thành"),
+              AppTabItem(value: 3, label: "Đã hủy"),
             ],
+            onTabChanged: (index) => interactor.onTabChanged(index),
           ),
-          const SizedBox(height: 4),
-          // Sliding Underline
-          AnimatedPadding(
-            duration: 300.ms,
-            curve: Curves.easeInOut,
-            padding: EdgeInsets.only(
-              left: _getTabUnderlineOffset(activeTabIndex),
-            ),
-            child: Container(
-              height: 2,
-              width: _getTabUnderlineWidth(activeTabIndex),
-              color: Colors.black,
-            ),
-          ),
-          const SizedBox(height: 4),
           Divider(height: 1, thickness: 1, color: Colors.grey.shade100),
         ],
-      ),
-    );
-  }
-
-  double _getTabUnderlineOffset(int index) {
-    switch (index) {
-      case 0: return 0;
-      case 1: return 62;  // 42 (Tất cả) + 20 (SizedBox)
-      case 2: return 184; // 62 + 102 (Chờ thanh toán) + 20
-      case 3: return 304; // 184 + 100 (Đã hoàn thành) + 20
-      default: return 0;
-    }
-  }
-
-  double _getTabUnderlineWidth(int index) {
-    switch (index) {
-      case 0: return 42;
-      case 1: return 102;
-      case 2: return 100;
-      case 3: return 48;
-      default: return 0;
-    }
-  }
-
-  Widget _buildTabButton(String title, int index, int activeTabIndex) {
-    final isSelected = index == activeTabIndex;
-    return TapEffect(
-      onTap: () => interactor.onTabChanged(index),
-      child: Text(
-        title,
-        style: TMLabsTextStyle.bodyBold.copyWith(
-          color: isSelected ? Colors.black : TMLabsColor.grey.withValues(alpha: 0.5),
-          fontSize: 14,
-        ),
       ),
     );
   }

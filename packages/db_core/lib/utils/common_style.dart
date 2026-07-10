@@ -93,3 +93,61 @@ class DbCommonStyle {
     decoration: TextDecoration.none,
   );
 }
+
+enum TabIndicatorMode { underline, background }
+
+class AppSlidingTabBarStyle {
+  final TextStyle? activeStyle;
+  final TextStyle? inactiveStyle;
+  final Color activeColor;
+  final Color inactiveColor;
+  final Color? activeTextColor; // Dùng cho mode Background để ép màu chữ (vd: trắng)
+  final double indicatorHeight;
+  final double indicatorRadius;
+  final EdgeInsetsGeometry itemPadding;
+  final double spacing;
+
+  const AppSlidingTabBarStyle({
+    this.activeStyle,
+    this.inactiveStyle,
+    this.activeColor = Colors.black,
+    this.inactiveColor = Colors.grey,
+    this.activeTextColor,
+    this.indicatorHeight = 2.0,
+    this.indicatorRadius = 4.0,
+    this.itemPadding = const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    this.spacing = 24.0,
+  });
+
+  AppSlidingTabBarStyle copyWith({
+    TextStyle? activeStyle,
+    TextStyle? inactiveStyle,
+    Color? activeColor,
+    Color? inactiveColor,
+    Color? activeTextColor,
+    double? indicatorHeight,
+    double? indicatorRadius,
+    EdgeInsetsGeometry? itemPadding,
+    double? spacing,
+  }) {
+    return AppSlidingTabBarStyle(
+      activeStyle: activeStyle ?? this.activeStyle,
+      inactiveStyle: inactiveStyle ?? this.inactiveStyle,
+      activeColor: activeColor ?? this.activeColor,
+      inactiveColor: inactiveColor ?? this.inactiveColor,
+      activeTextColor: activeTextColor ?? this.activeTextColor,
+      indicatorHeight: indicatorHeight ?? this.indicatorHeight,
+      indicatorRadius: indicatorRadius ?? this.indicatorRadius,
+      itemPadding: itemPadding ?? this.itemPadding,
+      spacing: spacing ?? this.spacing,
+    );
+  }
+
+  static const defaultStyle = AppSlidingTabBarStyle(
+    activeStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+    inactiveStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+    activeColor: Colors.black,
+    inactiveColor: Colors.grey,
+    spacing: 24,
+  );
+}

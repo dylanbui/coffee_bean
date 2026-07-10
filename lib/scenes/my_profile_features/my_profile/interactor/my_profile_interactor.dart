@@ -95,6 +95,9 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
       case "DAILY_SIGN_IN":
         router?.navigate(DailySignInRoute());
         break;
+      case "POINT_ACCUMULATION":
+        router?.navigate(MyPointListRoute());
+        break;
       case "SETTINGS":
         router?.navigate(SettingsAppRoute());
         break;

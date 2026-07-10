@@ -11,7 +11,7 @@ import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/avatar_widget.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:coffee_bean/shared/widget/image_slider_widget.dart';
-import 'package:db_core/db_core.dart';
+import 'package:db_core/utils/app_sliding_tab_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -88,42 +88,18 @@ class _InstructorProfilePageState extends AppCubitState<InstructorProfilePage, I
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              _buildTabButton("Bài đăng", InstructorTab.posts, currentTab),
-              const SizedBox(width: 24),
-              _buildTabButton("Khóa học", InstructorTab.courses, currentTab),
+          AppSlidingTabBar<InstructorTab>(
+            currentItem: currentTab,
+            style: TMLabsTabBarStyle.defaultStyle,
+            items: [
+              AppTabItem(value: InstructorTab.posts, label: "Bài đăng"),
+              AppTabItem(value: InstructorTab.courses, label: "Khóa học"),
             ],
+            onTabChanged: (tab) => interactor.onTabChanged(tab),
           ),
           const SizedBox(height: 4),
-          // Sliding Underline
-          AnimatedPadding(
-            duration: 300.ms,
-            curve: Curves.easeInOut,
-            padding: EdgeInsets.only(
-              left: currentTab == InstructorTab.posts ? 0 : 89,
-            ),
-            child: Container(
-              height: 2,
-              width: currentTab == InstructorTab.posts ? 65 : 70,
-              color: Colors.black,
-            ),
-          ),
+          Divider(height: 1, thickness: 1, color: Colors.grey.shade100),
         ],
-      ),
-    );
-  }
-
-  Widget _buildTabButton(String title, InstructorTab tab, InstructorTab currentTab) {
-    final isSelected = tab == currentTab;
-    return TapEffect(
-      onTap: () => interactor.onTabChanged(tab),
-      child: Text(
-        title,
-        style: TMLabsTextStyle.bodyBold.copyWith(
-          color: isSelected ? Colors.black : TMLabsColor.grey,
-          fontSize: 16,
-        ),
       ),
     );
   }

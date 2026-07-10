@@ -11,6 +11,7 @@ import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:db_core/utils/app_button.dart';
 import 'package:db_core/utils/app_label.dart';
+import 'package:db_core/utils/app_sliding_tab_bar.dart';
 import 'package:db_core/utils/fade_switcher.dart';
 import 'package:db_core/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:db_core/utils/tap_effect.dart';
@@ -271,60 +272,37 @@ class _VenueDetailPageState extends AppCubitState<VenueDetailPage, VenueDetailIn
   }
 
   Widget _buildTabs(VenueDetailState state) {
-    if (state.availableTypes.isEmpty) return const SizedBox.shrink();
+    if (state.availableTypes.isEmpty || state.selectedType == null) return const SizedBox.shrink();
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: state.availableTypes.map((type) {
-          final isSelected = state.selectedType?.id == type.id;
-          return Padding(
-            padding: const EdgeInsets.only(right: 24),
-            child: InkWell(
-              onTap: () {
-                if (isSelected) return;
-                
-                if (state.selectedSlots.isNotEmpty) {
-                  context.showFlashConfirm<bool>(
-                    title: "Chuyển loại sân",
-                    content: "Hành động này sẽ xóa toàn bộ các khung giờ bạn đã chọn. Bạn có chắc chắn muốn chuyển sang loại sân khác?",
-                    actions: [
-                      DbFlashDialogAction(label: "Hủy", value: false, color: TMLabsColor.grey),
-                      DbFlashDialogAction(label: "Chuyển", value: true, color: TMLabsColor.primary),
-                    ],
-                  ).then((confirmed) {
-                    if (confirmed == true) {
-                      interactor.onTabChanged(type);
-                    }
-                  });
-                } else {
-                  interactor.onTabChanged(type);
-                }
-              },
-              child: IntrinsicWidth(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      type.label,
-                      style: TMLabsTextStyle.title.copyWith(
-                        color: isSelected ? TMLabsColor.primary : TMLabsColor.grey,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
-                    ),
-                    if (isSelected)
-                      Container(
-                        margin: const EdgeInsets.only(top: 2),
-                        height: 2,
-                        width: double.infinity,
-                        color: TMLabsColor.primary,
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }).toList(),
+    return AppSlidingTabBar(
+      currentItem: state.selectedType!,
+      items: state.availableTypes.map((type) => AppTabItem(value: type, label: type.label)).toList(),
+      onTabChanged: (type) {
+        if (state.selectedType?.id == type.id) return;
+
+        if (state.selectedSlots.isNotEmpty) {
+          context.showFlashConfirm<bool>(
+            title: "Chuyển loại sân",
+            content: "Hành động này sẽ xóa toàn bộ các khung giờ bạn đã chọn. Bạn có chắc chắn muốn chuyển sang loại sân khác?",
+            actions: [
+              DbFlashDialogAction(label: "Hủy", value: false, color: TMLabsColor.grey),
+              DbFlashDialogAction(label: "Chuyển", value: true, color: TMLabsColor.primary),
+            ],
+          ).then((confirmed) {
+            if (confirmed == true) {
+              interactor.onTabChanged(type);
+            }
+          });
+        } else {
+          interactor.onTabChanged(type);
+        }
+      },
+      style: TMLabsTabBarStyle.defaultStyle.copyWith(
+        activeStyle: TMLabsTextStyle.title.copyWith(fontWeight: FontWeight.bold),
+        inactiveStyle: TMLabsTextStyle.title,
+        activeColor: TMLabsColor.primary,
+        inactiveColor: TMLabsColor.grey,
+        itemPadding: const EdgeInsets.symmetric(vertical: 4),
       ),
     );
   }

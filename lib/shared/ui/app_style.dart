@@ -178,6 +178,30 @@ class TMLabsTextStyle {
       };
 }
 
+class TMLabsTabBarStyle {
+  static final defaultStyle = AppSlidingTabBarStyle(
+    activeStyle: TMLabsTextStyle.bodyBold.copyWith(fontSize: 16),
+    inactiveStyle: TMLabsTextStyle.body.copyWith(
+      fontSize: 16,
+      color: TMLabsColor.secondary.withValues(alpha: 0.8),
+    ),
+    activeColor: TMLabsColor.primary,
+    inactiveColor: TMLabsColor.secondary.withValues(alpha: 0.8),
+    spacing: 16,
+    itemPadding: const EdgeInsets.symmetric(vertical: 6),
+  );
+
+  static final backgroundStyle = AppSlidingTabBarStyle(
+    activeStyle: TMLabsTextStyle.bodyBold.copyWith(fontSize: 14, color: Colors.white),
+    inactiveStyle: TMLabsTextStyle.body.copyWith(fontSize: 14),
+    activeColor: TMLabsColor.primary,
+    activeTextColor: Colors.white,
+    indicatorRadius: 20,
+    itemPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    spacing: 12,
+  );
+}
+
 class TMLabsButtonStyle {
   // --- App Button Styles ---
   static const primary = AppButtonStyleConfig(
