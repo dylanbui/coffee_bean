@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'package:coffee_bean/shared/base/tap_to_unfocus_mixin.dart';
+import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
+import 'package:coffee_bean/shared/ui/app_input_configs.dart';
 import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:flutter/material.dart';
@@ -11,15 +11,14 @@ import 'package:group_button/group_button.dart';
 import 'package:coffee_bean/scenes/my_profile_features/update_profile/interactor/update_profile_interactor.dart';
 import 'package:coffee_bean/scenes/my_profile_features/update_profile/interactor/update_profile_event_state.dart';
 
-class UpdateProfilePage extends CubitStateFulWidget<UpdateProfileInteractor, UpdateProfileState> {
+class UpdateProfilePage extends AppCubitStateFulWidget<UpdateProfileInteractor, UpdateProfileState> {
   UpdateProfilePage({super.key, required super.interactor});
 
   @override
   State<UpdateProfilePage> createState() => _UpdateProfilePageState();
 }
 
-class _UpdateProfilePageState extends CubitState<UpdateProfilePage, UpdateProfileInteractor, UpdateProfileState>
-    with TapToUnfocusMixin {
+class _UpdateProfilePageState extends AppCubitState<UpdateProfilePage, UpdateProfileInteractor, UpdateProfileState> {
 
   @override
   bool get tapToUnfocus => true;
@@ -36,80 +35,73 @@ class _UpdateProfilePageState extends CubitState<UpdateProfilePage, UpdateProfil
   }
 
   @override
-  PreferredSizeWidget? getAppBar(BuildContext context) {
-    return CoffeeAppBar(
-      title: 'Cập nhật thông tin',
-      style: TmLabAppBarStyle.whiteStyle,
-      onBackTap: () => interactor.router?.pop(),
-    );
-  }
+  String? getTitle() => 'Cập nhật thông tin';
 
   @override
   Widget getBody(BuildContext context) {
-    return wrapTapToUnfocus(
-      BlocConsumer<UpdateProfileInteractor, UpdateProfileState>(
-        listener: (context, state) {
-          if (state.isUpdateSuccess) {
-            context.showFlashSuccess("Cập nhật thành công");
+    return BlocConsumer<UpdateProfileInteractor, UpdateProfileState>(
+      listener: (context, state) {
+        if (state.isUpdateSuccess) {
+          context.showFlashSuccess("Cập nhật thành công");
+        }
+        if (state.error != null) {
+          context.showFlashError(state.error!);
+        }
+        
+        if (state.userInfo != null) {
+          if (!_initialized) {
+            _nicknameController.text = state.userInfo?.nickname ?? "";
+            _sex = state.userInfo?.sex ?? 1;
+            _initialized = true;
           }
-          if (state.error != null) {
-            context.showFlashError(state.error!);
-          }
-          
-          if (state.userInfo != null) {
-            if (!_initialized) {
-              _nicknameController.text = state.userInfo?.nickname ?? "";
-              _sex = state.userInfo?.sex ?? 1;
-              _initialized = true;
-            }
-          }
-        },
-        builder: (context, state) {
-          if (state.userInfo == null && state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+        }
+      },
+      builder: (context, state) {
+        if (state.userInfo == null && state.isLoading) {
+          return getLoadingView();
+        }
 
-          return Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      _buildAvatar(state.userInfo?.avatar, state.selectedAvatarFile),
-                      const SizedBox(height: 16),
-                      Text(state.userInfo?.nickname ?? "Nickname", style: TMLabsTextStyle.h2),
-                      const SizedBox(height: 32),
-                      _buildTextField(
-                        controller: _nicknameController,
-                        label: "Nickname",
-                        hint: "Nhập nickname",
-                      ),
-                      const SizedBox(height: 16),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text("Giới tính", style: TMLabsTextStyle.bodyBold),
-                      ),
-                      const SizedBox(height: 8),
-                      _buildSexSelector(),
-                    ],
-                  ),
+        return Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _buildAvatar(state.userInfo?.avatar, state.selectedAvatarFile),
+                    const SizedBox(height: 16),
+                    Text(state.userInfo?.nickname ?? "Nickname", style: TMLabsTextStyle.h2),
+                    const SizedBox(height: 32),
+                    AppInputField(
+                      controller: _nicknameController,
+                      labelText: "Nickname",
+                      hintText: "Nhập nickname",
+                      config: CoffeeInputStyles.filled,
+                    ),
+                    const SizedBox(height: 16),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text("Giới tính", style: TMLabsTextStyle.bodyBold),
+                    ),
+                    const SizedBox(height: 8),
+                    _buildSexSelector(),
+                  ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: AppButton(
-                  text: "Cập Nhật",
-                  isLoading: state.isLoading,
-                  style: TMLabsButtonStyle.primary,
-                  onPressed: () => _onUpdate(state),
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: AppButton(
+                text: "Cập Nhật",
+                isLoading: state.isLoading,
+                style: TMLabsButtonStyle.primary,
+                onPressed: () => _onUpdate(state),
               ),
-            ],
-          );
-        },
-      ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -153,39 +145,10 @@ class _UpdateProfilePageState extends CubitState<UpdateProfilePage, UpdateProfil
   }
 
   void _onPickAvatar() async {
-    final file = await DbAssetPicker.pickSingleImage(context,crop: true);
+    final file = await DbAssetPicker.pickSingleImage(context, crop: true);
     if (file != null) {
       interactor.onAvatarFileSelected(file);
     }
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          style: TMLabsTextStyle.body,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TMLabsTextStyle.body.copyWith(color: TMLabsColor.lightGrey),
-            filled: true,
-            fillColor: TMLabsColor.bgLight,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          ),
-        ),
-      ],
-    );
   }
 
   Widget _buildSexSelector() {

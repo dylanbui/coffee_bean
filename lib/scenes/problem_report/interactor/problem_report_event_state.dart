@@ -1,35 +1,36 @@
-import 'package:equatable/equatable.dart';
+import 'package:db_core/db_core.dart';
 
-abstract class ProblemReportState extends Equatable {
+class ProblemReportState extends BaseBlocState {
   final String text;
   final List<String> images;
-  
-  const ProblemReportState({this.text = '', this.images = const []});
+  final bool isSubmitting;
+  final String? errorMessage;
+  final bool isSuccess;
+
+  ProblemReportState({
+    this.text = '',
+    this.images = const [],
+    this.isSubmitting = false,
+    this.errorMessage,
+    this.isSuccess = false,
+  });
+
+  ProblemReportState copyWith({
+    String? text,
+    List<String>? images,
+    bool? isSubmitting,
+    String? errorMessage,
+    bool? isSuccess,
+  }) {
+    return ProblemReportState(
+      text: text ?? this.text,
+      images: images ?? this.images,
+      isSubmitting: isSubmitting ?? this.isSubmitting,
+      errorMessage: errorMessage, // Sẽ reset về null nếu không truyền
+      isSuccess: isSuccess ?? this.isSuccess,
+    );
+  }
 
   @override
-  List<Object?> get props => [text, images];
-}
-
-class ProblemReportInitial extends ProblemReportState {
-  const ProblemReportInitial() : super();
-}
-
-class ProblemReportUpdate extends ProblemReportState {
-  const ProblemReportUpdate({super.text, super.images});
-}
-
-class ProblemReportSubmitting extends ProblemReportState {
-  const ProblemReportSubmitting({super.text, super.images});
-}
-
-class ProblemReportSuccess extends ProblemReportState {
-  const ProblemReportSuccess() : super();
-}
-
-class ProblemReportError extends ProblemReportState {
-  final String message;
-  const ProblemReportError(this.message, {super.text, super.images});
-
-  @override
-  List<Object?> get props => [...super.props, message];
+  List<Object?> get props => [text, images, isSubmitting, errorMessage, isSuccess];
 }

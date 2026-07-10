@@ -175,6 +175,7 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
         _buildDbSelectionRow("INVITE_FRIENDS", AppAssets.icons.icInviteFriend, 'Mời bạn bè'),
         _buildDbSelectionRow("SUPPORT", AppAssets.icons.icCustomerSupport, 'CSKH'),
         _buildDbSelectionRow("FEEDBACK", AppAssets.icons.icFeedback, 'Đóng góp ý kiến'),
+        _buildDbSelectionRow("PROBLEM_REPORT", AppAssets.icons.icFeedback, 'Báo lỗi hệ thống'),
         _buildDbSelectionRow("SETTINGS", AppAssets.icons.icSystem, 'Cài đặt'),
       ],
     );

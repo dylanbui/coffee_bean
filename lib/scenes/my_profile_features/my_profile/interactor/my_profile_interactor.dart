@@ -104,6 +104,9 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
       case "FEEDBACK":
         router?.navigate(FeedbackRoute());
         break;
+      case "PROBLEM_REPORT":
+        router?.navigate(ProblemReportRoute());
+        break;
       case "MAP_TEST":
         router?.navigate(MapTestRoute());
         break;

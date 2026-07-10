@@ -1,9 +1,14 @@
+import 'package:coffee_bean/shared/ui/app_input_configs.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:coffee_bean/shared/ui/app_colors.dart';
+import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/widget/image_wechat_picker_list_view.dart';
 import 'package:coffee_bean/scenes/problem_report/interactor/problem_report_interactor.dart';
 import 'package:coffee_bean/scenes/problem_report/interactor/problem_report_event_state.dart';
+import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
+import 'package:db_core/db_core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 //ignore: must_be_immutable
 class ProblemReportPage extends AppCubitStateFulWidget<ProblemReportInteractor, ProblemReportState> {
@@ -31,17 +36,14 @@ class _ProblemReportPageState extends AppCubitState<ProblemReportPage, ProblemRe
   @override
   Widget getBody(BuildContext context) {
     return BlocConsumer<ProblemReportInteractor, ProblemReportState>(
+      listenWhen: (prev, curr) => prev.isSuccess != curr.isSuccess || prev.errorMessage != curr.errorMessage,
       listener: (context, state) {
-        if (state is ProblemReportSuccess) {
-          _textController.clear(); // Xóa sạch textarea khi thành công
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Problem Report Success"), backgroundColor: Colors.green),
-          );
-          // Navigator.of(context).pop();
-        } else if (state is ProblemReportError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-          );
+        if (state.isSuccess) {
+          _textController.clear();
+          context.showFlashSuccess("Problem Report Success");
+          // router.pop() can be handled here or in Interactor -> Router
+        } else if (state.errorMessage != null) {
+          context.showFlashError(state.errorMessage!);
         }
       },
       builder: (context, state) {
@@ -68,57 +70,35 @@ class _ProblemReportPageState extends AppCubitState<ProblemReportPage, ProblemRe
   }
 
   Widget _buildTextArea(ProblemReportState state) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          TextField(
-            controller: _textController,
-            maxLines: 6,
-            maxLength: 1000,
-            style: const TextStyle(fontSize: 14),
-            decoration: const InputDecoration(
-              hintText: "Nhập thông tin",
-              hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
-              border: InputBorder.none,
-              counterText: "", 
-            ),
-            onChanged: interactor.onTextChanged,
+    return Column(
+      children: [
+        AppInputField(
+          controller: _textController,
+          hintText: "Nhập thông tin",
+          maxLines: 6,
+          maxLength: 1000,
+          config: CoffeeInputStyles.filled.copyWith(borderRadius: 12),
+          onChanged: interactor.onTextChanged,
+          style: TMLabsTextStyle.body,
+        ),
+        const SizedBox(height: 4),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Text(
+            "${state.text.length}/1000",
+            style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),
           ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Text(
-              "${state.text.length}/1000",
-              style: const TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-          )
-        ],
-      ),
+        )
+      ],
     );
   }
 
   Widget _buildSubmitButton(ProblemReportState state) {
-    bool isSubmitting = state is ProblemReportSubmitting;
-    bool isValid = state.text.isNotEmpty;
-    
-    return ElevatedButton(
-      onPressed: (isValid && !isSubmitting) ? interactor.submitReport : null,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        disabledBackgroundColor: Colors.grey[300],
-        disabledForegroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-      child: isSubmitting 
-          ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-          : const Text("Gửi", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+    return AppButton(
+      text: "Gửi",
+      style: TMLabsButtonStyle.primary,
+      isLoading: state.isSubmitting,
+      onPressed: state.text.isNotEmpty ? interactor.submitReport : null,
     );
   }
 }
