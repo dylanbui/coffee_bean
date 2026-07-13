@@ -38,5 +38,17 @@ class AppPrefs {
   void setLastSyncTime(String key, int timestamp) {
     DbSharedPreferences().set('last_sync_$key', timestamp);
   }
+  
+  List<String> getTopicInterested() {
+    final dynamic data = DbSharedPreferences().get('OFFLINE_SELECTED_TOPICS');
+    if (data is List) {
+      return data.cast<String>();
+    }
+    return [];
+  }
+
+  void setTopicInterested(List<String> topics) {
+    DbSharedPreferences().set('OFFLINE_SELECTED_TOPICS', topics);
+  }
 
 }

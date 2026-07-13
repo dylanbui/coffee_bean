@@ -8,6 +8,8 @@ import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/local/user_manager/user_session.dart';
 import 'package:coffee_bean/features/checkout_order/checkout_order_common.dart';
 import 'package:coffee_bean/features/checkout_order/checkout_order_builder.dart';
+import 'package:coffee_bean/scenes/app_landing/community/community_builder.dart';
+import 'package:coffee_bean/scenes/app_landing/topic_selection/topic_selection_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/coupon_list/coupon_list_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/course_list_builder.dart';
 import 'package:coffee_bean/scenes/event_features/activity_list/activity_list_builder.dart';
@@ -52,6 +54,12 @@ class AppRouter extends DbNoteRouter implements AppRoutable {
     // --- TEST UI CHECKOUT ORDER ---
     // await _testCheckoutOrder();
 
+    // final builder = TopicSelectionBuilder();
+    // final router = builder.build();
+    // navigator.pushSameRootPage(router.viewController);
+
+    // Set empty for test
+    AppPrefs().setTopicInterested([]);
     // Load trang dau tien
     MainTabbarBuilder mainTabbarBuilder = MainTabbarBuilder();
     final router = mainTabbarBuilder.build();

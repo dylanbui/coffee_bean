@@ -1,18 +1,86 @@
-import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
-import 'package:coffee_bean/scenes/app_landing/community/community_router.dart';
-import 'package:db_core/state_management/lib_bloc/constants.dart';
-
-// States
-abstract class CommunityState extends BaseBlocState {}
-class CommunityInitial extends CommunityState {}
+import 'package:coffee_bean/data/model/response/hub/post.dart';
+import 'package:coffee_bean/data/model/response/hub/hot_topic.dart';
+import 'package:coffee_bean/data/repository/hub_repository.dart';
+import 'package:coffee_bean/scenes/app_landing/community/community_builder.dart';
+import 'package:coffee_bean/scenes/app_landing/community/interactor/community_event_state.dart';
+import 'package:coffee_bean/scenes/app_landing/community/interactor/mock_data.dart';
+import 'package:db_core/db_core.dart';
 
 class CommunityInteractor extends CubitInteractor<CommunityRoutable, CommunityState> {
+  final HubRepository _hubRepository = locator<HubRepository>();
 
-  CommunityInteractor(CommunityRoutable router) : super(CommunityInitial(), router: router);
+  CommunityInteractor(CommunityRoutable router)
+      : super(CommunityState(), router: router);
 
   @override
   void onDidBecomeActive() {
     super.onDidBecomeActive();
-    // Load data if needed
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    emit(state.copyWith(isLoading: true));
+    
+    final results = await Future.wait([
+      _hubRepository.getHotTopics(),
+      _hubRepository.getPostIndexList(_getSceneByTabIndex(state.currentTabIndex)),
+    ]);
+
+    final hotTopicsResult = results[0] as DbResult<List<HotTopic>>;
+    final postsResult = results[1] as DbResult<List<Post>>;
+
+    List<HotTopic> hotTopics = hotTopicsResult.dataOrNull ?? [];
+    if (hotTopics.isEmpty) {
+      hotTopics = CommunityMockData.mockHotTopics;
+    }
+
+    List<Post> posts = postsResult.dataOrNull ?? [];
+    if (posts.isEmpty) {
+      posts = CommunityMockData.getPostsByScene(_getSceneByTabIndex(state.currentTabIndex));
+    }
+
+    emit(state.copyWith(
+      isLoading: false,
+      hotTopics: hotTopics,
+      posts: posts,
+    ));
+  }
+
+  void onTabChanged(int index) {
+    if (state.currentTabIndex == index) return;
+    emit(state.copyWith(currentTabIndex: index));
+    _fetchPostsByTab();
+  }
+
+  void openSearch() {
+    router?.openSearch();
+  }
+
+  Future<void> _fetchPostsByTab() async {
+    emit(state.copyWith(isLoading: true));
+    final result = await _hubRepository.getPostIndexList(_getSceneByTabIndex(state.currentTabIndex));
+    
+    result.when(
+      success: (data) {
+        List<Post> posts = data;
+        if (posts.isEmpty) {
+          posts = CommunityMockData.getPostsByScene(_getSceneByTabIndex(state.currentTabIndex));
+        }
+        emit(state.copyWith(isLoading: false, posts: posts));
+      },
+      failure: (error) {
+        // Even on failure, we can show mock data if we want, or just the error
+        emit(state.copyWith(isLoading: false, failure: error, posts: CommunityMockData.getPostsByScene(_getSceneByTabIndex(state.currentTabIndex))));
+      },
+    );
+  }
+
+  String _getSceneByTabIndex(int index) {
+    switch (index) {
+      case 0: return 'FOLLOWING'; // Gợi ý
+      case 1: return 'RECOMMEND'; // Đề xuất
+      case 2: return 'TRENDING';  // Thịnh hành
+      default: return 'FOLLOWING';
+    }
   }
 }
