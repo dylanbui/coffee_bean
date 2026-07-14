@@ -1,5 +1,6 @@
 import 'package:coffee_bean/data/model/response/hub/post.dart';
 import 'package:coffee_bean/data/model/response/hub/hot_topic.dart';
+import 'package:coffee_bean/data/model/response/hub/topic_detail.dart';
 import 'package:coffee_bean/data/network/page_result.dart';
 import 'package:coffee_bean/data/network/network_response.dart';
 import 'package:db_core/db_core.dart';
@@ -23,6 +24,14 @@ class HubRepository extends BaseRepository {
         .toList();
   }
 
+  /// Get topic detail
+  Future<DbResult<TopicDetail>> getTopicDetail(int id) async {
+    return await networkClient
+        .doGet('/app-api/hub/topic/get', queryParameters: {'id': id})
+        .mapResponseTo(TopicDetail.fromJson)
+        .toObject();
+  }
+
   /// Save my followed topic tags
   Future<DbResult<bool>> saveTopicTags(List<String> tags) async {
     return await networkClient
@@ -39,22 +48,18 @@ class HubRepository extends BaseRepository {
         .toList();
   }
 
-  /// Get post detail
-  // Future<DbResult<Map<String, dynamic>>> getPostDetail(int id) async {
-  //   return await networkClient
-  //       .doGet('/app-api/hub/post/get', queryParameters: {'id': id})
-  //       .mapResponse()
-  //       .toObject();
-  // }
-
   /// Get paginated post list
   Future<DbResult<PageResult<Post>>> getPostPage({
     String? keyword,
+    String? topicName,
+    String scene = "LATEST",
     int pageNo = 1,
     int pageSize = 100,
   }) async {
     final params = {
       if (keyword != null && keyword.isNotEmpty) 'keyword': keyword,
+      if (topicName != null && topicName.isNotEmpty) 'topicName': topicName,
+      'scene': scene,
       'pageNo': pageNo,
       'pageSize': pageSize,
     };

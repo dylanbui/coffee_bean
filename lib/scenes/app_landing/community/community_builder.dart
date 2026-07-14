@@ -1,3 +1,4 @@
+import 'package:coffee_bean/scenes/posts_features/post_by_topic_list/post_by_topic_list_builder.dart';
 import 'package:coffee_bean/scenes/posts_features/post_list/post_list_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/community/interactor/community_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/community/interactor/community_page.dart';
@@ -7,12 +8,19 @@ import 'package:flutter/material.dart';
 
 abstract class CommunityRoutable implements DbNoteRoutable {
   void openSearch();
+  void pushPostByTopicList(int topicId);
 }
 
 class CommunityRouter extends DbNoteRouter implements CommunityRoutable {
   @override
   void openSearch() {
     final builder = PostListBuilder();
+    push(builder.build().viewController);
+  }
+
+  @override
+  void pushPostByTopicList(int topicId) {
+    final builder = PostByTopicListBuilder(topicId);
     push(builder.build().viewController);
   }
 }

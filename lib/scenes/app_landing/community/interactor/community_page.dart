@@ -29,7 +29,7 @@ class _CommunityPageState extends AppCubitState<CommunityPage, CommunityInteract
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(milliseconds: 800), () {
       if (mounted && AppPrefs().getTopicInterested().isEmpty) {
         _showTopicSelectionModal();
       }
@@ -185,21 +185,24 @@ class _CommunityPageState extends AppCubitState<CommunityPage, CommunityInteract
         if (index < topics.length) {
           final topic = topics[index];
           return Expanded(
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 3),
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(color: TMLabsColor.bgLight, borderRadius: BorderRadius.circular(8)),
-              child: Text(
-                topic.topicName ?? '',
-                style: TMLabsTextStyle.caption.copyWith(
-                  color: TMLabsColor.grey,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
+            child: TapEffect(
+              onTap: () => interactor.openTopicDetail(topic),
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(color: TMLabsColor.bgLight, borderRadius: BorderRadius.circular(8)),
+                child: Text(
+                  topic.topicName ?? '',
+                  style: TMLabsTextStyle.caption.copyWith(
+                    color: TMLabsColor.grey,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
             ),
           );

@@ -56,6 +56,10 @@ class CommunityInteractor extends CubitInteractor<CommunityRoutable, CommunitySt
     router?.openSearch();
   }
 
+  void openTopicDetail(HotTopic topic) {
+    router?.pushPostByTopicList(topic.id);
+  }
+
   Future<void> _fetchPostsByTab() async {
     emit(state.copyWith(isLoading: true));
     final result = await _hubRepository.getPostIndexList(_getSceneByTabIndex(state.currentTabIndex));
