@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
-import 'package:coffee_bean/scenes/post_detail/interactor/post_detail_event_state.dart';
-import 'package:coffee_bean/scenes/post_detail/post_detail_builder.dart';
+import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/post_detail_event_state.dart';
+import 'package:coffee_bean/scenes/posts_features/post_detail/post_detail_builder.dart';
 import 'package:db_core/db_core.dart';
 
 class PostDetailInteractor extends CubitInteractor<PostDetailRoutable, PostDetailState> implements CommentListSmallListener {

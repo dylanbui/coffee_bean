@@ -1,7 +1,7 @@
 import 'package:coffee_bean/scenes/announcement_detail/announcement_detail_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_event_state.dart';
 import 'package:coffee_bean/scenes/course_features/instructor_profile/instructor_profile_builder.dart';
-import 'package:coffee_bean/scenes/post_detail/post_detail_builder.dart';
+import 'package:coffee_bean/scenes/posts_features/post_detail/post_detail_builder.dart';
 import 'package:db_core/architecture_ribs/note_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/home/interactor/home_page.dart';

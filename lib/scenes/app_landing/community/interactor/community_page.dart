@@ -139,7 +139,7 @@ class _CommunityPageState extends AppCubitState<CommunityPage, CommunityInteract
   Widget _buildSearchButton() {
     return AppButton(
       text: AppStrings.searchHint,
-      onPressed: () => _showTopicSelectionModal(),
+      onPressed: () => interactor.openSearch(),
       mainAxisSize: MainAxisSize.min,
       leftIcon: AppIcon(AppAssets.icons.icSearch, color: TMLabsColor.grey, size: 20),
       style: AppButtonStyleConfig(

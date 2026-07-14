@@ -1,4 +1,4 @@
-import 'package:coffee_bean/data/model/response/hub/hot_topic.dart';
+import 'package:coffee_bean/scenes/posts_features/post_list/post_list_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/community/interactor/community_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/community/interactor/community_page.dart';
 import 'package:db_core/architecture_ribs/note_builder.dart';
@@ -12,7 +12,8 @@ abstract class CommunityRoutable implements DbNoteRoutable {
 class CommunityRouter extends DbNoteRouter implements CommunityRoutable {
   @override
   void openSearch() {
-    debugPrint("Navigate to Search Page");
+    final builder = PostListBuilder();
+    push(builder.build().viewController);
   }
 }
 

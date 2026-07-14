@@ -1,6 +1,6 @@
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
-import 'package:coffee_bean/scenes/post_detail/interactor/post_detail_event_state.dart';
-import 'package:coffee_bean/scenes/post_detail/interactor/post_detail_interactor.dart';
+import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/post_detail_event_state.dart';
+import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/post_detail_interactor.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';

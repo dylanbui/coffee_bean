@@ -8,23 +8,15 @@ import 'package:db_core/architecture_ribs/note_router.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_bean/data/model/response/hub/hot_topic.dart';
 
-abstract class TopicSelectionRoutable implements DbNoteRoutable {
-  void onFinish(List<HotTopic> selected);
-}
+// TODO: Refactor needed - The UI and logic in TopicSelectionPage and TopicSelectionPluginWidget 
+// are nearly identical. Consider unifying them into a shared widget or mixin in the future.
 
+
+// PLUGIN
 // Use for plugin TopicSelection
 abstract interface class TopicSelectionPluginListener {
   void onTopicSelectionFinish(List<HotTopic>? selected);
 }
-
-// /// Class hỗ trợ truyền callback nhanh cho TopicSelectionPlugin
-// class TopicSelectionCallbackListener implements TopicSelectionPluginListener {
-//   final void Function(List<HotTopic>? selected) onFinish;
-//   TopicSelectionCallbackListener(this.onFinish);
-//
-//   @override
-//   void onTopicSelectionFinish(List<HotTopic>? selected) => onFinish(selected);
-// }
 
 class TopicSelectionPluginController extends DbPluginController<TopicSelectionPluginInteractor, TopicSelectionPluginListener> {
   void refresh() {
@@ -36,14 +28,17 @@ abstract interface class TopicSelectionBuildable implements DbNoteBuildable {
   Widget buildPlugin(TopicSelectionPluginController controller);
 }
 
+// ROUTER
+abstract class TopicSelectionRoutable implements DbNoteRoutable {
+  void onFinish(List<HotTopic> selected);
+}
+
+
 class TopicSelectionRouter extends DbNoteRouter implements TopicSelectionRoutable {
-
-
   TopicSelectionRouter();
 
   @override
   void onFinish(List<HotTopic> selected) {
-
   }
 
   @override
@@ -52,8 +47,7 @@ class TopicSelectionRouter extends DbNoteRouter implements TopicSelectionRoutabl
   }
 }
 
-
-
+// BUILDER
 class TopicSelectionBuilder extends DbNoteBuilder<TopicSelectionRouter> implements TopicSelectionBuildable {
   TopicSelectionBuilder();
 

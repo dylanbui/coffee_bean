@@ -1,5 +1,7 @@
 import 'package:coffee_bean/data/model/response/hub/post.dart';
 import 'package:coffee_bean/data/model/response/hub/hot_topic.dart';
+import 'package:coffee_bean/data/network/page_result.dart';
+import 'package:coffee_bean/data/network/network_response.dart';
 import 'package:db_core/db_core.dart';
 
 class HubRepository extends BaseRepository {
@@ -9,7 +11,7 @@ class HubRepository extends BaseRepository {
   Future<DbResult<List<HotTopic>>> getHotTopics() async {
     return await networkClient
         .doGet('/app-api/hub/topic/index-hot-topic')
-        .mapTo(HotTopic.fromJson)
+        .mapResponseTo(HotTopic.fromJson)
         .toList();
   }
 
@@ -17,7 +19,7 @@ class HubRepository extends BaseRepository {
   Future<DbResult<List<HotTopic>>> getChooseTopicList() async {
     return await networkClient
         .doGet('/app-api/hub/topic/index-choose-topic')
-        .mapTo(HotTopic.fromJson)
+        .mapResponseTo(HotTopic.fromJson)
         .toList();
   }
 
@@ -25,21 +27,40 @@ class HubRepository extends BaseRepository {
   Future<DbResult<bool>> saveTopicTags(List<String> tags) async {
     return await networkClient
         .doPost('/app-api/hub/expert/save-topic-tags', params: tags)
-        .mapToData<bool>();
+        .mapResponse()
+        .toValue<bool>();
   }
 
   /// Get index post list by scene: RECOMMEND / FOLLOWING / TRENDING
   Future<DbResult<List<Post>>> getPostIndexList(String scene) async {
     return await networkClient
         .doGet('/app-api/hub/post/index-list', queryParameters: {'scene': scene})
-        .mapTo(Post.fromJson)
+        .mapResponseTo(Post.fromJson)
         .toList();
   }
 
   /// Get post detail
-  Future<DbResult<Map<String, dynamic>>> getPostDetail(int id) async {
+  // Future<DbResult<Map<String, dynamic>>> getPostDetail(int id) async {
+  //   return await networkClient
+  //       .doGet('/app-api/hub/post/get', queryParameters: {'id': id})
+  //       .mapResponse()
+  //       .toObject();
+  // }
+
+  /// Get paginated post list
+  Future<DbResult<PageResult<Post>>> getPostPage({
+    String? keyword,
+    int pageNo = 1,
+    int pageSize = 100,
+  }) async {
+    final params = {
+      if (keyword != null && keyword.isNotEmpty) 'keyword': keyword,
+      'pageNo': pageNo,
+      'pageSize': pageSize,
+    };
     return await networkClient
-        .doGet('/app-api/hub/post/get', queryParameters: {'id': id})
-        .mapToData<Map<String, dynamic>>();
+        .doGet('/app-api/hub/post/page', queryParameters: params)
+        .mapResponseToPage(Post.fromJson)
+        .toObject();
   }
 }

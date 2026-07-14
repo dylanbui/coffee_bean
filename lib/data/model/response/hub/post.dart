@@ -10,10 +10,13 @@ class Post {
   final String? userAvatar;
   final List<String>? topicTags;
   final String? postTitle;
+  final String? postContent;
+  final String? postDesc;
   final List<String>? postImgs;
   final int? viewCount;
   final int? postLikeCount;
   final int? postCommentCount;
+  final int? shareCount;
   final int? postStatus;
   final String? createTime;
 
@@ -24,10 +27,13 @@ class Post {
     this.userAvatar,
     this.topicTags,
     this.postTitle,
+    this.postContent,
+    this.postDesc,
     this.postImgs,
     this.viewCount,
     this.postLikeCount,
     this.postCommentCount,
+    this.shareCount,
     this.postStatus,
     this.createTime,
   });

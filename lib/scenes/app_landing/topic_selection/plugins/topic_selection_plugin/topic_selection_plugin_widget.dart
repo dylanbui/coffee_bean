@@ -139,8 +139,8 @@ class _TopicSelectionPluginWidgetState extends AppCubitState<TopicSelectionPlugi
             flex: 1,
             child: AppButton(
               text: "BỎ QUA",
-              height: 30,
-              style: TMLabsButtonStyle.outline.copyWith(borderRadius: 15),
+              height: 44,
+              style: TMLabsButtonStyle.outline.copyWith(borderRadius: 22),
               onPressed: () => interactor.skip(),
             ),
           ),
@@ -149,9 +149,9 @@ class _TopicSelectionPluginWidgetState extends AppCubitState<TopicSelectionPlugi
             flex: 2,
             child: AppButton(
               text: "XÁC NHẬN",
-              height: 30,
+              height: 44,
               isLoading: state.isLoading,
-              style: TMLabsButtonStyle.primary.copyWith(borderRadius: 15),
+              style: TMLabsButtonStyle.primary.copyWith(borderRadius: 22),
               onPressed: () => interactor.confirm(),
             ),
           ),
