@@ -122,7 +122,7 @@ class _CommunityPageState extends AppCubitState<CommunityPage, CommunityInteract
                       return CommunityPostItem(
                         key: ValueKey("post_${state.currentTabIndex}_${post.id}"),
                         data: post,
-                        onTap: () => debugPrint("Tap post ${post.id}"),
+                        onTap: () => interactor.router?.pushPostDetail(post.id),
                       );
                     }, childCount: state.posts.length),
                   ),

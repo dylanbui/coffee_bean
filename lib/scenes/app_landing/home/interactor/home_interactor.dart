@@ -237,10 +237,6 @@ class HomeInteractor extends CubitInteractor<HomeRoutable, HomeState> {
     // Logic for select market tag
   }
 
-  void selectPost(PostItem item) {
-    router?.navigate(PostDetailRoute(item.id));
-  }
-
   void playVideo(CourseVideoItem item) {
     // Logic to play video
     // Use flick_video_player or chewie for video playback

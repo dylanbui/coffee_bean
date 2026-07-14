@@ -1,3 +1,4 @@
+import 'package:coffee_bean/scenes/app_landing/home/home_builder.dart';
 import 'package:coffee_bean/scenes/posts_features/post_list/interactor/post_list_event_state.dart';
 import 'package:coffee_bean/scenes/posts_features/post_list/interactor/post_list_interactor.dart';
 import 'package:coffee_bean/scenes/posts_features/post_list/widgets/post_list_item.dart';
@@ -81,7 +82,7 @@ class _PostListPageState extends AppCubitState<PostListPage, PostListInteractor,
         final post = state.posts[index];
         return PostListItem(
           data: post,
-          onTap: () => interactor.onPostTapped(post),
+          onTap: () => interactor.router?.pushPostDetail(post.id),
         );
       },
     );

@@ -149,7 +149,7 @@ class _PostByTopicListPageState extends AppCubitState<PostByTopicListPage, PostB
       itemBuilder: (context, index) {
         return TopicPostItem(
           data: state.posts[index],
-          onTap: () => interactor.router?.navigate(PostDetailRoute(state.posts[index].id)),
+          onTap: () => interactor.router?.pushPostDetail(state.posts[index].id),
         );
       },
     );

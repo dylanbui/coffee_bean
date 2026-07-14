@@ -1,8 +1,7 @@
 import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/post_detail_interactor.dart';
 import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/post_detail_page.dart';
-import 'package:db_core/architecture_ribs/note_builder.dart';
+import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/scenes/problem_report/problem_report_builder.dart';
-import 'package:db_core/architecture_ribs/note_router.dart';
 
 abstract class PostDetailRoutable implements DbNoteRoutable {
   void openProblemReport();

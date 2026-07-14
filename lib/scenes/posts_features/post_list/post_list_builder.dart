@@ -7,18 +7,16 @@ import 'package:coffee_bean/scenes/posts_features/post_list/plugins/post_card_li
 import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 
+
 abstract class PostListRoutable implements DbNoteRoutable {
-  void openPostDetail(Post post);
+  void pushPostDetail(int postId);
 }
 
 class PostListRouter extends DbNoteRouter implements PostListRoutable {
   @override
-  void openPostDetail(Post post) {
-    push(PostDetailBuilder(postId: post.id).build().viewController);
-  }
-
-  @override
-  void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
+  void pushPostDetail(int postId) {
+    final builder = PostDetailBuilder(postId: postId);
+    push(builder.build().viewController);
   }
 }
 

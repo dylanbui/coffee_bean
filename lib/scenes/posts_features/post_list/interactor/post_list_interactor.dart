@@ -46,8 +46,5 @@ class PostListInteractor extends CubitInteractor<PostListRoutable, PostListState
   void onSearchChanged(String query) {
     _fetchPosts(keyword: query);
   }
-
-  void onPostTapped(Post post) {
-    router?.openPostDetail(post);
-  }
+  
 }

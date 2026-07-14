@@ -58,7 +58,7 @@ class _PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TapEffect(
-      onTap: () => interactor.selectPost(item),
+      onTap: () => interactor.router?.pushPostDetail(item.id),
       child: Container(
         height: 395,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

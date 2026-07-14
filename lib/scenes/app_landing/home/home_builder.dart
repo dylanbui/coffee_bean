@@ -27,16 +27,19 @@ class SellerDetailRoute implements DbNoteRoute {
   SellerDetailRoute(this.instructorId);
 }
 
-class PostDetailRoute implements DbNoteRoute {
-  final int postId;
-  PostDetailRoute(this.postId);
+abstract class HomeRoutable implements DbNoteRoutable {
+  void pushPostDetail(int postId);
 }
-
-
-abstract class HomeRoutable implements DbNoteRoutable {}
 
 // ROUTER
 class HomeRouter extends DbNoteRouter implements HomeRoutable {
+
+  @override
+  void pushPostDetail(int postId) {
+    final builder = PostDetailBuilder(postId: postId);
+    push(builder.build().viewController);
+  }
+
   @override
   void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
     if (toRoute is ChooseStoreRoute) {
@@ -75,10 +78,6 @@ class HomeRouter extends DbNoteRouter implements HomeRoutable {
       final nextRouter = nextBuilder.build();
       push(nextRouter.viewController);
 
-    } else if (toRoute is PostDetailRoute) {
-      final nextBuilder = PostDetailBuilder(postId: toRoute.postId);
-      final nextRouter = nextBuilder.build();
-      push(nextRouter.viewController);
     }
   }
 }

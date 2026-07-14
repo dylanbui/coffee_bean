@@ -1,3 +1,4 @@
+import 'package:coffee_bean/data/model/response/hub/post_detail.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
 import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/post_detail_event_state.dart';
 import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/post_detail_interactor.dart';
@@ -40,7 +41,7 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
           color: Colors.white,
           child: Column(
             children: [
-              _buildCustomAppBar(post, isLoading),
+              _buildCustomAppBar(post, isLoading, state),
               Expanded(
                 child: FadeSwitcher(
                   stateKey: isLoading ? 'loading' : (post == null ? 'empty' : 'content_${post.id}'),
@@ -51,7 +52,7 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
                           : _buildMainScrollContent(post)),
                 ),
               ),
-              _buildFooter(post, isLoading),
+              _buildFooter(post, isLoading, state),
             ],
           ),
         );
@@ -59,7 +60,7 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
     );
   }
 
-  Widget _buildMainScrollContent(PostModel post) {
+  Widget _buildMainScrollContent(PostDetail post) {
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
@@ -68,12 +69,12 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(post.title, style: TMLabsTextStyle.h2),
-                if (post.hashtags != null && post.hashtags!.isNotEmpty) ...[
+                Text(post.postTitle ?? "", style: TMLabsTextStyle.h2),
+                if (post.topicTags != null && post.topicTags!.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
-                    children: post.hashtags!
+                    children: post.topicTags!
                         .map(
                           (tag) => Text(
                             tag,
@@ -84,15 +85,15 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
                   ),
                 ],
                 const SizedBox(height: 16),
-                if (post.images != null && post.images!.isNotEmpty)
+                if (post.postImgs != null && post.postImgs!.isNotEmpty)
                   context.imageSlider(
-                    images: post.images!,
+                    images: post.postImgs!,
                     height: 240,
                     borderRadius: 16,
                     indicatorType: ImageSliderIndicatorType.dots,
                   ),
                 const SizedBox(height: 16),
-                Html(data: post.contentHtml, style: TMLabsTextStyle.htmlStyle),
+                Html(data: post.postContent ?? "", style: TMLabsTextStyle.htmlStyle),
                 const SizedBox(height: 16),
                 Row(
                   children: [
@@ -105,7 +106,7 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
                     ),
                     const Spacer(),
                     Text(
-                      "${post.readCount.formatCompact()} lượt đọc",
+                      "${(post.postViewCount ?? 0).formatCompact()} lượt đọc",
                       style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey),
                     ),
                   ],
@@ -123,7 +124,7 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
   }
 
 
-  Widget _buildCustomAppBar(PostModel? post, bool isLoading) {
+  Widget _buildCustomAppBar(PostDetail? post, bool isLoading, PostDetailState state) {
     return Container(
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 8, bottom: 8, left: 8, right: 16),
       decoration: const BoxDecoration(
@@ -136,46 +137,47 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
           if (isLoading || post == null)
             Expanded(child: _PostDetailShimmer.buildAppBar())
           else ...[
-            AvatarWidget(imageUrl: post.authorAvatar, size: 40),
+            AvatarWidget(imageUrl: post.expertAvatar, size: 40),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(post.authorName, style: TMLabsTextStyle.bodyBold.copyWith(color: TMLabsColor.primary)),
-                  Text(post.date, style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
+                  Text(post.expertTitle ?? "", style: TMLabsTextStyle.bodyBold.copyWith(color: TMLabsColor.primary)),
+                  Text(post.createTime ?? "", style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
                 ],
               ),
             ),
-            TapEffect(
-              onTap: () => interactor.toggleFollow(),
-              child: AppLabel(
-                post.isFollowing ? "Đã theo dõi" : "Theo dõi",
-                backgroundColor: post.isFollowing ? TMLabsColor.primary : TMLabsColor.bgLight,
-                style: TMLabsTextStyle.caption.copyWith(
-                  color: post.isFollowing ? Colors.white : TMLabsColor.primary,
-                  fontWeight: FontWeight.w600,
+            if (post.isOwn != true)
+              TapEffect(
+                onTap: () => interactor.toggleFollow(),
+                child: AppLabel(
+                  state.isFollowed ? "Đã theo dõi" : "Theo dõi",
+                  backgroundColor: state.isFollowed ? TMLabsColor.primary : TMLabsColor.bgLight,
+                  style: TMLabsTextStyle.caption.copyWith(
+                    color: state.isFollowed ? Colors.white : TMLabsColor.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  borderRadius: 20,
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                borderRadius: 20,
               ),
-            ),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildCommentHeader(PostModel post) {
+  Widget _buildCommentHeader(PostDetail post) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
       child: Row(
         children: [
           Text("Bình luận", style: TMLabsTextStyle.title),
           const SizedBox(width: 4),
-          Text(post.commentCount.formatCompact(), style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey)),
+          Text((post.postCommentCount ?? 0).formatCompact(), style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey)),
           const Spacer(),
-          Text(post.likeCount.formatCompact(), style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey)),
+          Text((post.postLikeCount ?? 0).formatCompact(), style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey)),
           const SizedBox(width: 4),
           Text("Lượt thích", style: TMLabsTextStyle.body.copyWith(color: TMLabsColor.grey)),
         ],
@@ -183,12 +185,12 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
     );
   }
 
-  Widget _buildCommentPlugin(PostModel post) {
+  Widget _buildCommentPlugin(PostDetail post) {
     _commentPlugin ??= CommentListBuilder(productId: post.id, type: 0);
     return (_commentPlugin as CommentListBuildable).buildPlugin(5, interactor.commentController);
   }
 
-  Widget _buildFooter(PostModel? post, bool isLoading) {
+  Widget _buildFooter(PostDetail? post, bool isLoading, PostDetailState state) {
     return IgnorePointer(
       ignoring: isLoading || post == null,
       child: AnimatedOpacity(
@@ -208,18 +210,18 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
                 _buildDivider(),
                 Expanded(
                   child: _buildFooterButton(
-                    (post?.isLiked ?? false) ? Icons.thumb_up : AppAssets.icons.icLike,
+                    state.isLiked ? Icons.thumb_up : AppAssets.icons.icLike,
                     "Thích",
-                    color: (post?.isLiked ?? false) ? TMLabsColor.primary : null,
+                    color: state.isLiked ? TMLabsColor.primary : null,
                     onTap: () => interactor.toggleLike(),
                   ),
                 ),
                 _buildDivider(),
                 Expanded(
                   child: _buildFooterButton(
-                    (post?.isSaved ?? false) ? Icons.favorite : Icons.favorite_border,
+                    state.isFavorited ? Icons.favorite : Icons.favorite_border,
                     "Lưu",
-                    color: (post?.isSaved ?? false) ? TMLabsColor.primary : null,
+                    color: state.isFavorited ? TMLabsColor.primary : null,
                     size: 26,
                     onTap: () => interactor.toggleSave(),
                   ),
@@ -231,13 +233,14 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
                     "Chia sẻ",
                     onTap: () {
                       if (post == null) return;
+                      interactor.sharePost();
                       SharePosterDialog.show(
                         context: context,
-                        imageUrl: post.images?.firstOrNull ?? post.authorAvatar,
-                        title: post.title,
+                        imageUrl: post.postImgs?.firstOrNull ?? post.expertAvatar ?? "",
+                        title: post.postTitle ?? "",
                         shareLink: "https://coffeebean.com/post/${post.id}", // Fake link
-                        subTitle: "Bởi ${post.authorName}",
-                        shareText: "Xem bài viết thú vị này trên Coffee Bean: ${post.title}",
+                        subTitle: "Bởi ${post.expertTitle}",
+                        shareText: "Xem bài viết thú vị này trên Coffee Bean: ${post.postTitle}",
                       );
                     },
                   ),
