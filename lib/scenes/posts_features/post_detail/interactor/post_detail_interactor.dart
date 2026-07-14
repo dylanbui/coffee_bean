@@ -4,6 +4,7 @@ import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
 import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/mock_data.dart';
 import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/post_detail_event_state.dart';
 import 'package:coffee_bean/scenes/posts_features/post_detail/post_detail_builder.dart';
+import 'package:coffee_bean/scenes/posts_features/post_report/post_report_builder.dart';
 import 'package:db_core/db_core.dart';
 
 class PostDetailInteractor extends CubitInteractor<PostDetailRoutable, PostDetailState> implements CommentListSmallListener {
@@ -84,7 +85,7 @@ class PostDetailInteractor extends CubitInteractor<PostDetailRoutable, PostDetai
     if (state.post == null) return;
 
     final newLiked = !state.isLiked;
-    // Cập nhật like count trong UI model nếu cần, 
+    // Cập nhật like count trong UI model nếu cần,
     // nhưng ở đây ta chỉ update state boolean
     emit(state.copyWith(isLiked: newLiked));
 
@@ -115,7 +116,18 @@ class PostDetailInteractor extends CubitInteractor<PostDetailRoutable, PostDetai
   }
 
   void reportPost() {
-    router?.openProblemReport();
+    final post = state.post;
+    if (post == null) return;
+    
+    router?.openReportPost(
+      targetInfo: ReportTargetInfo(
+        type: ReportTargetType.post,
+        targetId: postId,
+        nickname: post.expertTitle ?? '',
+        imageUrl: post.postImgs?.firstOrNull,
+        summary: post.postTitle ?? post.postContent ?? '',
+      ),
+    );
   }
 
   @override

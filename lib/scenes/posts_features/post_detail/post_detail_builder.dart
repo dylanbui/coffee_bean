@@ -1,16 +1,22 @@
 import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/post_detail_interactor.dart';
 import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/post_detail_page.dart';
 import 'package:db_core/db_core.dart';
-import 'package:coffee_bean/scenes/problem_report/problem_report_builder.dart';
+import 'package:coffee_bean/scenes/posts_features/post_report/post_report_builder.dart';
 
 abstract class PostDetailRoutable implements DbNoteRoutable {
-  void openProblemReport();
+  void openReportPost({
+    required ReportTargetInfo targetInfo,
+  });
 }
 
 class PostDetailRouter extends DbNoteRouter implements PostDetailRoutable {
   @override
-  void openProblemReport() {
-    final builder = ProblemReportBuilder();
+  void openReportPost({
+    required ReportTargetInfo targetInfo,
+  }) {
+    final builder = PostReportBuilder(
+      targetInfo: targetInfo,
+    );
     push(builder.build().viewController);
   }
 }

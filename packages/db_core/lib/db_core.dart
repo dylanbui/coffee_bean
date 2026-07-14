@@ -51,6 +51,7 @@ export 'utils/locator.dart';
 export 'utils/logger.dart';
 export 'utils/toast.dart';
 export 'utils/app_button.dart';
+export 'utils/app_label.dart';
 export 'utils/app_input_field.dart';
 export 'utils/tap_effect.dart';
 export 'utils/common_style.dart';

@@ -14,11 +14,11 @@ class CoffeeInputStyles {
       color: TMLabsColor.primary,
     ),
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    enabledBorderColor: TMLabsColor.accent.withValues(alpha: 0.1),
+    enabledBorderColor: TMLabsColor.accent.withValues(alpha: 0.3),
     focusedBorderColor: TMLabsColor.primary,
     borderRadius: 8.0,
   );
-
+  
   /// Elegant underline style.
   static AppInputStyleConfig get underline => AppInputStyleConfig(
     borderStyle: AppInputBorderStyle.underline,

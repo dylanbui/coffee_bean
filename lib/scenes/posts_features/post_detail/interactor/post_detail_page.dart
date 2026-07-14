@@ -101,7 +101,11 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
                       text: "Báo cáo",
                       width: 100,
                       height: 32,
-                      style: TMLabsButtonStyle.outline.copyWith(borderRadius: 8),
+                      style: TMLabsButtonStyle.outline.copyWith(
+                        borderRadius: 8,
+                        textColor: TMLabsColor.primary.withValues(alpha: 0.6),
+                        borderColor: TMLabsColor.primary.withValues(alpha: 0.6),
+                      ),
                       onPressed: () => interactor.reportPost(),
                     ),
                     const Spacer(),

@@ -173,4 +173,20 @@ class HubRepository extends BaseRepository {
         .mapResponse()
         .toValue<bool>();
   }
+
+  /// Submit report
+  Future<DbResult<int>> createReport({
+    required int targetType,
+    required int targetId,
+    required String reportReason,
+  }) async {
+    return await networkClient
+        .doPost('/app-api/hub/report/create', params: {
+          'targetType': targetType,
+          'targetId': targetId,
+          'reportReason': reportReason,
+        })
+        .mapResponse()
+        .toValue<int>();
+  }
 }
