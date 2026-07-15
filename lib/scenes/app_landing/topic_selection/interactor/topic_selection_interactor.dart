@@ -25,20 +25,45 @@ class TopicSelectionInteractor extends CubitInteractor<TopicSelectionRoutable, T
     
     result.when(
       success: (data) {
-        List<HotTopic> topics = data;
-        if (topics.isEmpty) {
-          topics = TopicSelectionMockData.mockTopics;
-        }
-        emit(state.copyWith(isLoading: false, topics: topics, failure: null));
+        final processed = _sortAndExtractSelected(data.isEmpty ? TopicSelectionMockData.mockTopics : data);
+        emit(state.copyWith(
+          isLoading: false, 
+          topics: processed.topics, 
+          selectedIds: processed.selectedIds, 
+          failure: null
+        ));
       },
       failure: (error) {
+        final processed = _sortAndExtractSelected(TopicSelectionMockData.mockTopics);
         emit(state.copyWith(
           isLoading: false, 
           failure: null,
-          topics: TopicSelectionMockData.mockTopics,
+          topics: processed.topics,
+          selectedIds: processed.selectedIds,
         ));
       },
     );
+  }
+
+  ({List<HotTopic> topics, List<int> selectedIds}) _sortAndExtractSelected(List<HotTopic> originalTopics) {
+    final savedTags = AppPrefs().getTopicInterested();
+    if (savedTags.isEmpty) {
+      return (topics: originalTopics, selectedIds: <int>[]);
+    }
+
+    final matched = <HotTopic>[];
+    final others = <HotTopic>[];
+
+    for (var topic in originalTopics) {
+      if (savedTags.contains(topic.topicName)) {
+        matched.add(topic);
+      } else {
+        others.add(topic);
+      }
+    }
+
+    // Không thêm các id vào selectedIds, chỉ sắp xếp lại danh sách
+    return (topics: [...matched, ...others], selectedIds: <int>[]);
   }
 
   void toggleTopic(int id) {
@@ -51,6 +76,14 @@ class TopicSelectionInteractor extends CubitInteractor<TopicSelectionRoutable, T
     emit(state.copyWith(selectedIds: currentSelected));
   }
 
+  Future<void> _saveTopics(List<String> tags) async {
+    // Save to SharedPreferences using AppPrefs
+    AppPrefs().setTopicInterested(tags);
+    if (UserManager().isLogin) {
+      await _hubRepository.saveTopicTags(tags);
+    }
+  }
+
   Future<void> confirm() async {
     final selectedTags = state.topics
         .where((t) => state.selectedIds.contains(t.id))
@@ -58,21 +91,11 @@ class TopicSelectionInteractor extends CubitInteractor<TopicSelectionRoutable, T
         .where((name) => name.isNotEmpty)
         .toList();
 
-    if (UserManager().isLogin) {
-      emit(state.copyWith(isLoading: true));
-      final result = await _hubRepository.saveTopicTags(selectedTags);
-      emit(state.copyWith(isLoading: false));
-      
-      if (result case DbSuccess()) {
-        router?.pop();
-      } else if (result case DbFailure(:final error)) {
-        emit(state.copyWith(failure: null));
-      }
-    } else {
-      // Save to SharedPreferences using AppPrefs if not logged in
-      AppPrefs().setTopicInterested(selectedTags);
-      router?.pop();
-    }
+    emit(state.copyWith(isLoading: true));
+    await _saveTopics(selectedTags);
+    emit(state.copyWith(isLoading: false));
+    
+    router?.pop();
   }
 
   void skip() {

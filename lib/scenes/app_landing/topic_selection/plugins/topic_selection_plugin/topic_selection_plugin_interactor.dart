@@ -56,6 +56,14 @@ class TopicSelectionPluginInteractor extends CubitInteractor<TopicSelectionRouta
     emit(state.copyWith(selectedIds: currentSelected));
   }
 
+  Future<void> _saveTopics(List<String> tags) async {
+    // Save to SharedPreferences using AppPrefs
+    AppPrefs().setTopicInterested(tags);
+    if (UserManager().isLogin) {
+      await _hubRepository.saveTopicTags(tags);
+    }
+  }
+
   Future<void> confirm() async {
     final selectedTopics = state.topics
         .where((t) => state.selectedIds.contains(t.id))
@@ -66,24 +74,26 @@ class TopicSelectionPluginInteractor extends CubitInteractor<TopicSelectionRouta
         .where((name) => name.isNotEmpty)
         .toList();
 
-    if (UserManager().isLogin) {
-      emit(state.copyWith(isLoading: true));
-      final result = await _hubRepository.saveTopicTags(selectedTags);
-      emit(state.copyWith(isLoading: false));
-      
-      if (result case DbSuccess()) {
-        controller.listener?.onTopicSelectionFinish(selectedTopics);
-      } else if (result case DbFailure(:final error)) {
-        emit(state.copyWith(failure: null));
-      }
-    } else {
-      // Save to SharedPreferences using AppPrefs if not logged in
-      AppPrefs().setTopicInterested(selectedTags);
-      controller.listener?.onTopicSelectionFinish(selectedTopics);
-    }
+    emit(state.copyWith(isLoading: true));
+    await _saveTopics(selectedTags);
+    emit(state.copyWith(isLoading: false));
+    
+    controller.listener?.onTopicSelectionFinish(selectedTopics);
   }
 
   void skip() {
-    controller.listener?.onTopicSelectionFinish(null);
+    // Khi user chọn "bỏ qua", mặc định lấy 5 topic đầu tiên
+    final selectedTopics = state.topics.take(5).toList();
+    
+    final selectedTags = selectedTopics
+        .map((t) => t.topicName ?? '')
+        .where((name) => name.isNotEmpty)
+        .toList();
+
+    // Chạy ngầm việc lưu vào hệ thống (không await)
+    _saveTopics(selectedTags);
+    
+    // Kết thúc plugin ngay lập tức
+    controller.listener?.onTopicSelectionFinish(selectedTopics);
   }
 }
