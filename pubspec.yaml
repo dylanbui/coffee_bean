@@ -132,7 +132,8 @@ dependencies:
   intl: ^0.20.2
   # A Flutter widget for rendering HTML and CSS as Flutter widgets
   flutter_html: ^3.0.0
-
+  # Flutter HTML Editor Enhanced is a text editor for Android, iOS, and Web
+  html_editor_enhanced: ^2.7.1
   # --- Payment gateway ---
   flutter_inappwebview: ^6.1.5
   crypto: ^3.0.7
