@@ -14,11 +14,11 @@ import 'package:coffee_bean/data/model/response/hub/hot_topic.dart';
 
 // PLUGIN
 // Use for plugin TopicSelection
-abstract interface class TopicSelectionPluginListener {
+abstract interface class TopicSelectionListener {
   void onTopicSelectionFinish(List<HotTopic>? selected);
 }
 
-class TopicSelectionPluginController extends DbPluginController<TopicSelectionPluginInteractor, TopicSelectionPluginListener> {
+class TopicSelectionPluginController extends DbPluginController<TopicSelectionPluginInteractor, TopicSelectionListener> {
   void refresh() {
     interactor?.fetchTopics();
   }
@@ -49,12 +49,13 @@ class TopicSelectionRouter extends DbNoteRouter implements TopicSelectionRoutabl
 
 // BUILDER
 class TopicSelectionBuilder extends DbNoteBuilder<TopicSelectionRouter> implements TopicSelectionBuildable {
-  TopicSelectionBuilder();
+  final TopicSelectionListener? listener;
+  TopicSelectionBuilder({this.listener});
 
   @override
   TopicSelectionRouter build() {
     final router = TopicSelectionRouter();
-    final interactor = TopicSelectionInteractor(router);
+    final interactor = TopicSelectionInteractor(router, listener: listener);
     final page = TopicSelectionPage(interactor: interactor);
     router.attach(interactor, page);
     return router;

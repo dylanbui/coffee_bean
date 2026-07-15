@@ -13,6 +13,7 @@ import 'package:coffee_bean/scenes/app_landing/topic_selection/topic_selection_b
 import 'package:coffee_bean/scenes/my_profile_features/coupon_list/coupon_list_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_list/course_list_builder.dart';
 import 'package:coffee_bean/scenes/event_features/activity_list/activity_list_builder.dart';
+import 'package:coffee_bean/scenes/posts_features/create_post/create_post_builder.dart';
 import 'package:coffee_bean/scenes/posts_features/post_list/post_list_builder.dart';
 import 'package:coffee_bean/scenes/shopping_features/product_detail/product_detail_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/update_profile/update_profile_builder.dart';
@@ -55,7 +56,7 @@ class AppRouter extends DbNoteRouter implements AppRoutable {
     // --- TEST UI CHECKOUT ORDER ---
     // await _testCheckoutOrder();
 
-    // final builder = PostListBuilder();
+    // final builder = CreatePostBuilder();
     // final router = builder.build();
     // navigator.pushSameRootPage(router.viewController);
 

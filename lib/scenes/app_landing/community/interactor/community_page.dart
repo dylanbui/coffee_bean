@@ -1,4 +1,5 @@
 import 'package:coffee_bean/config/app_pref.dart';
+import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/model/response/hub/hot_topic.dart';
 import 'package:coffee_bean/scenes/app_landing/community/interactor/community_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/community/interactor/community_interactor.dart';
@@ -45,6 +46,7 @@ class _CommunityPageState extends AppCubitState<CommunityPage, CommunityInteract
 
         return Scaffold(
           backgroundColor: TMLabsColor.bgMain,
+          floatingActionButton: UserManager().isLogin ? _buildCreatePostButton() : null,
           body: CustomScrollView(
             slivers: [
               // 1. Header: Slider + Hot Topics (Cuộn đi bình thường)
@@ -153,6 +155,30 @@ class _CommunityPageState extends AppCubitState<CommunityPage, CommunityInteract
     );
   }
 
+  Widget _buildCreatePostButton() {
+    return TapEffect(
+      onTap: () => interactor.router?.pushCreatePost(),
+      child: Container(
+        width: 70,
+        height: 70,
+        decoration: BoxDecoration(
+          color: TMLabsColor.primary,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: TMLabsColor.primary.withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            )
+          ],
+        ),
+        child: Center(
+          child: AppIcon(AppAssets.icons.icPencil, color: Colors.white, size: 30),
+        ),
+      ),
+    );
+  }
+
   Widget _buildHotTopics(CommunityState state) {
     final topics = state.hotTopics.take(10).toList();
     if (topics.isEmpty) return const SizedBox.shrink();
@@ -226,7 +252,7 @@ class _CommunityPageState extends AppCubitState<CommunityPage, CommunityInteract
   }
 }
 
-class _TopicSelectionModalListener implements TopicSelectionPluginListener {
+class _TopicSelectionModalListener implements TopicSelectionListener {
   final FlashController flashController;
   _TopicSelectionModalListener(this.flashController);
 

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:coffee_bean/data/repository/feedback_repository.dart';
 import 'package:coffee_bean/data/repository/infra_repository.dart';
 import 'package:coffee_bean/scenes/feedback_features/send_feedback/send_feedback_builder.dart';
-import 'package:coffee_bean/utils/image_utils.dart';
 import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/scenes/feedback_features/send_feedback/interactor/send_feedback_event_state.dart';
 
@@ -37,17 +36,15 @@ class SendFeedbackInteractor extends CubitInteractor<SendFeedbackRoutable, SendF
     emit(state.copyWith(isSubmitting: true, errorMessage: null, isSuccess: false));
 
     try {
-      // 1. Nén ảnh và Upload ảnh lên server
+      // 1. Upload ảnh lên server (Tự động nén bên trong Repo)
       final List<String> uploadedUrls = [];
       if (state.images.isNotEmpty) {
-        // Nén toàn bộ ảnh sang chuẩn FHD trước khi upload
         final List<File> imageFiles = state.images.map((path) => File(path)).toList();
-        final compressedFiles = await ImageUtils.compressFHDImages(imageFiles);
 
         if (uploadParallel) {
           // Phiên bản Upload ĐỒNG THỜI (Parallel)
           final uploadResults = await Future.wait(
-            compressedFiles.map((file) => _infraRepository.uploadFile(file, directory: 'feedback')),
+            imageFiles.map((file) => _infraRepository.uploadFile(file, directory: 'feedback')),
           );
 
           for (var result in uploadResults) {
@@ -57,7 +54,7 @@ class SendFeedbackInteractor extends CubitInteractor<SendFeedbackRoutable, SendF
           }
         } else {
           // Phiên bản Upload TUẦN TỰ (Sequential)
-          for (var file in compressedFiles) {
+          for (var file in imageFiles) {
             final uploadResult = await _infraRepository.uploadFile(file, directory: 'feedback');
             
             if (uploadResult case DbSuccess(:final data)) {
@@ -77,7 +74,6 @@ class SendFeedbackInteractor extends CubitInteractor<SendFeedbackRoutable, SendF
       );
 
       if (result case DbSuccess()) {
-        await ImageUtils.cleanTemporaryFiles();
         emit(state.copyWith(isSubmitting: false, isSuccess: true));
       } else if (result case DbFailure(:final error)) {
         emit(state.copyWith(isSubmitting: false, errorMessage: error.message));

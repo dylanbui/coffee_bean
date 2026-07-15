@@ -1,3 +1,4 @@
+import 'package:coffee_bean/data/model/request/hub/create_post_request.dart';
 import 'package:coffee_bean/data/model/response/hub/post.dart';
 import 'package:coffee_bean/data/model/response/hub/post_detail.dart';
 import 'package:coffee_bean/data/model/response/hub/post_status.dart';
@@ -119,6 +120,14 @@ class HubRepository extends BaseRepository {
         .doDelete('/app-api/hub/post/delete', queryParameters: {'id': id})
         .mapResponse()
         .toValue<bool>();
+  }
+
+  /// Create post
+  Future<DbResult<int>> createPost(CreatePostRequest request) async {
+    return await networkClient
+        .doPost('/app-api/hub/post/create', params: request.toJson())
+        .mapResponse()
+        .toValue<int>();
   }
 
   /// Create share record: 1-post

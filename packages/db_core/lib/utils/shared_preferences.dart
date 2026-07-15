@@ -64,13 +64,20 @@ class DbSharedPreferences {
   // endregion
 
 
-  /// Item setter
+  /// Item getter
   ///
   /// @param key String
-  /// @returns Future
+  /// @returns dynamic
   dynamic get(String key) {
+    // Ưu tiên lấy từ session cache để có dữ liệu ngay lập tức (cho dù chưa ghi xong xuống disk)
+    if (_session.containsKey(key)) {
+      return _session[key];
+    }
+
     try {
-      return json.decode(prefs.get(key).toString());
+      final val = prefs.get(key);
+      if (val == null) return null;
+      return json.decode(val.toString());
     } catch (e) {
       return prefs.get(key);
     }
@@ -82,53 +89,29 @@ class DbSharedPreferences {
   /// @param value any
   /// @returns Future
   Future set(String key, value) async {
+    // Cập nhật session cache ngay lập tức để các hàm get() gọi sau đó lấy được ngay
+    _session[key] = value;
 
-    // Detect item type
-    switch (value.runtimeType) {
-    // String
-      case String:
-        {
-          prefs.setString(key, value);
-        }
-        break;
-
-    // Integer
-      case int:
-        {
-          prefs.setInt(key, value);
-        }
-        break;
-
-    // Boolean
-      case bool:
-        {
-          prefs.setBool(key, value);
-        }
-        break;
-
-    // Double
-      case double:
-        {
-          prefs.setDouble(key, value);
-        }
-        break;
-
-    // List<String>
-      case List:
-        {
-          prefs.setStringList(key, value);
-        }
-        break;
-
-    // Object
-      default:
-        {
-          prefs.setString(key, jsonEncode(value.toJson()));
-        }
+    // Detect item type và thực hiện ghi xuống disk
+    if (value is String) {
+      await prefs.setString(key, value);
+    } else if (value is int) {
+      await prefs.setInt(key, value);
+    } else if (value is bool) {
+      await prefs.setBool(key, value);
+    } else if (value is double) {
+      await prefs.setDouble(key, value);
+    } else if (value is List<String>) {
+      await prefs.setStringList(key, value);
+    } else if (value is List) {
+      await prefs.setString(key, jsonEncode(value));
+    } else {
+      try {
+        await prefs.setString(key, jsonEncode(value.toJson()));
+      } catch (e) {
+        await prefs.setString(key, jsonEncode(value));
+      }
     }
-
-    // Add item to session container
-    _session.putIfAbsent(key, () => value);
   }
 
   Future remove(String key) {

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:coffee_bean/data/model/response/system/announcement.dart';
+import 'package:coffee_bean/utils/image_utils.dart';
 import 'package:db_core/network/base_repository.dart';
 import 'package:db_core/network/network_common.dart';
 import 'package:db_core/network/network_upload_response.dart';
@@ -73,19 +74,42 @@ class InfraRepository extends BaseRepository {
 
   /// Upload file to server
   /// API: POST /app-api/infra/file/upload
+  /// Tự động nén ảnh dựa trên thư mục upload và xóa file tạm sau khi xong
   Future<DbResult<String>> uploadFile(File file, {String directory = 'avatar'}) async {
+    File fileToUpload = file;
+    File? tempFile;
+
+    // 1. Tự động nén nếu là ảnh
+    if (directory == 'avatar') {
+      tempFile = await ImageUtils.compressAvatar(file);
+    } else {
+      tempFile = await ImageUtils.compressFHDImage(file);
+    }
+
+    if (tempFile != null) {
+      fileToUpload = tempFile;
+    }
+
+    // 2. Thực hiện upload
     final uploadData = UploadData(
       fieldName: 'file',
-      filePath: file.path,
+      filePath: fileToUpload.path,
       extraData: {'directory': directory},
     );
 
-    return await networkClient
+    final result = await networkClient
         .doUpload(
           '/app-api/infra/file/upload',
           uploadData,
         )
         .mapResponse()
         .toValue<String>();
+
+    // 3. Dọn dẹp file tạm ngay lập tức để giải phóng bộ nhớ
+    if (tempFile != null && tempFile.existsSync()) {
+      tempFile.delete().catchError((_) => null);
+    }
+
+    return result;
   }
 }

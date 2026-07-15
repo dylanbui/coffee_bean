@@ -25,9 +25,8 @@ class UpdateProfileInteractor extends CubitInteractor<UpdateProfileRoutable, Upd
   }
 
   Future<void> onAvatarFileSelected(File file) async {
-    // Nén ảnh ngay khi chọn
-    final compressedFile = await ImageUtils.compressAvatar(file);
-    emit(state.copyWith(selectedAvatarFile: compressedFile ?? file));
+    // Không cần nén ở đây nữa, Repo sẽ tự nén khi upload
+    emit(state.copyWith(selectedAvatarFile: file));
   }
 
   Future<void> updateProfile({

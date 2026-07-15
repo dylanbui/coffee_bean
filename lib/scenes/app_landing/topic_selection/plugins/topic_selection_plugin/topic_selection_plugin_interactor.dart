@@ -81,17 +81,28 @@ class TopicSelectionPluginInteractor extends CubitInteractor<TopicSelectionRouta
     controller.listener?.onTopicSelectionFinish(selectedTopics);
   }
 
-  void skip() {
-    // Khi user chọn "bỏ qua", mặc định lấy 5 topic đầu tiên
-    final selectedTopics = state.topics.take(5).toList();
+  Future<void> skip() async {
+    // Nếu đang load mà user bấm skip, có thể state.topics đang trống
+    // Ta ưu tiên lấy từ topics đã load, nếu chưa có thì lấy từ MockData
+    final sourceTopics = state.topics.isNotEmpty
+        ? state.topics
+        : TopicSelectionMockData.mockTopics;
+
+    // Khi user chọn "bỏ qua", mặc định lấy 3 topic đầu tiên
+    final selectedTopics = sourceTopics.take(3).toList();
     
     final selectedTags = selectedTopics
         .map((t) => t.topicName ?? '')
         .where((name) => name.isNotEmpty)
         .toList();
 
-    // Chạy ngầm việc lưu vào hệ thống (không await)
-    _saveTopics(selectedTags);
+    // Hiển thị loading nhẹ nếu cần (tùy chọn, vì skip thường muốn nhanh)
+    // emit(state.copyWith(isLoading: true));
+
+    // Lưu vào hệ thống
+    await _saveTopics(selectedTags);
+
+    // emit(state.copyWith(isLoading: false));
     
     // Kết thúc plugin ngay lập tức
     controller.listener?.onTopicSelectionFinish(selectedTopics);

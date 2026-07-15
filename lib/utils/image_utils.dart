@@ -23,6 +23,23 @@ class ImageUtils {
     return File(result.path);
   }
 
+  /// Nén một ảnh duy nhất theo chuẩn FHD (1920x1080) với Quality 90
+  static Future<File?> compressFHDImage(File file) async {
+    final tempDir = await getTemporaryDirectory();
+    final String targetPath = '${tempDir.path}/fhd_single_${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+    final XFile? result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      quality: 90,
+      minWidth: 1920,
+      minHeight: 1080,
+      format: CompressFormat.jpeg,
+    );
+
+    return result != null ? File(result.path) : null;
+  }
+
   /// Nén danh sách ảnh theo chuẩn FHD (1920x1080) với Quality 90
   /// Đảm bảo dung lượng luôn < 2MB (thường chỉ 600KB - 900KB)
   static Future<List<File>> compressFHDImages(List<File> files) async {

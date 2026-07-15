@@ -57,6 +57,7 @@ class _Icons {
   final String icDanDuong = 'assets/icons/ic_dan_duong.svg';
   final String icLogout = 'assets/icons/ic_system.svg';
   final String icNoImage = 'assets/icons/ic_no_image.svg';
+  final String icPencil = 'assets/icons/ic_pencil.svg';
 
 }
 

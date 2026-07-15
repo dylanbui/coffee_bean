@@ -8,18 +8,19 @@ import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/data/model/response/hub/hot_topic.dart';
 
 class TopicSelectionInteractor extends CubitInteractor<TopicSelectionRoutable, TopicSelectionState> {
+  final TopicSelectionListener? listener;
   final HubRepository _hubRepository = locator<HubRepository>();
 
-  TopicSelectionInteractor(TopicSelectionRoutable router)
+  TopicSelectionInteractor(TopicSelectionRoutable router, {this.listener})
       : super(TopicSelectionState(), router: router);
 
   @override
   void onDidBecomeActive() {
     super.onDidBecomeActive();
-    _fetchTopics();
+    fetchTopics();
   }
 
-  Future<void> _fetchTopics() async {
+  Future<void> fetchTopics() async {
     emit(state.copyWith(isLoading: true));
     final result = await _hubRepository.getChooseTopicList();
     
@@ -85,8 +86,11 @@ class TopicSelectionInteractor extends CubitInteractor<TopicSelectionRoutable, T
   }
 
   Future<void> confirm() async {
-    final selectedTags = state.topics
+    final selectedTopics = state.topics
         .where((t) => state.selectedIds.contains(t.id))
+        .toList();
+
+    final selectedTags = selectedTopics
         .map((t) => t.topicName ?? '')
         .where((name) => name.isNotEmpty)
         .toList();
@@ -95,6 +99,7 @@ class TopicSelectionInteractor extends CubitInteractor<TopicSelectionRoutable, T
     await _saveTopics(selectedTags);
     emit(state.copyWith(isLoading: false));
     
+    listener?.onTopicSelectionFinish(selectedTopics);
     router?.pop();
   }
 
