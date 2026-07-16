@@ -79,6 +79,13 @@ class ImageWechatPickerListView extends StatelessWidget {
   }
 
   Widget _buildImageItem(String path, int index) {
+    Widget image;
+    if (path.startsWith('http') || path.startsWith('https')) {
+      image = DbCachedImageWidget(imageUrl: path, fit: BoxFit.cover);
+    } else {
+      image = Image.file(File(path), fit: BoxFit.cover);
+    }
+
     return Container(
       width: 80,
       height: 80,
@@ -88,7 +95,7 @@ class ImageWechatPickerListView extends StatelessWidget {
           Positioned.fill(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.file(File(path), fit: BoxFit.cover),
+              child: image,
             ),
           ),
           Positioned(

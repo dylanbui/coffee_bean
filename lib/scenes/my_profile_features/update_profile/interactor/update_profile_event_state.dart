@@ -8,6 +8,7 @@ class UpdateProfileState extends BaseBlocState {
   final UserInfo? userInfo;
   final bool isUpdateSuccess;
   final File? selectedAvatarFile;
+  final File? selectedCoverFile;
 
   UpdateProfileState({
     this.isLoading = false,
@@ -15,6 +16,7 @@ class UpdateProfileState extends BaseBlocState {
     this.userInfo,
     this.isUpdateSuccess = false,
     this.selectedAvatarFile,
+    this.selectedCoverFile,
   });
 
   UpdateProfileState copyWith({
@@ -23,6 +25,7 @@ class UpdateProfileState extends BaseBlocState {
     UserInfo? userInfo,
     bool? isUpdateSuccess,
     File? selectedAvatarFile,
+    File? selectedCoverFile,
   }) {
     return UpdateProfileState(
       isLoading: isLoading ?? this.isLoading,
@@ -30,11 +33,12 @@ class UpdateProfileState extends BaseBlocState {
       userInfo: userInfo ?? this.userInfo,
       isUpdateSuccess: isUpdateSuccess ?? this.isUpdateSuccess,
       selectedAvatarFile: selectedAvatarFile ?? this.selectedAvatarFile,
+      selectedCoverFile: selectedCoverFile ?? this.selectedCoverFile,
     );
   }
 
   @override
-  List<Object?> get props => [isLoading, error, userInfo, isUpdateSuccess, selectedAvatarFile];
+  List<Object?> get props => [isLoading, error, userInfo, isUpdateSuccess, selectedAvatarFile, selectedCoverFile];
 }
 
 class UpdateProfileInitial extends UpdateProfileState {

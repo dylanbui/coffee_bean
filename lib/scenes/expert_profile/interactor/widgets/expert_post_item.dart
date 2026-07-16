@@ -5,11 +5,11 @@ import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 
-class CommunityPostItem extends StatelessWidget {
+class ExpertPostItem extends StatelessWidget {
   final Post data;
   final VoidCallback onTap;
 
-  const CommunityPostItem({
+  const ExpertPostItem({
     super.key,
     required this.data,
     required this.onTap,
@@ -21,8 +21,8 @@ class CommunityPostItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: TMLabsColor.primary,
-          borderRadius: BorderRadius.circular(24),
+          color: TMLabsColor.grey,
+          borderRadius: BorderRadius.circular(16),
         ),
         clipBehavior: Clip.antiAlias,
         child: Stack(
@@ -43,7 +43,7 @@ class CommunityPostItem extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.black.withValues(alpha: 0.1),
-                    Colors.black.withValues(alpha: 0.8),
+                    Colors.black.withValues(alpha: 0.6),
                   ],
                 ),
               ),
@@ -51,18 +51,18 @@ class CommunityPostItem extends StatelessWidget {
             
             // Content
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Row(
                     children: [
-                      AppIcon(AppAssets.icons.icComment, size: 14, color: TMLabsColor.white),
+                      AppIcon(AppAssets.icons.icComment, size: 12, color: TMLabsColor.white),
                       const SizedBox(width: 4),
                       Text(
                         (data.postCommentCount ?? 0).toString(),
-                        style: TMLabsTextStyle.caption.copyWith(color: Colors.white),
+                        style: TMLabsTextStyle.caption.copyWith(color: Colors.white, fontSize: 10),
                       ),
                     ],
                   ),
@@ -71,44 +71,15 @@ class CommunityPostItem extends StatelessWidget {
                     data.postTitle ?? '',
                     style: TMLabsTextStyle.bodyBold.copyWith(
                       color: Colors.white,
-                      fontSize: 12,
+                      fontSize: 11,
                       height: 1.2,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      ClipOval(
-                        child: DbCachedImageWidget(
-                          imageUrl: data.userAvatar,
-                          width: 20,
-                          height: 20,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          data.userNickname ?? "",
-                          style: TMLabsTextStyle.caption.copyWith(color: Colors.white70, fontSize: 10),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
-
-            // TODO: Hide Video Icon (Assuming if it has video, we show this)
-            // const Positioned(
-            //   top: 12,
-            //   right: 12,
-            //   child: Icon(Icons.play_circle_outline, color: Colors.white, size: 24),
-            // ),
           ],
         ),
       ),

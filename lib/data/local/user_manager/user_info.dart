@@ -59,6 +59,7 @@ class UserInfo {
   final int id;
   final String nickname;
   final String avatar;
+  final String? background;
   final String mobile;
   final int sex;
   final int point;
@@ -73,6 +74,7 @@ class UserInfo {
     required this.id,
     required this.nickname,
     required String avatar,
+    this.background,
     required this.mobile,
     required this.sex,
     required this.point,
@@ -89,6 +91,7 @@ class UserInfo {
     int? id,
     String? nickname,
     String? avatar,
+    String? background,
     String? mobile,
     int? sex,
     int? point,
@@ -101,6 +104,7 @@ class UserInfo {
       id: id ?? this.id,
       nickname: nickname ?? this.nickname,
       avatar: avatar ?? this.avatar,
+      background: background ?? this.background,
       mobile: mobile ?? this.mobile,
       sex: sex ?? this.sex,
       point: point ?? this.point,

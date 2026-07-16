@@ -5,12 +5,47 @@ import 'package:coffee_bean/data/model/response/hub/post_status.dart';
 import 'package:coffee_bean/data/model/response/hub/hub_comment.dart';
 import 'package:coffee_bean/data/model/response/hub/hot_topic.dart';
 import 'package:coffee_bean/data/model/response/hub/topic_detail.dart';
+import 'package:coffee_bean/data/model/response/hub/expert_info.dart';
+import 'package:coffee_bean/data/model/response/hub/user_stat.dart';
+import 'package:coffee_bean/data/model/response/hub/course_info.dart';
 import 'package:coffee_bean/data/network/page_result.dart';
 import 'package:coffee_bean/data/network/network_response.dart';
 import 'package:db_core/db_core.dart';
 
 class HubRepository extends BaseRepository {
   HubRepository({super.client});
+
+  /// Get expert info
+  Future<DbResult<ExpertInfo>> getExpertInfo(int? userId) async {
+    return await networkClient
+        .doGet('/app-api/hub/expert/get', queryParameters: userId != null ? {'userId': userId} : null)
+        .mapResponseTo(ExpertInfo.fromJson)
+        .toObject();
+  }
+
+  /// Get user stats
+  Future<DbResult<UserStat>> getUserStat(int? userId) async {
+    return await networkClient
+        .doGet('/app-api/hub/user-stat/get', queryParameters: userId != null ? {'userId': userId} : null)
+        .mapResponseTo(UserStat.fromJson)
+        .toObject();
+  }
+
+  /// Get user's post list
+  Future<DbResult<List<Post>>> getUserPosts(int? userId) async {
+    return await networkClient
+        .doGet('/app-api/hub/post/user-list', queryParameters: userId != null ? {'userId': userId} : null)
+        .mapResponseTo(Post.fromJson)
+        .toList();
+  }
+
+  /// Get user's course list
+  Future<DbResult<List<CourseInfo>>> getUserCourses(int? userId) async {
+    return await networkClient
+        .doGet('/app-api/hub/course-info/user-list', queryParameters: userId != null ? {'userId': userId} : null)
+        .mapResponseTo(CourseInfo.fromJson)
+        .toList();
+  }
 
   /// Get hot topics (top 10)
   Future<DbResult<List<HotTopic>>> getHotTopics() async {

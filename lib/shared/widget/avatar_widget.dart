@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +18,25 @@ class AvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget image;
+    if (imageUrl != null && imageUrl!.isNotEmpty) {
+      if (imageUrl!.startsWith('/') || imageUrl!.startsWith('file://')) {
+        image = Image.file(
+          File(imageUrl!.replaceFirst('file://', '')),
+          fit: BoxFit.cover,
+        );
+      } else {
+        image = DbCachedImageWidget(
+          imageUrl: imageUrl!,
+          fit: BoxFit.cover,
+        );
+      }
+    } else if (placeholderAsset != null) {
+      image = Image.asset(placeholderAsset!, fit: BoxFit.cover);
+    } else {
+      image = const SizedBox.shrink();
+    }
+
     return Container(
       width: size,
       height: size,
@@ -24,16 +44,7 @@ class AvatarWidget extends StatelessWidget {
         color: backgroundColor ?? Colors.grey[300],
         shape: BoxShape.circle,
       ),
-      child: ClipOval(
-        child: (imageUrl != null && imageUrl!.isNotEmpty)
-            ? DbCachedImageWidget(
-                imageUrl: imageUrl!,
-                fit: BoxFit.cover,
-              )
-            : (placeholderAsset != null
-                ? Image.asset(placeholderAsset!, fit: BoxFit.cover)
-                : const SizedBox.shrink()),
-      ),
+      child: ClipOval(child: image),
     );
   }
 }

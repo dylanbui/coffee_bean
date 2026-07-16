@@ -64,6 +64,7 @@ class UserRepository extends BaseRepository {
     required String nickname,
     required String avatar,
     required int sex,
+    String? background,
   }) async {
     return await networkClient
         .request('/app-api/member/user/update',
@@ -72,6 +73,7 @@ class UserRepository extends BaseRepository {
               'nickname': nickname,
               'avatar': avatar,
               'sex': sex,
+              'background': background,
             })
         .mapResponse()
         .toValue<bool>();

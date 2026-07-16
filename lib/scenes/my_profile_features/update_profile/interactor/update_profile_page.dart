@@ -10,6 +10,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:group_button/group_button.dart';
 import 'package:coffee_bean/scenes/my_profile_features/update_profile/interactor/update_profile_interactor.dart';
 import 'package:coffee_bean/scenes/my_profile_features/update_profile/interactor/update_profile_event_state.dart';
+import 'package:coffee_bean/shared/widget/avatar_widget.dart';
+import 'package:coffee_bean/shared/widget/image_wechat_picker_list_view.dart';
 
 class UpdateProfilePage extends AppCubitStateFulWidget<UpdateProfileInteractor, UpdateProfileState> {
   UpdateProfilePage({super.key, required super.interactor});
@@ -86,6 +88,20 @@ class _UpdateProfilePageState extends AppCubitState<UpdateProfilePage, UpdatePro
                     ),
                     const SizedBox(height: 8),
                     _buildSexSelector(),
+                    const SizedBox(height: 16),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text("Ảnh bìa (Cover)", style: TMLabsTextStyle.bodyBold),
+                    ),
+                    const SizedBox(height: 8),
+                    ImageWechatPickerListView(
+                      images: state.selectedCoverFile != null
+                          ? [state.selectedCoverFile!.path]
+                          : (state.userInfo?.background != null ? [state.userInfo!.background!] : []),
+                      maxImages: 1,
+                      onImagesPicked: (paths) => interactor.onCoverFileSelected(paths),
+                      onRemoveImage: (_) => interactor.removeCoverImage(),
+                    ),
                   ],
                 ),
               ),
@@ -110,23 +126,10 @@ class _UpdateProfilePageState extends AppCubitState<UpdateProfilePage, UpdatePro
       onTap: _onPickAvatar,
       child: Stack(
         children: [
-          localFile != null
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(75),
-                  child: Image.file(
-                    localFile,
-                    width: 150,
-                    height: 150,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              : DbCachedImageWidget(
-                  imageUrl: avatarUrl,
-                  width: 150,
-                  height: 150,
-                  borderRadius: 75,
-                  fit: BoxFit.cover,
-                ),
+          AvatarWidget(
+            imageUrl: localFile?.path ?? avatarUrl,
+            size: 150,
+          ),
           Positioned(
             bottom: 0,
             right: 0,
