@@ -8,12 +8,55 @@ import 'package:coffee_bean/data/model/response/hub/topic_detail.dart';
 import 'package:coffee_bean/data/model/response/hub/expert_info.dart';
 import 'package:coffee_bean/data/model/response/hub/user_stat.dart';
 import 'package:coffee_bean/data/model/response/hub/course_info.dart';
+import 'package:coffee_bean/data/models/response/hub/follower_user.dart';
+import 'package:coffee_bean/data/model/response/hub/expert_apply.dart';
 import 'package:coffee_bean/data/network/page_result.dart';
 import 'package:coffee_bean/data/network/network_response.dart';
 import 'package:db_core/db_core.dart';
 
 class HubRepository extends BaseRepository {
   HubRepository({super.client});
+
+  /// Submit expert application
+  Future<DbResult<int>> submitExpertApply(Dictionary params) async {
+    return await networkClient
+        .doPost('/app-api/hub/expert-apply/create', params: params)
+        .mapResponse()
+        .toValue<int>();
+  }
+
+  /// Get my expert application status
+  Future<DbResult<ExpertApply?>> getMyExpertApply() async {
+    final result = await networkClient
+        .doGet('/app-api/hub/expert-apply/get')
+        .mapResponseTo(ExpertApply.fromJson)
+        .toObject();
+
+    // Nếu lỗi là do data null (mã 500 từ wrapper khi data: null) hoặc 404 từ server,
+    // ta coi như người dùng chưa có hồ sơ và trả về DbSuccess(null) để hiện Form.
+    if (result case DbFailure(:final error)) {
+      if (error.code == 500 || error.code == 404) {
+        return DbSuccess(null);
+      }
+    }
+    return result;
+  }
+
+  /// Get follower list
+  Future<DbResult<PageResult<FollowUser>>> getFollowerList({int pageNo = 1, int pageSize = 20}) async {
+    return await networkClient
+        .doGet('/app-api/hub/follow/follower-list', queryParameters: {'pageNo': pageNo, 'pageSize': pageSize})
+        .mapResponseToPage(FollowUser.fromJson)
+        .toObject();
+  }
+
+  /// Get followee list (following list)
+  Future<DbResult<PageResult<FollowUser>>> getFolloweeList({int pageNo = 1, int pageSize = 20}) async {
+    return await networkClient
+        .doGet('/app-api/hub/follow/followee-list', queryParameters: {'pageNo': pageNo, 'pageSize': pageSize})
+        .mapResponseToPage(FollowUser.fromJson)
+        .toObject();
+  }
 
   /// Get expert info
   Future<DbResult<ExpertInfo>> getExpertInfo(int? userId) async {

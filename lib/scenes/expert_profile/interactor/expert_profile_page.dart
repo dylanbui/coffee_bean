@@ -152,9 +152,17 @@ class _ExpertProfilePageState extends AppCubitState<ExpertProfilePage, ExpertPro
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        _buildStatItem("${stat?.followerCount ?? 0}", "người theo dõi"),
+                        _buildStatItem(
+                          "${stat?.followerCount ?? 0}",
+                          "người theo dõi",
+                          onTap: isCurrentUser ? () => interactor.onShowFanFollowList(0) : null,
+                        ),
                         const SizedBox(width: 24),
-                        _buildStatItem("${stat?.followeeCount ?? 0}", "đang theo dõi"),
+                        _buildStatItem(
+                          "${stat?.followeeCount ?? 0}",
+                          "đang theo dõi",
+                          onTap: isCurrentUser ? () => interactor.onShowFanFollowList(1) : null,
+                        ),
                       ],
                     ),
                   ],
@@ -174,13 +182,16 @@ class _ExpertProfilePageState extends AppCubitState<ExpertProfilePage, ExpertPro
     );
   }
 
-  Widget _buildStatItem(String count, String label) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(count, style: TMLabsTextStyle.bodyBold),
-        Text(label, style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
-      ],
+  Widget _buildStatItem(String count, String label, {VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(count, style: TMLabsTextStyle.bodyBold),
+          Text(label, style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
+        ],
+      ),
     );
   }
 

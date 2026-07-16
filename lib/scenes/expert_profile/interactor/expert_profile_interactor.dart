@@ -1,3 +1,4 @@
+import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/model/response/hub/course_info.dart';
 import 'package:coffee_bean/data/model/response/hub/expert_info.dart';
 import 'package:coffee_bean/data/model/response/hub/post.dart';
@@ -12,7 +13,7 @@ class ExpertProfileInteractor extends CubitInteractor<ExpertProfileRoutable, Exp
   final int? userId;
   final HubRepository _hubRepo = locator.get<HubRepository>();
 
-  ExpertProfileInteractor(ExpertProfileRoutable router, {this.userId}) : super(ExpertProfileState(), router: router);
+  ExpertProfileInteractor(ExpertProfileRoutable router, {this.userId}) : super(ExpertProfileState(isCurrentUser: userId == null), router: router);
 
   @override
   void onDidBecomeActive() {
@@ -35,6 +36,9 @@ class ExpertProfileInteractor extends CubitInteractor<ExpertProfileRoutable, Exp
     final postsResult = results[2] as DbResult<List<Post>>;
     final coursesResult = results[3] as DbResult<List<CourseInfo>>;
 
+    final currentUserId = UserManager().userInfo?.id;
+    final isCurrentUser = state.isCurrentUser || (expertResult.isSuccess && expertResult.data?.userId == currentUserId);
+
     // Handle results and fallback to mock data if empty
     emit(state.copyWith(
       isLoading: false,
@@ -48,7 +52,7 @@ class ExpertProfileInteractor extends CubitInteractor<ExpertProfileRoutable, Exp
           : ExpertProfileMockData.mockCourses,
       // For now, these are not in API, so we keep them as default or logic-based
       isFollowed: false, 
-      isCurrentUser: false, // You might want to compare with current logged in user ID
+      isCurrentUser: isCurrentUser,
     ));
   }
 
@@ -67,6 +71,10 @@ class ExpertProfileInteractor extends CubitInteractor<ExpertProfileRoutable, Exp
 
   void onSettingsPressed() {
     iLog("Settings pressed");
+  }
+
+  void onShowFanFollowList(int initialTabIndex) {
+    router?.openFanFollowList(initialTabIndex: initialTabIndex);
   }
 
   void onPublishCourse() {

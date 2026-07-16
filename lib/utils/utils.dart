@@ -75,14 +75,14 @@ class Utils {
   }
 
   static bool isEmailAddress(String? email) {
-    if (email == null) {
+    if (email == null || email.trim().isEmpty) {
       return false;
     }
     // Regular Expressions check email address
     final RegExp emailRegExp = RegExp(
-      r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+',
+      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
     );
-    return emailRegExp.hasMatch(email);
+    return emailRegExp.hasMatch(email.trim());
   }
 
   static bool isDecimalNumber(double? text) {
