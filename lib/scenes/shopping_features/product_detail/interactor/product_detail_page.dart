@@ -1,3 +1,4 @@
+import 'package:coffee_bean/scenes/comment_list/comment_constant.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/scenes/shopping_features/product_detail/interactor/product_detail_event_state.dart';
@@ -75,9 +76,10 @@ class _ProductDetailPageState extends AppCubitState<ProductDetailPage, ProductDe
     }
 
     _commentPlugin ??= CommentListBuilder(
-      productId: state.product!.id,
+      resourceId: state.product!.id,
+      source: CommentSource.product,
       type: 0,
-    ).buildPlugin(2, interactor.commentController);
+    ).buildPlugin(10, interactor.commentController);
 
     return Stack(
       children: [

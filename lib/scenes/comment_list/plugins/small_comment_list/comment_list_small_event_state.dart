@@ -1,8 +1,8 @@
-import 'package:coffee_bean/data/model/response/product/product_comment.dart';
+import 'package:coffee_bean/scenes/comment_list/comment_constant.dart';
 import 'package:db_core/state_management/lib_bloc/constants.dart';
 
 class CommentListSmallState extends BaseBlocState {
-  final List<ProductComment> comments;
+  final List<IComment> comments;
   final bool isLoading;
 
   CommentListSmallState({
@@ -11,7 +11,7 @@ class CommentListSmallState extends BaseBlocState {
   });
 
   CommentListSmallState copyWith({
-    List<ProductComment>? comments,
+    List<IComment>? comments,
     bool? isLoading,
   }) {
     return CommentListSmallState(

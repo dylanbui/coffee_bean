@@ -2,22 +2,26 @@ import 'package:coffee_bean/data/repository/comment_repository.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_router.dart';
 import 'package:coffee_bean/scenes/comment_list/plugins/small_comment_list/comment_list_small_event_state.dart';
+import 'package:coffee_bean/scenes/comment_list/comment_constant.dart';
 import 'package:db_core/db_core.dart';
 
 class CommentListSmallInteractor extends CubitInteractor<CommentListRoutable, CommentListSmallState> {
   final CommentListSmallController controller;
-  final CommentRepository _commentRepository = locator<CommentRepository>();
+  late final ICommentRepository _repository;
   final int limitComments;
-  final int productId;
+  final int resourceId;
+  final CommentSource source;
   final int type;
 
   CommentListSmallInteractor(
     CommentListRoutable router, {
-    required this.productId,
+    required this.resourceId,
+    required this.source,
     required this.type,
     required this.limitComments,
     required this.controller,
   }) : super(CommentListSmallState(), router: router) {
+    _repository = locator<CommentRepository>().getSource(source);
     controller.attach(this);
   }
 
@@ -31,8 +35,8 @@ class CommentListSmallInteractor extends CubitInteractor<CommentListRoutable, Co
     if (state.isLoading) return;
     emit(state.copyWith(isLoading: true));
 
-    final result = await _commentRepository.getCommentPage(
-      spuId: productId,
+    final result = await _repository.getCommentPage(
+      resourceId: resourceId,
       type: type,
       pageNo: 1,
       pageSize: limitComments,
@@ -49,6 +53,6 @@ class CommentListSmallInteractor extends CubitInteractor<CommentListRoutable, Co
   }
 
   void onViewAll() {
-    controller.listener?.onNavigateToAllComments(productId, type);
+    controller.listener?.onNavigateToAllComments(resourceId, type);
   }
 }

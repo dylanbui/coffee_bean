@@ -1,3 +1,4 @@
+import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
 import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/post_detail_interactor.dart';
 import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/post_detail_page.dart';
 import 'package:db_core/db_core.dart';
@@ -7,6 +8,7 @@ abstract class PostDetailRoutable implements DbNoteRoutable {
   void openReportPost({
     required ReportTargetInfo targetInfo,
   });
+  void gotoCommentList(int resourceId, int type);
 }
 
 class PostDetailRouter extends DbNoteRouter implements PostDetailRoutable {
@@ -18,6 +20,13 @@ class PostDetailRouter extends DbNoteRouter implements PostDetailRoutable {
       targetInfo: targetInfo,
     );
     push(builder.build().viewController);
+  }
+
+  @override
+  void gotoCommentList(int resourceId, int type) {
+    final builder = CommentListBuilder(resourceId: resourceId, type: type);
+    final router = builder.build();
+    push(router.viewController);
   }
 }
 

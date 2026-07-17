@@ -131,8 +131,8 @@ class PostDetailInteractor extends CubitInteractor<PostDetailRoutable, PostDetai
   }
 
   @override
-  void onNavigateToAllComments(int productId, int type) {
-    // Navigate to full comment list if needed
-    // router?.gotoCommentList(productId, type);
+  void onNavigateToAllComments(int resourceId, int type) {
+    // Navigate to full comment list
+    router?.gotoCommentList(resourceId, type);
   }
 }

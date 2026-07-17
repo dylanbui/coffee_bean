@@ -21,7 +21,7 @@ class CourseDetailRouter extends DbNoteRouter implements CourseDetailRoutable {
 
   @override
   void gotoCommentList(int productId, int type) {
-    final builder = CommentListBuilder(productId: productId, type: type);
+    final builder = CommentListBuilder(resourceId: productId, type: type);
     final router = builder.build();
     push(router.viewController);
   }

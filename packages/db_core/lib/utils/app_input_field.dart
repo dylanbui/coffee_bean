@@ -11,6 +11,7 @@ class AppInputStyleConfig {
   final Color? backgroundColor;
   final double borderRadius;
   final EdgeInsetsGeometry? contentPadding;
+  final bool isDense;
   final Color? enabledBorderColor;
   final Color? focusedBorderColor;
   final Color? errorBorderColor;
@@ -23,6 +24,7 @@ class AppInputStyleConfig {
     this.backgroundColor,
     this.borderRadius = 8.0,
     this.contentPadding,
+    this.isDense = false,
     this.enabledBorderColor,
     this.focusedBorderColor,
     this.errorBorderColor = Colors.red,
@@ -36,6 +38,7 @@ class AppInputStyleConfig {
     Color? backgroundColor,
     double? borderRadius,
     EdgeInsetsGeometry? contentPadding,
+    bool? isDense,
     Color? enabledBorderColor,
     Color? focusedBorderColor,
     Color? errorBorderColor,
@@ -48,6 +51,7 @@ class AppInputStyleConfig {
       backgroundColor: backgroundColor ?? this.backgroundColor,
       borderRadius: borderRadius ?? this.borderRadius,
       contentPadding: contentPadding ?? this.contentPadding,
+      isDense: isDense ?? this.isDense,
       enabledBorderColor: enabledBorderColor ?? this.enabledBorderColor,
       focusedBorderColor: focusedBorderColor ?? this.focusedBorderColor,
       errorBorderColor: errorBorderColor ?? this.errorBorderColor,
@@ -70,6 +74,7 @@ class AppInputField extends StatefulWidget {
   final bool obscureText;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
+  final int? minLines;
   final int? maxLines;
   final int? maxLength;
   final ValueChanged<String>? onChanged;
@@ -104,6 +109,7 @@ class AppInputField extends StatefulWidget {
     this.obscureText = false,
     this.prefixIcon,
     this.suffixIcon,
+    this.minLines = 1,
     this.maxLines = 1,
     this.maxLength,
     this.onChanged,
@@ -196,7 +202,10 @@ class _AppInputFieldState extends State<AppInputField> {
           controller: widget.controller,
           keyboardType: widget.keyboardType,
           obscureText: widget.obscureText,
-          maxLines: widget.maxLines,
+          minLines: widget.minLines,
+          maxLines: (widget.maxLines != null && widget.minLines != null && widget.maxLines! < widget.minLines!)
+              ? widget.minLines
+              : widget.maxLines,
           maxLength: widget.maxLength,
           onChanged: (value) {
             _handleTextChange();
@@ -264,6 +273,7 @@ class _AppInputFieldState extends State<AppInputField> {
     return InputDecoration(
       hintText: widget.hintText,
       errorText: null,
+      isDense: widget.config.isDense,
       hintStyle: widget.style?.copyWith(color: widget.style?.color?.withValues(alpha: 0.5)) ??
           const TextStyle(color: Colors.grey),
       prefixIcon: widget.prefixIcon,

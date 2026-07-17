@@ -183,7 +183,7 @@ class ProductDetailInteractor extends CubitInteractor<ProductDetailRoutable, Pro
   }
 
   @override
-  void onNavigateToAllComments(int productId, int type) {
-    router?.gotoCommentList(productId, type);
+  void onNavigateToAllComments(int resourceId, int type) {
+    router?.gotoCommentList(resourceId, type);
   }
 }

@@ -1,4 +1,4 @@
-import 'package:coffee_bean/data/model/response/product/product_comment.dart';
+import 'package:coffee_bean/scenes/comment_list/comment_constant.dart';
 import 'package:coffee_bean/scenes/comment_list/shared/comment_reply_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
@@ -11,7 +11,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 
 class CommentItemWidget extends StatelessWidget {
-  final ProductComment comment;
+  final IComment comment;
 
   const CommentItemWidget({super.key, required this.comment});
 

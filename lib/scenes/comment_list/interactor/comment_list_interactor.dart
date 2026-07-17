@@ -1,14 +1,21 @@
 import 'package:coffee_bean/data/repository/comment_repository.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_router.dart';
 import 'package:coffee_bean/scenes/comment_list/interactor/comment_list_event_state.dart';
-import 'package:coffee_bean/data/model/response/product/product_comment.dart';
+import 'package:coffee_bean/scenes/comment_list/comment_constant.dart';
 import 'package:db_core/db_core.dart';
 
 class CommentListInteractor extends CubitInteractor<CommentListRoutable, CommentListState> {
-  final CommentRepository _commentRepository = locator<CommentRepository>();
+  late final ICommentRepository _repository;
 
-  CommentListInteractor(CommentListRoutable router, int productId, int type, {int pageSize = 10})
-      : super(CommentListState(productId: productId, type: type, pageSize: pageSize), router: router);
+  CommentListInteractor(
+    CommentListRoutable router, 
+    int resourceId, 
+    CommentSource source, 
+    int type, 
+    {int pageSize = 10}
+  ) : super(CommentListState(resourceId: resourceId, source: source, type: type, pageSize: pageSize), router: router) {
+    _repository = locator<CommentRepository>().getSource(source);
+  }
 
   @override
   void onDidBecomeActive() {
@@ -20,8 +27,8 @@ class CommentListInteractor extends CubitInteractor<CommentListRoutable, Comment
     if (state.isLoading) return;
     emit(state.copyWith(isLoading: true, pageNo: 1));
 
-    final result = await _commentRepository.getCommentPage(
-      spuId: state.productId,
+    final result = await _repository.getCommentPage(
+      resourceId: state.resourceId,
       type: state.type,
       pageNo: 1,
       pageSize: state.pageSize,
@@ -46,8 +53,8 @@ class CommentListInteractor extends CubitInteractor<CommentListRoutable, Comment
     final nextPage = state.pageNo + 1;
     emit(state.copyWith(isLoadMore: true));
 
-    final result = await _commentRepository.getCommentPage(
-      spuId: state.productId,
+    final result = await _repository.getCommentPage(
+      resourceId: state.resourceId,
       type: state.type,
       pageNo: nextPage,
       pageSize: state.pageSize,
@@ -55,7 +62,7 @@ class CommentListInteractor extends CubitInteractor<CommentListRoutable, Comment
 
     if (result case DbSuccess(:final data)) {
       final moreComments = data.list;
-      final updatedComments = List<ProductComment>.from(state.comments)..addAll(moreComments);
+      final updatedComments = List<IComment>.from(state.comments)..addAll(moreComments);
       
       emit(state.copyWith(
         comments: updatedComments,
@@ -69,7 +76,7 @@ class CommentListInteractor extends CubitInteractor<CommentListRoutable, Comment
   }
 
   void onViewAll() {
-    router?.onViewAllComments(state.productId, state.type);
+    router?.onViewAllComments(state.resourceId, state.type);
   }
 
   void goBack() {

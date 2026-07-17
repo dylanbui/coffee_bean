@@ -1,4 +1,5 @@
 import 'package:coffee_bean/data/model/response/hub/post_detail.dart';
+import 'package:coffee_bean/scenes/comment_list/comment_constant.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
 import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/post_detail_event_state.dart';
 import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/post_detail_interactor.dart';
@@ -12,7 +13,6 @@ import 'package:coffee_bean/shared/widget/image_slider_widget.dart';
 import 'package:coffee_bean/utils/extensions.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_extension.dart';
 import 'package:db_core/db_core.dart';
-import 'package:db_core/utils/app_label.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -190,8 +190,12 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
   }
 
   Widget _buildCommentPlugin(PostDetail post) {
-    _commentPlugin ??= CommentListBuilder(productId: post.id, type: 0);
-    return (_commentPlugin as CommentListBuildable).buildPlugin(5, interactor.commentController);
+    _commentPlugin ??= CommentListBuilder(
+      resourceId: post.id,
+      source: CommentSource.post,
+      type: 0,
+    );
+    return (_commentPlugin as CommentListBuildable).buildPlugin(10, interactor.commentController);
   }
 
   Widget _buildFooter(PostDetail? post, bool isLoading, PostDetailState state) {

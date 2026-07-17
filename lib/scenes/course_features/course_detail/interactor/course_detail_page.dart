@@ -1,3 +1,4 @@
+import 'package:coffee_bean/scenes/comment_list/comment_constant.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
 import 'package:coffee_bean/scenes/course_features/course_detail/interactor/course_detail_event_state.dart';
 import 'package:coffee_bean/scenes/course_features/course_detail/interactor/course_detail_interactor.dart';
@@ -265,9 +266,10 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
 
   Widget _buildCommentSection(CourseDetailState state) {
     _commentPlugin ??= CommentListBuilder(
-      productId: interactor.courseId,
+      resourceId: interactor.courseId,
+      source: CommentSource.course,
       type: 0, // 0 for all comments
-    ).buildPlugin(5, interactor.commentController);
+    ).buildPlugin(10, interactor.commentController);
 
     return Padding(
       padding: const EdgeInsets.only(top: 16.0),

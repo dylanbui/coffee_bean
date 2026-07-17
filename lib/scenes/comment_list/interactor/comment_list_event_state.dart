@@ -1,10 +1,11 @@
-import 'package:coffee_bean/data/model/response/product/product_comment.dart';
+import 'package:coffee_bean/scenes/comment_list/comment_constant.dart';
 import 'package:db_core/state_management/lib_bloc/constants.dart';
 
 class CommentListState extends BaseBlocState {
-  final int productId;
-  final int type; // Đổi từ String sang int theo API (0: all, 1: pos...)
-  final List<ProductComment> comments;
+  final int resourceId;
+  final CommentSource source;
+  final int type; // Filter type (mostly for product)
+  final List<IComment> comments;
   final bool isLoading;
   final bool isLoadMore;
   final bool hasMore;
@@ -12,7 +13,8 @@ class CommentListState extends BaseBlocState {
   final int pageSize;
 
   CommentListState({
-    required this.productId,
+    required this.resourceId,
+    required this.source,
     this.type = 0,
     this.comments = const [],
     this.isLoading = false,
@@ -23,7 +25,7 @@ class CommentListState extends BaseBlocState {
   });
 
   CommentListState copyWith({
-    List<ProductComment>? comments,
+    List<IComment>? comments,
     bool? isLoading,
     bool? isLoadMore,
     bool? hasMore,
@@ -31,7 +33,8 @@ class CommentListState extends BaseBlocState {
     int? type,
   }) {
     return CommentListState(
-      productId: productId,
+      resourceId: resourceId,
+      source: source,
       type: type ?? this.type,
       comments: comments ?? this.comments,
       isLoading: isLoading ?? this.isLoading,
@@ -43,5 +46,5 @@ class CommentListState extends BaseBlocState {
   }
 
   @override
-  List<Object?> get props => [productId, type, comments, isLoading, isLoadMore, hasMore, pageNo, pageSize];
+  List<Object?> get props => [resourceId, source, type, comments, isLoading, isLoadMore, hasMore, pageNo, pageSize];
 }

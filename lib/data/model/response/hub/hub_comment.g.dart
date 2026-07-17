@@ -9,12 +9,12 @@ part of 'hub_comment.dart';
 HubComment _$HubCommentFromJson(Map<String, dynamic> json) => HubComment(
   id: (json['id'] as num).toInt(),
   userId: (json['userId'] as num?)?.toInt(),
-  userNickname: json['userNickname'] as String?,
-  userAvatar: json['userAvatar'] as String?,
+  userNickname: json['userNickname'] as String? ?? '',
+  userAvatar: json['userAvatar'] as String? ?? '',
   resourceId: (json['resourceId'] as num?)?.toInt(),
   parentId: (json['parentId'] as num?)?.toInt(),
   commentContent: json['commentContent'] as String?,
-  createTime: (json['createTime'] as num?)?.toInt(),
+  createTimeInt: (json['createTime'] as num?)?.toInt(),
   replies: (json['replies'] as List<dynamic>?)
       ?.map((e) => HubComment.fromJson(e as Map<String, dynamic>))
       .toList(),
@@ -30,7 +30,7 @@ Map<String, dynamic> _$HubCommentToJson(HubComment instance) =>
       'resourceId': instance.resourceId,
       'parentId': instance.parentId,
       'commentContent': instance.commentContent,
-      'createTime': instance.createTime,
+      'createTime': instance.createTimeInt,
       'replies': instance.replies,
       'isOwn': instance.isOwn,
     };
