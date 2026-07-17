@@ -61,7 +61,7 @@ class _FanFollowListPageState extends AppCubitState<FanFollowListPage, FanFollow
 
   Widget _buildUserList(List<FollowUser> users, {required bool isFollowerTab}) {
     if (interactor.state.isLoading && users.isEmpty) return getLoadingView();
-    if (users.isEmpty) return getEmptyItemView(caption: "Chưa có dữ liệu");
+    if (users.isEmpty) return getEmptyItemView(caption: "Không tìm thấy nội dung liên quan");
 
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: 8),

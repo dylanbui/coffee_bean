@@ -51,6 +51,10 @@ class _ExpertApplyPageState extends AppCubitState<ExpertApplyPage, ExpertApplyIn
 
   Widget _buildContent(ExpertApplyState state) {
     if (state.application == null) {
+      // Nếu chưa có dữ liệu application và đang load (không phải đang submit), thì hiện màn hình trống kèm loading
+      if (state.isLoading && !state.isSubmitting) {
+        return const SizedBox.shrink();
+      }
       return _buildForm(state);
     }
 

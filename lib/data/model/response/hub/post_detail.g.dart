@@ -22,8 +22,9 @@ PostDetail _$PostDetailFromJson(Map<String, dynamic> json) => PostDetail(
   postViewCount: (json['postViewCount'] as num?)?.toInt(),
   postLikeCount: (json['postLikeCount'] as num?)?.toInt(),
   postCommentCount: (json['postCommentCount'] as num?)?.toInt(),
+  postShareCount: (json['postShareCount'] as num?)?.toInt(),
   postStatus: (json['postStatus'] as num?)?.toInt(),
-  createTime: json['createTime'] as String?,
+  createTime: (json['createTime'] as num?)?.toInt(),
   isOwn: json['isOwn'] as bool?,
 );
 
@@ -40,6 +41,7 @@ Map<String, dynamic> _$PostDetailToJson(PostDetail instance) =>
       'postViewCount': instance.postViewCount,
       'postLikeCount': instance.postLikeCount,
       'postCommentCount': instance.postCommentCount,
+      'postShareCount': instance.postShareCount,
       'postStatus': instance.postStatus,
       'createTime': instance.createTime,
       'isOwn': instance.isOwn,

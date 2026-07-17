@@ -3,7 +3,6 @@ import 'package:coffee_bean/data/model/response/hub/hot_topic.dart';
 import 'package:coffee_bean/data/repository/hub_repository.dart';
 import 'package:coffee_bean/scenes/app_landing/community/community_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/community/interactor/community_event_state.dart';
-import 'package:coffee_bean/scenes/app_landing/community/interactor/mock_data.dart';
 import 'package:db_core/db_core.dart';
 
 class CommunityInteractor extends CubitInteractor<CommunityRoutable, CommunityState> {
@@ -30,14 +29,7 @@ class CommunityInteractor extends CubitInteractor<CommunityRoutable, CommunitySt
     final postsResult = results[1] as DbResult<List<Post>>;
 
     List<HotTopic> hotTopics = hotTopicsResult.dataOrNull ?? [];
-    if (hotTopics.isEmpty) {
-      hotTopics = CommunityMockData.mockHotTopics;
-    }
-
     List<Post> posts = postsResult.dataOrNull ?? [];
-    if (posts.isEmpty) {
-      posts = CommunityMockData.getPostsByScene(_getSceneByTabIndex(state.currentTabIndex));
-    }
 
     emit(state.copyWith(
       isLoading: false,
@@ -66,15 +58,10 @@ class CommunityInteractor extends CubitInteractor<CommunityRoutable, CommunitySt
     
     result.when(
       success: (data) {
-        List<Post> posts = data;
-        if (posts.isEmpty) {
-          posts = CommunityMockData.getPostsByScene(_getSceneByTabIndex(state.currentTabIndex));
-        }
-        emit(state.copyWith(isLoading: false, posts: posts));
+        emit(state.copyWith(isLoading: false, posts: data));
       },
       failure: (error) {
-        // Even on failure, we can show mock data if we want, or just the error
-        emit(state.copyWith(isLoading: false, failure: error, posts: CommunityMockData.getPostsByScene(_getSceneByTabIndex(state.currentTabIndex))));
+        emit(state.copyWith(isLoading: false, failure: error));
       },
     );
   }

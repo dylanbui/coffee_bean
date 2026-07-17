@@ -5,7 +5,7 @@ final mockPostDetail = PostDetail(
   postTitle: "Tiêu đề bài viết Tiêu đề bài viết Tiêu đề bài viết Tiêu đề bài viết Tiêu đề bài viết",
   expertTitle: "Tyler Ballmer invest",
   expertAvatar: "https://i.pravatar.cc/150?u=1",
-  createTime: "2026-02-22T00:00:00Z",
+  createTime: 1771632000000, // 2026-02-22T00:00:00Z
   topicTags: ["#jbhsdkjbdj", "#hagtag"],
   postImgs: [
     "https://picsum.photos/id/10/800/400",

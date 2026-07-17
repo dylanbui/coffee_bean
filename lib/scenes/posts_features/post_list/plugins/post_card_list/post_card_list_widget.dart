@@ -121,7 +121,7 @@ class _PostCardItem extends StatelessWidget {
                         style: TMLabsTextStyle.bodyBold,
                       ),
                       Text(
-                        "${AppStrings.postedOn} ${item.createTime ?? ''}",
+                        "${AppStrings.postedOn} ${item.displayCreateTime}",
                         style: TMLabsTextStyle.small.copyWith(color: Colors.grey, fontWeight: FontWeight.normal),
                       ),
                     ],

@@ -148,7 +148,7 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(post.expertTitle ?? "", style: TMLabsTextStyle.bodyBold.copyWith(color: TMLabsColor.primary)),
-                  Text(post.createTime ?? "", style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
+                  Text(post.displayCreateTime, style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
                 ],
               ),
             ),

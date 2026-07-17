@@ -1,3 +1,4 @@
+import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/models/response/hub/follower_user.dart';
 import 'package:coffee_bean/data/network/page_result.dart';
 import 'package:coffee_bean/data/repository/hub_repository.dart';
@@ -19,12 +20,18 @@ class FanFollowListInteractor extends CubitInteractor<FanFollowListRoutable, Fan
   }
 
   Future<void> _fetchData() async {
+    final user = UserManager().currentUser;
+    if (user == null) {
+      emit(state.copyWith(isLoading: false, followers: [], following: []));
+      return;
+    }
+
     emit(state.copyWith(isLoading: true));
 
     // Fetch both lists in parallel
     final results = await Future.wait([
-      _hubRepository.getFollowerList(),
-      _hubRepository.getFolloweeList(),
+      _hubRepository.getFollowerList(userId: user.id),
+      _hubRepository.getFolloweeList(userId: user.id),
     ]);
 
     final followerResult = results[0];

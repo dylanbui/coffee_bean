@@ -14,6 +14,16 @@ import 'package:coffee_bean/data/network/page_result.dart';
 import 'package:coffee_bean/data/network/network_response.dart';
 import 'package:db_core/db_core.dart';
 
+enum FavoriteType {
+  venue(1),
+  course(2),
+  activity(3),
+  post(4);
+
+  final int value;
+  const FavoriteType(this.value);
+}
+
 class HubRepository extends BaseRepository {
   HubRepository({super.client});
 
@@ -43,17 +53,17 @@ class HubRepository extends BaseRepository {
   }
 
   /// Get follower list
-  Future<DbResult<PageResult<FollowUser>>> getFollowerList({int pageNo = 1, int pageSize = 20}) async {
+  Future<DbResult<PageResult<FollowUser>>> getFollowerList({required int userId, int pageNo = 1, int pageSize = 20}) async {
     return await networkClient
-        .doGet('/app-api/hub/follow/follower-list', queryParameters: {'pageNo': pageNo, 'pageSize': pageSize})
+        .doGet('/app-api/hub/follow/follower-list', queryParameters: {'userId': userId, 'pageNo': pageNo, 'pageSize': pageSize})
         .mapResponseToPage(FollowUser.fromJson)
         .toObject();
   }
 
   /// Get followee list (following list)
-  Future<DbResult<PageResult<FollowUser>>> getFolloweeList({int pageNo = 1, int pageSize = 20}) async {
+  Future<DbResult<PageResult<FollowUser>>> getFolloweeList({required int userId, int pageNo = 1, int pageSize = 20}) async {
     return await networkClient
-        .doGet('/app-api/hub/follow/followee-list', queryParameters: {'pageNo': pageNo, 'pageSize': pageSize})
+        .doGet('/app-api/hub/follow/followee-list', queryParameters: {'userId': userId, 'pageNo': pageNo, 'pageSize': pageSize})
         .mapResponseToPage(FollowUser.fromJson)
         .toObject();
   }
@@ -122,6 +132,20 @@ class HubRepository extends BaseRepository {
         .toValue<bool>();
   }
 
+  /// Get my followed topic tags
+  Future<DbResult<List<String>>> getMyTopicTags() async {
+    final result = await networkClient
+        .doGet('/app-api/hub/expert/my-topic-tags')
+        .mapResponse()
+        .toObject();
+
+    if (result case DbSuccess(data: final Dictionary data)) {
+      final tags = data['topicTags'] as List?;
+      return DbSuccess(tags?.map((e) => e.toString()).toList() ?? []);
+    }
+    return DbFailure(NetworkError(500, 'Parse error'));
+  }
+
   /// Get index post list by scene: RECOMMEND / FOLLOWING / TRENDING
   Future<DbResult<List<Post>>> getPostIndexList(String scene) async {
     return await networkClient
@@ -183,11 +207,10 @@ class HubRepository extends BaseRepository {
         .toValue<bool>();
   }
 
-  /// Toggle favorite: 1-venue 2-course 3-activity (post might be different, but let's assume it matches resourceId)
-  /// Note: OpenAPI says type 1-venue 2-course 3-activity, check if post is also supported
-  Future<DbResult<bool>> toggleFavorite(int targetId, {int type = 1}) async {
+  /// Toggle favorite: 1-venue 2-course 3-activity 4-post
+  Future<DbResult<bool>> toggleFavorite(int targetId, {FavoriteType type = FavoriteType.venue}) async {
     return await networkClient
-        .doPost('/app-api/hub/common-favorite/toggle', queryParameters: {'targetId': targetId, 'type': type})
+        .doPost('/app-api/hub/common-favorite/toggle', queryParameters: {'targetId': targetId, 'type': type.value})
         .mapResponse()
         .toValue<bool>();
   }

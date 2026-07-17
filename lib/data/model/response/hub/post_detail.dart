@@ -1,3 +1,4 @@
+import 'package:coffee_bean/utils/utils_datetime.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'post_detail.g.dart';
@@ -15,8 +16,9 @@ class PostDetail {
   final int? postViewCount;
   final int? postLikeCount;
   final int? postCommentCount;
+  final int? postShareCount;
   final int? postStatus;
-  final String? createTime;
+  final int? createTime;
   final bool? isOwn;
 
   PostDetail({
@@ -31,13 +33,19 @@ class PostDetail {
     this.postViewCount,
     this.postLikeCount,
     this.postCommentCount,
+    this.postShareCount,
     this.postStatus,
     this.createTime,
     this.isOwn,
   });
+
+  String get displayCreateTime => createTime != null 
+    ? UtcUtils.toDateTimeStr(createTime, format: AppDateTimeFormat.full) 
+    : "";
 
   factory PostDetail.fromJson(Map<String, dynamic> json) =>
       _$PostDetailFromJson(json);
 
   Map<String, dynamic> toJson() => _$PostDetailToJson(this);
 }
+

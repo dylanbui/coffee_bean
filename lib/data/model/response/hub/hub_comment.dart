@@ -1,3 +1,4 @@
+import 'package:coffee_bean/utils/utils_datetime.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'hub_comment.g.dart';
@@ -11,7 +12,7 @@ class HubComment {
   final int? resourceId;
   final int? parentId;
   final String? commentContent;
-  final String? createTime;
+  final int? createTime;
   final List<HubComment>? replies;
   final bool? isOwn;
 
@@ -28,8 +29,13 @@ class HubComment {
     this.isOwn,
   });
 
+  String get displayCreateTime => createTime != null 
+    ? UtcUtils.toDateTimeStr(createTime, format: AppDateTimeFormat.full) 
+    : "";
+
   factory HubComment.fromJson(Map<String, dynamic> json) =>
       _$HubCommentFromJson(json);
 
   Map<String, dynamic> toJson() => _$HubCommentToJson(this);
 }
+

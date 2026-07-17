@@ -104,7 +104,7 @@ class PostDetailInteractor extends CubitInteractor<PostDetailRoutable, PostDetai
     final newFavorited = !state.isFavorited;
     emit(state.copyWith(isFavorited: newFavorited));
 
-    final result = await _hubRepository.toggleFavorite(postId, type: 1); // Giả định type 1 cho post
+    final result = await _hubRepository.toggleFavorite(postId, type: FavoriteType.post);
     if (result case DbFailure()) {
       emit(state.copyWith(isFavorited: !newFavorited));
     }

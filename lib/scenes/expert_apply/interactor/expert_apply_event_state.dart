@@ -53,7 +53,7 @@ class ExpertApplyState extends BaseBlocState {
   final DbFailure? failure;
 
   ExpertApplyState({
-    this.isLoading = false,
+    this.isLoading = true,
     this.application,
     this.name = '',
     this.phone = '',

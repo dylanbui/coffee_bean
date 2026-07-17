@@ -1,3 +1,4 @@
+import 'package:coffee_bean/utils/utils_datetime.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'post.g.dart';
@@ -38,8 +39,13 @@ class Post {
     this.createTime,
   });
 
+  String get displayCreateTime => createTime != null 
+    ? UtcUtils.toDateTimeStr(createTime, format: AppDateTimeFormat.full) 
+    : "";
+
   factory Post.fromJson(Map<String, dynamic> json) =>
       _$PostFromJson(json);
 
   Map<String, dynamic> toJson() => _$PostToJson(this);
 }
+

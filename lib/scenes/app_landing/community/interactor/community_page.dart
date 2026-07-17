@@ -3,7 +3,6 @@ import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
 import 'package:coffee_bean/data/model/response/hub/hot_topic.dart';
 import 'package:coffee_bean/scenes/app_landing/community/interactor/community_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/community/interactor/community_interactor.dart';
-import 'package:coffee_bean/scenes/app_landing/community/interactor/mock_data.dart';
 import 'package:coffee_bean/scenes/app_landing/community/interactor/widgets/community_post_item.dart';
 import 'package:coffee_bean/scenes/app_landing/topic_selection/topic_selection_builder.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
@@ -55,10 +54,17 @@ class _CommunityPageState extends AppCubitState<CommunityPage, CommunityInteract
                   children: [
                     Stack(
                       children: [
+                        // TODO: update lai thong tin khi co api moi
                         ImageSliderWidget(
-                          images: CommunityMockData.mockBanners,
+                          images: state.posts.take(2).map((e) => e.postImgs?.firstOrNull ?? '').toList(),
                           height: sliderHeight,
                           indicatorType: ImageSliderIndicatorType.dots,
+                          onImageTap: (index, _) {
+                            if (index < state.posts.length) {
+                              final post = state.posts[index];
+                              interactor.router?.pushPostDetail(post.id);
+                            }
+                          },
                         ),
                         Positioned(top: statusBarHeight + 10, left: 16, child: _buildSearchButton()),
                       ],
