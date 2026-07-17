@@ -1,6 +1,7 @@
 import 'package:coffee_bean/data/map_provider/app_map_contract.dart';
 import 'package:coffee_bean/features/app_map/app_map_builder.dart';
 import 'package:coffee_bean/scenes/event_features/activity_list/activity_list_builder.dart';
+import 'package:coffee_bean/scenes/expert_profile/expert_profile_builder.dart';
 import 'package:coffee_bean/scenes/feedback_features/send_feedback/send_feedback_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/change_mobile/change_mobile_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/coupon_list/coupon_list_builder.dart';
@@ -18,6 +19,7 @@ import 'package:db_core/data/db_location.dart';
 import 'package:flutter/cupertino.dart';
 
 class EditProfileRoute implements DbNoteRoute {}
+class ExpertProfileRoute implements DbNoteRoute {}
 class ChangeMobileRoute implements DbNoteRoute {}
 class ReservationListRoute implements DbNoteRoute {}
 class CourseLearningListRoute implements DbNoteRoute {}
@@ -47,6 +49,10 @@ class MyProfileRouter extends DbNoteRouter implements MyProfileRoutable {
 
     } else if (toRoute is EditProfileRoute) {
       final builder = UpdateProfileBuilder().build();
+      push(builder.viewController);
+
+    } else if (toRoute is ExpertProfileRoute) {
+      final builder = ExpertProfileBuilder().build();
       push(builder.viewController);
 
     } else if (toRoute is ReservationListRoute) {

@@ -16,9 +16,9 @@ class Post {
   final int? viewCount;
   final int? postLikeCount;
   final int? postCommentCount;
-  final int? shareCount;
+  final int? postShareCount;
   final int? postStatus;
-  final String? createTime;
+  final int? createTime;
 
   Post({
     required this.id,
@@ -33,7 +33,7 @@ class Post {
     this.viewCount,
     this.postLikeCount,
     this.postCommentCount,
-    this.shareCount,
+    this.postShareCount,
     this.postStatus,
     this.createTime,
   });

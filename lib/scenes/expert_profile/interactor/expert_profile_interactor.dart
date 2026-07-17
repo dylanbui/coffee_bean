@@ -6,7 +6,6 @@ import 'package:coffee_bean/data/model/response/hub/user_stat.dart';
 import 'package:coffee_bean/data/repository/hub_repository.dart';
 import 'package:coffee_bean/scenes/expert_profile/expert_profile_builder.dart';
 import 'package:coffee_bean/scenes/expert_profile/interactor/expert_profile_event_state.dart';
-import 'package:coffee_bean/scenes/expert_profile/interactor/mock_data.dart';
 import 'package:db_core/db_core.dart';
 
 class ExpertProfileInteractor extends CubitInteractor<ExpertProfileRoutable, ExpertProfileState> {
@@ -24,36 +23,40 @@ class ExpertProfileInteractor extends CubitInteractor<ExpertProfileRoutable, Exp
   Future<void> _fetchData() async {
     emit(state.copyWith(isLoading: true));
 
-    final results = await Future.wait([
-      _hubRepo.getExpertInfo(userId),
-      _hubRepo.getUserStat(userId),
-      _hubRepo.getUserPosts(userId),
-      _hubRepo.getUserCourses(userId),
-    ]);
+    try {
+      final currentUserId = userId ?? UserManager().userInfo?.id;
 
-    final expertResult = results[0] as DbResult<ExpertInfo>;
-    final statResult = results[1] as DbResult<UserStat>;
-    final postsResult = results[2] as DbResult<List<Post>>;
-    final coursesResult = results[3] as DbResult<List<CourseInfo>>;
+      final results = await Future.wait([
+        _hubRepo.getExpertInfo(userId),
+        _hubRepo.getUserStat(currentUserId),
+        _hubRepo.getUserPosts(currentUserId),
+        _hubRepo.getUserCourses(currentUserId),
+      ]);
 
-    final currentUserId = UserManager().userInfo?.id;
-    final isCurrentUser = state.isCurrentUser || (expertResult.isSuccess && expertResult.data?.userId == currentUserId);
+      final expertResult = results[0] as DbResult<ExpertInfo>;
+      final statResult = results[1] as DbResult<UserStat>;
+      final postsResult = results[2] as DbResult<List<Post>>;
+      final coursesResult = results[3] as DbResult<List<CourseInfo>>;
 
-    // Handle results and fallback to mock data if empty
-    emit(state.copyWith(
-      isLoading: false,
-      expertInfo: expertResult.isSuccess ? expertResult.data : ExpertProfileMockData.mockExpertInfo,
-      userStat: statResult.isSuccess ? statResult.data : ExpertProfileMockData.mockUserStat,
-      posts: (postsResult.isSuccess && (postsResult.data != null && postsResult.data!.isNotEmpty))
-          ? postsResult.data
-          : ExpertProfileMockData.mockPosts,
-      courses: (coursesResult.isSuccess && (coursesResult.data != null && coursesResult.data!.isNotEmpty))
-          ? coursesResult.data
-          : ExpertProfileMockData.mockCourses,
-      // For now, these are not in API, so we keep them as default or logic-based
-      isFollowed: false, 
-      isCurrentUser: isCurrentUser,
-    ));
+      final isCurrentUser = state.isCurrentUser || (expertResult.isSuccess && expertResult.data?.userId == currentUserId);
+
+      // Handle results and fallback
+      emit(state.copyWith(
+        isLoading: false,
+        expertInfo: expertResult.data,
+        userStat: statResult.data,
+        posts: postsResult.data ?? [],
+        courses: coursesResult.data ?? [],
+        isFollowed: false,
+        isCurrentUser: isCurrentUser,
+      ));
+    } catch (e) {
+      iLog("Error fetching expert profile: $e");
+      emit(state.copyWith(
+        isLoading: false,
+        failure: DbFailure(NetworkError(-1, e.toString())),
+      ));
+    }
   }
 
   void onTabChanged(int index) {
@@ -69,19 +72,4 @@ class ExpertProfileInteractor extends CubitInteractor<ExpertProfileRoutable, Exp
     }
   }
 
-  void onSettingsPressed() {
-    iLog("Settings pressed");
-  }
-
-  void onShowFanFollowList(int initialTabIndex) {
-    router?.openFanFollowList(initialTabIndex: initialTabIndex);
-  }
-
-  void onPublishCourse() {
-    iLog("Publish course pressed");
-  }
-
-  void onApplyExpert() {
-    iLog("Apply expert pressed");
-  }
 }

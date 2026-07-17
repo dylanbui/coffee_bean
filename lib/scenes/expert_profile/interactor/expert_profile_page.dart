@@ -5,6 +5,7 @@ import 'package:coffee_bean/scenes/expert_profile/interactor/widgets/expert_post
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:db_core/utils/parallax_sliver_app_bar.dart';
 import 'package:coffee_bean/shared/widget/avatar_widget.dart';
 import 'package:db_core/db_core.dart';
 import 'package:db_core/utils/app_sliding_tab_bar.dart';
@@ -19,20 +20,69 @@ class ExpertProfilePage extends AppCubitStateFulWidget<ExpertProfileInteractor, 
 }
 
 class _ExpertProfilePageState extends AppCubitState<ExpertProfilePage, ExpertProfileInteractor, ExpertProfileState> {
+  late ScrollController _scrollController;
+  final GlobalKey _profileCardKey = GlobalKey();
+  
+  double _appBarTitleOpacity = 0.0;
+  double _profileCardOpacity = 1.0;
+  
+  static const double _expandedHeight = 200.0;
+  static const double _fadeOffset = 40.0; // Khoảng cách bắt đầu mờ dần
 
-  AppButtonStyleConfig _followButtonStyle(ExpertProfileState state) => (state.isFollowed ? TMLabsButtonStyle.outline : TMLabsButtonStyle.primary).copyWith(
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController()..addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    
+    final double offset = _scrollController.offset;
+    final double safeAreaTop = MediaQuery.of(context).padding.top;
+    final double toolbarHeight = kToolbarHeight + safeAreaTop;
+    
+    // Lấy chiều cao thực tế của ProfileCard
+    final RenderBox? renderBox = _profileCardKey.currentContext?.findRenderObject() as RenderBox?;
+    final double profileCardHeight = renderBox?.size.height ?? 150.0;
+    
+    // Quãng đường từ lúc bắt đầu cuộn đến khi TabBar chạm AppBar
+    // Quãng đường = (Chiều cao Banner mở rộng - Chiều cao AppBar thu gọn) + Chiều cao Profile Card
+    final double totalDistance = (_expandedHeight - toolbarHeight) + profileCardHeight;
+
+    // 1. Profile Card mờ dần xuyên suốt quãng đường cho đến khi chui dưới AppBar
+    final double newProfileOpacity = (1.0 - (offset / totalDistance)).clamp(0.0, 1.0);
+    
+    // 2. AppBar Title hiện dần khi Profile Card mờ đi (Bắt đầu hiện từ giữa quãng đường và rõ hẳn ở cuối)
+    double newTitleOpacity = 0.0;
+    const double titleStartThreshold = 0.6; // Bắt đầu hiện từ 60% quãng đường
+    if (offset / totalDistance > titleStartThreshold) {
+      newTitleOpacity = ((offset / totalDistance) - titleStartThreshold) / (1.0 - titleStartThreshold);
+    }
+
+    setState(() {
+      _profileCardOpacity = newProfileOpacity;
+      _appBarTitleOpacity = newTitleOpacity.clamp(0.0, 1.0);
+    });
+  }
+  AppButtonStyleConfig _followButtonStyle(ExpertProfileState state) =>
+      (state.isFollowed ? TMLabsButtonStyle.outline : TMLabsButtonStyle.primary).copyWith(
         textStyle: TMLabsTextStyle.caption.copyWith(
           color: state.isFollowed ? TMLabsColor.primary : Colors.white,
-          fontWeight: FontWeight.w600,
+          fontSize: 10,
+          fontWeight: FontWeight.w600
         ),
       );
 
   AppButtonStyleConfig _smallActionButtonStyle() => TMLabsButtonStyle.outline.copyWith(
-        textStyle: TMLabsTextStyle.caption.copyWith(
-          color: TMLabsColor.primary,
-          fontWeight: FontWeight.w600,
-        ),
-      );
+    textStyle: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.primary, fontWeight: FontWeight.w600),
+  );
 
   @override
   Widget getBody(BuildContext context) {
@@ -42,53 +92,68 @@ class _ExpertProfilePageState extends AppCubitState<ExpertProfilePage, ExpertPro
           return getLoadingView();
         }
 
-        return Scaffold(
-          body: CustomScrollView(
-            slivers: [
-              _buildSliverAppBar(context, state),
-              SliverToBoxAdapter(
-                child: _buildProfileCard(context, state),
+        return CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            _buildSliverAppBar(context, state),
+            SliverToBoxAdapter(
+              child: Opacity(
+                opacity: _profileCardOpacity,
+                child: Container(
+                  key: _profileCardKey,
+                  child: _buildProfileCard(context, state),
+                ),
               ),
-              _buildStickyTabBar(context, state),
-              _buildContentList(context, state),
-            ],
-          ),
+            ),
+            _buildStickyTabBar(context, state),
+            _buildContentList(context, state),
+          ],
         );
       },
     );
   }
 
   Widget _buildSliverAppBar(BuildContext context, ExpertProfileState state) {
-    return SliverAppBar(
-      expandedHeight: 200,
-      pinned: true,
-      leading: const BackButton(color: Colors.white),
-      backgroundColor: TMLabsColor.primary,
-      flexibleSpace: FlexibleSpaceBar(
-        background: const DbCachedImageWidget(
-          imageUrl: 'https://picsum.photos/800/400',
-          fit: BoxFit.cover,
-        ),
-        title: LayoutBuilder(
-          builder: (context, constraints) {
-            final isCollapsed = constraints.biggest.height <= kToolbarHeight + MediaQuery.of(context).padding.top;
-            if (!isCollapsed) return const SizedBox.shrink();
-
-            return Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AvatarWidget(imageUrl: state.expertInfo?.userAvatar, size: 30),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    state.expertInfo?.userNickname ?? "",
-                    style: TMLabsTextStyle.bodyBold.copyWith(color: Colors.white, fontSize: 14),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+    return ParallaxSliverAppBar(
+      expandedHeight: _expandedHeight,
+      imageUrl: (state.expertInfo?.background != null && state.expertInfo!.background!.isNotEmpty)
+          ? state.expertInfo!.background!
+          : 'https://picsum.photos/800/400',
+      onBackTap: interactor.router?.pop,
+      style: ParallaxSliverAppBarStyleConfig(
+        backgroundColor: TMLabsColor.primary,
+        backIcon: Icons.arrow_back_ios_new,
+        leadingWidth: 40,
+      ),
+      mode: ParallaxAppBarMode.solidOnScroll,
+      solidBackgroundColor: Colors.transparent,
+      actions: [
+        if (state.isCurrentUser)
+          IconButton(
+            onPressed: interactor.router?.pushUpdateProfile,
+            icon: const Icon(Icons.settings_outlined, color: Colors.white),
+          ),
+      ],
+      titleWidget: Opacity(
+        opacity: _appBarTitleOpacity,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            AvatarWidget(imageUrl: state.expertInfo?.userAvatar, size: 30),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                state.expertInfo?.userNickname ?? "",
+                style: TMLabsTextStyle.bodyBold.copyWith(
+                  color: Colors.white, 
+                  fontSize: 14,
+                  height: 1.2,
                 ),
-              ],
-            );
-          },
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -101,7 +166,7 @@ class _ExpertProfilePageState extends AppCubitState<ExpertProfilePage, ExpertPro
     final isExpert = info?.expertStatus == 1;
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -114,67 +179,80 @@ class _ExpertProfilePageState extends AppCubitState<ExpertProfilePage, ExpertPro
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    // Hàng 1: Nickname & Badge
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      runSpacing: 4,
                       children: [
-                        Expanded(
-                          child: Text(
-                            info?.userNickname ?? "",
-                            style: TMLabsTextStyle.h2,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                        Text(
+                          info?.userNickname ?? "",
+                          style: TMLabsTextStyle.h2.copyWith(height: 1.1),
                         ),
-                        if (isExpert && info?.expertTitle != null) ...[
-                          const SizedBox(width: 4),
-                          AppLabel(
-                            info!.expertTitle!,
-                            backgroundColor: TMLabsColor.primary,
-                          ),
-                        ],
-                        const SizedBox(width: 8),
-                        if (isCurrentUser)
-                          IconButton(
-                            onPressed: interactor.onSettingsPressed,
-                            icon: const Icon(Icons.settings_outlined),
-                            constraints: const BoxConstraints(),
-                            padding: EdgeInsets.zero,
-                          )
-                        else
-                          AppButton(
-                            text: state.isFollowed ? "Đã theo dõi" : "Theo dõi",
-                            onPressed: interactor.toggleFollow,
-                            style: _followButtonStyle(state),
-                            width: 90,
-                            height: 30,
+                        if (isExpert)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0D1E3A),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              "Chuyên gia",
+                              style: TMLabsTextStyle.caption.copyWith(
+                                color: Colors.white,
+                                fontStyle: FontStyle.italic,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
+                    // Hàng 2: Stats
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        _buildStatItem("${stat?.statPostCount ?? 0}", "Bài viết"),
+                        const SizedBox(width: 24),
                         _buildStatItem(
-                          "${stat?.followerCount ?? 0}",
-                          "người theo dõi",
-                          onTap: isCurrentUser ? () => interactor.onShowFanFollowList(0) : null,
+                          "${stat?.statFansCount ?? 0}",
+                          "Follower",
+                          onTap: isCurrentUser ? () => interactor.router?.pushFanFollowList(initialTabIndex: 0) : null,
                         ),
                         const SizedBox(width: 24),
                         _buildStatItem(
-                          "${stat?.followeeCount ?? 0}",
-                          "đang theo dõi",
-                          onTap: isCurrentUser ? () => interactor.onShowFanFollowList(1) : null,
+                          "${stat?.statFollowCount ?? 0}",
+                          "Đã Follow",
+                          onTap: isCurrentUser ? () => interactor.router?.pushFanFollowList(initialTabIndex: 1) : null,
                         ),
                       ],
                     ),
+                    if (!isCurrentUser) ...[
+                      const SizedBox(height: 6),
+                      AppButton(
+                        text: state.isFollowed ? "Đang theo dõi" : "Theo dõi",
+                        onPressed: interactor.toggleFollow,
+                        style: _followButtonStyle(state),
+                        width: 120,
+                        height: 32,
+                      ),
+                    ],
                   ],
                 ),
               ),
             ],
           ),
-          if (isExpert) ...[
-            const SizedBox(height: 16),
-            Text(
-              info?.expertIntro ?? "Chưa có giới thiệu bản thân.",
-              style: TMLabsTextStyle.body,
+          if (info?.expertIntro != null && info!.expertIntro!.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                info.expertIntro!,
+                style: TMLabsTextStyle.body.copyWith(
+                  color: TMLabsColor.grey,
+                ),
+              ),
             ),
           ],
         ],
@@ -188,8 +266,8 @@ class _ExpertProfilePageState extends AppCubitState<ExpertProfilePage, ExpertPro
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(count, style: TMLabsTextStyle.bodyBold),
-          Text(label, style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey)),
+          Text(count, style: TMLabsTextStyle.bodyBold.copyWith(fontSize: 18)),
+          Text(label, style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey, fontSize: 12)),
         ],
       ),
     );
@@ -201,6 +279,7 @@ class _ExpertProfilePageState extends AppCubitState<ExpertProfilePage, ExpertPro
       delegate: _SliverAppBarDelegate(
         child: Container(
           color: Colors.white,
+          height: 60,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             children: [
@@ -223,7 +302,7 @@ class _ExpertProfilePageState extends AppCubitState<ExpertProfilePage, ExpertPro
                   padding: const EdgeInsets.only(left: 8),
                   child: AppButton(
                     text: "Tạo khóa học",
-                    onPressed: interactor.onPublishCourse,
+                    onPressed: interactor.router?.pushCreateCourseApplication,
                     style: _smallActionButtonStyle(),
                     height: 28,
                     width: 90,
@@ -251,10 +330,8 @@ class _ExpertProfilePageState extends AppCubitState<ExpertProfilePage, ExpertPro
             childAspectRatio: 0.75,
           ),
           delegate: SliverChildBuilderDelegate(
-            (context, index) => ExpertPostItem(
-              data: state.posts[index],
-              onTap: () => iLog("Tap post ${state.posts[index].id}"),
-            ),
+            (context, index) =>
+                ExpertPostItem(data: state.posts[index], onTap: () => iLog("Tap post ${state.posts[index].id}")),
             childCount: state.posts.length,
           ),
         ),
@@ -278,11 +355,7 @@ class _ExpertProfilePageState extends AppCubitState<ExpertProfilePage, ExpertPro
                     style: TMLabsTextStyle.body,
                   ),
                   const SizedBox(height: 24),
-                  AppButton(
-                    text: "Đăng ký ngay",
-                    onPressed: interactor.onApplyExpert,
-                    width: 160,
-                  ),
+                  AppButton(text: "Đăng ký ngay", onPressed: interactor.router?.pushExpertApply, width: 160),
                 ],
               ),
             ),
@@ -296,10 +369,8 @@ class _ExpertProfilePageState extends AppCubitState<ExpertProfilePage, ExpertPro
 
       return SliverList(
         delegate: SliverChildBuilderDelegate(
-          (context, index) => ExpertCourseItem(
-            data: state.courses[index],
-            onTap: () => iLog("Tap course ${state.courses[index].id}"),
-          ),
+          (context, index) =>
+              ExpertCourseItem(data: state.courses[index], onTap: () => iLog("Tap course ${state.courses[index].id}")),
           childCount: state.courses.length,
         ),
       );

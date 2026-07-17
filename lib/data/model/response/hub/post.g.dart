@@ -23,9 +23,9 @@ Post _$PostFromJson(Map<String, dynamic> json) => Post(
   viewCount: (json['viewCount'] as num?)?.toInt(),
   postLikeCount: (json['postLikeCount'] as num?)?.toInt(),
   postCommentCount: (json['postCommentCount'] as num?)?.toInt(),
-  shareCount: (json['shareCount'] as num?)?.toInt(),
+  postShareCount: (json['postShareCount'] as num?)?.toInt(),
   postStatus: (json['postStatus'] as num?)?.toInt(),
-  createTime: json['createTime'] as String?,
+  createTime: (json['createTime'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
@@ -41,7 +41,7 @@ Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
   'viewCount': instance.viewCount,
   'postLikeCount': instance.postLikeCount,
   'postCommentCount': instance.postCommentCount,
-  'shareCount': instance.shareCount,
+  'postShareCount': instance.postShareCount,
   'postStatus': instance.postStatus,
   'createTime': instance.createTime,
 };

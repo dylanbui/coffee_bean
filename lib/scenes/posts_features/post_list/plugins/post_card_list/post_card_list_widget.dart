@@ -201,7 +201,7 @@ class _PostCardItem extends StatelessWidget {
               children: [
                 TapEffect(
                     onTap: () => onShareTapped(item),
-                    child: _buildActionIcon(AppAssets.icons.icShare, (item.shareCount ?? 0).formatCompact())),
+                    child: _buildActionIcon(AppAssets.icons.icShare, (item.postShareCount ?? 0).formatCompact())),
                 const SizedBox(width: 10),
                 TapEffect(
                     onTap: () => onCommentTapped(item),

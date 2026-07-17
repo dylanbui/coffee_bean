@@ -6,16 +6,18 @@ part 'user_stat.g.dart';
 class UserStat {
   final int? userId;
   final int statPostCount;
-  final int followerCount;
-  final int followeeCount;
-  final int likeReceivedCount;
+  final int statFansCount;
+  final int statFollowCount;
+  final int statPostLikeCount;
+  final bool statIsExpert;
 
   UserStat({
     this.userId,
     this.statPostCount = 0,
-    this.followerCount = 0,
-    this.followeeCount = 0,
-    this.likeReceivedCount = 0,
+    this.statFansCount = 0,
+    this.statFollowCount = 0,
+    this.statPostLikeCount = 0,
+    this.statIsExpert = false,
   });
 
   factory UserStat.fromJson(Map<String, dynamic> json) => _$UserStatFromJson(json);

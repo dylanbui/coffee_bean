@@ -20,12 +20,25 @@ class UpdateProfileInteractor extends CubitInteractor<UpdateProfileRoutable, Upd
 
   void loadInitialData() {
     final userInfo = UserManager().userInfo;
-    emit(state.copyWith(userInfo: userInfo));
+    emit(state.copyWith(
+      userInfo: userInfo,
+      nickname: userInfo?.nickname ?? '',
+    ));
+  }
+
+  void onNicknameChanged(String value) {
+    emit(state.copyWith(
+      nickname: value,
+      validation: state.validation.copyWith(isNicknameValid: true),
+    ));
   }
 
   Future<void> onAvatarFileSelected(File file) async {
     // Không cần nén ở đây nữa, Repo sẽ tự nén khi upload
-    emit(state.copyWith(selectedAvatarFile: file));
+    emit(state.copyWith(
+      selectedAvatarFile: file,
+      validation: state.validation.copyWith(isAvatarValid: true),
+    ));
   }
 
   void onCoverFileSelected(List<String> paths) {
@@ -39,13 +52,27 @@ class UpdateProfileInteractor extends CubitInteractor<UpdateProfileRoutable, Upd
   }
 
   Future<void> updateProfile({
-    required String nickname,
-    required String avatar,
     required int sex,
   }) async {
+    final isNicknameValid = state.nickname.trim().isNotEmpty;
+    // Avatar bắt buộc nếu cả file mới và url cũ đều không có
+    final isAvatarValid = state.selectedAvatarFile != null || (state.userInfo?.avatar.isNotEmpty ?? false);
+
+    final validation = state.validation.copyWith(
+      isNicknameValid: isNicknameValid,
+      isAvatarValid: isAvatarValid,
+    );
+
+    emit(state.copyWith(validation: validation));
+
+    if (!validation.isValid) {
+      emit(state.copyWith(error: "Vui lòng nhập đầy đủ thông tin bắt buộc"));
+      return;
+    }
+
     emit(state.copyWith(isLoading: true, error: null, isUpdateSuccess: false));
 
-    String finalAvatarUrl = avatar;
+    String finalAvatarUrl = state.userInfo?.avatar ?? "";
     String? finalCoverUrl = state.userInfo?.background;
 
     // Xử lý upload song song nếu có file mới
@@ -81,7 +108,7 @@ class UpdateProfileInteractor extends CubitInteractor<UpdateProfileRoutable, Upd
     }
 
     final result = await _userRepository.updateUserInfo(
-      nickname: nickname,
+      nickname: state.nickname.trim(),
       avatar: finalAvatarUrl,
       sex: sex,
       background: finalCoverUrl,
@@ -99,7 +126,7 @@ class UpdateProfileInteractor extends CubitInteractor<UpdateProfileRoutable, Upd
     final currentUserInfo = UserManager().userInfo;
     if (currentUserInfo != null) {
       final newUserInfo = currentUserInfo.copyWith(
-        nickname: nickname,
+        nickname: state.nickname.trim(),
         avatar: finalAvatarUrl,
         sex: sex,
         background: finalCoverUrl,

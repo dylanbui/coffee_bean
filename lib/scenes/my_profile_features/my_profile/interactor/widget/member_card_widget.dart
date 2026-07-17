@@ -2,7 +2,7 @@ import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
-import 'package:db_core/utils/app_label.dart';
+import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 
 class MemberCardStyle {
@@ -106,6 +106,7 @@ class MemberCardWidget extends StatelessWidget {
   final String rankName;
   final String className;
   final EdgeInsetsGeometry? padding;
+  final VoidCallback? onMyPagePressed;
 
   const MemberCardWidget({
     super.key,
@@ -118,6 +119,7 @@ class MemberCardWidget extends StatelessWidget {
     required this.rankName,
     required this.className,
     this.padding,
+    this.onMyPagePressed,
   });
 
   @override
@@ -207,15 +209,20 @@ class MemberCardWidget extends StatelessWidget {
             ),
             // My Page button
             Positioned(
-              right: 20,
+              right: 15,
               bottom: 15,
-              child: AppLabel(
-                'Trang của tôi',
-                style: TMLabsTextStyle.small.copyWith(color: style.primaryColor),
-                backgroundColor: style.primaryColor.withValues(alpha: 0.2),
-                borderRadius: 10,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                borderColor: style.primaryColor.withValues(alpha: 0.2),
+              child: AppButton(
+                text: 'Trang của tôi',
+                mainAxisSize: MainAxisSize.min,
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                style: AppButtonStyleConfig(
+                  backgroundColor: style.primaryColor.withValues(alpha: 0.2),
+                  textColor: style.primaryColor,
+                  borderRadius: 8,
+                  height: 26,
+                  textStyle: TMLabsTextStyle.small.copyWith(color: style.primaryColor),
+                ),
+                onPressed: onMyPagePressed,
               ),
             ),
           ],

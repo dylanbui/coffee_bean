@@ -21,13 +21,12 @@ class UpdateProfilePage extends AppCubitStateFulWidget<UpdateProfileInteractor, 
 }
 
 class _UpdateProfilePageState extends AppCubitState<UpdateProfilePage, UpdateProfileInteractor, UpdateProfileState> {
-
   @override
   bool get tapToUnfocus => true;
 
   final TextEditingController _nicknameController = TextEditingController();
   int _sex = 1;
-  
+
   bool _initialized = false;
 
   @override
@@ -49,10 +48,10 @@ class _UpdateProfilePageState extends AppCubitState<UpdateProfilePage, UpdatePro
         if (state.error != null) {
           context.showFlashError(state.error!);
         }
-        
+
         if (state.userInfo != null) {
           if (!_initialized) {
-            _nicknameController.text = state.userInfo?.nickname ?? "";
+            _nicknameController.text = state.nickname;
             _sex = state.userInfo?.sex ?? 1;
             _initialized = true;
           }
@@ -67,37 +66,47 @@ class _UpdateProfilePageState extends AppCubitState<UpdateProfilePage, UpdatePro
           children: [
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildAvatar(state.userInfo?.avatar, state.selectedAvatarFile),
-                    const SizedBox(height: 16),
-                    Text(state.userInfo?.nickname ?? "Nickname", style: TMLabsTextStyle.h2),
+                    Center(
+                      child: Column(
+                        children: [
+                          _buildInputLabel("Ảnh đại diện", isRequired: true, center: true),
+                          const SizedBox(height: 8),
+                          _buildAvatar(state.userInfo?.avatar, state.selectedAvatarFile),
+                          if (!state.validation.isAvatarValid)
+                            const Padding(
+                              padding: EdgeInsets.only(top: 8),
+                              child: Text(
+                                "Vui lòng chọn ảnh đại diện",
+                                style: TextStyle(color: TMLabsColor.error, fontSize: 12),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: 32),
+                    _buildInputLabel("Nickname", isRequired: true),
                     AppInputField(
                       controller: _nicknameController,
-                      labelText: "Nickname",
                       hintText: "Nhập nickname",
-                      config: CoffeeInputStyles.filled,
+                      config: CoffeeInputStyles.outline,
+                      onChanged: interactor.onNicknameChanged,
+                      errorText: state.validation.isNicknameValid ? null : "Vui lòng nhập nickname",
                     ),
-                    const SizedBox(height: 16),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text("Giới tính", style: TMLabsTextStyle.bodyBold),
-                    ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 20),
+                    _buildInputLabel("Giới tính"),
                     _buildSexSelector(),
-                    const SizedBox(height: 16),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text("Ảnh bìa (Cover)", style: TMLabsTextStyle.bodyBold),
-                    ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 20),
+                    _buildInputLabel("Ảnh bìa (Cover)"),
                     ImageWechatPickerListView(
                       images: state.selectedCoverFile != null
                           ? [state.selectedCoverFile!.path]
-                          : (state.userInfo?.background != null ? [state.userInfo!.background!] : []),
+                          : (state.userInfo?.background != null && state.userInfo!.background!.isNotEmpty
+                              ? [state.userInfo!.background!]
+                              : []),
                       maxImages: 1,
                       onImagesPicked: (paths) => interactor.onCoverFileSelected(paths),
                       onRemoveImage: (_) => interactor.removeCoverImage(),
@@ -107,17 +116,36 @@ class _UpdateProfilePageState extends AppCubitState<UpdateProfilePage, UpdatePro
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: EdgeInsets.fromLTRB(16, 12, 16, 12 + MediaQuery.of(context).padding.bottom),
               child: AppButton(
                 text: "Cập Nhật",
                 isLoading: state.isLoading,
                 style: TMLabsButtonStyle.primary,
-                onPressed: () => _onUpdate(state),
+                onPressed: () => interactor.updateProfile(sex: _sex),
               ),
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildInputLabel(String label, {bool isRequired = false, bool center = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        mainAxisAlignment: center ? MainAxisAlignment.center : MainAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TMLabsTextStyle.title.copyWith(fontSize: 14),
+          ),
+          if (isRequired) ...[
+            const SizedBox(width: 4),
+            const Text("*", style: TextStyle(color: TMLabsColor.error)),
+          ],
+        ],
+      ),
     );
   }
 
@@ -175,21 +203,6 @@ class _UpdateProfilePageState extends AppCubitState<UpdateProfilePage, UpdatePro
         _sex = index + 1;
       },
       controller: GroupButtonController(selectedIndex: _sex - 1),
-    );
-  }
-
-  void _onUpdate(UpdateProfileState state) {
-    final nickname = _nicknameController.text.trim();
-
-    if (nickname.isEmpty) {
-      context.showFlashError("Vui lòng nhập đầy đủ thông tin");
-      return;
-    }
-
-    interactor.updateProfile(
-      nickname: nickname,
-      avatar: state.userInfo?.avatar ?? "",
-      sex: _sex,
     );
   }
 }

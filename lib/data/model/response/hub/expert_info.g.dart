@@ -15,6 +15,7 @@ ExpertInfo _$ExpertInfoFromJson(Map<String, dynamic> json) => ExpertInfo(
   expertIntro: json['expertIntro'] as String?,
   expertStatus: (json['expertStatus'] as num?)?.toInt(),
   followerCount: (json['followerCount'] as num?)?.toInt(),
+  background: json['background'] as String?,
 );
 
 Map<String, dynamic> _$ExpertInfoToJson(ExpertInfo instance) =>
@@ -27,4 +28,5 @@ Map<String, dynamic> _$ExpertInfoToJson(ExpertInfo instance) =>
       'expertIntro': instance.expertIntro,
       'expertStatus': instance.expertStatus,
       'followerCount': instance.followerCount,
+      'background': instance.background,
     };

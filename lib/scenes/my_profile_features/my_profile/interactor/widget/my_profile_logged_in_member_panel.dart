@@ -1,6 +1,7 @@
 import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/scenes/my_profile_features/my_profile/interactor/my_profile_interactor.dart';
 import 'package:coffee_bean/scenes/my_profile_features/my_profile/interactor/widget/member_card_widget.dart';
+import 'package:coffee_bean/scenes/my_profile_features/my_profile/my_profile_router.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
@@ -43,6 +44,7 @@ class MyProfileLoggedInMemberPanel extends StatelessWidget {
                         className: '---', // TODO: Cần API class
                         avatarUrl: userInfo?.avatar,
                         padding: const EdgeInsets.only(top: 24, left: 20, right: 20),
+                        onMyPagePressed: () => interactor.router?.navigate(ExpertProfileRoute()),
                       ),
                       const SizedBox(height: 16),
                       _buildActionBarButtons(),

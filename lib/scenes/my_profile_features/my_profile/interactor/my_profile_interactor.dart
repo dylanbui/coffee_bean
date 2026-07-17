@@ -169,9 +169,13 @@ class MyProfileInteractor extends CubitInteractor<MyProfileRoutable, MyProfileSt
   //   router?.doLogout();
   // }
 
-  void goToUpdateProfile() {
-    router?.navigate(EditProfileRoute());
-  }
+  // void goToUpdateProfile() {
+  //   router?.navigate(EditProfileRoute());
+  // }
+  //
+  // void goToExpertProfile() {
+  //   router?.navigate(ExpertProfileRoute());
+  // }
 
 // --- UserAuthFlowListener ---
 

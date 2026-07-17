@@ -29,7 +29,7 @@ class PostByTopicMockData {
         viewCount: 1200,
         postLikeCount: 600,
         postCommentCount: 300,
-        createTime: DateTime.now().toIso8601String(),
+        createTime: DateTime.now().millisecondsSinceEpoch,
       ),
     );
   }

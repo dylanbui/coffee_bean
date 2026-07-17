@@ -9,13 +9,15 @@ class ExpertProfileMockData {
         userNickname: "Chuyên gia Cà phê TMLab",
         userAvatar: "https://i.pravatar.cc/150?u=expert1",
         expertTitle: "Influencer",
-        expertIntro: "Chào mừng bạn đến với thế giới cà phê đặc sản. Tôi có 10 năm kinh nghiệm trong ngành Rang và Pha chế. Hy vọng những chia sẻ của tôi sẽ giúp bạn tìm thấy niềm vui trong mỗi tách cà phê.",
+        expertIntro: "Chào mừng bạn đến với thế giới cà phê đặc sản. Tôi có 10 năm kinh nghiệm trong ngành Rang và Pha chế. Hy vọng những chia sẻ của tôi sẽ giúp bạn tìm thấy niềm vui trong mỗi tách cà phê. Nội dung giới thiệu cá nhân hiển thị mẫu, nội dung giới thiệu cá nhân hiển thị mẫu, nội dung giới thiệu cá nhân hiển thị mẫu, nội dung giới thiệu.",
+        expertStatus: 1,
       );
 
   static UserStat get mockUserStat => UserStat(
-        followerCount: 722,
-        followeeCount: 12,
+        statFansCount: 722,
+        statFollowCount: 12,
         statPostCount: 45,
+        statIsExpert: true,
       );
 
   static List<Post> get mockPosts => List.generate(

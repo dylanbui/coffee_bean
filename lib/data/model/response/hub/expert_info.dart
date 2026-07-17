@@ -12,6 +12,7 @@ class ExpertInfo {
   final String? expertIntro;
   final int? expertStatus; // 0-disabled 1-enabled
   final int? followerCount;
+  final String? background;
 
   ExpertInfo({
     required this.id,
@@ -22,6 +23,7 @@ class ExpertInfo {
     this.expertIntro,
     this.expertStatus,
     this.followerCount,
+    this.background,
   });
 
   factory ExpertInfo.fromJson(Map<String, dynamic> json) => _$ExpertInfoFromJson(json);

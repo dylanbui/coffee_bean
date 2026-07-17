@@ -83,9 +83,9 @@ class HubRepository extends BaseRepository {
   }
 
   /// Get user's course list
-  Future<DbResult<List<CourseInfo>>> getUserCourses(int? userId) async {
+  Future<DbResult<List<CourseInfo>>> getUserCourses(int? instructorId) async {
     return await networkClient
-        .doGet('/app-api/hub/course-info/user-list', queryParameters: userId != null ? {'userId': userId} : null)
+        .doGet('/app-api/hub/course-info/user-list', queryParameters: instructorId != null ? {'instructorId': instructorId} : null)
         .mapResponseTo(CourseInfo.fromJson)
         .toList();
   }

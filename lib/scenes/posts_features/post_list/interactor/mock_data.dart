@@ -12,8 +12,8 @@ class PostListMockData {
     topicTags: ['Coffee', 'HomeBrew', 'Barista'],
     postCommentCount: (index + 1) * 5,
     postLikeCount: (index + 1) * 10,
-    shareCount: (index + 1) * 2,
+    postShareCount: (index + 1) * 2,
     viewCount: (index + 1) * 12,
-    createTime: '23/04/2026',
+    createTime: DateTime.now().millisecondsSinceEpoch,
   ));
 }

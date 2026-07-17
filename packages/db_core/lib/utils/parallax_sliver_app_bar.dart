@@ -127,6 +127,7 @@ class _ParallaxSliverAppBarState extends State<ParallaxSliverAppBar> {
       elevation: widget.style.elevation,
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
+      leadingWidth: widget.style.leadingWidth,
       leading: widget.leading ??
           IconButton(
             icon: Icon(widget.style.backIcon ?? Icons.arrow_back_ios, size: 20),
@@ -255,7 +256,12 @@ class _ParallaxSliverAppBarState extends State<ParallaxSliverAppBar> {
                     color: (widget.solidBackgroundColor ?? widget.style.backgroundColor),
                     child: SafeArea(
                       child: widget.collapsedWidget ??
-                          Center(
+                          Container(
+                            padding: EdgeInsets.only(
+                              left: widget.style.leadingWidth ?? 56.0,
+                              right: widget.actions != null ? widget.actions!.length * 48.0 : 16.0,
+                            ),
+                            alignment: Alignment.centerLeft,
                             child: widget.titleWidget ??
                                 (widget.title != null
                                     ? Text(

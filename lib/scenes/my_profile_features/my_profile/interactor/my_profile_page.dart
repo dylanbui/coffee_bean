@@ -1,5 +1,6 @@
 import 'package:coffee_bean/scenes/my_profile_features/my_profile/interactor/widget/my_profile_logged_in_member_panel.dart';
 import 'package:coffee_bean/scenes/my_profile_features/my_profile/interactor/widget/my_profile_logged_out_panel.dart';
+import 'package:coffee_bean/scenes/my_profile_features/my_profile/my_profile_router.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/scenes/my_profile_features/my_profile/interactor/my_profile_interactor.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
@@ -44,7 +45,7 @@ class _MyProfilePageState extends AppCubitState<MyProfilePage, MyProfileInteract
               borderRadius: 20,
             ),
             leftIcon: AppIcon(AppAssets.icons.icMyFill, color: Colors.white, size: 20),
-            onPressed: () => interactor.goToUpdateProfile(),
+            onPressed: () => interactor.router?.navigate(EditProfileRoute()),
           ),
         ),
       ),

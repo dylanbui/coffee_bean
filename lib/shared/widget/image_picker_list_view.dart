@@ -176,6 +176,7 @@ class ImagePickerListView extends StatelessWidget {
   }
 
   Widget _buildImageItem(String path, int index) {
+    if (path.isEmpty) return const SizedBox.shrink();
     return Container(
       width: 80,
       height: 80,
