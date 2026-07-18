@@ -50,7 +50,7 @@ class _ExpertApplyPageState extends AppCubitState<ExpertApplyPage, ExpertApplyIn
   }
 
   Widget _buildContent(ExpertApplyState state) {
-    if (state.application == null) {
+    if (state.application == null || state.application!.applyStatus == 0) {
       // Nếu chưa có dữ liệu application và đang load (không phải đang submit), thì hiện màn hình trống kèm loading
       if (state.isLoading && !state.isSubmitting) {
         return const SizedBox.shrink();
@@ -60,21 +60,21 @@ class _ExpertApplyPageState extends AppCubitState<ExpertApplyPage, ExpertApplyIn
 
     final status = state.application!.applyStatus;
     switch (status) {
-      case 0: // Pending
+      case 1: // Pending
         return _buildStatusView(
           icon: Icons.access_time_filled,
           iconColor: Colors.orange,
           title: "Đơn ứng tuyển đã gửi thành công",
           subtitle: "Vui lòng chờ hệ thống phê duyệt",
         );
-      case 1: // Approved
+      case 2: // Approved
         return _buildStatusView(
           icon: Icons.check_circle,
           iconColor: Colors.green,
           title: "Chúc mừng!",
           subtitle: "Bạn đã trở thành chuyên gia của Coffee Bean",
         );
-      case 2: // Rejected
+      case 3: // Rejected
         return _buildRejectedView(state);
       default:
         return _buildForm(state);

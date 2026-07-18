@@ -37,19 +37,10 @@ class HubRepository extends BaseRepository {
 
   /// Get my expert application status
   Future<DbResult<ExpertApply?>> getMyExpertApply() async {
-    final result = await networkClient
+    return await networkClient
         .doGet('/app-api/hub/expert-apply/get')
         .mapResponseTo(ExpertApply.fromJson)
         .toObject();
-
-    // Nếu lỗi là do data null (mã 500 từ wrapper khi data: null) hoặc 404 từ server,
-    // ta coi như người dùng chưa có hồ sơ và trả về DbSuccess(null) để hiện Form.
-    if (result case DbFailure(:final error)) {
-      if (error.code == 500 || error.code == 404) {
-        return DbSuccess(null);
-      }
-    }
-    return result;
   }
 
   /// Get follower list

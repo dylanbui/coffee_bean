@@ -5,7 +5,7 @@ part 'expert_apply.g.dart';
 @JsonSerializable()
 class ExpertApply {
   final int id;
-  final int applyStatus; // 0-pending 1-approved 2-rejected
+  final int applyStatus; // 0=not_yet_apply 1=pending 2=approved 3=rejected
   final String? reviewRemark;
   final int? createTime; // UTC timestamp
 
