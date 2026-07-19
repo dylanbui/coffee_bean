@@ -1,3 +1,5 @@
+import 'package:coffee_bean/shared/service/app_event/app_main_tab_event.dart';
+import 'package:db_core/db_core.dart';
 import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/main_tabbar/interactor/main_tabbar_event_state.dart';
 import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_router.dart';
@@ -45,6 +47,13 @@ class MainTabbarInteractor extends CubitInteractor<MainTabbarRoutable, MainTabba
   }
 
   void selectTab(int index) {
+    if (state.selectedIndex == index) return;
     emit(state.copyWith(selectedIndex: index));
+    
+    // Ánh xạ index sang Enum (Theo thứ tự trong MainTabbarPage)
+    if (index >= 0 && index < MainTabType.values.length) {
+      final tabType = MainTabType.values[index];
+      locator<DbEventBus>().fire(AppMainTabSelectedEvent(tabType));
+    }
   }
 }

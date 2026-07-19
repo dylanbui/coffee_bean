@@ -29,6 +29,7 @@ import 'package:coffee_bean/scenes/app/mixins/app_network_mixin.dart';
 import 'package:coffee_bean/scenes/app/mixins/app_upgrade_mixin.dart';
 import 'package:coffee_bean/scenes/app/mixins/app_notify_mixin.dart';
 import 'package:coffee_bean/data/cache/app_cache.dart';
+import 'package:db_core/services/app_lifecycle_service.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:db_core/architecture_ribs/navigator.dart';
 import 'package:db_core/network/network_client.dart';
@@ -220,6 +221,10 @@ void _registerLazyServices() {
 
   // Register Broadcast Service (EventBus)
   locator.registerLazySingleton<DbEventBus>(() => DbEventBus());
+  
+  // Register and Initialize AppLifecycleService to broadcast app state changes via EventBus
+  locator.registerSingleton<AppLifecycleService>(AppLifecycleService(locator<DbEventBus>()));
+
   // Register DeepLink Service
   locator.registerLazySingleton<DeepLinkService>(() => DeepLinkService());
   // Register Live Services
