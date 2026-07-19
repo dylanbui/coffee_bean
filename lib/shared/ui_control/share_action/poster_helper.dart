@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:coffee_bean/data/repository/hub_repository.dart';
 import 'package:db_core/db_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -10,8 +11,44 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:gal/gal.dart';
 import 'package:share_plus/share_plus.dart';
 
+enum AppShareType {
+  post(1, 'app-share-detail-post'),
+  course(2, 'app-share-detail-course'),
+  activity(3, 'app-share-detail-activity'),
+  user(4, 'app-share-detail-user');
+
+  final int value;
+  final String path;
+
+  const AppShareType(this.value, this.path);
+}
+
 class PosterHelper {
   static final GlobalKey boundaryKey = GlobalKey();
+
+  static const String _baseUrl = "https://share.tmlabs.ai";
+
+  /// Tạo link chia sẻ dựa trên type và id
+  static String generateShareLink(AppShareType type, dynamic id) {
+    return "$_baseUrl/${type.path}/$id";
+  }
+
+  /// Gửi tracking share về server (chạy ngầm)
+  static Future<void> trackShare(AppShareType type, dynamic id, {String? channel}) async {
+    try {
+      final resourceId = int.tryParse(id.toString());
+      if (resourceId == null) return;
+      
+      final hubRepo = locator.get<HubRepository>();
+      await hubRepo.createShareRecord(
+        resourceId, 
+        shareType: type.value, 
+        shareChannel: channel,
+      );
+    } catch (e) {
+      debugPrint("PosterHelper trackShare error: $e");
+    }
+  }
 
   /// Chụp ảnh widget từ một GlobalKey
   static Future<Uint8List?> captureWidget(GlobalKey key) async {

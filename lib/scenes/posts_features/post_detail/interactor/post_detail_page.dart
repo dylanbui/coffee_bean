@@ -7,6 +7,7 @@ import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui_control/share_action/poster_helper.dart';
 import 'package:coffee_bean/shared/ui_control/share_action/share_poster_dialog.dart';
 import 'package:coffee_bean/shared/widget/avatar_widget.dart';
 import 'package:coffee_bean/shared/widget/image_slider_widget.dart';
@@ -241,12 +242,13 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
                     "Chia sẻ",
                     onTap: () {
                       if (post == null) return;
-                      interactor.sharePost();
+                      // interactor.sharePost(); // Bỏ vì SharePosterDialog đã handle trackShare khi bấm Chia sẻ
                       SharePosterDialog.show(
                         context: context,
                         imageUrl: post.postImgs?.firstOrNull ?? post.expertAvatar ?? "",
                         title: post.postTitle ?? "",
-                        shareLink: "https://coffeebean.com/post/${post.id}", // Fake link
+                        type: AppShareType.post,
+                        resourceId: post.id,
                         subTitle: "Bởi ${post.expertTitle}",
                         shareText: "Xem bài viết thú vị này trên Coffee Bean: ${post.postTitle}",
                       );

@@ -6,6 +6,7 @@ import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_sliver_app_bar.dart';
+import 'package:coffee_bean/shared/ui_control/share_action/poster_helper.dart';
 import 'package:coffee_bean/shared/ui_control/share_action/share_poster_dialog.dart';
 import 'package:coffee_bean/shared/widget/avatar_widget.dart';
 import 'package:coffee_bean/shared/widget/image_slider_widget.dart';
@@ -51,7 +52,8 @@ class _CourseDetailPageState extends AppCubitState<CourseDetailPage, CourseDetai
       context: context,
       imageUrl: course.courseCover.isNotEmpty ? course.courseCover.first : "",
       title: course.courseName,
-      shareLink: "https://tmlabs.coffee/course/${interactor.courseId}",
+      type: AppShareType.course,
+      resourceId: interactor.courseId,
       shareText: "Tham gia cùng tôi tại khóa học: ${course.courseName}",
     );
   }

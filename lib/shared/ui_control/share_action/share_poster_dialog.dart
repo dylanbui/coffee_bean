@@ -12,10 +12,13 @@ class SharePosterDialog {
     required BuildContext context,
     required String imageUrl,
     required String title,
-    required String shareLink,
+    required AppShareType type,
+    required dynamic resourceId,
     String? subTitle,
     String? shareText,
   }) {
+    final shareLink = PosterHelper.generateShareLink(type, resourceId);
+
     showDialog(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.7),
@@ -70,6 +73,9 @@ class SharePosterDialog {
                               onTap: () async {
                                 final bytes = await PosterHelper.captureWidget(PosterHelper.boundaryKey);
                                 if (bytes != null) {
+                                  // Track share API (chạy ngầm)
+                                  PosterHelper.trackShare(type, resourceId);
+
                                   await PosterHelper.shareImage(
                                     bytes,
                                     text: shareText ?? "Tham gia cùng tôi tại sự kiện: $title",

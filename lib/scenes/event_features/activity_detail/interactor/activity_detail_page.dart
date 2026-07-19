@@ -7,11 +7,11 @@ import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_sliver_app_bar.dart';
+import 'package:coffee_bean/shared/ui_control/share_action/poster_helper.dart';
 import 'package:coffee_bean/shared/ui_control/share_action/share_poster_dialog.dart';
 import 'package:coffee_bean/utils/currency_utils.dart';
 import 'package:coffee_bean/utils/utils_datetime.dart';
 import 'package:db_core/db_core.dart';
-import 'package:db_core/utils/app_label.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -46,7 +46,8 @@ class _ActivityDetailPageState extends AppCubitState<ActivityDetailPage, Activit
       context: context,
       imageUrl: activity.activityCover ?? "",
       title: activity.activityName,
-      shareLink: "https://tmlabs.coffee/event/${interactor.activityId}",
+      type: AppShareType.activity,
+      resourceId: interactor.activityId,
       shareText: "Tham gia cùng tôi tại sự kiện: ${activity.activityName}",
     );
   }
