@@ -26,9 +26,12 @@ class CommunityPage extends AppCubitStateFulWidget<CommunityInteractor, Communit
 
 class _CommunityPageState extends AppCubitState<CommunityPage, CommunityInteractor, CommunityState> {
   
+  late ScrollController _scrollController;
+
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
     Future.delayed(const Duration(milliseconds: 800), () {
       if (mounted && AppPrefs().getTopicInterested().isEmpty) {
         _showTopicSelectionModal();
@@ -37,76 +40,39 @@ class _CommunityPageState extends AppCubitState<CommunityPage, CommunityInteract
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget getBody(BuildContext context) {
     return BlocBuilder<CommunityInteractor, CommunityState>(
       builder: (context, state) {
         final double statusBarHeight = MediaQuery.of(context).padding.top;
         const double sliderHeight = 210.0;
+        const double hotTopicsHeight = 180.0;
+        const double tabBarHeight = 46.0;
+        const double spacing = 12.0;
 
         return Scaffold(
           backgroundColor: TMLabsColor.bgMain,
           floatingActionButton: UserManager().isLogin ? _buildCreatePostButton() : null,
           body: CustomScrollView(
+            controller: _scrollController,
             slivers: [
-              // 1. Header: Slider + Hot Topics (Cuộn đi bình thường)
-              SliverToBoxAdapter(
-                child: Column(
-                  children: [
-                    Stack(
-                      children: [
-                        // TODO: update lai thong tin khi co api moi
-                        ImageSliderWidget(
-                          images: state.posts.take(2).map((e) => e.postImgs?.firstOrNull ?? '').toList(),
-                          height: sliderHeight,
-                          indicatorType: ImageSliderIndicatorType.dots,
-                          onImageTap: (index, _) {
-                            if (index < state.posts.length) {
-                              final post = state.posts[index];
-                              interactor.router?.pushPostDetail(post.id);
-                            }
-                          },
-                        ),
-                        Positioned(top: statusBarHeight + 10, left: 16, child: _buildSearchButton()),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    _buildHotTopics(state),
-                    const SizedBox(height: 12), // KHOẢNG TRỐNG 12PX CHUẨN SÁT TABBAR
-                  ],
-                ),
-              ),
-
-              // 2. TabBar: Pinned (Sẽ dính lên top ngay dưới Status Bar khi cuộn tới)
               SliverPersistentHeader(
                 pinned: true,
-                delegate: _SimpleTabBarDelegate(
-                  height: 64 + statusBarHeight,
-                  child: Container(
-                    color: TMLabsColor.bgMain,
-                    padding: EdgeInsets.only(top: statusBarHeight),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AppSlidingTabBar<int>(
-                            currentItem: state.currentTabIndex,
-                            items: [
-                              AppTabItem(value: 0, label: "Gợi ý"),
-                              AppTabItem(value: 1, label: "Đề xuất"),
-                              AppTabItem(value: 2, label: "Thịnh hành"),
-                            ],
-                            onTabChanged: (index) => interactor.onTabChanged(index),
-                            style: TMLabsTabBarStyle.defaultStyle,
-                          ),
-                          const SizedBox(height: 4),
-                          Divider(height: 1, thickness: 1, color: Colors.grey.shade200),
-                          const SizedBox(height: 4),
-                        ],
-                      ),
-                    ),
-                  ),
+                delegate: _CommunityHeaderDelegate(
+                  state: state,
+                  interactor: interactor,
+                  statusBarHeight: statusBarHeight,
+                  sliderHeight: sliderHeight,
+                  hotTopicsHeight: hotTopicsHeight,
+                  tabBarHeight: tabBarHeight,
+                  spacing: spacing,
+                  searchButton: _buildSearchButton(),
+                  hotTopicsWidget: _buildHotTopics(state),
                 ),
               ),
 
@@ -270,25 +236,125 @@ class _TopicSelectionModalListener implements TopicSelectionListener {
   }
 }
 
-class _SimpleTabBarDelegate extends SliverPersistentHeaderDelegate {
-  final double height;
-  final Widget child;
+class _CommunityHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final CommunityState state;
+  final CommunityInteractor interactor;
+  final double statusBarHeight;
+  final double sliderHeight;
+  final double hotTopicsHeight;
+  final double tabBarHeight;
+  final double spacing;
+  final Widget searchButton;
+  final Widget hotTopicsWidget;
 
-  _SimpleTabBarDelegate({required this.height, required this.child});
+  _CommunityHeaderDelegate({
+    required this.state,
+    required this.interactor,
+    required this.statusBarHeight,
+    required this.sliderHeight,
+    required this.hotTopicsHeight,
+    required this.tabBarHeight,
+    required this.spacing,
+    required this.searchButton,
+    required this.hotTopicsWidget,
+  });
 
   @override
-  double get minExtent => height;
+  double get maxExtent => statusBarHeight + sliderHeight + spacing + hotTopicsHeight + spacing + tabBarHeight;
 
   @override
-  double get maxExtent => height;
+  double get minExtent => statusBarHeight + tabBarHeight;
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return child;
+    final double shrinkPercentage = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
+
+    return Container(
+      color: TMLabsColor.bgMain,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // 1. Khối nội dung trượt (Slider + Search + Hot Topics)
+          Positioned(
+            top: -shrinkOffset,
+            left: 0,
+            right: 0,
+            child: Column(
+              children: [
+                Stack(
+                  children: [
+                    ImageSliderWidget(
+                      images: state.posts.take(2).map((e) => e.postImgs?.firstOrNull ?? '').toList(),
+                      height: sliderHeight + statusBarHeight,
+                      indicatorType: ImageSliderIndicatorType.dots,
+                      onImageTap: (index, _) {
+                        if (index < state.posts.length) {
+                          final post = state.posts[index];
+                          interactor.router?.pushPostDetail(post.id);
+                        }
+                      },
+                    ),
+                    Positioned(top: statusBarHeight + 10, left: 16, child: searchButton),
+                  ],
+                ),
+                SizedBox(height: spacing),
+                hotTopicsWidget,
+                SizedBox(height: spacing),
+                // Placeholder cho TabBar
+                SizedBox(height: tabBarHeight),
+              ],
+            ),
+          ),
+
+          // 2. Lớp nền Status Bar (Hiện dần màu nền đặc khi cuộn)
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: statusBarHeight,
+            child: Container(
+              color: TMLabsColor.bgMain.withValues(alpha: shrinkPercentage),
+            ),
+          ),
+
+          // 3. TabBar Pinned (Lớp khóa vị trí)
+          Positioned(
+            top: (maxExtent - tabBarHeight - shrinkOffset).clamp(statusBarHeight, maxExtent),
+            left: 0,
+            right: 0,
+            height: tabBarHeight,
+            child: Material(
+              color: TMLabsColor.bgMain,
+              elevation: 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppSlidingTabBar<int>(
+                      currentItem: state.currentTabIndex,
+                      items: [
+                        AppTabItem(value: 0, label: "Gợi ý"),
+                        AppTabItem(value: 1, label: "Đề xuất"),
+                        AppTabItem(value: 2, label: "Thịnh hành"),
+                      ],
+                      onTabChanged: (index) => interactor.onTabChanged(index),
+                      style: TMLabsTabBarStyle.defaultStyle,
+                    ),
+                    const SizedBox(height: 4),
+                    Divider(height: 1, thickness: 1, color: Colors.grey.shade200),
+                    const SizedBox(height: 4),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
-  bool shouldRebuild(covariant _SimpleTabBarDelegate oldDelegate) {
-    return oldDelegate.height != height || oldDelegate.child != child;
-  }
+  bool shouldRebuild(covariant _CommunityHeaderDelegate oldDelegate) => true;
 }
