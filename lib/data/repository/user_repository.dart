@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:coffee_bean/data/model/response/user/invite_models.dart';
 import 'package:coffee_bean/data/local/user_manager/user_info.dart';
 import 'package:coffee_bean/data/model/response/promotion/point_breakdown.dart';
 import 'package:coffee_bean/data/network/page_result.dart';
@@ -140,5 +141,21 @@ class UserRepository extends BaseRepository {
         .request('/app-api/member/user/cancel', type: NetworkType.put)
         .mapResponse()
         .toValue<bool>();
+  }
+
+  /// Lấy thông tin tổng quan về mời bạn bè (Invite Overview)
+  Future<DbResult<InviteOverview>> getInviteOverview() async {
+    return await networkClient
+        .request('/app-api/member/invite/overview', type: NetworkType.get)
+        .mapResponseTo(InviteOverview.fromJson)
+        .toObject();
+  }
+
+  /// Lấy cấu hình phần thưởng mời bạn bè (Invite Reward Config)
+  Future<DbResult<InviteRewardConfig>> getInviteRewardConfig() async {
+    return await networkClient
+        .request('/app-api/member/invite/reward-config', type: NetworkType.get)
+        .mapResponseTo(InviteRewardConfig.fromJson)
+        .toObject();
   }
 }
