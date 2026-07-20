@@ -3,6 +3,7 @@ import 'package:coffee_bean/scenes/posts_features/create_post/interactor/create_
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui/app_ui.dart';
 import 'package:coffee_bean/shared/widget/html_editor_widget.dart';
 import 'package:coffee_bean/shared/widget/image_wechat_picker_list_view.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
@@ -222,8 +223,7 @@ class _CreatePostPageState extends AppCubitState<CreatePostPage, CreatePostInter
   }
 
   Widget _buildBottomButtons(BuildContext context, CreatePostState state) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
+    return AppUi.getBottomActionArea(
       child: Row(
         children: [
           Expanded(

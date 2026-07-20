@@ -1,6 +1,7 @@
 import 'package:coffee_bean/shared/ui/app_assets.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/widget/app_bottom_action_area.dart';
 import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:coffee_bean/utils/refresh_loadmore.dart';
 import 'package:flutter/cupertino.dart';
@@ -55,6 +56,11 @@ class AppUi {
 
   static Widget getLoadingView() {
     return const Center(child: LoadingView(width: 150, height: 150));
+  }
+
+  /// Helper chuẩn để tạo vùng action ghim ở dưới màn hình
+  static Widget getBottomActionArea({required Widget child, EdgeInsetsGeometry? padding}) {
+    return AppBottomActionArea(padding: padding ?? const EdgeInsets.all(10.0), child: child);
   }
 
   static Widget getEmptyItemView({

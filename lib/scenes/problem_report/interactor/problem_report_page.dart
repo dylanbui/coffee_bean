@@ -1,7 +1,8 @@
+import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_input_configs.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
-import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui/app_ui.dart';
 import 'package:coffee_bean/shared/widget/image_wechat_picker_list_view.dart';
 import 'package:coffee_bean/scenes/problem_report/interactor/problem_report_interactor.dart';
 import 'package:coffee_bean/scenes/problem_report/interactor/problem_report_event_state.dart';
@@ -31,41 +32,50 @@ class _ProblemReportPageState extends AppCubitState<ProblemReportPage, ProblemRe
   }
 
   @override
-  String? getTitle() => "Problems Report";
+  String? getTitle() => "Báo cáo sự cố";
 
   @override
   Widget getBody(BuildContext context) {
-    return BlocConsumer<ProblemReportInteractor, ProblemReportState>(
+    return BlocListener<ProblemReportInteractor, ProblemReportState>(
       listenWhen: (prev, curr) => prev.isSuccess != curr.isSuccess || prev.errorMessage != curr.errorMessage,
       listener: (context, state) {
         if (state.isSuccess) {
           _textController.clear();
-          context.showFlashSuccess("Problem Report Success");
-          // router.pop() can be handled here or in Interactor -> Router
+          context.showFlashSuccess("Gửi báo cáo thành công");
+          interactor.router?.pop();
         } else if (state.errorMessage != null) {
-          context.showFlashError(state.errorMessage!);
+          context.showFlashError("Đã có lỗi xảy ra: ${state.errorMessage}");
         }
       },
-      builder: (context, state) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildTextArea(state),
-              const SizedBox(height: 20),
-              ImageWechatPickerListView(
-                images: state.images,
-                maxImages: 5,
-                onImagesPicked: interactor.onImagesPicked,
-                onRemoveImage: interactor.removeImage,
-              ),
-              const SizedBox(height: 40),
-              _buildSubmitButton(state),
-            ],
-          ),
-        );
-      },
+      child: BlocBuilder<ProblemReportInteractor, ProblemReportState>(
+        builder: (context, state) {
+          return SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildTextArea(state),
+                        const SizedBox(height: 20),
+                        ImageWechatPickerListView(
+                          images: state.images,
+                          maxImages: 5,
+                          onImagesPicked: interactor.onImagesPicked,
+                          onRemoveImage: interactor.removeImage,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                _buildBottomButton(state),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -74,10 +84,12 @@ class _ProblemReportPageState extends AppCubitState<ProblemReportPage, ProblemRe
       children: [
         AppInputField(
           controller: _textController,
-          hintText: "Nhập thông tin",
+          hintText: "Mô tả sự cố bạn gặp phải...",
+          labelText: "Nội dung báo cáo",
+          minLines: 6,
           maxLines: 6,
           maxLength: 1000,
-          config: CoffeeInputStyles.filled.copyWith(borderRadius: 12),
+          config: CoffeeInputStyles.outline.copyWith(borderRadius: 12),
           onChanged: interactor.onTextChanged,
           style: TMLabsTextStyle.body,
         ),
@@ -93,12 +105,14 @@ class _ProblemReportPageState extends AppCubitState<ProblemReportPage, ProblemRe
     );
   }
 
-  Widget _buildSubmitButton(ProblemReportState state) {
-    return AppButton(
-      text: "Gửi",
-      style: TMLabsButtonStyle.primary,
-      isLoading: state.isSubmitting,
-      onPressed: state.text.isNotEmpty ? interactor.submitReport : null,
+  Widget _buildBottomButton(ProblemReportState state) {
+    return AppUi.getBottomActionArea(
+      child: AppButton(
+        text: "Gửi báo cáo",
+        style: TMLabsButtonStyle.primary,
+        isLoading: state.isSubmitting,
+        onPressed: state.text.isNotEmpty ? interactor.submitReport : null,
+      ),
     );
   }
 }

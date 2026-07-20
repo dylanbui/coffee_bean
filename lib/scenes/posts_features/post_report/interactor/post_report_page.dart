@@ -5,6 +5,7 @@ import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_input_configs.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
+import 'package:coffee_bean/shared/ui/app_ui.dart';
 import 'package:coffee_bean/shared/ui_control/coffee_app_bar.dart';
 import 'package:coffee_bean/utils/flash_utils/flash_dialog_helper.dart';
 import 'package:db_core/db_core.dart';
@@ -169,6 +170,7 @@ class _PostReportPageState extends AppCubitState<PostReportPage, PostReportInter
         AppInputField(
           config: CoffeeInputStyles.outline,
           hintText: 'Nhập nội dung báo cáo tại đây...',
+          minLines: 5,
           maxLines: 5,
           onChanged: interactor.onDescriptionChanged,
         ),
@@ -177,19 +179,15 @@ class _PostReportPageState extends AppCubitState<PostReportPage, PostReportInter
   }
 
   Widget _buildSubmitButton(PostReportState state) {
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: AppButton(
-          text: 'Gửi báo cáo',
-          style: TMLabsButtonStyle.primary,
-          width: double.infinity,
-          isLoading: state.isLoading,
-          onPressed: (state.selectedReasonIndexes.isNotEmpty || state.description.trim().isNotEmpty)
-              ? interactor.submitReport
-              : null,
-        ),
+    return AppUi.getBottomActionArea(
+      child: AppButton(
+        text: 'Gửi báo cáo',
+        style: TMLabsButtonStyle.primary,
+        width: double.infinity,
+        isLoading: state.isLoading,
+        onPressed: (state.selectedReasonIndexes.isNotEmpty || state.description.trim().isNotEmpty)
+            ? interactor.submitReport
+            : null,
       ),
     );
   }

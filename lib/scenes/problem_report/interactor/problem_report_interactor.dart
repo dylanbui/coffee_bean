@@ -1,6 +1,6 @@
 import 'package:db_core/db_core.dart';
 import 'package:coffee_bean/data/repository/file_repository.dart';
-import 'package:coffee_bean/scenes/problem_report/problem_report_router.dart';
+import 'package:coffee_bean/scenes/problem_report/problem_report_builder.dart';
 import 'package:coffee_bean/scenes/problem_report/interactor/problem_report_event_state.dart';
 
 class ProblemReportInteractor extends CubitInteractor<ProblemReportRouter, ProblemReportState> {

@@ -52,6 +52,7 @@ import 'package:coffee_bean/data/repository/course_repository.dart';
 import 'package:coffee_bean/data/repository/reservation_repository.dart';
 import 'package:coffee_bean/data/repository/store_repository.dart';
 import 'package:coffee_bean/data/repository/store_point_repository.dart';
+import 'package:coffee_bean/data/repository/system_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:db_core/utils/locator.dart';
@@ -252,6 +253,7 @@ void _registerLazyServices() {
   locator.registerLazySingleton<PromotionRepository>(() => PromotionRepository());
   locator.registerLazySingleton<TradeRepository>(() => TradeRepository());
   locator.registerLazySingleton<HubRepository>(() => HubRepository());
+  locator.registerLazySingleton<SystemRepository>(() => SystemRepository());
 
   // Register Tracking Service
   locator.registerLazySingleton<TrackingService>(() => FirebaseTrackingImpl());
