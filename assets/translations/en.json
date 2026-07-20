@@ -3,5 +3,21 @@
     "login_success": "Login successful!",
     "register_success": "Registration successful!",
     "reset_password_success": "Reset password successful! Please login again"
+  },
+  "disable_user": {
+    "title": "Delete Account",
+    "confirm_title": "Confirm Account Deletion",
+    "confirm_message": "Are you sure you want to delete your account? This action cannot be undone.",
+    "success_message": "Your account deletion is being processed.",
+    "warning_header": "We're sorry to see you go",
+    "warning_subheader": "Deleting your account will result in the following:",
+    "warning_item1": "All order history, points, and offers will be permanently deleted.",
+    "warning_item2": "You will no longer be able to log in to this account.",
+    "warning_item3": "Your personal information will be removed from the system in accordance with security regulations.",
+    "support_header": "How to recover or get support:",
+    "support_body": "If you change your mind or need assistance with account-related issues, you can contact us via:",
+    "support_item1": "Customer Service",
+    "support_item2": "Feedback (directly in the App)",
+    "button_delete": "Delete Account"
   }
 }

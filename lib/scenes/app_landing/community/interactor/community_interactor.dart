@@ -3,7 +3,7 @@ import 'package:coffee_bean/data/model/response/hub/hot_topic.dart';
 import 'package:coffee_bean/data/repository/hub_repository.dart';
 import 'package:coffee_bean/scenes/app_landing/community/community_builder.dart';
 import 'package:coffee_bean/scenes/app_landing/community/interactor/community_event_state.dart';
-import 'package:coffee_bean/shared/service/app_event/app_main_tab_event.dart';
+import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_constants.dart';
 import 'package:db_core/db_core.dart';
 
 class CommunityInteractor extends CubitInteractor<CommunityRoutable, CommunityState> {

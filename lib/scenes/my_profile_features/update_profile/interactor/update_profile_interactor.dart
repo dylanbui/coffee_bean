@@ -51,6 +51,10 @@ class UpdateProfileInteractor extends CubitInteractor<UpdateProfileRoutable, Upd
     emit(state.copyWith(selectedCoverFile: null));
   }
 
+  void onDisableAccountRequested() {
+    router?.routeToDisableUser();
+  }
+
   Future<void> updateProfile({
     required int sex,
   }) async {

@@ -3,5 +3,21 @@
     "login_success": "Đăng nhập thành công!",
     "register_success": "Đăng ký tài khoản thành công!",
     "reset_password_success": "Đặt lại mật khẩu thành công! Bạn hãy đăng nhập lại"
+  },
+  "disable_user": {
+    "title": "Xóa tài khoản",
+    "confirm_title": "Xác nhận xóa tài khoản",
+    "confirm_message": "Bạn có chắc chắn muốn xóa tài khoản không? Hành động này không thể hoàn tác.",
+    "success_message": "Tài khoản của bạn đang được xử lý xóa.",
+    "warning_header": "Chúng tôi rất tiếc khi bạn muốn rời đi",
+    "warning_subheader": "Việc xóa tài khoản sẽ dẫn đến các hệ quả sau:",
+    "warning_item1": "Toàn bộ lịch sử đơn hàng, điểm thưởng và các ưu đãi sẽ bị xóa vĩnh viễn.",
+    "warning_item2": "Bạn sẽ không thể đăng nhập vào tài khoản này nữa.",
+    "warning_item3": "Thông tin cá nhân của bạn sẽ được gỡ bỏ khỏi hệ thống theo quy định bảo mật.",
+    "support_header": "Cách khôi phục hoặc hỗ trợ:",
+    "support_body": "Nếu bạn thay đổi ý định hoặc cần hỗ trợ về các vấn đề liên quan đến tài khoản, bạn có thể liên hệ với chúng tôi qua:",
+    "support_item1": "Customer Service (Dịch vụ khách hàng)",
+    "support_item2": "Feedback (Góp ý trực tiếp trên App)",
+    "button_delete": "Xóa Account"
   }
 }

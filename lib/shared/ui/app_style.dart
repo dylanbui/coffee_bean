@@ -234,6 +234,12 @@ class TMLabsButtonStyle {
     textColor: Colors.white,
     borderRadius: 25,
   );
+
+  static const error = AppButtonStyleConfig(
+    backgroundColor: TMLabsColor.error,
+    textColor: Colors.white,
+    borderRadius: 25,
+  );
 }
 
 class TmLabAppBarStyle {

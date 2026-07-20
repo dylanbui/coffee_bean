@@ -133,4 +133,12 @@ class UserRepository extends BaseRepository {
         .mapResponseToPage(PointBreakdownItem.fromJson)
         .toObject();
   }
+
+  /// Xóa tài khoản (Cancel/Disable account)
+  Future<DbResult<bool>> cancelUserAccount() async {
+    return await networkClient
+        .request('/app-api/member/user/cancel', type: NetworkType.put)
+        .mapResponse()
+        .toValue<bool>();
+  }
 }

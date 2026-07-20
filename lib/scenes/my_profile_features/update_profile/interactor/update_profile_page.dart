@@ -111,6 +111,20 @@ class _UpdateProfilePageState extends AppCubitState<UpdateProfilePage, UpdatePro
                       onImagesPicked: (paths) => interactor.onCoverFileSelected(paths),
                       onRemoveImage: (_) => interactor.removeCoverImage(),
                     ),
+                    const SizedBox(height: 40),
+                    Center(
+                      child: TextButton(
+                        onPressed: interactor.onDisableAccountRequested,
+                        child: Text(
+                          "Xóa tài khoản",
+                          style: TMLabsTextStyle.body.copyWith(
+                            color: TMLabsColor.error,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),

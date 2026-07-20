@@ -1,8 +1,7 @@
-import 'package:coffee_bean/shared/service/app_event/app_main_tab_event.dart';
+import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_builder.dart';
+import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_constants.dart';
 import 'package:db_core/db_core.dart';
-import 'package:db_core/state_management/lib_bloc/cubit_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/main_tabbar/interactor/main_tabbar_event_state.dart';
-import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_router.dart';
 import 'package:flutter/widgets.dart';
 
 class MainTabbarInteractor extends CubitInteractor<MainTabbarRoutable, MainTabbarState> {

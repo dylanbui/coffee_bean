@@ -1,8 +1,18 @@
 import 'package:db_core/architecture_ribs/note_builder.dart';
-import 'package:coffee_bean/scenes/app_landing/main_tabbar/main_tabbar_router.dart';
 import 'package:coffee_bean/scenes/app_landing/main_tabbar/interactor/main_tabbar_interactor.dart';
 import 'package:coffee_bean/scenes/app_landing/main_tabbar/interactor/main_tabbar_page.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:db_core/architecture_ribs/note_router.dart';
+import 'package:flutter/material.dart';
+
+abstract class MainTabbarRoutable implements DbNoteRoutable {}
+
+class MainTabbarRouter extends DbNoteRouter implements MainTabbarRoutable {
+  @override
+  void navigate(DbNoteRoute toRoute, {BuildContext? fromContext, String? routeName, Map<String, Object>? parameters}) {
+    // Implement navigation logic if needed
+  }
+}
+
 
 class MainTabbarBuilder extends DbNoteBuilder<MainTabbarRouter> {
   @override
