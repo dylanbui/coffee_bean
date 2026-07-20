@@ -6,7 +6,6 @@ import 'package:coffee_bean/shared/widget/loading_view.dart';
 import 'package:coffee_bean/utils/refresh_loadmore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 class AppUi {
 

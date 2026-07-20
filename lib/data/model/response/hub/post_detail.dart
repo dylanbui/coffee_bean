@@ -39,13 +39,15 @@ class PostDetail {
     this.isOwn,
   });
 
-  String get displayCreateTime => createTime != null 
-    ? UtcUtils.toDateTimeStr(createTime, format: AppDateTimeFormat.full) 
-    : "";
-
   factory PostDetail.fromJson(Map<String, dynamic> json) =>
       _$PostDetailFromJson(json);
 
   Map<String, dynamic> toJson() => _$PostDetailToJson(this);
+}
+
+extension PostDetailExtension on PostDetail {
+  String get displayCreateTime => createTime != null
+      ? UtcUtils.toDateTimeStr(createTime, format: AppDateTimeFormat.full)
+      : "";
 }
 

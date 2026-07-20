@@ -158,4 +158,15 @@ class UserRepository extends BaseRepository {
         .mapResponseTo(InviteRewardConfig.fromJson)
         .toObject();
   }
+
+  /// Lấy lịch sử nhận thưởng từ việc mời bạn bè (Invite Reward Points Records)
+  Future<ResultPageType<PointBreakdownItem>> getInviteRewardPoints({int pageNo = 1, int pageSize = 20}) async {
+    return await networkClient
+        .request('/app-api/member/invite/reward-points', params: {
+          'pageNo': pageNo,
+          'pageSize': pageSize,
+        })
+        .mapResponseToPage(PointBreakdownItem.fromJson)
+        .toObject();
+  }
 }
