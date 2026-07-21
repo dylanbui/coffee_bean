@@ -9,7 +9,7 @@ class PointBreakdownItem {
   final String title;
   final String? description;
   final int point;
-  final int createTime;
+  final dynamic createTime;
 
   PointBreakdownItem({
     required this.id,
@@ -24,5 +24,7 @@ class PointBreakdownItem {
 }
 
 extension PointBreakdownItemExtension on PointBreakdownItem {
-  String get displayTime => UtcUtils.formatTimestamp(createTime, format: AppDateTimeFormat.fullDatetime);
+  String get displayTime => createTime != null 
+    ? UtcUtils.toDateTimeStr(createTime, format: AppDateTimeFormat.fullDatetimeYearFirst)
+    : "";
 }

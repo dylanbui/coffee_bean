@@ -134,7 +134,7 @@ class AnnouncementHeaderDelegate extends SliverPersistentHeaderDelegate {
                   ),
                   if (announcement.createTime != null)
                     Text(
-                      UtcUtils.formatTimestamp(announcement.createTime!),
+                      announcement.displayCreateTime,
                       style: TMLabsTextStyle.caption.copyWith(color: Colors.white.withValues(alpha: 0.9)),
                     ),
                 ],
@@ -162,7 +162,7 @@ class AnnouncementHeaderDelegate extends SliverPersistentHeaderDelegate {
                   ),
                   if (announcement.createTime != null)
                     Text(
-                      UtcUtils.formatTimestamp(announcement.createTime!),
+                      announcement.displayCreateTime,
                       style: TMLabsTextStyle.caption.copyWith(color: TMLabsColor.grey, fontSize: 10),
                     ),
                 ],

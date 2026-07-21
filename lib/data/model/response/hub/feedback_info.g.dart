@@ -14,7 +14,7 @@ FeedbackInfo _$FeedbackInfoFromJson(Map<String, dynamic> json) => FeedbackInfo(
       .toList(),
   feedbackStatus: json['feedbackStatus'] as String?,
   feedbackRemark: json['feedbackRemark'] as String?,
-  createTime: (json['createTime'] as num?)?.toInt(),
+  createTime: json['createTime'],
 );
 
 Map<String, dynamic> _$FeedbackInfoToJson(FeedbackInfo instance) =>

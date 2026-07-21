@@ -24,7 +24,7 @@ PostDetail _$PostDetailFromJson(Map<String, dynamic> json) => PostDetail(
   postCommentCount: (json['postCommentCount'] as num?)?.toInt(),
   postShareCount: (json['postShareCount'] as num?)?.toInt(),
   postStatus: (json['postStatus'] as num?)?.toInt(),
-  createTime: (json['createTime'] as num?)?.toInt(),
+  createTime: json['createTime'],
   isOwn: json['isOwn'] as bool?,
 );
 

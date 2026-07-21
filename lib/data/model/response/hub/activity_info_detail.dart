@@ -22,7 +22,7 @@ class ActivityInfoDetail {
   final int? activityType;
   final String? activityDetail;
   final int? merchantId;
-  final int? createTime;
+  final dynamic createTime;
 
   ActivityInfoDetail({
     required this.id,

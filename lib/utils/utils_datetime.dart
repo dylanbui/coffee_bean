@@ -28,6 +28,8 @@ USAGE EXAMPLES:
 
 enum AppDateTimeFormat {
   /// dd/MM/yyyy HH:mm:ss
+  fullDatetimeYearFirst("dd/MM/yyyy HH:mm:ss"),
+  /// dd/MM/yyyy HH:mm:ss
   fullDatetime("dd/MM/yyyy HH:mm:ss"),
   /// dd/MM/yyyy HH:mm
   full("dd/MM/yyyy HH:mm"),

@@ -24,7 +24,7 @@ class HubComment implements IComment {
   final String? commentContent;
   
   @JsonKey(name: 'createTime')
-  final int? createTimeInt;
+  final dynamic createTimeInt;
   
   final List<HubComment>? replies;
   final bool? isOwn;
@@ -46,9 +46,7 @@ class HubComment implements IComment {
   String get content => commentContent ?? "";
 
   @override
-  DateTime? get createTime => createTimeInt != null 
-    ? DateTime.fromMillisecondsSinceEpoch(createTimeInt!) 
-    : null;
+  DateTime? get createTime => UtcUtils.toDateTimeSafe(createTimeInt);
 
   @override
   List<String> get picUrls => []; 
@@ -63,10 +61,10 @@ class HubComment implements IComment {
   String? get replyContent => replyStatus ? replies![0].commentContent : null;
 
   @override
-  DateTime? get replyTime => replyStatus ? (replies![0].createTimeInt != null ? DateTime.fromMillisecondsSinceEpoch(replies![0].createTimeInt!) : null) : null;
+  DateTime? get replyTime => replyStatus ? UtcUtils.toDateTimeSafe(replies![0].createTimeInt) : null;
 
   String get displayCreateTime => createTimeInt != null 
-    ? UtcUtils.toDateTimeStr(createTimeInt, format: AppDateTimeFormat.full) 
+    ? UtcUtils.toDateTimeStr(createTimeInt, format: AppDateTimeFormat.fullDatetimeYearFirst) 
     : "";
 
   factory HubComment.fromJson(Map<String, dynamic> json) =>

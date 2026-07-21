@@ -76,10 +76,10 @@ class InviteRecord {
   final String? avatar;
   final int? status;
   final String? statusName;
-  final int? registerTime;
+  final dynamic registerTime;
   final int? rewardPoints;
-  final int? rewardTime;
-  final int createTime;
+  final dynamic rewardTime;
+  final dynamic createTime;
 
   InviteRecord({
     this.inviteeId,
@@ -98,5 +98,7 @@ class InviteRecord {
 }
 
 extension InviteRecordExtension on InviteRecord {
-  String get displayCreateTime => UtcUtils.toDateTimeStr(createTime, format: AppDateTimeFormat.full);
+  String get displayCreateTime => createTime != null 
+    ? UtcUtils.toDateTimeStr(createTime, format: AppDateTimeFormat.fullDatetimeYearFirst)
+    : "";
 }

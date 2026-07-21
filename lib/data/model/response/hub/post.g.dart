@@ -25,7 +25,7 @@ Post _$PostFromJson(Map<String, dynamic> json) => Post(
   postCommentCount: (json['postCommentCount'] as num?)?.toInt(),
   postShareCount: (json['postShareCount'] as num?)?.toInt(),
   postStatus: (json['postStatus'] as num?)?.toInt(),
-  createTime: (json['createTime'] as num?)?.toInt(),
+  createTime: json['createTime'],
 );
 
 Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{

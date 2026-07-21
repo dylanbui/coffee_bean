@@ -1,3 +1,4 @@
+import 'package:coffee_bean/utils/utils_datetime.dart';
 import 'package:db_core/commons_constants.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -9,7 +10,7 @@ class Announcement {
   final String title;
   final int type;
   final String content;
-  final int? createTime;
+  final dynamic createTime;
 
   Announcement({
     required this.id,
@@ -22,4 +23,10 @@ class Announcement {
   factory Announcement.fromJson(Dictionary json) => _$AnnouncementFromJson(json);
 
   Dictionary toJson() => _$AnnouncementToJson(this);
+}
+
+extension AnnouncementExtension on Announcement {
+  String get displayCreateTime => createTime != null 
+    ? UtcUtils.toDateTimeStr(createTime, format: AppDateTimeFormat.fullDatetimeYearFirst)
+    : "";
 }

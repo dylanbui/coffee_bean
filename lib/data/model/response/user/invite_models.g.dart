@@ -72,10 +72,10 @@ InviteRecord _$InviteRecordFromJson(Map<String, dynamic> json) => InviteRecord(
   avatar: json['avatar'] as String?,
   status: (json['status'] as num?)?.toInt(),
   statusName: json['statusName'] as String?,
-  registerTime: (json['registerTime'] as num?)?.toInt(),
+  registerTime: json['registerTime'],
   rewardPoints: (json['rewardPoints'] as num?)?.toInt(),
-  rewardTime: (json['rewardTime'] as num?)?.toInt(),
-  createTime: (json['createTime'] as num).toInt(),
+  rewardTime: json['rewardTime'],
+  createTime: json['createTime'],
 );
 
 Map<String, dynamic> _$InviteRecordToJson(InviteRecord instance) =>

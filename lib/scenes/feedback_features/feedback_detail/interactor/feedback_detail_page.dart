@@ -1,3 +1,4 @@
+import 'package:coffee_bean/data/model/response/hub/feedback_info.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
 import 'package:coffee_bean/shared/ui/app_colors.dart';
 import 'package:coffee_bean/shared/ui/app_style.dart';
@@ -33,14 +34,6 @@ class _FeedbackDetailPageState extends AppCubitState<FeedbackDetailPage, Feedbac
           return getEmptyItemView(caption: "Không tìm thấy nội dung phản hồi.");
         }
 
-        String formattedDate = "";
-        if (item.createTime != null) {
-          formattedDate = UtcUtils.formatTimestamp(
-            item.createTime!, 
-            format: AppDateTimeFormat.fullDatetime
-          );
-        }
-
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Container(
@@ -63,7 +56,7 @@ class _FeedbackDetailPageState extends AppCubitState<FeedbackDetailPage, Feedbac
                 ],
                 const SizedBox(height: 24),
                 Text(
-                  formattedDate,
+                  item.displayCreateTime,
                   style: TMLabsTextStyle.caption.copyWith(color: Colors.grey),
                 ),
                 if (item.feedbackRemark != null && item.feedbackRemark!.isNotEmpty) ...[

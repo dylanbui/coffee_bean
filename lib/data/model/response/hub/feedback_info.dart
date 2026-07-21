@@ -1,3 +1,4 @@
+import 'package:coffee_bean/utils/utils_datetime.dart';
 import 'package:db_core/commons_constants.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -10,7 +11,7 @@ class FeedbackInfo {
   final List<String>? feedbackImgs;
   final String? feedbackStatus;
   final String? feedbackRemark;
-  final int? createTime;
+  final dynamic createTime;
 
   FeedbackInfo({
     required this.id,
@@ -23,4 +24,10 @@ class FeedbackInfo {
 
   factory FeedbackInfo.fromJson(Dictionary json) => _$FeedbackInfoFromJson(json);
   Dictionary toJson() => _$FeedbackInfoToJson(this);
+}
+
+extension FeedbackInfoExtension on FeedbackInfo {
+  String get displayCreateTime => createTime != null 
+    ? UtcUtils.toDateTimeStr(createTime, format: AppDateTimeFormat.fullDatetimeYearFirst)
+    : "";
 }

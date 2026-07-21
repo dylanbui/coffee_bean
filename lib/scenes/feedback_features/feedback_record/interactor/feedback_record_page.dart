@@ -48,14 +48,6 @@ class _FeedbackRecordPageState extends AppCubitState<FeedbackRecordPage, Feedbac
   }
 
   Widget _buildFeedbackItem(FeedbackInfo item) {
-    String formattedDate = "";
-    if (item.createTime != null) {
-      formattedDate = UtcUtils.formatTimestamp(
-        item.createTime!, 
-        format: AppDateTimeFormat.fullDatetime
-      );
-    }
-
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -81,7 +73,7 @@ class _FeedbackRecordPageState extends AppCubitState<FeedbackRecordPage, Feedbac
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    formattedDate,
+                    item.displayCreateTime,
                     style: TMLabsTextStyle.caption.copyWith(color: Colors.grey),
                   ),
                 ],

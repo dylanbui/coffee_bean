@@ -72,7 +72,9 @@ class SystemNotificationInteractor extends CubitInteractor<SystemNotificationRou
     final yesterday = today.subtract(const Duration(days: 1));
 
     for (var msg in messages) {
-      final createTime = UtcUtils.fromUtcMs(msg.createTime);
+      final createTime = UtcUtils.toDateTimeSafe(msg.createTime);
+      if (createTime == null) continue;
+      
       final msgDate = DateTime(createTime.year, createTime.month, createTime.day);
       if (msgDate == today) {
         groups["Hôm nay"]!.add(msg);

@@ -11,7 +11,7 @@ Announcement _$AnnouncementFromJson(Map<String, dynamic> json) => Announcement(
   title: json['title'] as String,
   type: (json['type'] as num).toInt(),
   content: json['content'] as String,
-  createTime: (json['createTime'] as num?)?.toInt(),
+  createTime: json['createTime'],
 );
 
 Map<String, dynamic> _$AnnouncementToJson(Announcement instance) =>

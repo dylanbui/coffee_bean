@@ -19,7 +19,7 @@ class Post {
   final int? postCommentCount;
   final int? postShareCount;
   final int? postStatus;
-  final int? createTime;
+  final dynamic createTime;
 
   Post({
     required this.id,
@@ -40,7 +40,7 @@ class Post {
   });
 
   String get displayCreateTime => createTime != null 
-    ? UtcUtils.toDateTimeStr(createTime, format: AppDateTimeFormat.full) 
+    ? UtcUtils.toDateTimeStr(createTime, format: AppDateTimeFormat.fullDatetimeYearFirst) 
     : "";
 
   factory Post.fromJson(Map<String, dynamic> json) =>

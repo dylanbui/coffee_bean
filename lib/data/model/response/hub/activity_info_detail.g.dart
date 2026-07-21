@@ -25,7 +25,7 @@ ActivityInfoDetail _$ActivityInfoDetailFromJson(Map<String, dynamic> json) =>
       activityType: (json['activityType'] as num?)?.toInt(),
       activityDetail: json['activityDetail'] as String?,
       merchantId: (json['merchantId'] as num?)?.toInt(),
-      createTime: (json['createTime'] as num?)?.toInt(),
+      createTime: json['createTime'],
     );
 
 Map<String, dynamic> _$ActivityInfoDetailToJson(ActivityInfoDetail instance) =>

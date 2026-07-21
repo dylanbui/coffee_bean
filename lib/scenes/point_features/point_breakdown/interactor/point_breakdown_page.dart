@@ -114,7 +114,7 @@ class _PointBreakdownPageState
                 maxLines: 1,
               ),
               Text(
-                UtcUtils.formatTimestamp(item.createTime, format: AppDateTimeFormat.full),
+                item.displayTime,
                 style: TMLabsTextStyle.small.copyWith(
                   color: TMLabsColor.grey,
                   fontWeight: FontWeight.normal,

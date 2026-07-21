@@ -14,7 +14,7 @@ HubComment _$HubCommentFromJson(Map<String, dynamic> json) => HubComment(
   resourceId: (json['resourceId'] as num?)?.toInt(),
   parentId: (json['parentId'] as num?)?.toInt(),
   commentContent: json['commentContent'] as String?,
-  createTimeInt: (json['createTime'] as num?)?.toInt(),
+  createTimeInt: json['createTime'],
   replies: (json['replies'] as List<dynamic>?)
       ?.map((e) => HubComment.fromJson(e as Map<String, dynamic>))
       .toList(),

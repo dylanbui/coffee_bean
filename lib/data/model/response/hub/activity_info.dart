@@ -1,3 +1,4 @@
+import 'package:coffee_bean/utils/utils_datetime.dart';
 import 'package:db_core/commons_constants.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -22,7 +23,7 @@ class ActivityInfo {
   final int? activityType;
   final String? activityDetail;
   final int? merchantId;
-  final int? createTime;
+  final dynamic createTime;
 
   ActivityInfo({
     required this.id,
@@ -50,4 +51,10 @@ class ActivityInfo {
 
   String get mainImage => activityCover ?? "";
   String get name => activityName;
+}
+
+extension ActivityInfoExtension on ActivityInfo {
+  String get displayCreateTime => createTime != null 
+    ? UtcUtils.toDateTimeStr(createTime, format: AppDateTimeFormat.fullDatetimeYearFirst)
+    : "";
 }

@@ -18,7 +18,7 @@ class PostDetail {
   final int? postCommentCount;
   final int? postShareCount;
   final int? postStatus;
-  final int? createTime;
+  final dynamic createTime;
   final bool? isOwn;
 
   PostDetail({
@@ -47,7 +47,7 @@ class PostDetail {
 
 extension PostDetailExtension on PostDetail {
   String get displayCreateTime => createTime != null
-      ? UtcUtils.toDateTimeStr(createTime, format: AppDateTimeFormat.full)
+      ? UtcUtils.toDateTimeStr(createTime, format: AppDateTimeFormat.fullDatetimeYearFirst)
       : "";
 }
 

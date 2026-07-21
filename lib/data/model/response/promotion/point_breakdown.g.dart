@@ -12,7 +12,7 @@ PointBreakdownItem _$PointBreakdownItemFromJson(Map<String, dynamic> json) =>
       title: json['title'] as String,
       description: json['description'] as String?,
       point: (json['point'] as num).toInt(),
-      createTime: (json['createTime'] as num).toInt(),
+      createTime: json['createTime'],
     );
 
 Map<String, dynamic> _$PointBreakdownItemToJson(PointBreakdownItem instance) =>

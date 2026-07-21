@@ -225,7 +225,7 @@ class _SystemNotificationPageState
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  UtcUtils.formatTimestamp(msg.createTime, format: AppDateTimeFormat.fullDatetime),
+                                  UtcUtils.toDateTimeStr(msg.createTime, format: AppDateTimeFormat.fullDatetime),
                                   style: TMLabsTextStyle.caption.copyWith(
                                     color: msg.readStatus ? TMLabsColor.grey : TMLabsColor.primary.withValues(alpha: 0.7),
                                   ),
