@@ -23,6 +23,7 @@ class AppSlidingTabBar<T> extends StatefulWidget {
   final TabIndicatorMode mode;
   final ValueChanged<T> onTabChanged;
   final AppSlidingTabBarStyle style;
+  final bool isFullWidth;
 
   const AppSlidingTabBar({
     super.key,
@@ -31,6 +32,7 @@ class AppSlidingTabBar<T> extends StatefulWidget {
     required this.onTabChanged,
     this.mode = TabIndicatorMode.underline,
     this.style = AppSlidingTabBarStyle.defaultStyle,
+    this.isFullWidth = false,
   });
 
   @override
@@ -113,78 +115,94 @@ class _AppSlidingTabBarState<T> extends State<AppSlidingTabBar<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      controller: _scrollController,
-      scrollDirection: Axis.horizontal,
-      child: Stack(
-        key: _containerKey,
-        children: [
-          // LỚP 1: Indicator
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            left: _indicatorLeft,
-            width: _indicatorWidth,
-            top: widget.mode == TabIndicatorMode.underline ? _indicatorHeight - widget.style.indicatorHeight : 0,
-            height: widget.mode == TabIndicatorMode.underline ? widget.style.indicatorHeight : _indicatorHeight,
-            child: Container(
-              decoration: BoxDecoration(
-                color: widget.style.activeColor,
-                borderRadius: BorderRadius.circular(
-                  widget.mode == TabIndicatorMode.background ? widget.style.indicatorRadius : 0,
-                ),
+    Widget content = Stack(
+      key: _containerKey,
+      children: [
+        // LỚP 1: Indicator
+        AnimatedPositioned(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          left: _indicatorLeft,
+          width: _indicatorWidth,
+          top: widget.mode == TabIndicatorMode.underline ? _indicatorHeight - widget.style.indicatorHeight : 0,
+          height: widget.mode == TabIndicatorMode.underline ? widget.style.indicatorHeight : _indicatorHeight,
+          child: Container(
+            decoration: BoxDecoration(
+              color: widget.style.activeColor,
+              borderRadius: BorderRadius.circular(
+                widget.mode == TabIndicatorMode.background ? widget.style.indicatorRadius : 0,
               ),
             ),
           ),
+        ),
 
-          // LỚP 2: Các Tab Items
-          Row(
-            children: widget.items.map((item) {
-              final isSelected = item.value == widget.currentItem;
+        // LỚP 2: Các Tab Items
+        Row(
+          mainAxisSize: widget.isFullWidth ? MainAxisSize.max : MainAxisSize.min,
+          children: widget.items.map((item) {
+            final isSelected = item.value == widget.currentItem;
 
-              return Padding(
-                padding: EdgeInsets.only(right: item == widget.items.last ? 0 : widget.style.spacing),
-                child: GestureDetector(
-                  key: _itemKeys[item.value],
-                  onTap: () => widget.onTabChanged(item.value),
-                  behavior: HitTestBehavior.opaque,
-                  child: Container(
-                    padding: widget.style.itemPadding,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (item.leftIcon != null) ...[
-                          _buildIcon(item.leftIcon!, isSelected),
-                          const SizedBox(width: 6),
-                        ],
-                        AnimatedDefaultTextStyle(
-                          duration: const Duration(milliseconds: 300),
-                          style: ((isSelected ? widget.style.activeStyle : widget.style.inactiveStyle) ??
-                                  TextStyle(
-                                    color: isSelected ? widget.style.activeColor : widget.style.inactiveColor,
-                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                    fontSize: 14,
-                                  ))
-                              .copyWith(
-                            color: (widget.mode == TabIndicatorMode.background && isSelected)
-                                ? (widget.style.activeTextColor ?? Colors.white)
-                                : (isSelected ? widget.style.activeColor : widget.style.inactiveColor),
-                          ),
-                          child: Text(item.label),
-                        ),
-                        if (item.rightIcon != null) ...[
-                          const SizedBox(width: 6),
-                          _buildIcon(item.rightIcon!, isSelected),
-                        ],
-                      ],
+            Widget tabChild = Container(
+              alignment: Alignment.center,
+              padding: widget.style.itemPadding,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (item.leftIcon != null) ...[
+                    _buildIcon(item.leftIcon!, isSelected),
+                    const SizedBox(width: 6),
+                  ],
+                  AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 300),
+                    style: ((isSelected ? widget.style.activeStyle : widget.style.inactiveStyle) ??
+                            TextStyle(
+                              color: isSelected ? widget.style.activeColor : widget.style.inactiveColor,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              fontSize: 14,
+                            ))
+                        .copyWith(
+                      color: (widget.mode == TabIndicatorMode.background && isSelected)
+                          ? (widget.style.activeTextColor ?? Colors.white)
+                          : (isSelected ? widget.style.activeColor : widget.style.inactiveColor),
                     ),
+                    child: Text(item.label),
                   ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
+                  if (item.rightIcon != null) ...[
+                    const SizedBox(width: 6),
+                    _buildIcon(item.rightIcon!, isSelected),
+                  ],
+                ],
+              ),
+            );
+
+            Widget itemWidget = GestureDetector(
+              key: _itemKeys[item.value],
+              onTap: () => widget.onTabChanged(item.value),
+              behavior: HitTestBehavior.opaque,
+              child: tabChild,
+            );
+
+            if (widget.isFullWidth) {
+              return Expanded(child: itemWidget);
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(right: item == widget.items.last ? 0 : widget.style.spacing),
+              child: itemWidget,
+            );
+          }).toList(),
+        ),
+      ],
+    );
+
+    if (widget.isFullWidth) {
+      return content;
+    }
+
+    return SingleChildScrollView(
+      controller: _scrollController,
+      scrollDirection: Axis.horizontal,
+      child: content,
     );
   }
 

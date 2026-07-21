@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coffee_bean/data/model/response/user/invite_models.dart';
 import 'package:coffee_bean/scenes/my_profile_features/invitation_ranking/interactor/invitation_ranking_event_state.dart';
 import 'package:coffee_bean/scenes/my_profile_features/invitation_ranking/interactor/invitation_ranking_interactor.dart';
@@ -24,29 +25,26 @@ class _InvitationRankingPageState extends AppCubitState<InvitationRankingPage, I
   String? getTitle() => "invitation_ranking.title".tr();
 
   @override
+  PreferredSizeWidget? getAppBar(BuildContext context) => null;
+
+  @override
   Widget getBody(BuildContext context) {
     return BlocBuilder<InvitationRankingInteractor, InvitationRankingState>(
       builder: (context, state) {
-        return Scaffold(
-          backgroundColor: TMLabsColor.bgMain,
-          body: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) {
-              return [
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: RankingHeaderDelegate(
-                    statusBarHeight: MediaQuery.paddingOf(context).top,
-                    tabBar: _buildTabBar(state),
-                    // Using a static image as requested. In production, this might come from state or assets.
-                    imageUrl: 'https://picsum.photos/id/162/800/600', 
-                  ),
+        return NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: RankingHeaderDelegate(
+                  statusBarHeight: MediaQuery.paddingOf(context).top,
+                  tabBar: _buildTabBar(state),
+                  imageUrl: state.userInfo?.background ?? 'https://picsum.photos/id/162/800/600',
                 ),
-              ];
-            },
-            body: state.isLoading 
-                ? getLoadingView()
-                : _buildRankingList(state),
-          ),
+              ),
+            ];
+          },
+          body: state.isLoading ? getLoadingView() : _buildRankingList(state),
         );
       },
     );
@@ -54,8 +52,12 @@ class _InvitationRankingPageState extends AppCubitState<InvitationRankingPage, I
 
   Widget _buildTabBar(InvitationRankingState state) {
     return Container(
-      height: 48,
-      color: Colors.white,
+      height: 64,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       child: AppSlidingTabBar<String>(
         items: [
           AppTabItem(value: 'DAILY', label: "invitation_ranking.day".tr()),
@@ -63,25 +65,27 @@ class _InvitationRankingPageState extends AppCubitState<InvitationRankingPage, I
           AppTabItem(value: 'MONTHLY', label: "invitation_ranking.month".tr()),
         ],
         currentItem: state.timeRange,
-        onTabChanged: (value) => interactor.fetchRanking(value),
+        onTabChanged: (value) => interactor.changeTimeRange(value),
         mode: TabIndicatorMode.background,
+        isFullWidth: true,
         style: TMLabsTabBarStyle.backgroundStyle.copyWith(
-          spacing: 20,
+          spacing: 0,
         ),
       ),
     );
   }
 
   Widget _buildRankingList(InvitationRankingState state) {
-    if (state.rankingList.isEmpty) {
+    final list = state.currentRanking;
+    if (list.isEmpty) {
       return getEmptyItemView(caption: "invitation_ranking.no_data".tr());
     }
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      itemCount: state.rankingList.length,
+      itemCount: list.length,
       itemBuilder: (context, index) {
-        final item = state.rankingList[index];
+        final item = list[index];
         return _buildRankingItem(item);
       },
     );
@@ -153,10 +157,11 @@ class RankingHeaderDelegate extends SliverPersistentHeaderDelegate {
   });
 
   final double imageHeight = 200.0;
-  final double tabBarHeight = 48.0;
+  final double tabBarHeight = 64.0;
+  final double spacing = 12.0;
 
   @override
-  double get maxExtent => statusBarHeight + imageHeight + tabBarHeight;
+  double get maxExtent => statusBarHeight + imageHeight + spacing + tabBarHeight;
 
   @override
   double get minExtent => statusBarHeight + kToolbarHeight + tabBarHeight;
@@ -166,34 +171,36 @@ class RankingHeaderDelegate extends SliverPersistentHeaderDelegate {
     final double totalShrinkRange = maxExtent - minExtent;
     final double shrinkPercentage = (shrinkOffset / totalShrinkRange).clamp(0.0, 1.0);
 
-    final Color backButtonColor = Color.lerp(Colors.white, TMLabsColor.primary, shrinkPercentage)!;
-    final Color appBarBgColor = Colors.white.withValues(alpha: shrinkPercentage);
+    // TODO: chờ update ui Sử dụng màu navy thương hiệu cho AppBar overlay, độ trong suốt tăng dần khi cuộn
+    //final Color appBarBgColor = TMLabsColor.primary.withValues(alpha: shrinkPercentage * 0.85);
     
     return Stack(
       fit: StackFit.expand,
       children: [
-        // Background Image
+        // LAYER 1: Background Image with Parallax
         Positioned(
-          top: -shrinkOffset * 0.5,
+          top: -shrinkOffset * 0.3, // Hiệu ứng parallax nhẹ
           left: 0,
           right: 0,
-          height: imageHeight + statusBarHeight,
-          child: Image.network(
-            imageUrl,
+          height: imageHeight + statusBarHeight + spacing,
+          child: DbCachedImageWidget(
+            imageUrl: imageUrl,
             fit: BoxFit.cover,
           ),
         ),
 
-        // AppBar Overlay when scrolled
+        // LAYER 2: AppBar Background Overlay (Semi-transparent)
         Positioned(
           top: 0,
           left: 0,
           right: 0,
           height: statusBarHeight + kToolbarHeight,
-          child: Container(color: appBarBgColor),
+          child: Container(
+            color: Colors.transparent,
+          ),
         ),
 
-        // Title in AppBar
+        // LAYER 3: Title (Fade in)
         Positioned(
           top: statusBarHeight,
           left: 56,
@@ -204,35 +211,35 @@ class RankingHeaderDelegate extends SliverPersistentHeaderDelegate {
               opacity: shrinkPercentage,
               child: Text(
                 "invitation_ranking.title".tr(),
-                style: TMLabsTextStyle.title,
+                style: TMLabsTextStyle.title.copyWith(color: Colors.white),
               ),
             ),
           ),
         ),
 
-        // TabBar pinned at the bottom
+        // LAYER 4: TabBar pinned at the bottom using CLAMP logic
         Positioned(
-          bottom: 0,
+          top: (maxExtent - tabBarHeight - shrinkOffset).clamp(statusBarHeight + kToolbarHeight, maxExtent),
           left: 0,
           right: 0,
           height: tabBarHeight,
           child: Material(
             elevation: shrinkPercentage > 0.98 ? 2 : 0,
-            color: Colors.white,
+            color: Colors.transparent, // Background handled by _buildTabBar decoration
             child: tabBar,
           ),
         ),
 
-        // Back Button
+        // LAYER 5: Back Button
         Positioned(
           top: statusBarHeight,
           left: 8,
           width: 48,
           height: kToolbarHeight,
           child: IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back_ios_new,
-              color: backButtonColor,
+              color: Colors.white,
               size: 20,
             ),
             onPressed: () => Navigator.maybePop(context),

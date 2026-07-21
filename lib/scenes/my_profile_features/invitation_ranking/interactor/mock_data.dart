@@ -2,14 +2,27 @@ import 'package:coffee_bean/data/model/response/user/invite_models.dart';
 
 class InvitationRankingMockData {
   static List<InviteRanking> getRanking(String timeRange) {
-    // Return different mock data based on timeRange if needed
+    // Return different mock data based on timeRange
+    int baseInvites = 100;
+    String suffix = "";
+    
+    if (timeRange == 'WEEKLY') {
+      baseInvites = 500;
+      suffix = " (W)";
+    } else if (timeRange == 'MONTHLY') {
+      baseInvites = 2000;
+      suffix = " (M)";
+    } else {
+      suffix = " (D)";
+    }
+
     return List.generate(20, (index) {
       return InviteRanking(
         rank: index + 1,
         userId: 1000 + index,
-        nickname: _getNickname(index),
+        nickname: _getNickname(index) + suffix,
         avatar: 'https://picsum.photos/id/${index + 10}/200',
-        totalInvites: 100 - (index * 3),
+        totalInvites: baseInvites - (index * 3),
         mobile: '****${7260 + index}',
       );
     });
