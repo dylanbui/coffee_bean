@@ -8,7 +8,7 @@ import 'package:coffee_bean/data/model/response/hub/topic_detail.dart';
 import 'package:coffee_bean/data/model/response/hub/expert_info.dart';
 import 'package:coffee_bean/data/model/response/hub/user_stat.dart';
 import 'package:coffee_bean/data/model/response/hub/course_info.dart';
-import 'package:coffee_bean/data/models/response/hub/follower_user.dart';
+import 'package:coffee_bean/data/model/response/hub/follower_user.dart';
 import 'package:coffee_bean/data/model/response/hub/expert_apply.dart';
 import 'package:coffee_bean/data/network/page_result.dart';
 import 'package:coffee_bean/data/network/network_response.dart';

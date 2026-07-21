@@ -3,9 +3,7 @@ import 'package:coffee_bean/data/repository/user_repository.dart';
 import 'package:coffee_bean/scenes/my_profile_features/invitation_infor/interactor/invitation_infor_event_state.dart';
 import 'package:coffee_bean/scenes/my_profile_features/invitation_infor/interactor/mock_data.dart';
 import 'package:coffee_bean/scenes/my_profile_features/invitation_infor/invitation_infor_builder.dart';
-import 'package:coffee_bean/shared/service/system_notify/system_notify_event.dart';
 import 'package:db_core/db_core.dart';
-import 'package:flutter/services.dart';
 
 class InvitationInforInteractor extends CubitInteractor<InvitationInforRoutable, InvitationInforState> {
   final UserRepository _userRepository = locator<UserRepository>();
@@ -57,13 +55,5 @@ class InvitationInforInteractor extends CubitInteractor<InvitationInforRoutable,
     emit(newState);
   }
 
-  void copyInviteCode(String code) {
-    Clipboard.setData(ClipboardData(text: code)).then((_) {
-      // Use extension method from flash_utils if available on context or via EventBus
-      // Based on AGENTS.md: UI Layer uses context.showFlash, Logic Layer uses SystemNotifyEvent
-      locator<DbEventBus>().fire(SystemSuccessNotifyEvent("Đã sao chép mã mời: $code"));
-    });
-  }
-  
   void refresh() => _fetchData();
 }

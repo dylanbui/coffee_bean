@@ -15,7 +15,8 @@ enum AppShareType {
   post(1, 'app-share-detail-post'),
   course(2, 'app-share-detail-course'),
   activity(3, 'app-share-detail-activity'),
-  user(4, 'app-share-detail-user');
+  user(4, 'app-share-detail-user'),
+  invitation(5, 'app-share-invitation');
 
   final int value;
   final String path;

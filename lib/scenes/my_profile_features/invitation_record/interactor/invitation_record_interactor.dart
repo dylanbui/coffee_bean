@@ -25,7 +25,7 @@ class InvitationRecordInteractor extends CubitInteractor<InvitationRecordRoutabl
     }
 
     final pageNo = isRefresh ? 1 : state.pageNo + 1;
-    final result = await _userRepository.getInviteRecords(pageNo: pageNo);
+    final result = await _userRepository.getInviteRecords(pageNo: pageNo, pageSize: 50);
 
     if (result case DbSuccess(:final data)) {
       if (data.list.isEmpty && isRefresh) {

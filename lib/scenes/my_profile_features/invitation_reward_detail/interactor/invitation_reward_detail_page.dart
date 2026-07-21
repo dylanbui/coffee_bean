@@ -56,13 +56,13 @@ class _InvitationRewardDetailPageState extends AppCubitState<InvitationRewardDet
           child: ListView.separated(
             controller: _scrollController,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            itemCount: state.items.length + (state.hasMore ? 1 : 1), // Always show footer
+            itemCount: state.items.length + (state.hasMore || state.pageNo > 1 ? 1 : 0),
             separatorBuilder: (context, index) => const Divider(height: 1, color: TMLabsColor.lightGrey),
             itemBuilder: (context, index) {
               if (index < state.items.length) {
                 return _buildRewardItem(state.items[index]);
               } else {
-                return _buildFooter(state.hasMore);
+                return _buildFooter(state.hasMore, state.pageNo);
               }
             },
           ),
@@ -115,13 +115,23 @@ class _InvitationRewardDetailPageState extends AppCubitState<InvitationRewardDet
     );
   }
 
-  Widget _buildFooter(bool hasMore) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 24),
-      alignment: Alignment.center,
-      child: hasMore
-          ? AppUi.getLoadingBottom(context, color: TMLabsColor.primary)
-          : AppUi.getNoMore(context),
-    );
+  Widget _buildFooter(bool hasMore, int pageNo) {
+    if (hasMore) {
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        alignment: Alignment.center,
+        child: AppUi.getLoadingBottom(context, color: TMLabsColor.primary),
+      );
+    }
+    
+    if (pageNo > 1) {
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        alignment: Alignment.center,
+        child: AppUi.getNoMore(context),
+      );
+    }
+    
+    return const SizedBox.shrink();
   }
 }

@@ -1,5 +1,5 @@
 import 'package:coffee_bean/data/local/user_manager/user_manager.dart';
-import 'package:coffee_bean/data/models/response/hub/follower_user.dart';
+import 'package:coffee_bean/data/model/response/hub/follower_user.dart';
 import 'package:coffee_bean/data/network/page_result.dart';
 import 'package:coffee_bean/data/repository/hub_repository.dart';
 import 'package:coffee_bean/scenes/fan_follow_list/fan_follow_list_builder.dart';

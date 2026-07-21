@@ -1,4 +1,4 @@
-import 'package:coffee_bean/data/models/response/hub/follower_user.dart';
+import 'package:coffee_bean/data/model/response/hub/follower_user.dart';
 
 class FanFollowMockData {
   static List<FollowUser> getFollowers() {

@@ -1,4 +1,4 @@
-import 'package:coffee_bean/data/models/response/hub/follower_user.dart';
+import 'package:coffee_bean/data/model/response/hub/follower_user.dart';
 import 'package:coffee_bean/scenes/fan_follow_list/interactor/fan_follow_list_event_state.dart';
 import 'package:coffee_bean/scenes/fan_follow_list/interactor/fan_follow_list_interactor.dart';
 import 'package:coffee_bean/shared/base/app_cubit_stateful_widget.dart';
