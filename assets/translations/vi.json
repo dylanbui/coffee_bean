@@ -19,5 +19,14 @@
     "support_item1": "Customer Service (Dịch vụ khách hàng)",
     "support_item2": "Feedback (Góp ý trực tiếp trên App)",
     "button_delete": "Xóa Account"
+  },
+  "invitation_ranking": {
+    "title": "Bảng xếp hạng mời bạn",
+    "day": "Ngày",
+    "week": "Tuần",
+    "month": "Tháng",
+    "no_data": "Chưa có dữ liệu xếp hạng",
+    "anonymous": "Người dùng ẩn danh",
+    "invites_count": "lượt mời"
   }
 }

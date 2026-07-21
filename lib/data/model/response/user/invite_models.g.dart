@@ -45,3 +45,48 @@ Map<String, dynamic> _$InviteRewardConfigToJson(InviteRewardConfig instance) =>
       'inviteExpireDays': instance.inviteExpireDays,
       'description': instance.description,
     };
+
+InviteRanking _$InviteRankingFromJson(Map<String, dynamic> json) =>
+    InviteRanking(
+      rank: (json['rank'] as num?)?.toInt() ?? 0,
+      userId: (json['userId'] as num?)?.toInt() ?? 0,
+      nickname: json['nickname'] as String?,
+      avatar: json['avatar'] as String?,
+      totalInvites: (json['totalInvites'] as num?)?.toInt() ?? 0,
+      mobile: json['mobile'] as String?,
+    );
+
+Map<String, dynamic> _$InviteRankingToJson(InviteRanking instance) =>
+    <String, dynamic>{
+      'rank': instance.rank,
+      'userId': instance.userId,
+      'nickname': instance.nickname,
+      'avatar': instance.avatar,
+      'totalInvites': instance.totalInvites,
+      'mobile': instance.mobile,
+    };
+
+InviteRecord _$InviteRecordFromJson(Map<String, dynamic> json) => InviteRecord(
+  inviteeId: (json['inviteeId'] as num?)?.toInt(),
+  nickname: json['nickname'] as String?,
+  avatar: json['avatar'] as String?,
+  status: (json['status'] as num?)?.toInt(),
+  statusName: json['statusName'] as String?,
+  registerTime: (json['registerTime'] as num?)?.toInt(),
+  rewardPoints: (json['rewardPoints'] as num?)?.toInt(),
+  rewardTime: (json['rewardTime'] as num?)?.toInt(),
+  createTime: (json['createTime'] as num).toInt(),
+);
+
+Map<String, dynamic> _$InviteRecordToJson(InviteRecord instance) =>
+    <String, dynamic>{
+      'inviteeId': instance.inviteeId,
+      'nickname': instance.nickname,
+      'avatar': instance.avatar,
+      'status': instance.status,
+      'statusName': instance.statusName,
+      'registerTime': instance.registerTime,
+      'rewardPoints': instance.rewardPoints,
+      'rewardTime': instance.rewardTime,
+      'createTime': instance.createTime,
+    };

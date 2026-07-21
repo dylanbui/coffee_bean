@@ -169,4 +169,25 @@ class UserRepository extends BaseRepository {
         .mapResponseToPage(PointBreakdownItem.fromJson)
         .toObject();
   }
+
+  /// Lấy bảng xếp hạng mời bạn bè (Invite Ranking)
+  Future<DbResult<List<InviteRanking>>> getInviteRanking(String timeRange) async {
+    return await networkClient
+        .request('/app-api/member/invite/ranking', params: {
+          'timeRange': timeRange,
+        })
+        .mapResponseTo(InviteRanking.fromJson)
+        .toList();
+  }
+
+  /// Lấy danh sách mời bạn bè (Invite Records)
+  Future<ResultPageType<InviteRecord>> getInviteRecords({int pageNo = 1, int pageSize = 20}) async {
+    return await networkClient
+        .request('/app-api/member/invite/records', params: {
+          'pageNo': pageNo,
+          'pageSize': pageSize,
+        })
+        .mapResponseToPage(InviteRecord.fromJson)
+        .toObject();
+  }
 }

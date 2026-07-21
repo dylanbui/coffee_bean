@@ -1,3 +1,4 @@
+import 'package:coffee_bean/utils/utils_datetime.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'invite_models.g.dart';
@@ -44,4 +45,58 @@ class InviteRewardConfig {
 
   factory InviteRewardConfig.fromJson(Map<String, dynamic> json) => _$InviteRewardConfigFromJson(json);
   Map<String, dynamic> toJson() => _$InviteRewardConfigToJson(this);
+}
+
+@JsonSerializable()
+class InviteRanking {
+  final int rank;
+  final int userId;
+  final String? nickname;
+  final String? avatar;
+  final int totalInvites;
+  final String? mobile; // Added based on design, might be null from API
+
+  InviteRanking({
+    this.rank = 0,
+    this.userId = 0,
+    this.nickname,
+    this.avatar,
+    this.totalInvites = 0,
+    this.mobile,
+  });
+
+  factory InviteRanking.fromJson(Map<String, dynamic> json) => _$InviteRankingFromJson(json);
+  Map<String, dynamic> toJson() => _$InviteRankingToJson(this);
+}
+
+@JsonSerializable()
+class InviteRecord {
+  final int? inviteeId;
+  final String? nickname;
+  final String? avatar;
+  final int? status;
+  final String? statusName;
+  final int? registerTime;
+  final int? rewardPoints;
+  final int? rewardTime;
+  final int createTime;
+
+  InviteRecord({
+    this.inviteeId,
+    this.nickname,
+    this.avatar,
+    this.status,
+    this.statusName,
+    this.registerTime,
+    this.rewardPoints,
+    this.rewardTime,
+    required this.createTime,
+  });
+
+  factory InviteRecord.fromJson(Map<String, dynamic> json) => _$InviteRecordFromJson(json);
+  Map<String, dynamic> toJson() => _$InviteRecordToJson(this);
+}
+
+extension InviteRecordExtension on InviteRecord {
+  String get displayCreateTime => UtcUtils.toDateTimeStr(createTime, format: AppDateTimeFormat.full);
 }

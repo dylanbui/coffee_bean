@@ -7,6 +7,7 @@ import 'package:coffee_bean/scenes/my_profile_features/change_mobile/change_mobi
 import 'package:coffee_bean/scenes/my_profile_features/coupon_list/coupon_list_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/course_learning_list/course_learning_list_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/course_order_catalog/course_order_catalog_builder.dart';
+import 'package:coffee_bean/scenes/my_profile_features/invitation_infor/invitation_infor_builder.dart';
 import 'package:coffee_bean/scenes/my_profile_features/update_profile/update_profile_builder.dart';
 import 'package:coffee_bean/scenes/point_features/daily_sign_in/daily_sign_in_builder.dart';
 import 'package:coffee_bean/scenes/point_features/my_point_list/my_point_list_builder.dart';
@@ -34,6 +35,7 @@ class ProblemReportRoute implements DbNoteRoute {}
 class MapTestRoute implements DbNoteRoute {}
 class CourseOrderCatalogRoute implements DbNoteRoute {}
 class SystemNotificationRoute implements DbNoteRoute {}
+class InvitationInforRoute implements DbNoteRoute {}
 
 
 abstract class MyProfileRoutable implements DbNoteRoutable {
@@ -108,6 +110,9 @@ class MyProfileRouter extends DbNoteRouter implements MyProfileRoutable {
       push(builder.viewController);
     } else if (toRoute is SystemNotificationRoute) {
       final builder = SystemNotificationBuilder().build();
+      push(builder.viewController);
+    } else if (toRoute is InvitationInforRoute) {
+      final builder = InvitationInforBuilder().build();
       push(builder.viewController);
     }
 

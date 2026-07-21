@@ -19,5 +19,14 @@
     "support_item1": "Customer Service",
     "support_item2": "Feedback (directly in the App)",
     "button_delete": "Delete Account"
+  },
+  "invitation_ranking": {
+    "title": "Invitation Ranking",
+    "day": "Day",
+    "week": "Week",
+    "month": "Month",
+    "no_data": "No ranking data",
+    "anonymous": "Anonymous user",
+    "invites_count": "invites"
   }
 }
