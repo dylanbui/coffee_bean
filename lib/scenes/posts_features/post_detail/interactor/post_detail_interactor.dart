@@ -1,13 +1,15 @@
 import 'dart:async';
 import 'package:coffee_bean/data/repository/hub_repository.dart';
 import 'package:coffee_bean/scenes/comment_list/comment_list_builder.dart';
+import 'package:coffee_bean/scenes/comment_list/plugins/create_comment/interactor/create_comment_interactor.dart';
 import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/mock_data.dart';
 import 'package:coffee_bean/scenes/posts_features/post_detail/interactor/post_detail_event_state.dart';
 import 'package:coffee_bean/scenes/posts_features/post_detail/post_detail_builder.dart';
 import 'package:coffee_bean/scenes/posts_features/post_report/post_report_builder.dart';
 import 'package:db_core/db_core.dart';
 
-class PostDetailInteractor extends CubitInteractor<PostDetailRoutable, PostDetailState> implements CommentListSmallListener {
+class PostDetailInteractor extends CubitInteractor<PostDetailRoutable, PostDetailState> 
+    implements CommentListSmallListener, CreateCommentListener {
   final int postId;
   final HubRepository _hubRepository = locator<HubRepository>();
   
@@ -134,5 +136,20 @@ class PostDetailInteractor extends CubitInteractor<PostDetailRoutable, PostDetai
   void onNavigateToAllComments(int resourceId, int type) {
     // Navigate to full comment list
     router?.gotoCommentList(resourceId, type);
+  }
+
+  void showCommentInput() {
+    emit(state.copyWith(showCommentInput: true));
+  }
+
+  void hideCommentInput() {
+    emit(state.copyWith(showCommentInput: false));
+  }
+
+  @override
+  void onCommentCreatedSuccess() {
+    hideCommentInput();
+    // Refresh danh sách comment plugin
+    commentController.refresh();
   }
 }

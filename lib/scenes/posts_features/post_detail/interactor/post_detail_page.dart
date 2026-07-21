@@ -30,6 +30,7 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
   bool get tapToUnfocus => true;
 
   DbNoteBuilder? _commentPlugin;
+  double _keyboardHeight = 0;
 
   @override
   Widget getBody(BuildContext context) {
@@ -38,27 +39,67 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
         final post = state.post;
         final bool isLoading = state.isLoading && post == null;
 
-        return Container(
-          color: Colors.white,
-          child: Column(
-            children: [
-              _buildCustomAppBar(post, isLoading, state),
-              Expanded(
-                child: FadeSwitcher(
-                  stateKey: isLoading ? 'loading' : (post == null ? 'empty' : 'content_${post.id}'),
-                  child: isLoading
-                      ? _PostDetailShimmer.buildContent()
-                      : (post == null
-                          ? getEmptyItemView(caption: "Không tìm thấy bài viết")
-                          : _buildMainScrollContent(post)),
-                ),
+        return Stack(
+          children: [
+            Container(
+              color: Colors.white,
+              child: Column(
+                children: [
+                  _buildCustomAppBar(post, isLoading, state),
+                  Expanded(
+                    child: FadeSwitcher(
+                      stateKey: isLoading ? 'loading' : (post == null ? 'empty' : 'content_${post.id}'),
+                      child: isLoading
+                          ? _PostDetailShimmer.buildContent()
+                          : (post == null
+                              ? getEmptyItemView(caption: "Không tìm thấy bài viết")
+                              : _buildMainScrollContent(post)),
+                    ),
+                  ),
+                  _buildFooter(post, isLoading, state),
+                ],
               ),
-              _buildFooter(post, isLoading, state),
-            ],
-          ),
+            ),
+            if (state.showCommentInput && post != null) _buildCommentInputOverlay(post),
+          ],
         );
       },
     );
+  }
+
+  Widget _buildCommentInputOverlay(PostDetail post) {
+    _commentPlugin ??= CommentListBuilder(
+      resourceId: post.id,
+      source: CommentSource.post,
+      type: 0,
+    );
+    return Positioned.fill(
+      child: Column(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: interactor.hideCommentInput,
+              child: Container(color: Colors.black.withValues(alpha: 0.2)),
+            ),
+          ),
+          (_commentPlugin as CommentListBuildable).buildCreateCommentPlugin(interactor, autoFocus: true),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    final view = View.of(context);
+    final currentBottomInset = view.viewInsets.bottom;
+
+    // Khi bàn phím đóng lại hoàn toàn (currentBottomInset == 0)
+    // mà trước đó bàn phím đang mở (_keyboardHeight > 0)
+    if (_keyboardHeight > 0 && currentBottomInset == 0 && interactor.state.showCommentInput) {
+      interactor.hideCommentInput();
+    }
+    _keyboardHeight = currentBottomInset;
   }
 
   Widget _buildMainScrollContent(PostDetail post) {
@@ -215,7 +256,7 @@ class _PostDetailPageState extends AppCubitState<PostDetailPage, PostDetailInter
           child: IntrinsicHeight(
             child: Row(
               children: [
-                Expanded(child: _buildFooterButton(AppAssets.icons.icComment, "Bình luận", onTap: () {})),
+                Expanded(child: _buildFooterButton(AppAssets.icons.icComment, "Bình luận", onTap: () => interactor.showCommentInput())),
                 _buildDivider(),
                 Expanded(
                   child: _buildFooterButton(

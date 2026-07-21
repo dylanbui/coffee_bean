@@ -18,14 +18,13 @@ abstract interface class CommentListSmallListener {
 
 class CommentListSmallController extends DbPluginController<CommentListSmallInteractor, CommentListSmallListener> {
   void refresh() {
-    // Gia lap goi Plugin refresh
-    // interactor?.refreshData();
+    interactor?.loadRecentComments();
   }
 }
 
 abstract interface class CommentListBuildable implements DbNoteBuildable {
   Widget buildPlugin(int limitComments, CommentListSmallController controller);
-  Widget buildCreateCommentPlugin(CreateCommentListener? listener);
+  Widget buildCreateCommentPlugin(CreateCommentListener? listener, {bool autoFocus = false});
 }
 
 class CommentListBuilder extends DbNoteBuilder<CommentListRouter> implements CommentListBuildable {
@@ -67,12 +66,13 @@ class CommentListBuilder extends DbNoteBuilder<CommentListRouter> implements Com
   }
 
   @override
-  Widget buildCreateCommentPlugin(CreateCommentListener? listener) {
+  Widget buildCreateCommentPlugin(CreateCommentListener? listener, {bool autoFocus = false}) {
     final router = CommentListRouter();
     final interactor = CreateCommentInteractor(
       resourceId: resourceId,
       source: source,
       listener: listener,
+      autoFocus: autoFocus,
     );
     final page = CreateCommentWidget(interactor: interactor);
     router.attach(interactor, page);

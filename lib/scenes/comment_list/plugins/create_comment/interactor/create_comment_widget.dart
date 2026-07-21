@@ -61,6 +61,7 @@ class _CreateCommentWidgetState extends AppCubitState<CreateCommentWidget, Creat
               Expanded(
                 child: AppInputField(
                   controller: _controller,
+                  autofocus: interactor.autoFocus,
                   config: CoffeeInputStyles.filled.copyWith(
                     isDense: true,
                     borderRadius: 24,

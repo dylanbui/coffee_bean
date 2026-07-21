@@ -11,12 +11,14 @@ class CreateCommentInteractor extends CubitInteractor<DbNoteRoutable, CreateComm
   final int resourceId;
   final CommentSource source;
   final CreateCommentListener? listener;
+  final bool autoFocus;
   final CommentRepository _commentRepository = locator.get<CommentRepository>();
 
   CreateCommentInteractor({
     required this.resourceId,
     required this.source,
     this.listener,
+    this.autoFocus = false,
   }) : super(CreateCommentState());
 
   void onContentChanged(String content) {

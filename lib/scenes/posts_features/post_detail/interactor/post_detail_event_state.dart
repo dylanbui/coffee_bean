@@ -8,6 +8,7 @@ class PostDetailState extends BaseBlocState with EquatableMixin {
   final bool isFollowed;
   final bool isFavorited;
   final bool isLoading;
+  final bool showCommentInput;
   final String? error;
 
   PostDetailState({
@@ -16,6 +17,7 @@ class PostDetailState extends BaseBlocState with EquatableMixin {
     this.isFollowed = false,
     this.isFavorited = false,
     this.isLoading = false,
+    this.showCommentInput = false,
     this.error,
   });
 
@@ -25,6 +27,7 @@ class PostDetailState extends BaseBlocState with EquatableMixin {
     bool? isFollowed,
     bool? isFavorited,
     bool? isLoading,
+    bool? showCommentInput,
     String? error,
   }) {
     return PostDetailState(
@@ -33,10 +36,11 @@ class PostDetailState extends BaseBlocState with EquatableMixin {
       isFollowed: isFollowed ?? this.isFollowed,
       isFavorited: isFavorited ?? this.isFavorited,
       isLoading: isLoading ?? this.isLoading,
+      showCommentInput: showCommentInput ?? this.showCommentInput,
       error: error ?? this.error,
     );
   }
 
   @override
-  List<Object?> get props => [post, isLiked, isFollowed, isFavorited, isLoading, error];
+  List<Object?> get props => [post, isLiked, isFollowed, isFavorited, isLoading, showCommentInput, error];
 }
