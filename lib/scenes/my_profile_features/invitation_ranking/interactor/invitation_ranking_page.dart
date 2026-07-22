@@ -127,7 +127,7 @@ class _InvitationRankingPageState extends AppCubitState<InvitationRankingPage, I
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               AppLabel(
-                "TOP ${item.rank}",
+                "invitation_ranking.top_label".tr(namedArgs: {'rank': '${item.rank}'}),
                 backgroundColor: TMLabsColor.error,
                 borderRadius: 4,
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),

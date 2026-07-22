@@ -1,4 +1,36 @@
 {
+  "general": {
+    "actions": {
+      "ok": "OK",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "close": "Close",
+      "back": "Back",
+      "retry": "Retry",
+      "save": "Save",
+      "delete": "Delete",
+      "edit": "Edit",
+      "add": "Add",
+      "search": "Search",
+      "done": "Done",
+      "next": "Next",
+      "see_more": "See more"
+    },
+    "feedback": {
+      "success": "Success",
+      "error": "Error",
+      "notification": "Notification",
+      "loading": "Loading...",
+      "no_data": "No data"
+    },
+    "info": {
+      "name": "Full Name",
+      "phone": "Phone Number",
+      "address": "Address",
+      "email": "Email",
+      "password": "Password"
+    }
+  },
   "auth": {
     "login_success": "Login successful!",
     "register_success": "Registration successful!",
@@ -27,6 +59,8 @@
     "month": "Month",
     "no_data": "No ranking data",
     "anonymous": "Anonymous user",
-    "invites_count": "invites"
+    "invites_count": "invites",
+    "top_label": "TOP {rank}",
+    "error_fetch": "Failed to load ranking data"
   }
 }

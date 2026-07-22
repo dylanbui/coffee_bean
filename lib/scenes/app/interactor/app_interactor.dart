@@ -13,6 +13,7 @@ import 'package:coffee_bean/data/local/store_manager/store_manager.dart';
 import 'package:coffee_bean/scenes/app/app_router.dart';
 import 'package:coffee_bean/data/local/settings_app_manager/settings_app_manager.dart';
 import 'package:db_core/db_core.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 /// The State for the AppInteractor.
 abstract class AppInteractorState extends BaseBlocState {}
@@ -52,7 +53,18 @@ class AppInteractor extends CubitInteractor<AppRoutable, AppInteractorState> {
 
     // Listen to app settings changes (Language/Currency)
     collect(locator<DbEventBus>().on<SettingsAppChangedEvent>().listen((event) {
-      dLog("AppInteractor: Received SettingsAppChangedEvent! Rebooting to Main Root...");
+      final newLocale = SettingsAppManager.currentLanguage.locale;
+      dLog("AppInteractor: Received SettingsAppChangedEvent! New Locale: ${newLocale.toString()}");
+      
+      // Sử dụng Global Context để cập nhật ngôn ngữ tại Runtime
+      final context = DbNavigator.globalNavigatorState.currentContext;
+      if (context != null && context.mounted) {
+        dLog("AppInteractor: Found global context. Updating Locale...");
+        context.setLocale(newLocale);
+      } else {
+        dLog("AppInteractor: WARNING: Global context is NULL or not mounted. Locale might not update immediately.");
+      }
+      
       router?.gotoMainRoot();
     }));
 

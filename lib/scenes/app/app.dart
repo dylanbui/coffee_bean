@@ -29,6 +29,7 @@ import 'package:coffee_bean/scenes/app/mixins/app_network_mixin.dart';
 import 'package:coffee_bean/scenes/app/mixins/app_upgrade_mixin.dart';
 import 'package:coffee_bean/scenes/app/mixins/app_notify_mixin.dart';
 import 'package:coffee_bean/data/cache/app_cache.dart';
+import 'package:coffee_bean/utils/language_utils.dart';
 import 'package:db_core/services/app_lifecycle_service.dart';
 import 'package:db_core/utils/widget/cached_image_widget.dart';
 import 'package:db_core/architecture_ribs/navigator.dart';
@@ -122,9 +123,11 @@ Future<Widget> initializeApp() async {
   FlutterNativeSplash.remove();
 
   return EasyLocalization(
-    supportedLocales: const [Locale('vi'), Locale('en')],
+    supportedLocales: Language.values.map((e) => e.locale).toList(),
     path: 'assets/translations',
-    fallbackLocale: const Locale('vi'),
+    fallbackLocale: Language.vi.locale,
+    startLocale: SettingsAppManager.currentLanguage.locale,
+    useOnlyLangCode: true,
     child: App(),
   );
 }
@@ -286,18 +289,15 @@ Future<void> _setupUiUtils() async {
 /// -------------------------
 
 class App extends StatefulWidget {
-  final AppBuilder _appBuilder = AppBuilder();
-  late final _appRouter = _appBuilder.build();
-
-  App({super.key}) {
-    _appBuilder.startApp();
-  }
+  const App({super.key});
 
   @override
   State<App> createState() => _AppState();
 }
 
 class _AppState extends State<App> with WidgetsBindingObserver, AppNetworkMixin, AppUpgradeMixin, AppNotifyMixin {
+  final AppBuilder _appBuilder = AppBuilder();
+  late final _appRouter = _appBuilder.build();
 
   @override
   void initState() {
@@ -305,6 +305,9 @@ class _AppState extends State<App> with WidgetsBindingObserver, AppNetworkMixin,
     debugPrint("App: --- INIT STATE ---");
     WidgetsBinding.instance.addObserver(this);
     
+    // Khởi tạo logic app duy nhất 1 lần tại đây
+    _appBuilder.startApp();
+
     initNetworkLogic();
     initUpgradeLogic();
     initNotifyLogic();
@@ -351,7 +354,7 @@ class _AppState extends State<App> with WidgetsBindingObserver, AppNetworkMixin,
           ],
         );
       },
-      home: widget._appRouter.viewController,
+      home: _appRouter.viewController,
     );
   }
 }

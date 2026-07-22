@@ -42,6 +42,11 @@ class DailySignInInteractor extends CubitInteractor<DailySignInRoutable, DailySi
       final int continuousDay = summary['continuousDay'] as int? ?? 0;
       final bool todaySignIn = summary['todaySignIn'] as bool? ?? false;
       
+      // Đồng bộ trạng thái điểm danh local nếu server báo đã điểm danh
+      if (todaySignIn) {
+        await UserManager().saveLastSignInDate();
+      }
+      
       // Chuyển configList sang Map {day: point} để tra cứu nhanh điểm thưởng theo số ngày liên tiếp
       final Map<int, int> configMap = {
         for (var item in configList) 
@@ -106,7 +111,10 @@ class DailySignInInteractor extends CubitInteractor<DailySignInRoutable, DailySi
     final result = await _userRepo.createSignInRecord();
 
     if (result case DbSuccess()) {
-      // 1. Lấy lại userInfo mới để cập nhật điểm trên UI đồng bộ toàn hệ thống
+      // 1. Đồng bộ trạng thái điểm danh local
+      await UserManager().saveLastSignInDate();
+
+      // 2. Lấy lại userInfo mới để cập nhật điểm trên UI đồng bộ toàn hệ thống
       final infoRes = await _userRepo.getUserInfo();
       if (infoRes case DbSuccess(:final data)) {
         await UserManager().saveUserInfo(data);

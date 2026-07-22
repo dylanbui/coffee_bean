@@ -127,133 +127,111 @@ class _SystemNotificationPageState
   Widget _buildMessageItem(NotifyMessage msg, bool isExpanded) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: Slidable(
-        key: ValueKey(msg.id),
-        endActionPane: ActionPane(
-          motion: const ScrollMotion(),
-          extentRatio: 0.4,
-          children: [
-            if (!msg.readStatus)
-              SlidableAction(
-                onPressed: (context) => interactor.markAsRead(msg.id),
-                backgroundColor: TMLabsColor.success,
-                foregroundColor: Colors.white,
-                icon: Icons.done_all,
-                label: 'Đã đọc',
-              ),
-            SlidableAction(
-              onPressed: (context) => interactor.deleteMessage(msg.id),
-              backgroundColor: TMLabsColor.error,
-              foregroundColor: Colors.white,
-              icon: Icons.delete,
-              label: 'Xóa',
-              borderRadius: const BorderRadius.horizontal(right: Radius.circular(12)),
+      child: InkWell(
+        onTap: () => interactor.toggleExpand(msg.id),
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: msg.readStatus ? Colors.white : TMLabsColor.primary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: msg.readStatus ? TMLabsColor.lightGrey : TMLabsColor.primary.withValues(alpha: 0.3),
+              width: 0.8,
             ),
-          ],
-        ),
-        child: InkWell(
-          onTap: () => interactor.toggleExpand(msg.id),
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: msg.readStatus ? Colors.white : TMLabsColor.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: msg.readStatus ? TMLabsColor.lightGrey : TMLabsColor.primary.withValues(alpha: 0.3),
-                width: 0.8,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.03),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: RichText(
-                              text: TextSpan(
-                                style: TMLabsTextStyle.body.copyWith(
-                                  color: msg.readStatus ? Colors.black87 : TMLabsColor.primary,
-                                  fontWeight: msg.readStatus ? FontWeight.normal : FontWeight.bold,
-                                ),
-                                children: [
-                                  const TextSpan(text: "Có "),
-                                  TextSpan(
-                                    text: msg.templateNickname,
-                                    style: const TextStyle(decoration: TextDecoration.underline),
-                                  ),
-                                  const TextSpan(text: " gửi tin nhắn cho bạn."),
-                                ],
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              style: TMLabsTextStyle.body.copyWith(
+                                color: msg.readStatus ? Colors.black87 : TMLabsColor.primary,
+                                fontWeight: msg.readStatus ? FontWeight.normal : FontWeight.bold,
                               ),
+                              children: [
+                                const TextSpan(text: "Có "),
+                                TextSpan(
+                                  text: msg.templateNickname,
+                                  style: const TextStyle(decoration: TextDecoration.underline),
+                                ),
+                                const TextSpan(text: " gửi tin nhắn cho bạn."),
+                              ],
                             ),
                           ),
-                          if (!msg.readStatus)
-                            const Padding(
-                              padding: EdgeInsets.only(left: 8.0),
-                              child: AppLabel(
-                                "Mới",
-                                backgroundColor: TMLabsColor.error,
-                                style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
-                                borderRadius: 4,
-                                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              ),
+                        ),
+                        if (!msg.readStatus)
+                          const Padding(
+                            padding: EdgeInsets.only(left: 8.0),
+                            child: AppLabel(
+                              "Mới",
+                              backgroundColor: TMLabsColor.error,
+                              style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                              borderRadius: 4,
+                              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      AnimatedSize(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                        alignment: Alignment.topLeft,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildContent(msg.templateContent, msg.readStatus, isExpanded),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  UtcUtils.toDateTimeStr(msg.createTime, format: AppDateTimeFormat.fullDatetime),
-                                  style: TMLabsTextStyle.caption.copyWith(
-                                    color: msg.readStatus ? TMLabsColor.grey : TMLabsColor.primary.withValues(alpha: 0.7),
-                                  ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    AnimatedSize(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      alignment: Alignment.topLeft,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildContent(msg.templateContent, msg.readStatus, isExpanded),
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                UtcUtils.toDateTimeStr(msg.createTime, format: AppDateTimeFormat.fullDatetime),
+                                style: TMLabsTextStyle.caption.copyWith(
+                                  color: msg.readStatus ? TMLabsColor.grey : TMLabsColor.primary.withValues(alpha: 0.7),
                                 ),
-                                if (isExpanded)
-                                  Text(
-                                    "Thu gọn",
+                              ),
+                              if (isExpanded)
+                                GestureDetector(
+                                  onTap: () => interactor.deleteMessage(msg.id),
+                                  child: Text(
+                                    "Xóa",
                                     style: TMLabsTextStyle.caption.copyWith(
-                                      color: TMLabsColor.primary,
+                                      color: TMLabsColor.error,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                              ],
-                            ),
-                          ],
-                        ),
+                                ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                Icon(
-                  isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                  size: 20,
-                  color: msg.readStatus ? TMLabsColor.grey : TMLabsColor.primary,
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 8),
+              Icon(
+                isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                size: 20,
+                color: msg.readStatus ? TMLabsColor.grey : TMLabsColor.primary,
+              ),
+            ],
           ),
         ),
       ),

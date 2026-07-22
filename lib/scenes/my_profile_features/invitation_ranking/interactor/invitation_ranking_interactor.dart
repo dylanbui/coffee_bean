@@ -5,6 +5,8 @@ import 'package:coffee_bean/scenes/my_profile_features/invitation_ranking/intera
 import 'package:coffee_bean/scenes/my_profile_features/invitation_ranking/interactor/mock_data.dart';
 import 'package:coffee_bean/scenes/my_profile_features/invitation_ranking/invitation_ranking_builder.dart';
 import 'package:db_core/db_core.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 
 class InvitationRankingInteractor extends CubitInteractor<InvitationRankingRoutable, InvitationRankingState> {
   final UserRepository _userRepository = locator.get<UserRepository>();
@@ -44,6 +46,13 @@ class InvitationRankingInteractor extends CubitInteractor<InvitationRankingRouta
     if (result case DbSuccess(:final data)) {
       if (data.isNotEmpty) return data;
     }
+
+    if (result case DbFailure(:final error)) {
+      // Ví dụ: Bạn có thể sử dụng .tr() ngay tại Interactor để log hoặc xử lý logic
+      // mà không cần BuildContext
+      debugPrint("Log: ${'invitation_ranking.error_fetch'.tr()} - Code: ${error.code}");
+    }
+
     // Fallback to mock data if empty or error
     return InvitationRankingMockData.getRanking(timeRange);
   }

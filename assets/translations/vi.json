@@ -1,4 +1,36 @@
 {
+  "general": {
+    "actions": {
+      "ok": "Đồng ý",
+      "cancel": "Hủy",
+      "confirm": "Xác nhận",
+      "close": "Đóng",
+      "back": "Quay lại",
+      "retry": "Thử lại",
+      "save": "Lưu",
+      "delete": "Xóa",
+      "edit": "Sửa",
+      "add": "Thêm",
+      "search": "Tìm kiếm",
+      "done": "Xong",
+      "next": "Tiếp theo",
+      "see_more": "Xem thêm"
+    },
+    "feedback": {
+      "success": "Thành công",
+      "error": "Lỗi",
+      "notification": "Thông báo",
+      "loading": "Đang tải...",
+      "no_data": "Không có dữ liệu"
+    },
+    "info": {
+      "name": "Họ và tên",
+      "phone": "Số điện thoại",
+      "address": "Địa chỉ",
+      "email": "Email",
+      "password": "Mật khẩu"
+    }
+  },
   "auth": {
     "login_success": "Đăng nhập thành công!",
     "register_success": "Đăng ký tài khoản thành công!",
@@ -27,6 +59,8 @@
     "month": "Tháng",
     "no_data": "Chưa có dữ liệu xếp hạng",
     "anonymous": "Người dùng ẩn danh",
-    "invites_count": "lượt mời"
+    "invites_count": "lượt mời",
+    "top_label": "Hạng {rank}",
+    "error_fetch": "Không thể tải dữ liệu xếp hạng"
   }
 }
